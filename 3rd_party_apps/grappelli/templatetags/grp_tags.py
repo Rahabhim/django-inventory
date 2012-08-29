@@ -19,10 +19,10 @@ register = template.Library()
 
 # GENERIC OBJECTS
 class do_get_generic_objects(template.Node):
-    
+
     def __init__(self):
         pass
-    
+
     def render(self, context):
         return_string = "{"
         for c in ContentType.objects.all().order_by('id'):
@@ -86,11 +86,11 @@ register.simple_tag(grappelli_admin_title)
 
 # SEARCH FIELDS VERBOSE
 class GetSearchFields(template.Node):
-    
+
     def __init__(self, opts, var_name):
         self.opts = template.Variable(opts)
         self.var_name = var_name
-    
+
     def render(self, context):
         opts = str(self.opts.resolve(context)).split('.')
         model = models.get_model(opts[0], opts[1])
@@ -98,7 +98,7 @@ class GetSearchFields(template.Node):
             field_list = admin.site._registry[model].search_fields_verbose
         except:
             field_list = ""
-        
+
         context[self.var_name] = ", ".join(field_list)
         return ""
 
@@ -107,7 +107,7 @@ def do_get_search_fields_verbose(parser, token):
     """
     Get search_fields_verbose in order to display on the Changelist.
     """
-    
+
     try:
         tag, arg = token.contents.split(None, 1)
     except:

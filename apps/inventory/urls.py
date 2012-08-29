@@ -10,13 +10,13 @@ from photos.views import generic_photos
 
 from models import ItemTemplate, InventoryTransaction, \
                    Inventory, Log, Location, Supplier
-                   
+
 from forms import InventoryTransactionForm, InventoryForm, \
                   ItemTemplateForm, ItemTemplateForm_view, LogForm, \
                   SupplierForm, LocationForm_view
 
 from conf import settings as inventory_settings
-                                
+
 
 urlpatterns = patterns('inventory.views',
     url(r'^template/list/$', generic_list, dict({'queryset':ItemTemplate.objects.all()}, extra_context=dict(title=_(u'item template'))), 'template_list'),
@@ -24,7 +24,7 @@ urlpatterns = patterns('inventory.views',
     url(r'^template/(?P<object_id>\d+)/update/$', update_object, {'form_class':ItemTemplateForm, 'template_name':'generic_form.html', 'extra_context':{'object_name':_(u'item template')}}, 'template_update' ),
     url(r'^template/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':ItemTemplate}, post_delete_redirect="template_list", extra_context=dict(object_name=_(u'item template'), _message=_(u"Will be deleted from any user that may have it assigned and from any item group."))), 'template_delete' ),
     url(r'^template/orphans/$', generic_list, dict({'queryset':ItemTemplate.objects.filter(item=None)}, extra_context=dict(title=_('orphan templates'))), 'template_orphans_list'),
-    url(r'^template/(?P<object_id>\d+)/photos/$', generic_photos, {'model':ItemTemplate, 'max_photos':inventory_settings.MAX_TEMPLATE_PHOTOS, 'extra_context':{'object_name':_(u'item template')}}, 'template_photos'), 
+    url(r'^template/(?P<object_id>\d+)/photos/$', generic_photos, {'model':ItemTemplate, 'max_photos':inventory_settings.MAX_TEMPLATE_PHOTOS, 'extra_context':{'object_name':_(u'item template')}}, 'template_photos'),
     url(r'^template/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemTemplateForm_view, queryset=ItemTemplate.objects.all(), extra_context={'object_name':_(u'item template'), 'sidebar_subtemplates':['generic_photos_subtemplate.html']}), 'template_view'),
     url(r'^template/(?P<object_id>\d+)/items/$', 'template_items', (), 'template_items_list'),
     url(r'^template/(?P<object_id>\d+)/assign/supplies$', 'template_assign_remove_supply', (), name='template_assign_supply'),
@@ -58,8 +58,8 @@ urlpatterns = patterns('inventory.views',
     url(r'^supplier/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Supplier}, post_delete_redirect="supplier_list", extra_context=dict(object_name=_(u'supplier'))), 'supplier_delete'),
     url(r'^supplier/(?P<object_id>\d+)/assign/itemtemplates/$', 'supplier_assign_remove_itemtemplates', (), 'supplier_assign_itemtemplates'),
     url(r'^supplier/(?P<object_id>\d+)/purchase/orders/$', 'supplier_purchase_orders', (), 'supplier_purchase_orders'),
-    
+
 #    url(r'^reports/items_per_person/(?P<object_id>\d+)/$', 'report_items_per_person', (), 'report_items_per_person'),
 )
-    
+
 

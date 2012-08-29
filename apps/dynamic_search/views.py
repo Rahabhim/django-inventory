@@ -17,10 +17,10 @@ def normalize_query(query_string,
     ''' Splits the query string in invidual keywords, getting rid of unecessary spaces
         and grouping quoted words together.
         Example:
-        
+
         >>> normalize_query('  some random  words "with   quotes  " and   spaces')
         ['some', 'random', 'words', 'with quotes', 'and', 'spaces']
-    
+
     '''
     return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)]
 
@@ -28,9 +28,9 @@ def normalize_query(query_string,
 def get_query(terms, search_fields):
     ''' Returns a query, that is a combination of Q objects. That combination
         aims to search keywords within a model by testing the given search fields.
-    
+
     '''
-    query = None # Query to search for every search term        
+    query = None # Query to search for every search term
     #terms = normalize_query(query_string)
     for term in terms:
         or_query = None # Query to search for a given term in each field
@@ -55,11 +55,11 @@ def search(request):
     if ('q' in request.GET) and request.GET['q'].strip():
         query_string = request.GET['q']
         form = SearchForm(initial={'q':query_string})
-        
+
         terms = normalize_query(query_string)
-        
+
         for model, data in search_list.items():
-            query = get_query(terms, data['fields'])            
+            query = get_query(terms, data['fields'])
 
             results = model.objects.filter(query)
             if results:
@@ -70,7 +70,7 @@ def search(request):
         form = SearchForm()
 
     return render_to_response('search_results.html', {
-                            'query_string':query_string, 
+                            'query_string':query_string,
                             'found_entries':found_entries,
                             'form':form,
                             'object_list':object_list,

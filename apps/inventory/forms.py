@@ -1,4 +1,4 @@
-from django import forms 
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -11,8 +11,8 @@ from models import ItemTemplate, Log, \
 class LocationForm_view(DetailForm):
     class Meta:
         model = Location
-       
-      
+
+
 class ItemTemplateForm(forms.ModelForm):
     class Meta:
         model = ItemTemplate
@@ -24,7 +24,7 @@ class ItemTemplateForm_view(DetailForm):
         model = ItemTemplate
         exclude = ('photos',)
 
-    
+
 class LogForm(forms.ModelForm):
     class Meta:
         model = Log
@@ -42,8 +42,8 @@ class InventoryForm_view(DetailForm):
 class InventoryTransactionForm(forms.ModelForm):
     class Meta:
         model = InventoryTransaction
-        
-        
+
+
 class SupplierForm(forms.ModelForm):
     class Meta:
         model = Supplier

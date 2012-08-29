@@ -13,11 +13,11 @@ TODO: PR Change Order model ?
 
 class PurchaseRequestStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
-    
+
     class Meta:
         verbose_name = _(u'purchase request status')
         verbose_name_plural = _(u'purchase request status')
-        
+
     def __unicode__(self):
         return self.name
 
@@ -30,21 +30,21 @@ class PurchaseRequest(models.Model):
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
     issue_date = models.DateField(auto_now_add=True, verbose_name=_(u'issue date'))
     required_date = models.DateField(null=True, blank=True, verbose_name=_(u'date required'))
-    budget = models.PositiveIntegerField(null=True, blank=True, verbose_name=_(u'budget')) 
+    budget = models.PositiveIntegerField(null=True, blank=True, verbose_name=_(u'budget'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     status = models.ForeignKey(PurchaseRequestStatus, null=True, blank=True, verbose_name=_(u'status'))
     originator = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'originator'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
-    
+
     #account number
-    
+
     class Meta:
         verbose_name = _(u'purchase request')
         verbose_name_plural = _(u'purchase requests')
-        
+
     def __unicode__(self):
-        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date) 
-        
+        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date)
+
     @models.permalink
     def get_absolute_url(self):
         return ('purchase_request_view', [str(self.id)])
@@ -55,11 +55,11 @@ class PurchaseRequestItem(models.Model):
     item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'))
     qty = models.PositiveIntegerField(verbose_name=_(u'quantity'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
-    
+
     class Meta:
         verbose_name = _(u'purchase request item')
         verbose_name_plural = _(u'purchase request items')
-        
+
     def __unicode__(self):
         return unicode(self.item_template)
 
@@ -70,11 +70,11 @@ class PurchaseRequestItem(models.Model):
 
 class PurchaseOrderStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
-    
+
     class Meta:
         verbose_name = _(u'purchase order status')
         verbose_name_plural = _(u'purchase order status')
-        
+
     def __unicode__(self):
         return self.name
 
@@ -92,13 +92,13 @@ class PurchaseOrder(models.Model):
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     status = models.ForeignKey(PurchaseOrderStatus, null=True, blank=True, verbose_name=_(u'status'))
-   
+
     class Meta:
         verbose_name = _(u'purchase order')
         verbose_name_plural = _(u'purchase orders')
-        
+
     def __unicode__(self):
-        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date) 
+        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date)
 
     @models.permalink
     def get_absolute_url(self):
@@ -107,11 +107,11 @@ class PurchaseOrder(models.Model):
 
 class PurchaseOrderItemStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
-    
+
     class Meta:
         verbose_name = _(u'purchase order item status')
         verbose_name_plural = _(u'purchase order item status')
-        
+
     def __unicode__(self):
         return self.name
 
@@ -129,11 +129,11 @@ class PurchaseOrderItem(models.Model):
     status = models.ForeignKey(PurchaseOrderItemStatus, null=True, blank=True, verbose_name=_(u'status'))
     qty = models.PositiveIntegerField(verbose_name=_(u'quantity'))
     received_qty = models.PositiveIntegerField(default=0, null=True, blank=True, verbose_name=_(u'received'))
-         
+
     class Meta:
         verbose_name = _(u'purchase order item')
         verbose_name_plural = _(u'purchase order items')
-        
+
     def __unicode__(self):
         return unicode(self.item_template)
 

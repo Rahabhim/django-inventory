@@ -2,7 +2,7 @@ from django.template.defaultfilters import stringfilter
 from django.template import Library, Node, Variable
 from django.core.urlresolvers import reverse
 
-from photos.models import GenericPhoto 
+from photos.models import GenericPhoto
 
 register = Library()
 

@@ -6,7 +6,7 @@ register = Library()
 
 def filter_form(context):
     new_context = context
-   
+
     new_context.update({
         'form':context['filter_form'],
         'submit_method':'get',

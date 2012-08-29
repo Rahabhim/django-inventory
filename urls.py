@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
 
     #(r'^i18n/', include('django.conf.urls.i18n')),
-    
+
     #----Project
     (r'^', include('common.urls')),
     (r'^', include('main.urls')),
@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     (r'^search/', include('dynamic_search.urls')),
     (r'^import/', include('importer.urls')),
     (r'^movements/', include('movements.urls')),
-    (r'^generic_photos/', include('photos.urls')),    
+    (r'^generic_photos/', include('photos.urls')),
 )
 
 if settings.DEVELOPMENT:

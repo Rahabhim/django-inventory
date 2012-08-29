@@ -55,15 +55,15 @@ class DocumentForm(forms.Form):
             choices.remove(exclusion)
 
         super(DocumentForm, self).__init__(*args, **kwargs)
-        
+
         capfirst = lambda x: x[0].upper() + x[1:]
-        
+
         get_verbose_name = lambda x: getattr(x._meta, 'verbose_name', x) if hasattr(x, '_meta') else x
-        
+
         names = [capfirst(get_verbose_name(ContentType.objects.get(app_label=model.split('.')[0], model=model.split('.')[1]).model_class())) for model in choices]
-                
+
         self.fields['model_name'].choices=sorted(zip(choices, names), lambda x,y: 1 if x[1]>y[1] else -1)
-        
+
     local_document = DocumentField(label=_(u'Local document'))
     model_name = forms.ChoiceField(label=_(u'Model'), help_text=_(u'Model that will receive the data.'))
     #import_mappings = forms.FileField(label=_(u'Import mappings file (optional)'), required=False)
@@ -93,12 +93,12 @@ class ImportResultForm(forms.Form):
         if 'initial' in kwargs:
             if kwargs['initial']:
                 title = kwargs['initial'].pop('title', _(u'import results'))
-        
+
         self.title = title
         super(ImportResultForm, self).__init__(*args, **kwargs)
-        
+
     result_area = forms.CharField(label=_(u'Results'), required=False, widget=forms.widgets.Textarea(attrs={'cols':80, 'rows':10}))
-    
+
 
 class ImportWizard(BoundFormWizard):
     def store_settings(self, request, settings_list):
@@ -121,7 +121,7 @@ class ImportWizard(BoundFormWizard):
     def render_template(self, request, form, previous_fields, step, context=None):
         context = {'step_title':self.extra_context['step_titles'][step]}
         return super(ImportWizard, self).render_template(request, form, previous_fields, step, context)
-       
+
     def parse_params(self, request, *args, **kwargs):
         self.extra_context={'step_titles':[
             _(u'step 1 of 4: Import preview'),
@@ -134,16 +134,16 @@ class ImportWizard(BoundFormWizard):
         self.settings['model_name'] = request.GET.get('model_name', None)
         if not self.settings['filename']:
             raise Http404
-            
+
         try:
             self.sniff_file()
         except IOError, err:
             raise Http404(err)
-        
+
     def get_template(self, step):
         return 'import_wizard.html'
-    
-       
+
+
     def process_step(self, request, form, step):
         if step == 0:
             self.settings['dialect_settings'] = dict([(key, form.cleaned_data[key]) for key in form.cleaned_data if 'dialect' in key])
@@ -173,13 +173,13 @@ class ImportWizard(BoundFormWizard):
         elif step == 2:
             self.store_settings(request, ['model_name', 'start_row', 'expressions', 'dialect_settings'])
             results = perform_import(self.settings['filename'], self.settings['model'], self.settings['expressions'], dialect_settings=self.settings['dialect_settings'], start_row=self.settings['start_row'], dryrun=False)
-            
+
             self.initial = {3:
                 {'result_area':'\n'.join(results),
                 'title':_(u'Final import results')}
             }
-           
-   
+
+
     def done(self, request, form_list):
         os.unlink(self.settings['filename'])
         return HttpResponseRedirect('/')

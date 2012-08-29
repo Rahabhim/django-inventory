@@ -1,4 +1,4 @@
-from django import forms 
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -31,7 +31,7 @@ class PersonForm_view(DetailForm):
         model = Person
         exclude = ('photos',)
 
-        
+
 class ItemGroupForm(forms.ModelForm):
     class Meta:
         model = ItemGroup

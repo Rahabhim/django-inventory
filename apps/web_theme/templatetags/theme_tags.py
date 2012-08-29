@@ -38,7 +38,7 @@ def get_theme(parser, token):
         raise template.TemplateSyntaxError, "%r tag had invalid arguments" % tag_name
     #format_string, var_name = m.groups()
     var_name = m.groups()
-    
+
     #if not (format_string[0] == format_string[-1] and format_string[0] in ('"', "'")):
     #    raise template.TemplateSyntaxError, "%r tag's argument should be in quotes" % tag_name
-    return GetThemeNode(var_name)    
+    return GetThemeNode(var_name)

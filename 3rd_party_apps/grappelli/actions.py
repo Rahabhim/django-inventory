@@ -31,7 +31,7 @@ def get_csv_export_fields(modeladmin, included):
                 fields.append(item)
             elif isinstance(item, FunctionType) and (item.__name__ in included):
                 fields.append(item)
-    
+
     for f in model_fields:
         if (csv_get_fieldname(f) in included) and (csv_get_fieldname(f) not in fields):
             fields.append(f)
@@ -56,7 +56,7 @@ def get_csv_export_field_names(modeladmin):
                     break
             if not appended:
                 fields.append([item, item])
-    
+
     for f in model_fields:
         inserted = False
         for item in fields:
@@ -108,7 +108,7 @@ def csv_export_selected(modeladmin, request, queryset):
         }
         fields = get_csv_export_fields(modeladmin, request.POST.getlist('_fields'))
         headers = [csv_get_fieldname(f) for f in fields]
-        
+
         response = HttpResponse(mimetype='text/csv')
         response['Content-Disposition'] = 'attachment; filename=%s' % csv_get_export_filename(modeladmin)
         writer = csv.writer(response, csv_export_dialect, **csv_export_fmtparam)
@@ -117,16 +117,16 @@ def csv_export_selected(modeladmin, request, queryset):
             csvrow = [f.encode('utf-8') if isinstance(f, unicode) else f for f in [csv_resolve_field(row, f) for f in fields]]
             writer.writerow(csvrow)
         return response
-    
+
     fields = get_csv_export_field_names(modeladmin)
-    
+
     list_display = []
     for item in modeladmin.list_display:
         if isinstance(item, basestring):
             list_display.append(item)
         else:
             list_display.append(item.__name__)
-    
+
     opts = modeladmin.model._meta
     app_label = opts.app_label
     context = {
@@ -140,7 +140,7 @@ def csv_export_selected(modeladmin, request, queryset):
         'fields': fields,
         'list_display': list_display,
     }
-    
+
     # Display the confirmation page
     return render_to_response([
         "admin/%s/%s/csv_export_selected_confirmation.html" % (app_label, opts.object_name.lower()),

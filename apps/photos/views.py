@@ -31,9 +31,9 @@ def generic_photos(request, model, object_id, max_photos=5, extra_context={}):
 #					_flash_message(request, _(u'El solo fotos de tipo: PNG, JPG o GIF son permitidas.'), type='error')
 #					os.unlink(instance.get_photo_filename())
 #					return HttpResponseRedirect('/photos/' + str(ad.number))
-            
+
             instance.object_id = object_id
-            instance.content_type = ContentType.objects.get_for_model(model)                
+            instance.content_type = ContentType.objects.get_for_model(model)
             instance.save()
 
             photos = GenericPhoto.objects.photos_for_object(model_instance)
@@ -41,12 +41,12 @@ def generic_photos(request, model, object_id, max_photos=5, extra_context={}):
                 new_main_photo = photos[0]
                 new_main_photo.main=True
                 new_main_photo.save()
-                            
+
             messages.success(request, _(u'The photo was added successfully.'))
             return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
     else:
         form = PhotoForm()
-        
+
     extra_context.update({
         'title':_(u'photos for%(object_name)s%(max_photos)s: %(object)s') % {
                 'object_name':' %s' % unicode(extra_context['object_name']) if 'object_name' in extra_context else '',
@@ -64,21 +64,21 @@ def generic_photos(request, model, object_id, max_photos=5, extra_context={}):
     })
 
     if GenericPhoto.objects.photos_for_object(model_instance).count() < max_photos:
-        extra_context.update({        
+        extra_context.update({
             'subforms_dict':[
                 {
                     'name':'generic_form_subtemplate.html',
                     'title':_(u'Upload new photo'),
                     'form':form,
                 },
-            ],        
+            ],
         })
     else:
         #subform_dict is persistent between views, clear it explicitly
         extra_context.update({'subforms_dict':[]})
-       
+
     return render_to_response('photos.html', extra_context,
-        context_instance=RequestContext(request))    
+        context_instance=RequestContext(request))
 
 
 def generic_photo_mark_main(request, object_id):
@@ -92,12 +92,12 @@ def generic_photo_mark_main(request, object_id):
 
         messages.success(request, _(u'The main photo has been changed.'))
         return HttpResponseRedirect(request.POST.get('next', '/'))
-        
+
     return render_to_response('generic_confirm.html', {
         'next':request.META.get('HTTP_REFERER','/'),
         'previous':request.META.get('HTTP_REFERER','/'),
         'object':photo.content_object,
-    },  context_instance=RequestContext(request))   
+    },  context_instance=RequestContext(request))
 
 
 def generic_photo_delete(request, object_id):
@@ -111,13 +111,13 @@ def generic_photo_delete(request, object_id):
                 new_main_photo = photos[0]
                 new_main_photo.main=True
                 new_main_photo.save()
-                
+
                 messages.success(request, _(u'The main photo was deleted successfully.  The another photo has been selected as the main photo.'))
             else:
                 messages.success(request, _(u'The main photo was deleted successfully.'))
         else:
             messages.success(request, _(u'The photo was deleted successfully.'))
-        
+
         return HttpResponseRedirect(request.POST.get('next', '/'))
 
     return render_to_response('generic_confirm.html', {
@@ -125,5 +125,5 @@ def generic_photo_delete(request, object_id):
         'previous':request.META.get('HTTP_REFERER','/'),
         'title':_(u'Are you sure you wish to delete this photo?'),
         'object':photo.content_object,
-        'delete_view':True,        
-    },  context_instance=RequestContext(request)) 
+        'delete_view':True,
+    },  context_instance=RequestContext(request))

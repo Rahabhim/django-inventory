@@ -10,7 +10,7 @@ def __get_changelog(sender, instance, old_record=True):
             old_instance = sender.objects.get(pk=new_instance.id)
         except:
             old_record = False
-    
+
     change_log = ''
 
     for field in new_instance.__class__._meta.fields:# + new_instance.__class__._meta.many_to_many:
@@ -20,7 +20,7 @@ def __get_changelog(sender, instance, old_record=True):
             old_value = unicode(getattr(old_instance,field.name))
         else:
             old_value = None
-        
+
         if not old_value == new_value:
             if new_value:
                 change_log += "field: %s\n===========\n" % unicode(field.verbose_name)
@@ -33,7 +33,7 @@ def __get_changelog(sender, instance, old_record=True):
 def update_log_object_update(sender, **kwargs):
     if sender!=Item or sender!=ItemTemplate or sender!=ItemGroup or sender!=Item or sender!=Person:
         return
-        
+
     try:
         old_instance = sender.objects.get(pk=kwargs['instance'].id)
     except:
@@ -46,7 +46,7 @@ def update_log_object_update(sender, **kwargs):
 def update_log_object_create(sender, **kwargs):
     if sender!=Item or sender!=ItemTemplate or sender!=ItemGroup or sender!=Item or sender!=Person:
         return
-        
+
     if 'created' in kwargs:
         if kwargs['created']:
             entry = Log(content_object=kwargs['instance'], action="object created: %s" % kwargs['instance'], description=__get_changelog(sender, kwargs['instance'],old_record=False))

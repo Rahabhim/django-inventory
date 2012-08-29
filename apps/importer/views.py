@@ -25,22 +25,22 @@ def handle_uploaded_file(f):
         destination.write(chunk)
     destination.close()
     return filepath
-   
-   
+
+
 def import_wizard(request):
     ExpressionFormSet = formset_factory(ExpressionForm, extra=0)
     ExpressionFormSet.title = _(u'expressions')
     wizard = ImportWizard(form_list=[PreviewForm, ExpressionFormSet, ImportResultForm, ImportResultForm])
     return wizard(request)
-    
-   
+
+
 def import_file(request):
     models = [
         'inventory.inventory',
         'inventory.inventorytransaction',
         'assets.itemgroup',
         'assets.itemstate',
-        'inventory.itemtemplate', 
+        'inventory.itemtemplate',
         'inventory.location',
         'assets.person',
         'assets.state',
@@ -58,7 +58,7 @@ def import_file(request):
                         'temp_file':temp_file,
                         'model_name':form.cleaned_data['model_name'],
                     })]))
-         
+
     else:
         form = DocumentForm(models=models)
 
@@ -67,9 +67,9 @@ def import_file(request):
         'form':form,
         'title':_(u'Upload a file to import'),
     },
-    context_instance=RequestContext(request))    
-    
-    
+    context_instance=RequestContext(request))
+
+
 def download_last_settings(request):
     settings = request.session.get('last_import_settings', None)
     if settings:
@@ -78,7 +78,7 @@ def download_last_settings(request):
         response['Content-Length'] = len(content)
         response['Content-Disposition'] = "attachment; filename=last_import_settings.json"
         return response
-                       
+
 
     messages.error(request, _(u'There are no settings available to download.'))
     return HttpResponseRedirect('/')

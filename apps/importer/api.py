@@ -12,16 +12,16 @@ def perform_import(csvfilename, model, mappings, dialect_settings=None, start_ro
         dialect.escapechar = str(dialect_settings['dialect_escapechar'])
         dialect.quotechar = str(dialect_settings['dialect_quotechar'])
         dialect.skipinitialspace = dialect_settings['dialect_skipinitialspace']
-        
+
     csvfile.seek(0)
-    
+
     try:
         csvfd = file(csvfilename, 'r')
     except IOError:
         self.error(_(u'Could not open specified csv file, %s, or it does not exist') % datafile, 0)
     else:
         # CSV Reader returns an iterable, but as we possibly need to
-        # perform list commands and since list is an acceptable iterable, 
+        # perform list commands and since list is an acceptable iterable,
         # we'll just transform it.
         csvfile = list(csv.reader(csvfd, dialect=dialect))
 
@@ -64,11 +64,11 @@ def perform_import(csvfilename, model, mappings, dialect_settings=None, start_ro
         except Exception, err:
             errors += 1
             results.append(_(u'Import error, line: %(line)s, error: %(err)s') % {'line':line, 'err':err})
-        
+
 
     results.append(_(u'Processed %s lines.') % len(csvfile[start_row-1:]))
     results.append(_(u'Imported %s lines.') % imported_lines)
     results.append(_(u'There were %s errors.') % errors)
-    
+
     csvfd.close()
     return results

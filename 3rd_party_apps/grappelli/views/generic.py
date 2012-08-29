@@ -12,28 +12,28 @@ from django.utils.safestring import mark_safe
 JSON_TEMPLATE = u"[{% for obj in objects %}{contentTypeId:'{{ obj.content_type_id }}',contentTypeText:'{{ obj.content_type_text }}',objectId:'{{ obj.object_id }}',objectText:'{{ obj.object_text|urlencode }}'}{% if not forloop.last %},{% endif %}{% endfor %}]"
 
 def get_obj(content_type_id, object_id):
-    
+
     content_type = ContentType.objects.get(pk=content_type_id)
     try:
         obj = content_type.get_object_for_this_type(pk=object_id)
     except:
         obj = None
     content_type_text = unicode(content_type)
-    
+
     if obj:
         object_text = unicode(obj)
     else:
         object_text = "Not Found"
-    
+
     return {
         'content_type_text': content_type_text,
         'content_type_id': content_type_id,
         'object_text':strip_tags(object_text),
         'object_id': object_id
     }
-    
+
 def generic_lookup(request):
-    
+
     if request.method == 'GET':
         objects = []
         if request.GET.has_key('content_type') and request.GET.has_key('object_id'):
@@ -47,7 +47,7 @@ def generic_lookup(request):
             t = Template(JSON_TEMPLATE)
             c = Context({'objects': objects})
             return HttpResponse(t.render(c), mimetype='text/plain; charset=utf-8')
-            
-        
-    
+
+
+
 

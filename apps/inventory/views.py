@@ -28,21 +28,21 @@ def supplier_assign_remove_itemtemplates(request, object_id):
         request,
         title=_(u'Assign templates to the supplier: <a href="%(url)s">%(obj)s</a>' % {'url':obj.get_absolute_url(), 'obj':obj}),
         obj=obj,
-        left_list_qryset=ItemTemplate.objects.exclude(suppliers=obj), 
-        right_list_qryset=obj.itemtemplate_set.all(), 
-        add_method=obj.itemtemplate_set.add, 
-        remove_method=obj.itemtemplate_set.remove, 
-        left_list_title=_(u'Unassigned templates'), 
-        right_list_title=_(u'Assigned templates'), 
-        item_name=_(u"templates"), 
+        left_list_qryset=ItemTemplate.objects.exclude(suppliers=obj),
+        right_list_qryset=obj.itemtemplate_set.all(),
+        add_method=obj.itemtemplate_set.add,
+        remove_method=obj.itemtemplate_set.remove,
+        left_list_title=_(u'Unassigned templates'),
+        right_list_title=_(u'Assigned templates'),
+        item_name=_(u"templates"),
     )
-    
+
 def template_assign_remove_supply(request, object_id):
     obj = get_object_or_404(ItemTemplate, pk=object_id)
 
     return generic_assign_remove(
         request,
-        title=_(u'Assign supplies to the template: <a href="%(url)s">%(obj)s</a>' % {'url':obj.get_absolute_url(), 'obj':obj}),        
+        title=_(u'Assign supplies to the template: <a href="%(url)s">%(obj)s</a>' % {'url':obj.get_absolute_url(), 'obj':obj}),
         obj=obj,
         left_list_qryset=ItemTemplate.objects.exclude(supplies=obj).exclude(pk=obj.pk),
         right_list_qryset=obj.supplies.all(),
@@ -51,14 +51,14 @@ def template_assign_remove_supply(request, object_id):
         left_list_title=_(u'Unassigned supplies'),
         right_list_title=_(u'Assigned supplies'),
         item_name=_(u"supplies"))
-           
+
 
 def template_assign_remove_suppliers(request, object_id):
     obj = get_object_or_404(ItemTemplate, pk=object_id)
 
     return generic_assign_remove(
         request,
-        title=_(u'Assign suppliers to the template: <a href="%(url)s">%(obj)s</a>' % {'url':obj.get_absolute_url(), 'obj':obj}),        
+        title=_(u'Assign suppliers to the template: <a href="%(url)s">%(obj)s</a>' % {'url':obj.get_absolute_url(), 'obj':obj}),
         obj=obj,
         left_list_qryset=Supplier.objects.exclude(itemtemplate=obj),
         right_list_qryset=obj.suppliers.all(),
@@ -67,14 +67,14 @@ def template_assign_remove_suppliers(request, object_id):
         left_list_title=_(u'Unassigned suppliers'),
         right_list_title=_(u'Assigned suppliers'),
         item_name=_(u"suppliers"))
-            
+
 
 def template_items(request, object_id):
     template = get_object_or_404(ItemTemplate, pk=object_id)
     return object_list(
         request,
         queryset = template.item_set.all(),
-        template_name = "generic_list.html", 
+        template_name = "generic_list.html",
         extra_context=dict(
             title = '%s: %s' % (_(u"assets that use the template"), template),
         ),
@@ -94,7 +94,7 @@ def inventory_view(request, object_id):
             supply_qty[t.supply] = t.quantity
 
     supplies_list = [{'item_template':x, 'qty':y} for x,y in supply_qty.items()]
-    
+
     return render_to_response('generic_detail.html', {
         'object_name':_(u'inventory'),
         'object':inventory,
@@ -106,7 +106,7 @@ def inventory_view(request, object_id):
                 'object_list':supplies_list,
                 'main_object':'item_template',
                 'extra_columns':[{'name':_(u'quantity'),'attribute':'qty'}],
-                
+
             }
         ]
     },
@@ -115,7 +115,7 @@ def inventory_view(request, object_id):
 
 def inventory_list_transactions(request, object_id):
     inventory = get_object_or_404(Inventory, pk=object_id)
-    form = InventoryForm_view(instance=inventory)    
+    form = InventoryForm_view(instance=inventory)
 
     return render_to_response('generic_detail.html', {
         'object_name':_(u'inventory'),
@@ -135,17 +135,17 @@ def inventory_list_transactions(request, object_id):
             }
         ]
     }, context_instance=RequestContext(request))
-    
-    
+
+
 def inventory_create_transaction(request, object_id):
     inventory = get_object_or_404(Inventory, pk=object_id)
-    
+
     if request.method == 'POST':
         form = InventoryTransactionForm(request.POST)#, initial={'inventory':inventory})
         if form.is_valid():
             form.save()
             msg = _(u'The inventory transaction was created successfully.')
-            messages.success(request, msg, fail_silently=True)            
+            messages.success(request, msg, fail_silently=True)
             return redirect('inventory_list_transactions', inventory.id)
     else:
         form = InventoryTransactionForm(initial={'inventory':inventory})
@@ -168,7 +168,7 @@ def inventory_current(request, object_id):
             supply_qty[t.supply] = supply_qty[t.supply] + t.quantity
         else:
             supply_qty[t.supply] = t.quantity
-    
+
     supplies_list = [{'item_template':x, 'qty':y} for x,y in supply_qty.items()]
     return render_to_response('generic_list.html', {
         'object_list':supplies_list,
@@ -185,7 +185,7 @@ def supplier_purchase_orders(request, object_id):
     return object_list(
         request,
         queryset = supplier.purchaseorder_set.all(),
-        template_name = "generic_list.html", 
+        template_name = "generic_list.html",
         extra_context=dict(
             title = '%s: %s' % (_(u"purchase orders from supplier"), supplier),
         ),
@@ -202,7 +202,7 @@ def item_log_list(request, object_id):
         queryset=log,
         template_name='generic_list.html',
         extra_context={'title':_(u"Asset log: %s") % item},
-        ) 
+        )
 
 '''
 '''
@@ -226,14 +226,14 @@ def render_to_pdf(template_src, context_dict):
 
 def report_items_per_person(request, object_id):
     person = Person.objects.get(pk=object_id)
-    
+
     return render_to_pdf('report-items_per_person.html',
 #	return render_to_response('report-items_per_person.html',
         {
             'pagesize':'A4',
             'object': person
         })
-        
+
 def fetch_resources(uri, rel):
     import os
     from django.conf import settings

@@ -29,8 +29,8 @@ def process_links(links, view_name, url):
                     child_url = 'url' in child_link and child_link['url']
                     if view_name == child_view or url == child_url:
                         active = True
-                        active_item = item                
-            
+                        active_item = item
+
         items.append(
             {
                 'first':count==0,
@@ -46,7 +46,7 @@ def process_links(links, view_name, url):
 class NavigationNode(Node):
     def __init__(self, navigation, *args, **kwargs):
         self.navigation = navigation
-        
+
     def render(self, context):
         request = Variable('request').resolve(context)
         view_name = resolve_to_name(request.META['PATH_INFO'])
@@ -56,7 +56,7 @@ class NavigationNode(Node):
         if active_item and 'links' in active_item:
             secondary_links, active_item = process_links(links=active_item['links'], view_name=view_name, url=request.META['PATH_INFO'])
             context['navigation_secondary_links'] = secondary_links
-        return ''                
+        return ''
 
 
 @register.tag
@@ -66,8 +66,8 @@ def main_navigation(parser, token):
 #    if len(args) != 3 or args[1] != 'as':
 #        raise TemplateSyntaxError("'get_all_states' requires 'as variable' (got %r)" % args)
 
-    #return NavigationNode(variable=args[2], navigation=navigation)    
-    return NavigationNode(navigation=menu_navigation)    
+    #return NavigationNode(variable=args[2], navigation=navigation)
+    return NavigationNode(navigation=menu_navigation)
 
 
 #http://www.djangosnippets.org/snippets/1378/
@@ -129,20 +129,20 @@ def resolve_arguments(context, src_args):
     else:
         val = resolve_template_variable(context, src_args)
         if val:
-            args.append(val)    
+            args.append(val)
 
     return args, kwargs
-    
+
 
 def resolve_links(context, links, current_view, current_path):
     context_links = []
     for link in links:
         args, kwargs = resolve_arguments(context, link.get('args', {}))
-        
+
         if 'view' in link:
             link['active'] = link['view'] == current_view
             args, kwargs = resolve_arguments(context, link.get('args', {}))
-                
+
             try:
                 if kwargs:
                     link['url'] = reverse(link['view'], kwargs=kwargs)
@@ -155,36 +155,36 @@ def resolve_links(context, links, current_view, current_path):
             link['active'] = link['url'] == current_path
         else:
             link['active'] = False
-        context_links.append(link)    
+        context_links.append(link)
 
     return context_links
 
 def _get_object_navigation_links(context, menu_name=None):
     current_path = Variable('request').resolve(context).META['PATH_INFO']
     current_view = resolve_to_name(current_path)#.get_full_path())
-    context_links = []    
+    context_links = []
 
     try:
         object_name = Variable('navigation_object_name').resolve(context)
     except VariableDoesNotExist:
         object_name = 'object'
-        
+
     try:
         obj = Variable(object_name).resolve(context)
     except VariableDoesNotExist:
         obj = None
-        
+
     try:
         links = object_navigation[menu_name][current_view]['links']
         for link in resolve_links(context, links, current_view, current_path):
-            context_links.append(link)            
+            context_links.append(link)
     except KeyError:
         pass
 
     try:
         links = object_navigation[menu_name][type(obj)]['links']
         for link in resolve_links(context, links, current_view, current_path):
-            context_links.append(link)            
+            context_links.append(link)
     except KeyError:
         pass
 
@@ -216,8 +216,8 @@ class GetNavigationLinks(Node):
 def get_object_navigation_links(parser, token):
     args = token.split_contents()
     return GetNavigationLinks(*args[1:])
-    
-    
+
+
 def object_navigation_template(context):
     return {
         'horizontal':True,
@@ -225,4 +225,4 @@ def object_navigation_template(context):
     }
     return new_context
 register.inclusion_tag('generic_navigation.html', takes_context=True)(object_navigation_template)
- 
+
