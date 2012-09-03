@@ -24,7 +24,7 @@ def add_filter(request, list_filters):
                 if data:
                     filters.append(Q(**{filter_dict[name]['destination']:data}))
 
-    else:			
+    else:
         filter_form = FilterForm(list_filters)
 
     return filter_form, filters
