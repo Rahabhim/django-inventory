@@ -53,8 +53,9 @@ LANGUAGES = (
     ('es', ugettext('Spanish')),
     ('en', ugettext('English')),
     ('ru', ugettext('Russian')),
+    ('el', ugettext('Greek')),
 )
-    
+
 SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
@@ -94,7 +95,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'middleware.login_required_middleware.LoginRequiredMiddleware',
-    'pagination.middleware.PaginationMiddleware',  
+    'pagination.middleware.PaginationMiddleware',
 ]
 
 ROOT_URLCONF = 'urls'
@@ -186,7 +187,7 @@ if DEVELOPMENT:
     TEMPLATE_LOADERS = (
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
-    )    
+    )
     try:
         import rosetta
         INSTALLED_APPS.append('rosetta')
@@ -213,3 +214,5 @@ if DEVELOPMENT:
         DEBUG_TOOLBAR_CONFIG={
             'INTERCEPT_REDIRECTS' : False,
         }
+
+#eof

@@ -44,7 +44,7 @@ class ItemTemplate(models.Model):
     suppliers = models.ManyToManyField("Supplier", null=True, blank=True)
 
     class Meta:
-        ordering = ['description']	
+        ordering = ['description']
         verbose_name = _(u"item template")
         verbose_name_plural = _(u"item templates")
 
