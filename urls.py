@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     (r'^import/', include('importer.urls')),
     (r'^movements/', include('movements.urls')),
     (r'^generic_photos/', include('photos.urls')),
+    (r'^', include('company.urls')),
 )
 
 if settings.DEVELOPMENT:
