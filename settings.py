@@ -13,8 +13,8 @@ sys.path.append(os.path.join(PROJECT_ROOT, '3rd_party_apps'))
 PROJECT_TITLE = 'Django Inventory'
 PROJECT_NAME = 'django_inventory'
 
-DEBUG = False
-DEVELOPMENT = False
+DEBUG = True
+DEVELOPMENT = True
 TEMPLATE_DEBUG = DEBUG
 ADMINS = (
         # ('Your Name', 'your_email@domain.com'),
