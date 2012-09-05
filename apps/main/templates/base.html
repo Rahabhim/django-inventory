@@ -32,8 +32,8 @@
     {% if user.is_staff %}
         <li><a href="/admin">{% trans "Admin site" %}</a></li>
     {% endif %}
-    
-    
+
+
     <li>
         <form action="{% url set_language %}" method="post">{% csrf_token %}
             <select name="language">
@@ -42,28 +42,28 @@
                 {% endfor %}
             </select>
             <input type="submit" value="{% trans 'Go' %}" />
-        </form>                                
+        </form>
     </li>
     <li><a class="logout" href="{% if user.is_anonymous %}{% url login_view %}?next=/{% else %}{% url logout_view %}{% endif %}">{% if user.is_anonymous %}{% trans 'Login' %}{% else %}{% trans 'Logout' %}{% endif %}</a></li>
 {% endblock %}
 
 {% block web_theme_main_navigation %}
-    {% main_navigation %}                    
+    {% main_navigation %}
     {% for link in navigation_main_links %}
         <li class="{% if link.first %}first {% endif %}{% if link.active %}active{% endif %}"><a href="{{ link.url }}">{{ link.text|capfirst }}{% if link.famfam %}<span class="famfam active famfam-{{ link.famfam|default:'link' }}"></span>{% endif %}</a></li>
     {% endfor %}
 {% endblock %}
 
 {% block web_theme_secondary_navigation %}
-    {% main_navigation %}  
+    {% main_navigation %}
     {% if navigation_secondary_links %}
             <div class="secondary-navigation">
                 <ul class="wat-cf">
                     {% for link in navigation_secondary_links %}
                         <li class="{% if link.first %}first {% endif %}{% if link.active %}active{% endif %}"><a href="{{ link.url }}">{{ link.text|capfirst }}{% if link.famfam %}<span class="famfam active famfam-{{ link.famfam|default:'link' }}"></span>{% endif %}</a></li>
-                    {% endfor %}     
+                    {% endfor %}
                 </ul>
-            </div>     
+            </div>
     {% endif %}
 {% endblock %}
 
@@ -105,7 +105,7 @@
             {% filter_form %}
         {% endwith %}
     {% endif %}
-    
+
     {% block sidebar %}{% endblock %}
 {% endblock %}
 
@@ -119,7 +119,7 @@
         <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}skins/pilu-web-app/javascripts/jquery.scrollTo.js"></script>
         <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}skins/pilu-web-app/javascripts/jquery.localscroll.js"></script>
         {% block stylesheets %}{% endblock %}
-        
+
         <script type="text/javascript" src="{{ MEDIA_URL }}packages/jquery-1.4.2.min.js"></script>
 
         <script type="text/javascript">
@@ -129,7 +129,7 @@
                     $('input:submit', this).attr("disabled", "disabled");
                     return true;
                 });
-            
+
                 $().ajaxSend(function(r,s){
                     $("#loading").show();
                 });
