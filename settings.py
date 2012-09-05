@@ -22,6 +22,9 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+AUTH_BACKEND = 'auth_passwd'
+AUTH_URLS = AUTH_BACKEND + '.urls'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -123,7 +126,9 @@ INSTALLED_APPS = [
     'movements',
     'main',
     'web_theme',
+    AUTH_BACKEND,
 ]
+
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.auth",
