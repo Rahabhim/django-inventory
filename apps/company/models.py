@@ -8,11 +8,7 @@ class DepartmentType(models.Model):
     name = models.CharField(max_length=128)
 
     class Meta:
-        admin = True
-        permissions = (('admin_company', 'Can manage companies'))
-    #   _name = 'hr.department.type'
-    #   _permissions = 'r'
-    #   _search_filter = None
+        permissions = [('admin_company', 'Can manage companies'),]
 
 class Department(models.Model):
     name = models.CharField(max_length=64)
@@ -28,8 +24,7 @@ class Department(models.Model):
     section_name = models.CharField(max_length=128, verbose_name=_('Section'))
 
     class Meta:
-        admin = True
-        permissions = (('admin_company', 'Can manage companies'))
-
+        # admin = True
+        permissions = [('admin_company', 'Can manage companies'),]
 
 #eof
