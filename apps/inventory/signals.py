@@ -40,7 +40,7 @@ def update_log_object_update(sender, **kwargs):
         return
 
     entry = Log(content_object=kwargs['instance'], action="object updated: %s" % kwargs['instance'], description=__get_changelog(sender, kwargs['instance']))
-    entry.save()		
+    entry.save()
 
 
 def update_log_object_create(sender, **kwargs):
@@ -50,7 +50,7 @@ def update_log_object_create(sender, **kwargs):
     if 'created' in kwargs:
         if kwargs['created']:
             entry = Log(content_object=kwargs['instance'], action="object created: %s" % kwargs['instance'], description=__get_changelog(sender, kwargs['instance'],old_record=False))
-            entry.save()		
+            entry.save()
 
 #pre_save.connect(update_log_object_update)
 #post_save.connect(update_log_object_create)
