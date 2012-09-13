@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
