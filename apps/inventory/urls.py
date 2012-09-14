@@ -8,15 +8,11 @@ from generic_views.views import generic_assign_remove, \
 
 from photos.views import generic_photos
 
-from models import ItemTemplate, InventoryTransaction, \
-                   Inventory, Log, Location, Supplier
+from models import InventoryTransaction, \
+                   Inventory, Log
 
 from forms import InventoryTransactionForm, InventoryForm, \
-                  ItemTemplateForm, ItemTemplateForm_view, LogForm, \
-                  SupplierForm, LocationForm_view
-
-from conf import settings as inventory_settings
-
+                  LogForm
 
 urlpatterns = patterns('inventory.views',
     url(r'^template/list/$', generic_list, dict({'queryset':ItemTemplate.objects.all()}, extra_context=dict(title=_(u'item template'))), 'template_list'),
@@ -45,18 +41,6 @@ urlpatterns = patterns('inventory.views',
     url(r'^transaction/(?P<object_id>\d+)/update/$', update_object, {'model':InventoryTransaction, 'template_name':'generic_form.html', 'extra_context':{'object_name':_(u'transaction')}}, 'inventory_transaction_update'),
     url(r'^transaction/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':InventoryTransaction}, post_delete_redirect='inventory_list', extra_context=dict(object_name=_(u'inventory transaction'))), 'inventory_transaction_delete'),
 
-    url(r'^location/list/$', generic_list, dict({'queryset':Location.objects.all()}, extra_context=dict(title =_(u'locations'))), 'location_list'),
-    url(r'^location/create/$', create_object, {'model':Location, 'template_name':'generic_form.html'}, 'location_create'),
-    url(r'^location/(?P<object_id>\d+)/update/$', update_object, {'model':Location, 'template_name':'generic_form.html'}, 'location_update'),
-    url(r'^location/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Location}, post_delete_redirect="location_list", extra_context=dict(object_name=_(u'locations'))), 'location_delete'),
-    url(r'^location/(?P<object_id>\d+)/$', generic_detail, dict(form_class=LocationForm_view, queryset=Location.objects.all()), 'location_view'),
-
-    url(r'^supplier/(?P<object_id>\d+)/$', generic_detail, dict(form_class=SupplierForm, queryset=Supplier.objects.all()), 'supplier_view'),
-    url(r'^supplier/list/$', generic_list, dict({'queryset':Supplier.objects.all()}, extra_context=dict(title=_(u'suppliers'))), 'supplier_list'),
-    url(r'^supplier/create/$', create_object, {'form_class':SupplierForm, 'template_name':'generic_form.html'}, 'supplier_create'),
-    url(r'^supplier/(?P<object_id>\d+)/update/$', update_object, {'form_class':SupplierForm, 'template_name':'generic_form.html'}, 'supplier_update'),
-    url(r'^supplier/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Supplier}, post_delete_redirect="supplier_list", extra_context=dict(object_name=_(u'supplier'))), 'supplier_delete'),
-    url(r'^supplier/(?P<object_id>\d+)/assign/itemtemplates/$', 'supplier_assign_remove_itemtemplates', (), 'supplier_assign_itemtemplates'),
     url(r'^supplier/(?P<object_id>\d+)/purchase/orders/$', 'supplier_purchase_orders', (), 'supplier_purchase_orders'),
 
 #    url(r'^reports/items_per_person/(?P<object_id>\d+)/$', 'report_items_per_person', (), 'report_items_per_person'),

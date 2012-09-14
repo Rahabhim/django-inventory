@@ -8,7 +8,7 @@ from generic_views.views import generic_assign_remove, \
 
 from photos.views import generic_photos
 
-from inventory import location_filter
+from common import location_filter
 
 from assets import state_filter
 from models import Item, ItemGroup, Person, State

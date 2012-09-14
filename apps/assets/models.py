@@ -7,7 +7,8 @@ from django.contrib.auth.models import User, UserManager
 from photos.models import GenericPhoto
 
 from dynamic_search.api import register
-from inventory.models import ItemTemplate, Location
+from common.models import Location, Partner, Supplier
+from products.models import ItemTemplate, AbstractAttribute
 
 class State(models.Model):
     name = models.CharField(max_length=32, verbose_name=_(u'name'))
@@ -48,13 +49,12 @@ class ItemState(models.Model):
     def get_absolute_url(self):
         return ('state_update', [str(self.id)])
 
-
 class Item(models.Model):
     item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u"item template"))
     property_number = models.CharField(verbose_name=_(u"asset number"), max_length=48)
-    notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)	
+    notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
     serial_number = models.CharField(verbose_name=_(u"serial number"), max_length=48, null=True, blank=True)
-    location = models.ForeignKey(Location, verbose_name=_(u"location"), null=True, blank=True)
+    location = models.ForeignKey(Location, verbose_name=_(u"current location"), null=True, blank=True)
     active = models.BooleanField(default=True)
 
     class Meta:

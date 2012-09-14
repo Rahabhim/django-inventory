@@ -12,28 +12,6 @@ from photos.models import GenericPhoto
 from dynamic_search.api import register
 
 
-class Location(models.Model):
-    name = models.CharField(max_length=32, verbose_name=_("name"))
-    address_line1 = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'address'))
-    address_line2 = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'address'))
-    address_line3 = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'address'))
-    address_line4 = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'address'))
-    phone_number1 = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'phone number'))
-    phone_number2 = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'phone number'))
-
-    class Meta:
-        ordering = ['name']
-        verbose_name = _(u"location")
-        verbose_name_plural = _(u"locations")
-
-    def __unicode__(self):
-        return self.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('location_view', [str(self.id)])
-
-
 class ItemTemplate(models.Model):
     description = models.CharField(verbose_name=_(u"description"), max_length=64)
     brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True)
@@ -55,6 +33,8 @@ class ItemTemplate(models.Model):
     def __unicode__(self):
         return self.description
 
+from common import models as common
+from assets import models as assets
 
 class Log(models.Model):
     timedate = models.DateTimeField(auto_now_add=True, verbose_name=_(u"timedate"))
@@ -77,7 +57,7 @@ class Log(models.Model):
 
 class Inventory(models.Model):
     name = models.CharField(max_length=32, verbose_name=_(u'name'))
-    location = models.ForeignKey(Location, verbose_name=_(u'location'))
+    location = models.ForeignKey(common.Location, verbose_name=_(u'location'))
 
     class Meta:
         verbose_name = _(u'inventory')
@@ -123,30 +103,5 @@ class InventoryTransaction(models.Model):
         return "%s: '%s' qty=%s @ %s" % (self.inventory, self.supply, self.quantity, self.date)
 
 
-class Supplier(models.Model):
-    #TODO: Contact, extension
-    name = models.CharField(max_length=32, verbose_name=_("name"))
-    address_line1 = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'address'))
-    address_line2 = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'address'))
-    address_line3 = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'address'))
-    address_line4 = models.CharField(max_length=64, null=True, blank=True, verbose_name=_(u'address'))
-    phone_number1 = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'phone number'))
-    phone_number2 = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'phone number'))
-    notes = models.TextField(null=True, blank=True, verbose_name=(u'notes'))
 
-    class Meta:
-        ordering = ['name']
-        verbose_name = _(u"supplier")
-        verbose_name_plural = _(u"suppliers")
-
-    def __unicode__(self):
-        return self.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('supplier_view', [str(self.id)])
-
-register(ItemTemplate, _(u'templates'), ['description', 'brand', 'model', 'part_number', 'notes'])
-register(Location, _(u'locations'), ['name', 'address_line1', 'address_line2', 'address_line3', 'address_line4', 'phone_number1', 'phone_number2'])
 register(Inventory, _(u'inventory'), ['name', 'location__name'])
-register(Supplier, _(u'supplier'), ['name', 'address_line1', 'address_line2', 'address_line3', 'address_line4', 'phone_number1', 'phone_number2', 'notes'])
