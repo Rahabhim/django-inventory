@@ -10,31 +10,8 @@ from django.core.urlresolvers import reverse
 from photos.models import GenericPhoto
 
 from dynamic_search.api import register
-
-
-class ItemTemplate(models.Model):
-    description = models.CharField(verbose_name=_(u"description"), max_length=64)
-    brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True)
-    model = models.CharField(verbose_name=_(u"model"), max_length=32, null=True, blank=True)
-    part_number = models.CharField(verbose_name=_(u"part number"), max_length=32, null=True, blank=True)
-    notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)	
-    supplies = models.ManyToManyField("self", null=True, blank=True, verbose_name=_(u"supplies"))
-    suppliers = models.ManyToManyField("Supplier", null=True, blank=True)
-
-    class Meta:
-        ordering = ['description']
-        verbose_name = _(u"item template")
-        verbose_name_plural = _(u"item templates")
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('template_view', [str(self.id)])
-
-    def __unicode__(self):
-        return self.description
-
 from common import models as common
-from assets import models as assets
+from products import models as products
 
 class Log(models.Model):
     timedate = models.DateTimeField(auto_now_add=True, verbose_name=_(u"timedate"))
@@ -74,18 +51,18 @@ class Inventory(models.Model):
 class InventoryCheckPoint(models.Model):
     inventory = models.ForeignKey(Inventory)
     datetime = models.DateTimeField(default=datetime.datetime.now())	
-    supplies = models.ManyToManyField(ItemTemplate, null=True, blank=True, through='InventoryCPQty')
+    supplies = models.ManyToManyField(products.ItemTemplate, null=True, blank=True, through='InventoryCPQty')
 
 
 class InventoryCPQty(models.Model):
-    supply = models.ForeignKey(ItemTemplate)
+    supply = models.ForeignKey(products.ItemTemplate)
     check_point = models.ForeignKey(InventoryCheckPoint)
     quantity = models.IntegerField()
 
 
 class InventoryTransaction(models.Model):
     inventory = models.ForeignKey(Inventory)
-    supply = models.ForeignKey(ItemTemplate)
+    supply = models.ForeignKey(products.ItemTemplate)
     quantity = models.IntegerField()
     date = models.DateField(default=datetime.date.today(), verbose_name=_(u"date"))
     notes = models.TextField(null=True, blank=True)

@@ -119,6 +119,7 @@ INSTALLED_APPS = [
     'photologue',
     'photos',
     'common',
+    'products',
     'company',
     'generic_views',
     'inventory',

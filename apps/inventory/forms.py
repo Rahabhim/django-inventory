@@ -4,17 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from generic_views.forms import DetailForm
 
-
-class ItemTemplateForm(forms.ModelForm):
-    class Meta:
-        model = ItemTemplate
-        exclude = ('photos', 'supplies', 'suppliers')
-
-
-class ItemTemplateForm_view(DetailForm):
-    class Meta:
-        model = ItemTemplate
-        exclude = ('photos',)
 from models import Log, \
                    InventoryTransaction, Inventory
 

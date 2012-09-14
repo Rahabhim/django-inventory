@@ -2,6 +2,11 @@ from django.db.models.signals import post_save, pre_save
 #from models import *
 from django.contrib.auth.models import Message
 
+from products.models import ItemTemplate
+from models import Item, ItemGroup, Log
+Person = None
+
+
 def __get_changelog(sender, instance, old_record=True):
     new_instance = instance
 

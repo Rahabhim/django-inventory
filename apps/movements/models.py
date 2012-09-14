@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from inventory.models import Supplier, ItemTemplate
+from common.models import Supplier
+from assets.models import ItemTemplate
 
 from dynamic_search.api import register
 
