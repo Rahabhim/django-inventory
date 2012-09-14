@@ -1,7 +1,10 @@
 import csv
+import logging
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_unicode
+
+logger = logging.getLogger(__name__)
 
 def perform_import(csvfilename, model, mappings, dialect_settings=None, start_row=1, dryrun=True):
     csvfile = open(csvfilename, 'rb')
@@ -16,9 +19,10 @@ def perform_import(csvfilename, model, mappings, dialect_settings=None, start_ro
     csvfile.seek(0)
 
     try:
+        # FIXME badly broken. Why open twice?
         csvfd = file(csvfilename, 'r')
     except IOError:
-        self.error(_(u'Could not open specified csv file, %s, or it does not exist') % datafile, 0)
+        logger.error(_(u'Could not open specified csv file, %s, or it does not exist'), csvfilename)
     else:
         # CSV Reader returns an iterable, but as we possibly need to
         # perform list commands and since list is an acceptable iterable,
