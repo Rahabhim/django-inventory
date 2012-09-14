@@ -2,11 +2,10 @@ from django.conf.urls.defaults import patterns, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
-from generic_views.views import generic_assign_remove, \
-                                generic_delete, \
+from generic_views.views import generic_delete, \
                                 generic_detail, generic_list
 
-from photos.views import generic_photos
+#from photos.views import generic_photos
 
 from models import InventoryTransaction, \
                    Inventory, Log

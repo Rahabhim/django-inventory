@@ -4,6 +4,7 @@ from django.utils.translation import ugettext as _
 from django.db import models
 import types
 
+import settings
 
 def return_attrib(obj, attrib, arguments=None):
     try:

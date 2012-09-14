@@ -4,15 +4,15 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import messages
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.http import HttpResponseRedirect, Http404 # , HttpResponse
+from django.shortcuts import render_to_response #, get_object_or_404
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.views.generic.list_detail import object_detail, object_list
-from django.views.generic.create_update import create_object, update_object, delete_object
+from django.views.generic.create_update import delete_object # create_object, update_object, 
 
-from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
-                  DetailForm
+from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm
+                  # DetailForm
 
 def add_filter(request, list_filters):
     filters = []

@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-from django.contrib.auth.models import User, UserManager
+# from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes import generic
+# from django.contrib.auth.models import User, UserManager
 
-from photos.models import GenericPhoto
+# from photos.models import GenericPhoto
 
 from dynamic_search.api import register
 from common.models import Location, Partner, Supplier

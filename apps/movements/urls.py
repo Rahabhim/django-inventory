@@ -2,9 +2,7 @@ from django.conf.urls.defaults import patterns, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
-from generic_views.views import generic_assign_remove, \
-                                generic_delete, \
-                                generic_detail, generic_list
+from generic_views.views import generic_delete, generic_list
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
