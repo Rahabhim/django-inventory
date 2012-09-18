@@ -8,6 +8,10 @@ class ItemCategory(models.Model):
     name = models.CharField(max_length=64)
     parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True)
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('category_view', [str(self.id)])
+
 class ItemAttrType(models.Model):
     """
     
@@ -47,6 +51,10 @@ class Manufacturer(Partner):
 
     class Meta:
         ordering = ['name']
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('manufacturer_view', [str(self.id)])
 
 class ItemTemplate(models.Model):
     description = models.CharField(verbose_name=_(u"description"), max_length=64)
