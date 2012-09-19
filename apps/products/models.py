@@ -11,6 +11,9 @@ class ItemCategory(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('category_view', [str(self.id)])
+    
+    def __unicode__(self):
+        return self.name
 
 class ItemAttrType(models.Model):
     """
@@ -30,7 +33,10 @@ class ItemAttrType(models.Model):
     max_entries = models.IntegerField()
     optional = models.BooleanField()
     in_name = models.BooleanField()
-    
+
+    def __unicode__(self):
+        return self.name
+
 
 class AbstractAttribute(models.Model):
     """Extra properties an Item can have
@@ -39,6 +45,9 @@ class AbstractAttribute(models.Model):
     """
     atype = models.ForeignKey(ItemAttrType, verbose_name=_(u"attribute"))
     value = models.CharField(max_length=32)
+
+    def __unicode__(self):
+        return '%s=%s' % (self.atype.name, self.value)
 
     class Meta:
         abstract = True
@@ -55,6 +64,9 @@ class Manufacturer(Partner):
     @models.permalink
     def get_absolute_url(self):
         return ('manufacturer_view', [str(self.id)])
+
+    def __unicode__(self):
+        return self.name
 
 class ItemTemplate(models.Model):
     description = models.CharField(verbose_name=_(u"description"), max_length=64)
