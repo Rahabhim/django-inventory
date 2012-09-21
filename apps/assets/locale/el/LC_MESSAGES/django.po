@@ -1,0 +1,228 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# P. Christeas <xrg@linux.gr>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-21 17:03+0300\n"
+"PO-Revision-Date: 2012-09-21 16:38+0300\n"
+"Last-Translator: P. Christeas <xrg@linux.gr>\n"
+"Language-Team: Greek <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Lokalize 1.2\n"
+
+#: __init__.py:9
+msgid "assets states"
+msgstr ""
+
+#: __init__.py:10
+msgid "create new asset state"
+msgstr ""
+
+#: __init__.py:11
+msgid "edit asset state"
+msgstr ""
+
+#: __init__.py:12
+msgid "delete asset state"
+msgstr ""
+
+#: __init__.py:15
+msgid "view all assets"
+msgstr ""
+
+#: __init__.py:16
+msgid "create new asset"
+msgstr ""
+
+#: __init__.py:17 __init__.py:24
+msgid "edit"
+msgstr "επεξεργασία"
+
+#: __init__.py:18 __init__.py:25
+msgid "delete"
+msgstr "διαγραφή"
+
+#: __init__.py:19
+msgid "add / remove photos"
+msgstr ""
+
+#: __init__.py:20
+msgid "template"
+msgstr ""
+
+#: __init__.py:22
+msgid "view all groups"
+msgstr ""
+
+#: __init__.py:23
+msgid "create group"
+msgstr ""
+
+#: __init__.py:27 models.py:14 models.py:32
+msgid "state"
+msgstr ""
+
+#: __init__.py:44 models.py:59 models.py:98 urls.py:23 views.py:103
+msgid "assets"
+msgstr ""
+
+#: models.py:10
+msgid "name"
+msgstr ""
+
+#: models.py:11 models.py:18
+msgid "exclusive"
+msgstr ""
+
+#: models.py:15 models.py:97 urls.py:35 urls.py:38
+msgid "states"
+msgstr ""
+
+#: models.py:18
+msgid "inclusive"
+msgstr ""
+
+#: models.py:31 models.py:79
+msgid "item"
+msgstr ""
+
+#: models.py:33
+msgid "date"
+msgstr ""
+
+#: models.py:38
+msgid "item state"
+msgstr ""
+
+#: models.py:39
+msgid "item states"
+msgstr ""
+
+#: models.py:42
+#, python-format
+msgid "%(asset)s, %(state)s since %(date)s"
+msgstr ""
+
+#: models.py:49
+msgid "item template"
+msgstr ""
+
+#: models.py:50
+msgid "asset number"
+msgstr ""
+
+#: models.py:51
+msgid "notes"
+msgstr ""
+
+#: models.py:52
+msgid "serial number"
+msgstr ""
+
+#: models.py:53
+msgid "current location"
+msgstr ""
+
+#: models.py:58 urls.py:21 urls.py:22 urls.py:24 urls.py:25
+msgid "asset"
+msgstr ""
+
+#: models.py:84 urls.py:33
+msgid "item group"
+msgstr ""
+
+#: models.py:85 urls.py:29
+msgid "item groups"
+msgstr ""
+
+#: models.py:99
+msgid "asset groups"
+msgstr ""
+
+#: urls.py:24
+msgid "Assigned to:"
+msgstr ""
+
+#: views.py:25
+#, python-format
+msgid "This asset has already been marked as '%s'."
+msgstr ""
+
+#: views.py:32
+#, python-format
+msgid "Are you sure you wish to mark this asset as '%s'?"
+msgstr ""
+
+#: views.py:36
+msgid "Any other states this asset may be marked as, will be cleared."
+msgstr ""
+
+#: views.py:46
+#, python-format
+msgid ""
+"This asset has already been exclusively marked as '%s'.  Clear this state "
+"first."
+msgstr ""
+
+#: views.py:53
+#, python-format
+msgid "The asset has been marked as '%s'."
+msgstr ""
+
+#: views.py:68
+#, python-format
+msgid "This asset is not marked as '%s'"
+msgstr ""
+
+#: views.py:74
+#, python-format
+msgid "Are you sure you wish to unmark this asset as '%s'?"
+msgstr ""
+
+#: views.py:80
+#, python-format
+msgid "The asset has been unmarked as '%s'."
+msgstr ""
+
+#: views.py:82
+#, python-format
+msgid "Unable to unmark this asset as '%s'"
+msgstr ""
+
+#: views.py:95
+#, python-format
+msgid "Assign assets to the group: <a href=\"%(url)s\">%(obj)s</a>"
+msgstr ""
+
+#: views.py:101
+msgid "Unassigned assets"
+msgstr ""
+
+#: views.py:102
+msgid "Assigned assets"
+msgstr ""
+
+#: templates/state_subtemplate.html:7
+msgid "Item states"
+msgstr ""
+
+#: templates/state_subtemplate.html:12
+#, python-format
+msgid "Unmark as %(state)s"
+msgstr ""
+
+#: templates/state_subtemplate.html:14
+#, python-format
+msgid "Mark as %(state)s"
+msgstr ""
+
+#: templates/state_subtemplate.html:18
+msgid "There are no states defined."
+msgstr ""

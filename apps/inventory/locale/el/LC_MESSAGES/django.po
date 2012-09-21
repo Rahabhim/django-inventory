@@ -1,0 +1,157 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-21 17:03+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: __init__.py:10
+msgid "view all inventories"
+msgstr ""
+
+#: __init__.py:11
+msgid "create new inventory"
+msgstr ""
+
+#: __init__.py:13 __init__.py:21
+msgid "edit"
+msgstr ""
+
+#: __init__.py:14 __init__.py:22
+msgid "delete"
+msgstr ""
+
+#: __init__.py:15
+msgid "add transaction"
+msgstr ""
+
+#: __init__.py:16 __init__.py:23
+msgid "details"
+msgstr ""
+
+#: __init__.py:17 models.py:72 views.py:68
+msgid "inventory transactions"
+msgstr ""
+
+#: __init__.py:19
+msgid "view all transactions"
+msgstr ""
+
+#: __init__.py:20
+msgid "create new transaction"
+msgstr ""
+
+#: __init__.py:25
+msgid "template"
+msgstr ""
+
+#: __init__.py:26
+msgid "return to inventory"
+msgstr ""
+
+#: __init__.py:42 models.py:41 urls.py:17
+msgid "inventories"
+msgstr ""
+
+#: models.py:17
+msgid "timedate"
+msgstr ""
+
+#: models.py:19
+msgid "description"
+msgstr ""
+
+#: models.py:36
+msgid "name"
+msgstr ""
+
+#: models.py:37 urls.py:17
+msgid "location"
+msgstr ""
+
+#: models.py:40 models.py:84 urls.py:18 urls.py:20 urls.py:21 views.py:40
+#: views.py:62
+msgid "inventory"
+msgstr ""
+
+#: models.py:67 views.py:72
+msgid "date"
+msgstr ""
+
+#: models.py:71 urls.py:30
+msgid "inventory transaction"
+msgstr ""
+
+#: urls.py:26
+msgid "transactions"
+msgstr ""
+
+#: urls.py:27 urls.py:28 urls.py:29
+msgid "transaction"
+msgstr ""
+
+#: views.py:46
+#, python-format
+msgid "current balances for inventory: %s"
+msgstr ""
+
+#: views.py:49
+msgid "quantity"
+msgstr ""
+
+#: views.py:73
+msgid "item"
+msgstr ""
+
+#: views.py:74
+msgid "qty"
+msgstr ""
+
+#: views.py:88
+msgid "The inventory transaction was created successfully."
+msgstr ""
+
+#: views.py:97
+msgid "add new transaction"
+msgstr ""
+
+#: views.py:131
+msgid "purchase orders from supplier"
+msgstr ""
+
+#: templates/report-items_per_person.html:14
+msgid "User assets report"
+msgstr ""
+
+#: templates/report-items_per_person.html:21
+msgid "ASSET NUMBER"
+msgstr ""
+
+#: templates/report-items_per_person.html:22
+msgid "DESCRIPTION"
+msgstr ""
+
+#: templates/report-items_per_person.html:23
+msgid "LOCATION"
+msgstr ""
+
+#: templates/report-items_per_person.html:24
+msgid "ASSIGNED TO"
+msgstr ""
+
+#: templates/report-items_per_person.html:25
+msgid "NOTES"
+msgstr ""
