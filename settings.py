@@ -120,6 +120,7 @@ INSTALLED_APPS = [
     'photos',
     'common',
     'products',
+    'procurements',
     'company',
     'generic_views',
     'inventory',
