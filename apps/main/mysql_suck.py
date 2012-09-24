@@ -311,7 +311,7 @@ class Table_Suck(object):
         """
         r = self._django_model(**odata)
         r.save()
-        return r.id
+        return r
 
 class IDmap_Column(sColumn):
     rtype = int
@@ -328,7 +328,7 @@ class IDmap_Column(sColumn):
         """Keeps the result of orm.create() into map data
         """
         assert r, repr(r)
-        self._map_data[rline[self._myqindex]] = r
+        self._map_data[rline[self._myqindex]] = r.id
 
 class simple_column(sColumn):
     def __init__(self, name, oname):
@@ -392,14 +392,16 @@ class Enum2Bool_Column(simple_column):
             out[self._oname] = False
 
 class Contain_Column(sColumn):
-    """Column that creates a secondary one2many entry for a subset of the data
+    """Column that creates a secondary entry for a subset of the data
 
-        Example: res.partner.address inside a res.partner table.
+        Example: Address inside a Partner table.
     """
-    def __init__(self, oname):
+    def __init__(self, omodel, oname):
         super(Contain_Column, self).__init__('')
         self._oname = oname
         self._columns = []
+        self._omodel = omodel
+        self._djang_model = None
 
     def __iadd__(self, column):
         assert isinstance(column, sColumn), column
@@ -407,23 +409,30 @@ class Contain_Column(sColumn):
         return self
 
     def init(self, table):
+        table._after_handlers.append(self._push_cdata)
         for c in self._columns:
             c.init(table)
+        self._django_model = _get_model(self._omodel)
 
     def makeMyQuery(self, query):
         for c in self._columns:
             c.makeMyQuery(query)
 
     def postProcess(self, qres, out, context=None):
-        """prepare the data as a contained subset
+        pass
+
+    def _push_cdata(self, r, rline):
+        """prepare and push the data as a contained subset
         """
         sout = {}
 
         try:
+            sout[self._oname] = r
             for c in self._columns:
-                c.postProcess(qres, sout, context=context)
+                c.postProcess(rline, sout, context=None)
 
-            out[self._oname] = [(0,0, sout),]
+            r2 = self._django_model(**sout)
+            r2.save()
         except DiscardRow:
             pass
 
