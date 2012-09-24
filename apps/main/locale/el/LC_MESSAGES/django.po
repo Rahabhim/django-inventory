@@ -1,0 +1,88 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# P. Christeas <xrg@linux.gr>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-21 17:03+0300\n"
+"PO-Revision-Date: 2012-09-21 16:37+0300\n"
+"Last-Translator: P. Christeas <xrg@linux.gr>\n"
+"Language-Team: Greek <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Lokalize 1.2\n"
+
+#: __init__.py:13
+msgid "home"
+msgstr "κύρια σελίδα"
+
+#: __init__.py:16
+msgid "tools"
+msgstr "εργαλεία"
+
+#: __init__.py:17
+msgid "import"
+msgstr "εισαγωγή"
+
+#: __init__.py:20
+msgid "setup"
+msgstr "ρύθμιση"
+
+#: templates/about.html:4
+msgid "About this program"
+msgstr "Σχετικά με την εφαρμογή"
+
+#: templates/about.html:10
+msgid "A Django based inventory and asset management system"
+msgstr "Ένα σύστημα κτηματολογίου και διαχείρισης παγίων, σε Django."
+
+#: templates/base.html:24
+msgid "User"
+msgstr "Χρήστης"
+
+#: templates/base.html:26
+msgid "Anonymous"
+msgstr "Ανώνυμος"
+
+#: templates/base.html:29
+msgid "New password"
+msgstr "Νέος κωδικός"
+
+#: templates/base.html:33
+msgid "Admin site"
+msgstr "Διαχείριση"
+
+#: templates/base.html:44
+msgid "Go"
+msgstr "Πήγαινε"
+
+#: templates/base.html:47
+msgid "Login"
+msgstr "Σύνδεση"
+
+#: templates/base.html:47
+msgid "Logout"
+msgstr "Αποσύνδεση"
+
+#: templates/base.html:76
+#, python-format
+msgid "Actions for %(object_name)s: %(object)s"
+msgstr ""
+
+#: templates/base.html:78
+#, python-format
+msgid "Actions for: %(object)s"
+msgstr "Ενέργειες για: %(object)s"
+
+#: templates/base.html:81
+msgid "Actions"
+msgstr "Ενέργειες"
+
+#: templates/base.html:94
+msgid "Other available actions"
+msgstr "Άλλες διαθέσιμες ενέργειες"

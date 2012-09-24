@@ -3,7 +3,7 @@ from django import forms
 
 from generic_views.forms import DetailForm
 
-from models import Item, Person, ItemGroup
+from models import Item, ItemGroup
 
 
 
@@ -17,19 +17,6 @@ class ItemForm_view(DetailForm):
     class Meta:
         model = Item
         exclude = ('photos', 'active')
-
-
-class PersonForm(forms.ModelForm):
-    class Meta:
-        model = Person
-        exclude = ('photos', 'inventory')
-
-
-class PersonForm_view(DetailForm):
-    class Meta:
-        model = Person
-        exclude = ('photos',)
-
 
 class ItemGroupForm(forms.ModelForm):
     class Meta:
