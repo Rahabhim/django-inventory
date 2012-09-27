@@ -339,9 +339,6 @@ class simple_column(sColumn):
         assert self._myqindex is not None
 
         val = qres[self._myqindex]
-        if val is None:
-            # ORM fix for XML-RPC
-            val = False
         out[self._oname] = val
 
 class Str_Column(simple_column):
@@ -364,8 +361,7 @@ class Date_Column(simple_column):
 
         val = qres[self._myqindex]
         if val is None:
-            # ORM fix for XML-RPC
-            out[self._oname] = False
+            out[self._oname] = None
         else:
             out[self._oname] = val.strftime('%Y-%m-%d')
 
