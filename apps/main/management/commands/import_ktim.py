@@ -74,7 +74,95 @@ class Command(BaseCommand):
         # product_cat += M.Bool_Column('IS_BUNDLE', 'is_bundle')
         #product_cat += M.Static_Ref_Column(dict(parent_id=False),
         #        'parent_id', 'products.ItemCategory') TODO
+
+
+        products = M.Table_Suck('KT_05_PROIONTA', 'product.ItemTemplate', myc)
+        products += M.IDmap_Column('PROION_ID')
+        products += M.Str_Column('PROION_DESCR', 'description')
+        products += M.Ref_Column('KATASK_ID', 'manufacturer', 'KT_08_KATASKEYASTHS')
+        products += M.Ref_Column('EIDOS_ID', 'category', 'KT_03_EIDOS')
+        # products += M.Static_Column('product', 'type')
+
+        # KT_08_KATASKEYASTHS
+        katask = M.Table_Suck('KT_08_KATASKEYASTHS', 'products.Manufacturer', myc)
+        katask += M.IDmap_Column('KATASK_ID')
+        katask += M.Str_Column('KATASK_DESCR', 'name')
+        katask += M.Str_Column('WEB', 'web')
+
+        # KT_11_MANAGERS
+        managers = M.Table_Suck('KT_11_MANAGERS', 'company.Department', myc)
+        managers += M.IDmap_Column('MANAGER_ID')
+        managers += M.Str_Column('SHORT_DESCRIPTION', 'name')
+        managers += M.Static_Ref_Column(dict(name=u'ΠΔΕ'), 'dept_type_id', 'company.DepartmentType')
         
-        self._tables.append(product_cat)
+        # All rest of columns are not set in old db, anyway...
+        #managers += M.Str_Column('WEB', 'website')
+        #managers += M.Str_Column('DESCRIPTION', 'description')
+        #managers_addr = M.M2O_Column('address_id', 'res.partner.address')
+        #managers += managers_addr
+        #managers_addr += M.Str_Column_Required('CONTACT_PERSON', 'name')
+        #managers_addr += M.Str_Column('TELEPHONE', 'phone')
+        #managers_addr += M.Str_Column('CONTACT_TEL', 'mobile')
+
+        #TODO KT_14_ONTOTHTES
+
+        # KT_16_ANATH_ARXH
+        anath = M.Table_Suck('KT_16_ANATH_ARXH', 'company.Department', myc)
+        anath += M.IDmap_Column('ANATHETOUSA_ARXH')
+        anath += M.Str_Column('ARXH_DESCR', 'name')
+        anath += M.Static_Ref_Column(dict(name=u'Αναθέτουσα αρχή'), 'dept_type_id', 'company.DepartmentType')
+        
+        #anath += M.Str_Column('WEB', 'website')
+        #anath_addr = M.Contain_Column('common.Address', 'address')
+        #anath += anath_addr
+        #anath_addr += M.Str_Column('CONTACT_PERSON', 'name')
+        #anath_addr += M.Str_Column('TELEPHONE', 'phone')
+        #anath_addr += M.Str_Column('CONTACT_TEL', 'mobile')
+        #anath += M.Static_Ref2M_Column([('id.ref', '=', 'ktimatologio.partner_cat_anath')],
+        #        'category_id', 'res.partner.category')
+
+
+        # KT_18_ERGA
+        erga = M.Table_Suck('KT_18_ERGA', 'procurements.Project', myc)
+        erga += M.IDmap_Column('ERGO_ID')
+        erga += M.Str_Column('ERGO_DESCR', 'description')
+        erga += M.Str_Column('ERGO_SHORT_DESCR', 'name')
+
+        # KT_06_YPOERGA
+        ypoerga = M.Table_Suck('KT_06_YPOERGA', 'procurements.Contract', myc)
+        ypoerga += M.IDmap_Column('YPOERGO_ID')
+        ypoerga += M.Str_Column('YPOERGO_DESCR', 'description')
+        ypoerga += M.Str_Column('YPOERGO_SHORT_DESCR', 'name')
+        ypoerga += M.Date_Column('DATE_SIGN', 'date_start')
+        ypoerga += M.Date_Column('END_DATE', 'end_date')
+        ypoerga += M.Str_Column('DIARKEIA_EGYHSHS', 'warranty_dur')
+        ypoerga += M.Str_Column('XRONOS_APOKRISHS', 'service_response')
+        ypoerga += M.Str_Column('XRONOS_APOKATASTASHS', 'repair_time')
+        ypoerga += M.Str_Column('FILE_NAME', 'kp_filename')
+        #ypoerga += M.Str_Column('TYPE_OF_ANATHETOUSA', 'kp_type')
+        # FIXME: they should set "partner" from the subclass'es partner
+        ypoerga += M.Ref_NN_Column('ANATH_FOREAS_ID', 'partner', 'KT_11_MANAGERS')
+        ypoerga += M.Ref_NN_Column('ANATH_OTHER_ID', 'partner', 'KT_16_ANATH_ARXH')
+        ypoerga += M.Ref_Column('ERGO_ID', 'parent_id', 'KT_18_ERGA')
+        ypoerga += M.Ref_Column('ANADOXOS_ID', 'delegate', 'KT_01_ANADOXOI')
+
+        #TODO KT_07_KTHMATOLOGIO
+
+        # MONADES
+        monades = M.Table_Suck('MONADES', 'company.Department', myc)
+        monades += M.IDmap_Column('GLUC')
+        monades += M.Str_Column('GLUC', 'code')
+        monades += M.Str_Column('YPEPTH_ID', 'code2')
+        monades += M.Str_Column('ONOMASIA', 'name')
+        monades += M.StrLookup_Column('TYPOS_ONOMA', 'dept_type_id', 'company.DepartmentType')
+        monades += M.Str_Column('DNSH_ONOMA', 'section_name')
+        monades += M.Str_Column('OTA_ONOMA', 'ota_name')
+        monades += M.Str_Column('NOM_ONOMA', 'nom_name')
+        # TODO monades += M.XXX_Column('MANAGER_ID', '??') # foreas
+        monades += M.Enum2Bool_Column('KATARGHSH', 'deprecate')
+        monades += M.Ref_Column('SYGXONEYSH_GLUC', 'merge_id', 'MONADES')
+
+        self._tables += [ anadoxoi, product_cat, products, katask, anath,
+                managers, erga, ypoerga, monades ]
 
 #eof
