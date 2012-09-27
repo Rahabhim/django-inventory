@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-21 17:03+0300\n"
-"PO-Revision-Date: 2012-09-21 16:38+0300\n"
+"PO-Revision-Date: 2012-09-28 00:20+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: __init__.py:9
 msgid "assets states"
-msgstr ""
+msgstr "καταστάσεις εξοπλισμού"
 
 #: __init__.py:10
 msgid "create new asset state"
@@ -35,11 +35,11 @@ msgstr ""
 
 #: __init__.py:15
 msgid "view all assets"
-msgstr ""
+msgstr "εύρεση εξοπλισμού"
 
 #: __init__.py:16
 msgid "create new asset"
-msgstr ""
+msgstr "δημιουργία εξοπλισμού"
 
 #: __init__.py:17 __init__.py:24
 msgid "edit"
@@ -55,7 +55,7 @@ msgstr ""
 
 #: __init__.py:20
 msgid "template"
-msgstr ""
+msgstr "προϊόν"
 
 #: __init__.py:22
 msgid "view all groups"
@@ -67,15 +67,15 @@ msgstr ""
 
 #: __init__.py:27 models.py:14 models.py:32
 msgid "state"
-msgstr ""
+msgstr "κατάσταση"
 
 #: __init__.py:44 models.py:59 models.py:98 urls.py:23 views.py:103
 msgid "assets"
-msgstr ""
+msgstr "εξοπλισμός"
 
 #: models.py:10
 msgid "name"
-msgstr ""
+msgstr "όνομα"
 
 #: models.py:11 models.py:18
 msgid "exclusive"
@@ -91,15 +91,15 @@ msgstr ""
 
 #: models.py:31 models.py:79
 msgid "item"
-msgstr ""
+msgstr "προϊόν"
 
 #: models.py:33
 msgid "date"
-msgstr ""
+msgstr "ημερομηνία"
 
 #: models.py:38
 msgid "item state"
-msgstr ""
+msgstr "κατάσταση προϊόντος"
 
 #: models.py:39
 msgid "item states"
@@ -120,31 +120,31 @@ msgstr ""
 
 #: models.py:51
 msgid "notes"
-msgstr ""
+msgstr "σημειώσεις"
 
 #: models.py:52
 msgid "serial number"
-msgstr ""
+msgstr "Σειριακός αριθμός"
 
 #: models.py:53
 msgid "current location"
-msgstr ""
+msgstr "Τρέχουσα τοποθεσία"
 
 #: models.py:58 urls.py:21 urls.py:22 urls.py:24 urls.py:25
 msgid "asset"
-msgstr ""
+msgstr "εξοπλισμός"
 
 #: models.py:84 urls.py:33
 msgid "item group"
-msgstr ""
+msgstr "σύνθεση"
 
 #: models.py:85 urls.py:29
 msgid "item groups"
-msgstr ""
+msgstr "συνθέσεις"
 
 #: models.py:99
 msgid "asset groups"
-msgstr ""
+msgstr "συνθέσεις εξοπλισμού"
 
 #: urls.py:24
 msgid "Assigned to:"
@@ -226,3 +226,4 @@ msgstr ""
 #: templates/state_subtemplate.html:18
 msgid "There are no states defined."
 msgstr ""
+
