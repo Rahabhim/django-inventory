@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django import forms
 from generic_views.forms import DetailForm
 from models import ItemTemplate, Manufacturer, ItemCategory

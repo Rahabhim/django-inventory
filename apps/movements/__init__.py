@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 
 from common.api import register_links, register_menu

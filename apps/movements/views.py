@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 import datetime
 
 from django.utils.translation import ugettext as _

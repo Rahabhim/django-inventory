@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from models import Department, DepartmentType
 from django.conf.urls.defaults import patterns, url, include
 from django.views.generic import ListView
