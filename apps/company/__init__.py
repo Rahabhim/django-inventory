@@ -3,10 +3,14 @@
 # Only a few rights reserved
 from django.utils.translation import ugettext_lazy as _
 from common.api import register_links, register_menu
+from common import location_list
 
 register_menu([
-    {'text':_('company'), 'view':'company_department_list', 'links':[
-        #purchase_request_list, purchase_order_list,
-    ],'famfam':'basket','position':3}]) # FIXME: icon
+    {'text':_('company'), 'view':'company_department_list', 
+            'links':[ {'text':_('departments'), 'view':'company_department_list', 'famfam':'page_go'},
+                {'text':_('department types'), 'view':'company_department_type_list', 'famfam':'page_go'},
+                location_list,
+                ],
+        'famfam':'basket','position':3}]) # FIXME: icon
 
 #eof

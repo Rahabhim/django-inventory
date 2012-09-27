@@ -10,6 +10,10 @@ class DepartmentType(models.Model):
 
     class Meta:
         permissions = [('admin_company', 'Can manage companies'),]
+    
+    def __unicode__(self):
+        return self.name
+
 
 class Department(models.Model):
     name = models.CharField(max_length=64)
@@ -28,5 +32,8 @@ class Department(models.Model):
     class Meta:
         # admin = True
         permissions = [('admin_company', 'Can manage companies'),]
+
+    def __unicode__(self):
+        return self.name
 
 #eof
