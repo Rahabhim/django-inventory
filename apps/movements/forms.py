@@ -65,3 +65,28 @@ class PurchaseOrderItemTransferForm(forms.Form):
     purchase_order_item = forms.CharField(label=_(u'Purchase order item'), widget=forms.TextInput(attrs={'readonly':'readonly'}))
     inventory = forms.ModelChoiceField(queryset = Inventory.objects.all(), help_text = _(u'Inventory that will receive the item.'))
     qty = forms.CharField(label=_(u'Qty received'))
+
+# todo: baseclass, maybe?
+class DestroyItemsForm(forms.Form):
+    """This form is registered whenever defective equipment is trashed (destroyed)
+    
+    """
+    name = forms.CharField(label=_("Protocol ID"),)
+    
+    
+class LoseItemsForm(forms.Form):
+    """ This form is completed whenever equipment is missing (lost/stolen)
+    """
+    name = forms.CharField(label=_("Protocol ID"),)
+
+class MoveItemsForm(forms.Form):
+    """ Registered whenever equipment moves from one inventory to another
+    """
+    name = forms.CharField(label=_("Protocol ID"),)
+
+class RepairGroupForm(forms.Form):
+    """Used to mark repairs (changes within group) of Items
+    """
+    name = forms.CharField(label=_("Protocol ID"),)
+
+#eof

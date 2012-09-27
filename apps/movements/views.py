@@ -419,7 +419,7 @@ def purchase_order_item_close(request, object_id):
     if purchase_order_item.active == False:
         msg = _(u'This purchase order item has already been closed.')
         messages.error(request, msg, fail_silently=True)
-        return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
+        return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order_item.get_absolute_url())
 
 
     if request.method == 'POST':
@@ -451,3 +451,17 @@ def purchase_order_item_create(request, object_id):
         'title':_(u'add new purchase order item') ,
     },
     context_instance=RequestContext(request))
+
+def destroy_items(request):
+    raise NotImplementedError
+
+def lose_items(request):
+    raise NotImplementedError
+
+def move_items(request):
+    raise NotImplementedError
+
+def repair_itemgroup(request):
+    raise NotImplementedError
+
+#eof
