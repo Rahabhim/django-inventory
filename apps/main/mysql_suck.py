@@ -543,6 +543,7 @@ class Static_Ref_Column(sColumn):
 
     def __init__(self, expr, oname, model):
         super(Static_Ref_Column, self).__init__('')
+        assert isinstance(expr, dict), type(expr)
         self._expr = expr
         self._model = model
         self._oname = oname
