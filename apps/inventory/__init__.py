@@ -27,7 +27,7 @@ jump_to_template = {'text':_(u'template'), 'view':'template_view', 'args':'objec
 jump_to_inventory = {'text':_(u'return to inventory'), 'view':'inventory_view', 'args':'object.inventory.id', 'famfam':'package_go'}
 
 inventory_menu_links = [
-    inventory_list,#, inventory_transaction_list, inventory_transaction_create
+    inventory_list, inventory_transaction_list,
 ]
 
 register_links(['inventory_view', 'inventory_list', 'inventory_create', 'inventory_update', 'inventory_delete', 'inventory_transaction_list'], [inventory_create], menu_name='sidebar')

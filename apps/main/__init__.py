@@ -19,7 +19,7 @@ register_menu([
     ],'famfam':'wrench', 'name':'tools','position':7},
 
     {'text':_(u'setup'), 'view':'about', 'links': [
-        inventory.location_list, assets.state_list,
+        assets.state_list,
         movements.purchase_request_state_list,
         movements.purchase_order_state_list,
         movements.purchase_order_item_state_list,
