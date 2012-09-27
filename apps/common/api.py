@@ -31,3 +31,19 @@ def register_menu(links):
         menu_links.append(link)
 
     menu_links.sort(lambda x,y: 1 if x>y else -1, lambda x:x['position'] if 'position' in x else 1)
+
+def register_submenu(menu_id, links):
+    """ Adds some more links to existing menu
+
+        Useful for foreign applications to append a base menu
+        @param menu_id  shall match the 'id' field of a menu entry
+        @param links    list of links to append to menu's links
+    """
+    for ml in menu_links:
+        if ml.get('id', False) == menu_id:
+            ml.setdefault('links', []).extend(links)
+            break
+    else:
+        raise KeyError("No menu with id: %s" % menu_id)
+
+#eof
