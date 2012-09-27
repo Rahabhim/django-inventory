@@ -55,6 +55,19 @@ class Command(BaseCommand):
 
     def _init_tables(self):
         self._myc = myc = M.MyS_Connector()
+        
+        anadoxoi = M.Table_Suck('KT_01_ANADOXOI', 'procurements.Delegate', myc)
+        anadoxoi += M.IDmap_Column('ANADOXOS_ID')
+        anadoxoi += M.Str_Column('ANADOXOS_DESCR', 'name')
+        anadoxoi += M.Str_Column('WEB', 'web')
+        anadoxoi_addr = M.Contain_Column('common.Address', 'partner')
+        anadoxoi += anadoxoi_addr
+        anadoxoi_addr += M.Str_Column('CONTACT_PERSON', 'name')
+        anadoxoi_addr += M.Str_Column('TELEPHONE', 'phone1')
+        anadoxoi_addr += M.Str_Column('CONTACT_TEL', 'phone2')
+
+        # TODO KT_02_BUNDLES
+
         product_cat = M.Table_Suck('KT_03_EIDOS', 'products.ItemCategory', myc)
         product_cat += M.IDmap_Column('EIDOS_ID')
         product_cat += M.Str_Column('EIDOS_DESCR', 'name')
