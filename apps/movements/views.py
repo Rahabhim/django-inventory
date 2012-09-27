@@ -2,17 +2,19 @@
 import datetime
 
 from django.utils.translation import ugettext as _
-from django.http import HttpResponse, HttpResponseRedirect
+#from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
-from django.views.generic.list_detail import object_detail, object_list
-from django.core.urlresolvers import reverse
-from django.views.generic.create_update import create_object
+#from django.contrib.contenttypes.models import ContentType
+#from django.views.generic.list_detail import object_detail, object_list
+#from django.core.urlresolvers import reverse
+#from django.views.generic.create_update import create_object
 from django.forms.formsets import formset_factory
 
-from inventory.models import Supplier, ItemTemplate, InventoryTransaction
+from common.models import Supplier
+from inventory.models import InventoryTransaction
+from assets.models import ItemTemplate
 
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder
 from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
