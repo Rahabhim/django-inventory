@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django.core.management.base import BaseCommand, CommandError
 from main.conf import settings
 
@@ -34,8 +35,6 @@ class Command(BaseCommand):
             if options.get(d, None) is None:
                 options[d] = settings.defaults[d]
 
-        # self.stdout.write("handle!!\n")
-        print "args:", args
         if not self._myc.connect(options, load=True):
             self.stderr.write("Cannot connect to MySQL!\n")
             return
