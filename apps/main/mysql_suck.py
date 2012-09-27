@@ -519,7 +519,7 @@ class Ref_NN_Column(Ref_Column):
             return
         mref = self._id_column()._map_data.get(rid, None)
         if mref is None:
-            raise ValueError("Don't have id #%d in table %s for %s" % (rid, self.otable, self.name))
+            raise ValueError("Don't have id #%d in table %s for %s" % (rid, self.otable, self._name))
         out[self._oname] = mref
 
 class Static_Column(sColumn):
