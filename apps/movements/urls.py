@@ -62,9 +62,9 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/item/(?P<object_id>\d+)/transfer/$', 'purchase_order_item_transfer', (), 'purchase_order_item_transfer'),
 
     
-    url(r'^objects/items/destroy/$', views.destroy_items, 'destroy_items'),
-    url(r'^objects/items/lose/$', views.lose_items, 'lose_items'),
-    url(r'^objects/items/move/$', views.move_items, 'move_items'),
+    url(r'^objects/items/destroy/$', views.destroy_items, (), 'destroy_items'),
+    url(r'^objects/items/lose/$', views.lose_items, (), 'lose_items'),
+    url(r'^objects/items/move/$', views.move_items, (), 'move_items'),
     
 )
 
