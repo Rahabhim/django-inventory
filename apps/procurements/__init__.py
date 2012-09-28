@@ -12,6 +12,6 @@ register_menu([
                 {'text':_('contracts'), 'view':'contract_list', 'famfam':'page_go'},
                 supplier_list,
                 ],
-        'famfam':'basket','position':3}]) # FIXME: icon
+        'famfam':'basket','position':5}]) # FIXME: icon
 
 # register links?

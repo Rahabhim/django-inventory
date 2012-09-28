@@ -40,7 +40,9 @@ register_links(InventoryTransaction, [jump_to_inventory], menu_name='sidebar')
 
 
 register_menu([
-    {'text':_('inventories'), 'view':'inventory_list', 'links':inventory_menu_links,'famfam':'package', 'position':5},
+    {'text':_('inventories'), 'view':'inventory_list', 
+        'links':inventory_menu_links,
+        'famfam':'package', 'position':6},
 ])
 
 

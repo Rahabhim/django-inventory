@@ -85,8 +85,8 @@ register_menu([
         purchase_request_list, purchase_order_list,
     ],'famfam':'basket','position':4}])
 
-register_submenu('menu_assets', [dict(text=_(u'Destroy assets'), view=destroy_items), 
-        dict(text=_(u'Lose assets'), view=lose_items),
-        dict(text=_(u'Move assets'), view=move_items),
+register_submenu('menu_assets', [dict(text=_(u'Destroy assets'), view=destroy_items, famfam='computer_delete'), 
+        dict(text=_(u'Lose assets'), view=lose_items, famfam='computer_error'),
+        dict(text=_(u'Move assets'), view=move_items, famfam='computer_go'),
         ])
 # eof

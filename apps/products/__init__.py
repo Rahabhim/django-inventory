@@ -31,5 +31,5 @@ register_links(ItemTemplate, [template_update, template_delete, template_photos,
 
 register_menu([
     {'text':_('templates'), 'view':'template_list', 
-            'links': template_menu_links, 'famfam':'page', 'position':4},
+            'links': template_menu_links, 'famfam':'page', 'position':3},
     ])

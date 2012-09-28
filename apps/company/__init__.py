@@ -11,6 +11,6 @@ register_menu([
                 {'text':_('department types'), 'view':'company_department_type_list', 'famfam':'page_go'},
                 location_list,
                 ],
-        'famfam':'basket','position':3}]) # FIXME: icon
+        'famfam':'building','position':4}])
 
 #eof
