@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django.db.models.signals import post_save, pre_save
 #from models import *
 from django.contrib.auth.models import Message

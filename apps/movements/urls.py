@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
@@ -14,6 +15,7 @@ from movements import purchase_request_state_filter, \
 
 
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm
+import views
 
 urlpatterns = patterns('movements.views',
     url(r'^purchase/request/state/list/$', generic_list, dict({'queryset':PurchaseRequestStatus.objects.all()}, extra_context=dict(title =_(u'purchase request states'))), 'purchase_request_state_list'),
@@ -59,6 +61,11 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/item/(?P<object_id>\d+)/close/$', 'purchase_order_item_close', (), 'purchase_order_item_close'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/transfer/$', 'purchase_order_item_transfer', (), 'purchase_order_item_transfer'),
 
+    
+    url(r'^objects/items/destroy/$', views.destroy_items, (), 'destroy_items'),
+    url(r'^objects/items/lose/$', views.lose_items, (), 'lose_items'),
+    url(r'^objects/items/move/$', views.move_items, (), 'move_items'),
+    
 )
 
 

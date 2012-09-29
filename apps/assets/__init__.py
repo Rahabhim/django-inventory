@@ -41,7 +41,7 @@ register_links(State, [state_edit, state_delete])
 
 
 register_menu([
-    {'text':_('assets'), 'view':'item_list', 
+    {'text':_('assets'), 'view':'item_list', 'id': 'menu_assets',
         'links':[ asset_list, group_list,
                 ],
         'famfam':'computer', 'position':2},

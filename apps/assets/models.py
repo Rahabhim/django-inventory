@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # from django.contrib.contenttypes.models import ContentType
@@ -96,6 +97,6 @@ class ItemGroup(Item):
 
 register(ItemState, _(u'states'), ['state__name'])
 register(Item, _(u'assets'), ['property_number', 'notes', 'serial_number', ])
-register(ItemGroup, _(u'asset groups'), ['name'])
+register(ItemGroup, _(u'item groups'), ['name'])
 
 #eof

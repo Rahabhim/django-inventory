@@ -7,8 +7,8 @@ from common.api import register_links, register_menu
 
 from models import Supplier, Location
 
-supplier_create = {'text':_('create new supplier'), 'view':'supplier_create', 'famfam':'lorry_add'}
 supplier_list = {'text':_('suppliers'), 'view':'supplier_list', 'famfam':'lorry'}
+supplier_create = {'text':_('create new supplier'), 'view':'supplier_create', 'famfam':'lorry_add'}
 supplier_update = {'text':_('edit'), 'view':'supplier_update', 'args':'object.id', 'famfam':'lorry'}
 supplier_delete = {'text':_('delete'), 'view':'supplier_delete', 'args':'object.id', 'famfam':'lorry_delete'}
 supplier_assign_itemtemplate = {'text':_(u'assign templates'), 'view':'supplier_assign_itemtemplates', 'args':'object.id', 'famfam':'page_go'}
