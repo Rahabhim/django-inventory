@@ -404,12 +404,10 @@ class Contain_Column(sColumn):
 
         Example: Address inside a Partner table.
     """
-    def __init__(self, omodel, oname):
+    def __init__(self, oname):
         super(Contain_Column, self).__init__('')
         self._oname = oname
         self._columns = []
-        self._omodel = omodel
-        self._djang_model = None
 
     def __iadd__(self, column):
         assert isinstance(column, sColumn), column
@@ -420,7 +418,6 @@ class Contain_Column(sColumn):
         table._after_handlers.append(self._push_cdata)
         for c in self._columns:
             c.init(table)
-        self._django_model = _get_model(self._omodel)
 
     def makeMyQuery(self, query):
         for c in self._columns:
@@ -435,12 +432,10 @@ class Contain_Column(sColumn):
         sout = {}
 
         try:
-            sout[self._oname] = r
             for c in self._columns:
                 c.postProcess(rline, sout, context=None)
 
-            r2 = self._django_model(**sout)
-            r2.save()
+            getattr(r, self._oname).create(**sout)
         except DiscardRow:
             pass
 
