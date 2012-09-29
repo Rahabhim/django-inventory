@@ -4,9 +4,13 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class DepartmentType(models.Model):
     name = models.CharField(max_length=128)
+    location_tmpl = models.ManyToManyField('common.LocationTemplate', blank=True, related_name='location_tmpl',
+            help_text=_(u"These will automatically be setup as locations, for each new department of this type") )
 
     class Meta:
         permissions = [('admin_company', 'Can manage companies'),]
@@ -35,5 +39,19 @@ class Department(models.Model):
 
     def __unicode__(self):
         return self.name
+
+@receiver(post_save, sender=Department, dispatch_uid='139i436')
+def post_save(sender, **kwargs):
+    """ create the locations, after a department has been saved
+    """
+    from common.models import Location
+    if kwargs.get('created', False) and not kwargs.get('raw', False):
+        assert kwargs.get('instance', None), 'keys: %r' % (kwargs.keys(),)
+        dept = kwargs['instance']
+        for lt in dept.dept_type.location_tmpl.all():
+            dept.location_set.create(name=lt.name, usage='internal')
+
+    # instance, created, raw, using=None)
+
 
 #eof

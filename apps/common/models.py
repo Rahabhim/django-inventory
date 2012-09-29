@@ -67,6 +67,23 @@ class Location(models.Model):
             raise ValidationError("Department can only be specified for \"internal\" locations")
         return super(Location, self).clean()
 
+class LocationTemplate(models.Model):
+    """ A location template is just names of locations to create for each dpt. type
+
+    """
+    name = models.CharField(max_length=32, verbose_name=_("name"))
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = _(u"location template")
+        verbose_name_plural = _(u"location templates")
+
+    def __unicode__(self):
+        return self.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('location_template_view', [str(self.id)])
 
 class Supplier(Partner):
     #TODO: Contact, extension
