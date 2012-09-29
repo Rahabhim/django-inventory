@@ -2,8 +2,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from common.models import Supplier
-from assets.models import ItemTemplate
+from common.models import Supplier, Location
+from assets.models import Item, ItemTemplate
 
 from dynamic_search.api import register
 
@@ -143,6 +143,28 @@ class PurchaseOrderItem(models.Model):
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.purchase_order.id)])
 
+class Movement(models.Model):
+    date = models.DateField(auto_now_add=True, verbose_name=_(u'date'))
+    name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
+    state = models.CharField(max_length=16, choices=[('draft', 'Draft'), ('done', 'Done')])
+    stype = models.CharField(max_length=16, choices=[('in', 'Incoming'),('out',' Outgoing'), 
+                ('internal', 'Internal'), ('other', 'Other')], verbose_name=_('type'))
+    origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
+    note = models.TextField(verbose_name=_('Notes'), blank=True)
+    location_src = models.ForeignKey(Location, related_name='location_src')
+    location_dest = models.ForeignKey(Location, related_name='location_dest')
+    items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='items')
+        # limit_choices_to
+    # todo: links with purchase or so..
+
+    def do_close(self):
+        """Closes the movement and updates the assets counters
+        """
+        pass
+
+#class MovementLine(models.Model):
+    #movement = models.ForeignKey(Movement)
+    #asset = models.ForeignKey(Item)
 
 register(PurchaseRequestStatus, _(u'purchase request status'), ['name'])
 register(PurchaseRequest, _(u'purchase request'), ['user_id', 'id', 'budget', 'required_date', 'status__name', 'originator'])
