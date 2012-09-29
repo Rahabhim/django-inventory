@@ -243,6 +243,7 @@ class Table_Suck(object):
             This must happen after connector._load(), because the dicts of
             _table_data must have settled first
         """
+        self._django_model = _get_model(self._orm_model)
         for c in self._columns:
             c.init(self)
 
@@ -263,8 +264,6 @@ class Table_Suck(object):
         log = self._connector()._log
         log.debug("Running for table %s, limit=%s", self.table_name, limit)
         nfound = 0
-        if not self._django_model:
-            self._django_model = _get_model(self._orm_model)
         mycr = self._connector().cursor()
         while (not limit) or (nfound < limit):
 
