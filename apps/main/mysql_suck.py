@@ -488,6 +488,7 @@ class Ref_Column(simple_column):
         super(Ref_Column, self).__init__(name, oname,)
         self.otable = otable
         self._id_column = None
+        self._omanager = None
 
     def init(self, table):
         """Try to keep a weakref of the other table
@@ -499,6 +500,12 @@ class Ref_Column(simple_column):
                 break
         else:
             raise KeyError("Cannnot find ID column in table %s" % self.otable)
+        
+        try:
+            self._omanager = weakref.ref(getattr(table._django_model, self._oname).field.rel.to.objects)
+        except Exception, e:
+            table._connector()._log.error("Cannot find related field %s.%s: %s", table.table_name, self._name, e)
+            raise
 
     def postProcess(self, qres, out, context=None):
         assert self._myqindex is not None
@@ -508,7 +515,7 @@ class Ref_Column(simple_column):
             mref = self._id_column()._map_data.get(rid, None)
             if mref is None:
                 raise ValueError("Don't have id #%d in table %s for %s" % (rid, self.otable, self._name))
-            out[self._oname] = mref
+            out[self._oname] = self._omanager().get(pk=mref)
         else:
             out[self._oname] = False
 
