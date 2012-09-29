@@ -535,7 +535,7 @@ class Ref_NN_Column(Ref_Column):
         mref = self._id_column()._map_data.get(rid, None)
         if mref is None:
             raise ValueError("Don't have id #%d in table %s for %s" % (rid, self.otable, self._name))
-        out[self._oname] = mref
+        out[self._oname] = self._omanager().get(pk=mref)
 
 class Static_Column(sColumn):
     """Column that pushes a constant value into every pg row
