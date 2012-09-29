@@ -373,6 +373,19 @@ class Str_Column_Required(Str_Column):
             raise DiscardRow
         out[self._oname] = val
 
+class Str_Column_Default(Str_Column):
+    def __init__(self, name, oname, default="-"):
+        Str_Column.__init__(self, name, oname)
+        self._default = default
+
+    def postProcess(self, qres, out, context=None):
+        assert self._myqindex is not None
+
+        val = qres[self._myqindex]
+        if not val:
+            val = self._default
+        out[self._oname] = val
+
 class Enum2Bool_Column(simple_column):
     """ Convert a 'Y'/ 'N' enum to pg. boolean
 
