@@ -5,6 +5,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from dynamic_search.api import register
+from django.core.exceptions import ValidationError
 
 class Partner(models.Model):
     name = models.CharField(max_length=128, unique=True)
@@ -39,10 +40,8 @@ class Location(models.Model):
         inventory is a virtual location, used to correct stock levels
     """
     name = models.CharField(max_length=32, verbose_name=_("name"))
-    address = models.TextField(null=True, blank=True, verbose_name=_(u'address'))
-    
-    phone_number1 = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'phone number'))
-    phone_number2 = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'phone number'))
+    department = models.ForeignKey('company.Department', null=True, blank=True)
+
     usage = models.CharField(max_length=32, verbose_name=_("location type"),
             choices=[('customer','Customer'), ('procurement', 'Procurement'), ('internal', 'Internal'),
                     ('inventory', 'Inventory'), ('supplier', 'Supplier Location')])
@@ -53,11 +52,21 @@ class Location(models.Model):
         verbose_name_plural = _(u"locations")
 
     def __unicode__(self):
-        return self.name
+        ret = ''
+        if self.department:
+            ret = self.department.name + ' / '
+        ret += self.name
+        return ret
 
     @models.permalink
     def get_absolute_url(self):
         return ('location_view', [str(self.id)])
+
+    def clean(self):
+        if self.department and self.usage != 'internal':
+            raise ValidationError("Department can only be specified for \"internal\" locations")
+        return super(Location, self).clean()
+
 
 class Supplier(Partner):
     #TODO: Contact, extension
