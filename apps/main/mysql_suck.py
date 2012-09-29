@@ -23,6 +23,7 @@ import optparse
 import weakref
 
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 
 try:
     import cPickle as pickle
@@ -640,4 +641,38 @@ class StrLookup_Column(sColumn):
         assert r, repr(r)
         self._map_data[rline[self._myqindex]] = r
 
+class ParentName_Column(simple_column):
+    """Looks up or creates the parent inherited record, based on name
+    
+        It could have been a `Str_Column`, on name, meaning that a parent
+        object would always be created.
+        But, when one already exists, we come up with an IntegrityError.
+    """
+    
+    def __init__(self, name, oname, parent_column, parentname='name'):
+        simple_column.__init__(self, name, oname)
+        self._parent_column = parent_column
+        self._parentname = parentname
+        self._omanager = None
+
+    def init(self, table):
+        simple_column.init(self, table)
+        try:
+            self._omanager = weakref.ref(getattr(table._django_model, self._parent_column).field.rel.to.objects)
+        except Exception, e:
+            table._connector()._log.error("Cannot find related field %s.%s: %s", table.table_name, self._name, e)
+            raise
+
+    def postProcess(self, qres, out, context=None):
+        assert self._myqindex is not None
+
+        val = qres[self._myqindex]
+        out[self._oname] = val
+        try:
+            exp = { self._parentname: val }
+            rec = self._omanager().get(**exp)
+            out[self._parent_column] = rec
+        except ObjectDoesNotExist, e:
+            pass
+    
 #eof
