@@ -7,6 +7,8 @@ from django.views.generic.create_update import create_object, update_object
 from generic_views.views import generic_delete, \
                                 generic_detail, generic_list
 
+from forms import DepartmentForm_view, DepartmentTypeForm_view
+
 urlpatterns = patterns('',
     url(r'^object/list/company_department$', ListView.as_view( model=Department, template_name="department_list.html" ),
             name='company_department_list'),
@@ -14,6 +16,9 @@ urlpatterns = patterns('',
             dict({'queryset':DepartmentType.objects.all()}, extra_context=dict(title =_(u'department types'))),
             name='company_department_type_list'),
     # url(r'^object/list/company_locations$', ListView.as_view()),
+    
+    url(r'^object/view/company_department/(?P<object_id>\d+)/$', generic_detail, dict(form_class=DepartmentForm_view, queryset=Department.objects.all()), 'company_department_view'),
+    url(r'^object/view/company_department_type/(?P<object_id>\d+)/$', generic_detail, dict(form_class=DepartmentTypeForm_view, queryset=DepartmentType.objects.all()), 'company_department_type_view'),
     )
 
 #eof
