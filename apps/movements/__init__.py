@@ -8,8 +8,6 @@ from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseOrderItemStatus, PurchaseOrder, \
                    PurchaseOrderItem
 
-from views import destroy_items, lose_items, move_items, repair_itemgroup
-
 purchase_request_state_list = {'text':_('purchase request states'), 'view':'purchase_request_state_list', 'famfam':'pencil_go'}
 purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add'}
 purchase_request_state_update = {'text':_('edit state'), 'view':'purchase_request_state_update', 'args':'object.id', 'famfam':'pencil'}
@@ -85,8 +83,11 @@ register_menu([
         purchase_request_list, purchase_order_list,
     ],'famfam':'basket','position':4}])
 
-register_submenu('menu_assets', [dict(text=_(u'Destroy assets'), view=destroy_items, famfam='computer_delete'), 
-        dict(text=_(u'Lose assets'), view=lose_items, famfam='computer_error'),
-        dict(text=_(u'Move assets'), view=move_items, famfam='computer_go'),
-        ])
+# register_submenu('menu_assets', .. )
+
+register_links( ['item_list'],
+        [dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete'), 
+        dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error'),
+        dict(text=_(u'Move assets'), view='move_items', famfam='computer_go'),
+        ], menu_name='sidebar')
 # eof

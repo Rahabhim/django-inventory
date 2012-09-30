@@ -8,13 +8,14 @@ from generic_views.views import generic_delete, generic_list
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
                    PurchaseOrderItemStatus, PurchaseOrder, \
-                   PurchaseOrderItem
+                   PurchaseOrderItem, Movement
 
 from movements import purchase_request_state_filter, \
                       purchase_order_state_filter
 
 
-from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm
+from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
+        DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm
 import views
 
 urlpatterns = patterns('movements.views',
@@ -61,10 +62,17 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/item/(?P<object_id>\d+)/close/$', 'purchase_order_item_close', (), 'purchase_order_item_close'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/transfer/$', 'purchase_order_item_transfer', (), 'purchase_order_item_transfer'),
 
-    
-    url(r'^objects/items/destroy/$', views.destroy_items, (), 'destroy_items'),
-    url(r'^objects/items/lose/$', views.lose_items, (), 'lose_items'),
-    url(r'^objects/items/move/$', views.move_items, (), 'move_items'),
+    url(r'^objects/items/destroy/$', create_object, {'form_class': DestroyItemsForm, 
+            'template_name': 'generic_form.html',
+            'extra_context': dict(object_name=_(u'Items destruction'))}, 'destroy_items'),
+
+    url(r'^objects/items/lose/$', create_object, {'form_class': LoseItemsForm, 
+            'template_name': 'generic_form.html',
+            'extra_context': dict(object_name=_(u'Lost Items'))} , 'lose_items'),
+
+    url(r'^objects/items/move/$', create_object, {'form_class': MoveItemsForm, 
+            'template_name': 'generic_form.html',
+            'extra_context': dict(object_name=_(u'Items movement'))}, 'move_items'),
     
 )
 

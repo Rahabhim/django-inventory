@@ -454,15 +454,6 @@ def purchase_order_item_create(request, object_id):
     },
     context_instance=RequestContext(request))
 
-def destroy_items(request):
-    raise NotImplementedError
-
-def lose_items(request):
-    raise NotImplementedError
-
-def move_items(request):
-    raise NotImplementedError
-
 def repair_itemgroup(request):
     raise NotImplementedError
 
