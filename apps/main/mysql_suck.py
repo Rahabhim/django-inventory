@@ -518,7 +518,7 @@ class Ref_Column(simple_column):
                 raise ValueError("Don't have id #%d in table %s for %s" % (rid, self.otable, self._name))
             out[self._oname] = self._omanager().get(pk=mref)
         else:
-            out[self._oname] = False
+            out[self._oname] = None
 
 class Ref_NN_Column(Ref_Column):
     """ Reference column, which only sets output if input is not null
