@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 17:03+0300\n"
+"POT-Creation-Date: 2012-09-30 22:38+0300\n"
 "PO-Revision-Date: 2012-09-21 16:48+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,34 +17,34 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:7
+#: __init__.py:9
 msgid "procurements"
 msgstr "προμήθειες"
 
-#: __init__.py:8
+#: __init__.py:10
 msgid "delegates"
 msgstr "ανάδοχοι"
 
-#: __init__.py:9
+#: __init__.py:11
 msgid "projects"
 msgstr "έργα"
 
-#: __init__.py:10
+#: __init__.py:12
 msgid "contracts"
 msgstr "συμβάσεις"
 
-#: urls.py:16 urls.py:19 urls.py:23 urls.py:27 urls.py:32
+#: urls.py:17 urls.py:20 urls.py:24 urls.py:28 urls.py:33
 msgid "delegate"
 msgstr "ανάδοχος"
 
-#: urls.py:28
+#: urls.py:29
 msgid "Will delete delegate and all references in contracts"
 msgstr ""
 
-#: urls.py:36 urls.py:39 urls.py:43 urls.py:47 urls.py:53
+#: urls.py:37 urls.py:40 urls.py:44 urls.py:48 urls.py:54
 msgid "contract"
 msgstr "σύμβαση"
 
-#: urls.py:57 urls.py:60 urls.py:64 urls.py:68 urls.py:74
+#: urls.py:58 urls.py:61 urls.py:65 urls.py:69 urls.py:75
 msgid "project"
 msgstr "έργο"

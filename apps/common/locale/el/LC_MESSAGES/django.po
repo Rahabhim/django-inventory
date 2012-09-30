@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 17:03+0300\n"
+"POT-Creation-Date: 2012-09-30 22:38+0300\n"
 "PO-Revision-Date: 2012-09-21 16:52+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,13 +17,13 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10
-msgid "create new supplier"
-msgstr "νέος προμηθευτής"
-
-#: __init__.py:11 models.py:70 urls.py:25
+#: __init__.py:10 models.py:95 urls.py:25
 msgid "suppliers"
 msgstr "προμηθευτές"
+
+#: __init__.py:11
+msgid "create new supplier"
+msgstr "νέος προμηθευτής"
 
 #: __init__.py:12 __init__.py:19
 msgid "edit"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "related purchase orders"
 msgstr ""
 
-#: __init__.py:17 models.py:54 models.py:77 urls.py:18 urls.py:21
+#: __init__.py:17 models.py:52 models.py:102 urls.py:18 urls.py:21
 msgid "locations"
 msgstr "τοποθεσίες"
 
@@ -49,46 +49,54 @@ msgstr "τοποθεσίες"
 msgid "create new location"
 msgstr ""
 
-#: __init__.py:29 models.py:53
+#: __init__.py:29 models.py:51
 msgid "location"
 msgstr "τοποθεσία"
 
-#: models.py:11 models.py:27
+#: models.py:12 models.py:28
 msgid "active"
 msgstr "ενεργό"
 
-#: models.py:24
+#: models.py:25
 msgid "contact"
 msgstr "Επαφή"
 
-#: models.py:28
+#: models.py:29
 msgid "phone"
 msgstr "τηλέφωνο"
 
-#: models.py:29
+#: models.py:30
 msgid "phone 2"
 msgstr "τηλέφωνο 2"
 
-#: models.py:41
+#: models.py:42 models.py:74
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:42
-msgid "address"
-msgstr "Διεύθυνση"
-
-#: models.py:45 models.py:46
-msgid "phone number"
-msgstr "αριθμός τηλεφώνου"
-
-#: models.py:47
+#: models.py:45
 msgid "location type"
 msgstr ""
 
-#: models.py:65
+#: models.py:78
+#, fuzzy
+msgid "location template"
+msgstr "τοποθεσία"
+
+#: models.py:79
+#, fuzzy
+msgid "location templates"
+msgstr "τοποθεσίες"
+
+#: models.py:90
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:69 models.py:78 urls.py:28
+#: models.py:94 models.py:103 urls.py:28
 msgid "supplier"
 msgstr "προμηθευτής"
+
+#~ msgid "address"
+#~ msgstr "Διεύθυνση"
+
+#~ msgid "phone number"
+#~ msgstr "αριθμός τηλεφώνου"

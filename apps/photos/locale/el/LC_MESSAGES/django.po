@@ -1,22 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
+# P. Christeas <xrg@linux.gr>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 17:03+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2012-09-30 22:38+0300\n"
+"PO-Revision-Date: 2012-09-30 22:44+0300\n"
+"Last-Translator: P. Christeas <xrg@linux.gr>\n"
+"Language-Team: Greek <>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: __init__.py:7
 msgid "delete photo"
@@ -36,11 +35,11 @@ msgstr ""
 
 #: models.py:26 views.py:60
 msgid "photo"
-msgstr ""
+msgstr "Φωτογραφία"
 
 #: models.py:27
 msgid "photos"
-msgstr ""
+msgstr "φωτογραφίες"
 
 #: views.py:25
 msgid "The photo is too big."
@@ -112,5 +111,7 @@ msgid "Please wait..."
 msgstr ""
 
 #: templates/photos.html:20
+#, fuzzy
 msgid "Add / remove photos"
-msgstr ""
+msgstr "προσθήκη / αφαίρεση φωτογραφιών"
+
