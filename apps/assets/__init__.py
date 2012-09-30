@@ -12,14 +12,14 @@ state_edit = {'text':_(u'edit asset state'), 'view':'state_update', 'args':'obje
 state_delete = {'text':_(u'delete asset state'), 'view':'state_delete', 'args':'object.id', 'famfam':'error_delete'}
 
 
-asset_list = {'text':_('view all assets'), 'view':'item_list', 'famfam':'computer'}
+asset_list = {'text':_('list all assets'), 'view':'item_list', 'famfam':'computer'}
 asset_create = {'text':_('create new asset'), 'view':'item_create', 'famfam':'computer_add'}
 asset_edit = {'text':_(u'edit'), 'view':'item_update', 'args':'object.id', 'famfam':'computer_edit'}
 asset_delete = {'text':_(u'delete'), 'view':'item_delete', 'args':'object.id', 'famfam':'computer_delete'}
 asset_photos = {'text':_(u'add / remove photos'), 'view':'item_photos', 'args':'object.id', 'famfam':'picture_edit'}
 asset_template = {'text':_(u'template'), 'view':'template_view', 'args':'object.item_template.id', 'famfam':'page_go'}
 
-group_list = {'text':_(u'view all groups'), 'view':'group_list', 'famfam':'chart_pie'}
+group_list = {'text':_(u'list all groups'), 'view':'group_list', 'famfam':'chart_pie'}
 group_create = {'text':_(u'create group'), 'view':'group_create', 'famfam':'chart_pie_add'}
 group_update = {'text':_(u'edit'), 'view':'group_update', 'args':'object.id', 'famfam':'chart_pie_edit'}
 group_delete = {'text' : _(u'delete'), 'view':'group_delete', 'args':'object.id', 'famfam':'chart_pie_delete'}
