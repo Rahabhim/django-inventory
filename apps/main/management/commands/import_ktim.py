@@ -40,10 +40,12 @@ class Command(BaseCommand):
             return
         self.stderr.write("Connected. Start of sync\n")
 
-        self._myc.run_all( args or ['KT_01_ANADOXOI',
+        self._myc.run_all( args or [
                 'KT_03_EIDOS',
                 'KT_08_KATASKEYASTHS',
                 'KT_05_PROIONTA',
+                'KT_14_ONTOTHTES',
+                'KT_01_ANADOXOI',
                 'KT_11_MANAGERS',
                 'KT_16_ANATH_ARXH',
                 'KT_18_ERGA',
@@ -58,11 +60,11 @@ class Command(BaseCommand):
         
         anadoxoi = M.Table_Suck('KT_01_ANADOXOI', 'procurements.Delegate', myc)
         anadoxoi += M.IDmap_Column('ANADOXOS_ID')
-        anadoxoi += M.Str_Column('ANADOXOS_DESCR', 'name')
+        anadoxoi += M.ParentName_Column('ANADOXOS_DESCR', 'name', 'partner_ptr')
         anadoxoi += M.Str_Column('WEB', 'web')
-        anadoxoi_addr = M.Contain_Column('common.Address', 'partner')
+        anadoxoi_addr = M.Contain_Column('address_set')
         anadoxoi += anadoxoi_addr
-        anadoxoi_addr += M.Str_Column('CONTACT_PERSON', 'name')
+        anadoxoi_addr += M.Str_Column_Default('CONTACT_PERSON', 'name')
         anadoxoi_addr += M.Str_Column('TELEPHONE', 'phone1')
         anadoxoi_addr += M.Str_Column('CONTACT_TEL', 'phone2')
 
@@ -76,7 +78,7 @@ class Command(BaseCommand):
         #        'parent_id', 'products.ItemCategory') TODO
 
 
-        products = M.Table_Suck('KT_05_PROIONTA', 'product.ItemTemplate', myc)
+        products = M.Table_Suck('KT_05_PROIONTA', 'products.ItemTemplate', myc)
         products += M.IDmap_Column('PROION_ID')
         products += M.Str_Column('PROION_DESCR', 'description')
         products += M.Ref_Column('KATASK_ID', 'manufacturer', 'KT_08_KATASKEYASTHS')
@@ -104,7 +106,10 @@ class Command(BaseCommand):
         #managers_addr += M.Str_Column('TELEPHONE', 'phone')
         #managers_addr += M.Str_Column('CONTACT_TEL', 'mobile')
 
-        #TODO KT_14_ONTOTHTES
+        # KT_14_ONTOTHTES
+        onto = M.Table_Suck('KT_14_ONTOTHTES', 'common.LocationTemplate', myc)
+        onto += M.IDmap_Column('ONT_TYPE_ID')
+        onto += M.Str_Column('ONT_DESCR', 'name')
 
         # KT_16_ANATH_ARXH
         anath = M.Table_Suck('KT_16_ANATH_ARXH', 'company.Department', myc)
@@ -143,7 +148,7 @@ class Command(BaseCommand):
         # FIXME: they should set "partner" from the subclass'es partner
         ypoerga += M.Ref_NN_Column('ANATH_FOREAS_ID', 'partner', 'KT_11_MANAGERS')
         ypoerga += M.Ref_NN_Column('ANATH_OTHER_ID', 'partner', 'KT_16_ANATH_ARXH')
-        ypoerga += M.Ref_Column('ERGO_ID', 'parent_id', 'KT_18_ERGA')
+        ypoerga += M.Ref_Column('ERGO_ID', 'parent', 'KT_18_ERGA')
         ypoerga += M.Ref_Column('ANADOXOS_ID', 'delegate', 'KT_01_ANADOXOI')
 
         #TODO KT_07_KTHMATOLOGIO
@@ -160,9 +165,9 @@ class Command(BaseCommand):
         monades += M.Str_Column('NOM_ONOMA', 'nom_name')
         # TODO monades += M.XXX_Column('MANAGER_ID', '??') # foreas
         monades += M.Enum2Bool_Column('KATARGHSH', 'deprecate')
-        monades += M.Ref_Column('SYGXONEYSH_GLUC', 'merge_id', 'MONADES')
+        monades += M.Ref_Column('SYGXONEYSH_GLUC', 'merge', 'MONADES')
 
-        self._tables += [ anadoxoi, product_cat, products, katask, anath,
+        self._tables += [ onto, anadoxoi, product_cat, products, katask, anath,
                 managers, erga, ypoerga, monades ]
 
 #eof
