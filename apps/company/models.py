@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.exceptions import ObjectDoesNotExist
 
 class DepartmentType(models.Model):
     name = models.CharField(max_length=128)
@@ -57,8 +58,11 @@ def post_save(sender, **kwargs):
     if kwargs.get('created', False) and not kwargs.get('raw', False):
         assert kwargs.get('instance', None), 'keys: %r' % (kwargs.keys(),)
         dept = kwargs['instance']
-        for lt in dept.dept_type.location_tmpl.all():
-            dept.location_set.create(name=lt.name, usage='internal')
+        try:
+            for lt in dept.dept_type.location_tmpl.all():
+                dept.location_set.create(name=lt.name, usage='internal')
+        except ObjectDoesNotExist:
+            pass
 
     # instance, created, raw, using=None)
 
