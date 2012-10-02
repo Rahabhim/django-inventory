@@ -4,6 +4,12 @@ from django import forms
 
 from generic_views.forms import DetailForm
 from models import Location, Supplier
+from ajax_select import make_ajax_field
+
+class LocationForm(forms.ModelForm):
+    department = make_ajax_field(Location, 'department', 'department', required=False)
+    class Meta:
+        model = Location
 
 class LocationForm_view(DetailForm):
     class Meta:
