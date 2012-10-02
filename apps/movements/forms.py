@@ -1,8 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-
 from generic_views.forms import DetailForm
-
+from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from inventory.models import Inventory
 
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
@@ -40,6 +39,7 @@ class PurchaseOrderForm_view(DetailForm):
 
 
 class PurchaseOrderItemForm(forms.ModelForm):
+    item_template = AutoCompleteSelectField('product')
     class Meta:
         model = PurchaseOrderItem
         exclude = ('active',)
@@ -66,24 +66,26 @@ class PurchaseOrderItemTransferForm(forms.Form):
     inventory = forms.ModelChoiceField(queryset = Inventory.objects.all(), help_text = _(u'Inventory that will receive the item.'))
     qty = forms.CharField(label=_(u'Qty received'))
 
-class DestroyItemsForm(forms.ModelForm):
-    """This form is registered whenever defective equipment is trashed (destroyed)
+class _baseMovementForm(forms.ModelForm):
+    location_src = AutoCompleteSelectField('location', required=False)
+    location_dest = AutoCompleteSelectField('location', required=False)
+    items = AutoCompleteSelectMultipleField('item',)
 
+class DestroyItemsForm(_baseMovementForm):
+    """This form is registered whenever defective equipment is trashed (destroyed)
     """
     class Meta:
         model = Movement
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
 
-class LoseItemsForm(forms.ModelForm):
+class LoseItemsForm(_baseMovementForm):
     """ This form is completed whenever equipment is missing (lost/stolen)
     """
-    name = forms.CharField(label=_("Protocol ID"),)
-
     class Meta:
         model = Movement
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
 
-class MoveItemsForm(forms.ModelForm):
+class MoveItemsForm(_baseMovementForm):
     """ Registered whenever equipment moves from one inventory to another
     """
 

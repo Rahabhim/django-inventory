@@ -4,10 +4,10 @@ from django import forms
 
 from generic_views.forms import DetailForm
 from models import Location, Supplier
-from ajax_select import make_ajax_field
+from ajax_select.fields import AutoCompleteSelectField
 
 class LocationForm(forms.ModelForm):
-    department = make_ajax_field(Location, 'department', 'department', required=False)
+    department = AutoCompleteSelectField('department', required=False)
     class Meta:
         model = Location
 

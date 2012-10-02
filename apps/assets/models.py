@@ -59,6 +59,7 @@ class Item(models.Model):
     is_bundled = models.BooleanField(default=False,
             help_text=_("If true, this item is bundled in a group, and therefore has no location"))
 
+    # δυναμικό πεδίο: attributes και τύπος
     class Meta:
         ordering = ['property_number']
         verbose_name = _(u"asset")
@@ -81,6 +82,12 @@ class Item(models.Model):
             raise ValidationError("A bundled item cannot be assigned to any location itself")
         return super(Item, self).clean()
 
+    def get_specs(self):
+        if not self.active:
+            return "spec1"
+        else:
+            return "spec2"
+
 class ItemGroup(Item):
     """ A group (or bundle) is itself an item, behaves like one in the long run
     
@@ -100,8 +107,6 @@ class ItemGroup(Item):
     @models.permalink
     def get_absolute_url(self):
         return ('group_view', [str(self.id)])
-
-
 
 
 register(ItemState, _(u'states'), ['state__name'])

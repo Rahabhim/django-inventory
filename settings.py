@@ -137,7 +137,6 @@ INSTALLED_APPS = [
 
 
 TEMPLATE_CONTEXT_PROCESSORS = [
-    #"django.core.context_processors.auth",
     "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
@@ -149,8 +148,11 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
 AJAX_LOOKUP_CHANNELS = {
     'department': ('company.lookups', 'DepartmentLookup'),
-    #'product':
-    #'item':     
+    'location': ('company.lookups', 'LocationLookup'), # searches by department!
+    'product': ('products.lookups', 'ItemTemplateLookup'),
+    'manufacturer': ('products.lookups', 'ManufacturerLookup'),
+    'item': ('assets.lookups', 'ItemLookup'),
+    
     # 'supplier':
 }
 AJAX_SELECT_BOOTSTRAP = False
