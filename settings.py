@@ -203,19 +203,22 @@ if DEVELOPMENT:
         import rosetta
         INSTALLED_APPS.append('rosetta')
     except ImportError:
-        print "rosetta is not installed"
+        pass
+        #print "rosetta is not installed"
 
     try:
         import django_extensions
         INSTALLED_APPS.append('django_extensions')
     except ImportError:
-        print "django_extensions is not installed"
+        pass
+        #print "django_extensions is not installed"
 
     try:
         import debug_toolbar
         #INSTALLED_APPS.append('debug_toolbar')
     except ImportError:
-        print "debug_toolbar is not installed"
+        pass
+        #print "debug_toolbar is not installed"
 
     TEMPLATE_CONTEXT_PROCESSORS.append("django.core.context_processors.debug")
 
