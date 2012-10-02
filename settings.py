@@ -131,6 +131,7 @@ INSTALLED_APPS = [
     'movements',
     'main',
     'web_theme',
+    'ajax_select',
     AUTH_BACKEND,
 ]
 
@@ -144,6 +145,15 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "grappelli.context_processors.admin_template_path",
     'django.contrib.messages.context_processors.messages',
 ]
+
+AJAX_LOOKUP_CHANNELS = {
+    'department': ('company.lookups', 'DepartmentLookup'),
+    #'product':
+    #'item':     
+    # 'supplier':
+}
+AJAX_SELECT_BOOTSTRAP = False
+AJAX_SELECT_INLINES = False
 
 #===== Configuration options ===============
 #--------- Grappelli ----------------
