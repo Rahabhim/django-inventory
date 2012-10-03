@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 {% block title %} :: {% with "true" as striptags %}{% include "calculate_form_title.html" %}{% endwith %}{% endblock %}
 
+{% block javascript %}
+<script src="{{ MEDIA_URL }}packages/jquery.formset.js"></script>
+<script type="text/javascript">
+$(function() {
+    {% for formset in formsets %}
+    $('.form-row.inline.{{ formset.prefix }}').formset({
+        prefix: '{{ formset.prefix }}',
+    })
+    {% endfor %}
+})
+</script>
+{% endblock %}
+
 {% block content %}
     {% include "generic_form_subtemplate_fs.html" %}
 {% endblock %}
