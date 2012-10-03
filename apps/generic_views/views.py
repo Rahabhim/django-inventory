@@ -3,6 +3,7 @@ import urllib
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import messages
 from django.db.models import Q
+from django.db.models.related import RelatedObject
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
@@ -10,6 +11,9 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.views.generic.list_detail import object_detail, object_list
 from django.views.generic.create_update import create_object, update_object, delete_object
+import django.views.generic as django_gv
+from django.core.exceptions import ImproperlyConfigured
+from django.forms.models import inlineformset_factory
 
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   DetailForm
@@ -144,3 +148,59 @@ def generic_detail(request, object_id, form_class, queryset, title=None, extra_c
         queryset=queryset,
         object_id=object_id,
     )
+
+class GenericCreateView(django_gv.CreateView):
+    template_name = 'generic_form_fs.html'
+    extra_context = None
+    inline_fields = ()
+    _inline_formsets = None
+
+    def __init__(self, **kwargs):
+        super(GenericCreateView, self).__init__(**kwargs)
+        if not self.model:
+            form_class = self.get_form_class()
+            if form_class:
+                self.model = form_class._meta.model
+            elif hasattr(self, 'object') and self.object is not None:
+                self.model = self.object.__class__
+
+        self._inline_formsets = {}
+        for inlf in self.inline_fields:
+            relo = self.model._meta.get_field_by_name(inlf)
+            if not isinstance(relo[0], RelatedObject):
+                raise ImproperlyConfigured("Field %s.%s is not a related object for inlined field of %s" % \
+                    (self.model._meta.object_name, inlf, self.__class__.__name__))
+            self._inline_formsets[inlf] = inlineformset_factory(self.model, relo[0].model, extra=1)
+            # explicitly set this (new) attribute, because jinja2 is not allowed to see '_meta'
+            self._inline_formsets[inlf].title = relo[0].model._meta.verbose_name_plural
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        if all([ inline_form.is_valid() for inline_form in context['formsets']]):
+            self.object = form.save()
+            for inline_form in context['formsets']:
+                inline_form.instance = self.object
+                inline_form.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        context = super(GenericCreateView, self).get_context_data(**kwargs)
+
+        if self.request.POST:
+            iargs = (self.request.POST, self.request.FILES)
+        else:
+            iargs =()
+
+        context['formsets'] = []
+        for inlf in self.inline_fields:
+            context['formsets'].append(self._inline_formsets[inlf](*iargs))
+        if self.extra_context:
+            context.update(self.extra_context)
+        return context
+
+#eof
