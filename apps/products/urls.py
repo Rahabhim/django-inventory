@@ -9,7 +9,7 @@ from conf import settings as inventory_settings
 from photos.views import generic_photos
 
 from generic_views.views import generic_delete, \
-                                generic_detail, generic_list
+                                generic_detail, generic_list, GenericCreateView
 
 from models import ItemTemplate, ItemCategory, Manufacturer
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
@@ -18,10 +18,10 @@ from forms import ItemTemplateForm, ItemTemplateForm_view, \
 urlpatterns = patterns('products.views',
     url(r'^template/list/$', generic_list, dict({'queryset':ItemTemplate.objects.all()},
             extra_context=dict(title=_(u'item template'))), 'template_list'),
-    url(r'^template/create/$', create_object, {'form_class':ItemTemplateForm,
-                    'template_name':'generic_form.html',
-                    'extra_context':{'object_name':_(u'item template')}},
-            'template_create'),
+    url(r'^template/create/$', GenericCreateView.as_view(form_class=ItemTemplateForm,
+                    inline_fields=('attributes',),
+                    extra_context={'object_name':_(u'item template')}),
+            name='template_create'),
     url(r'^template/(?P<object_id>\d+)/update/$', update_object,
             {'form_class':ItemTemplateForm, 'template_name':'generic_form.html',
                     'extra_context':{'object_name':_(u'item template')}},
