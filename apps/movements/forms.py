@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from generic_views.forms import DetailForm
+from generic_views.forms import DetailForm, InlineModelForm
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from inventory.models import Inventory
 
@@ -39,6 +39,12 @@ class PurchaseOrderForm_view(DetailForm):
 
 
 class PurchaseOrderItemForm(forms.ModelForm):
+    item_template = AutoCompleteSelectField('product')
+    class Meta:
+        model = PurchaseOrderItem
+        exclude = ('active',)
+
+class PurchaseOrderItemForm_inline(InlineModelForm):
     item_template = AutoCompleteSelectField('product')
     class Meta:
         model = PurchaseOrderItem

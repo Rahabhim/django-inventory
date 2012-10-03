@@ -9,7 +9,8 @@ from conf import settings as inventory_settings
 from photos.views import generic_photos
 
 from generic_views.views import generic_delete, \
-                                generic_detail, generic_list, GenericCreateView
+                                generic_detail, generic_list, \
+                                GenericCreateView, GenericUpdateView
 
 from models import ItemTemplate, ItemCategory, Manufacturer
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
@@ -22,10 +23,10 @@ urlpatterns = patterns('products.views',
                     inline_fields=('attributes',),
                     extra_context={'object_name':_(u'item template')}),
             name='template_create'),
-    url(r'^template/(?P<object_id>\d+)/update/$', update_object,
-            {'form_class':ItemTemplateForm, 'template_name':'generic_form.html',
-                    'extra_context':{'object_name':_(u'item template')}},
-            'template_update' ),
+    url(r'^template/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
+            form_class=ItemTemplateForm, inline_fields=('attributes',),
+            extra_context={'object_name':_(u'item template')}),
+            name='template_update' ),
     url(r'^template/(?P<object_id>\d+)/delete/$', generic_delete,
             dict(model=ItemTemplate, post_delete_redirect="template_list",
                     extra_context=dict(object_name=_(u'item template'),

@@ -123,7 +123,7 @@ class PurchaseOrderItemStatus(models.Model):
 
 
 class PurchaseOrderItem(models.Model):
-    purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'))
+    purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'), related_name='items')
     item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'))
     status = models.ForeignKey(PurchaseRequestStatus, null=True, blank=True, verbose_name=_(u'status'))
     agreed_price = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name=_(u'agreed price'))
