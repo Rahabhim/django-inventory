@@ -13,7 +13,7 @@ from django.views.generic.list_detail import object_detail, object_list
 from django.views.generic.create_update import delete_object # create_object, update_object, 
 import django.views.generic as django_gv
 from django.core.exceptions import ImproperlyConfigured
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, ModelForm
 
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm
                   # DetailForm
@@ -149,6 +149,16 @@ def generic_detail(request, object_id, form_class, queryset, title=None, extra_c
         object_id=object_id,
     )
 
+class _InlineModelForm(ModelForm):
+    def as_table(self):
+        "Returns this form rendered as HTML <td>s"
+        return self._html_output(
+            normal_row = u'<td %(html_class_attr)s>%(label)s%(errors)s%(field)s%(help_text)s</td>',
+            error_row = u'%s',
+            row_ender = u'</td>',
+            help_text_html = u'<br /><span class="helptext">%s</span>',
+            errors_on_separate_row = False)
+
 class GenericCreateView(django_gv.CreateView):
     template_name = 'generic_form_fs.html'
     extra_context = None
@@ -170,7 +180,8 @@ class GenericCreateView(django_gv.CreateView):
             if not isinstance(relo[0], RelatedObject):
                 raise ImproperlyConfigured("Field %s.%s is not a related object for inlined field of %s" % \
                     (self.model._meta.object_name, inlf, self.__class__.__name__))
-            self._inline_formsets[inlf] = inlineformset_factory(self.model, relo[0].model, extra=1)
+            self._inline_formsets[inlf] = inlineformset_factory(self.model, \
+                            relo[0].model, form=_InlineModelForm, extra=1)
             # explicitly set this (new) attribute, because jinja2 is not allowed to see '_meta'
             self._inline_formsets[inlf].title = relo[0].model._meta.verbose_name_plural
 

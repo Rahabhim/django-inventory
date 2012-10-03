@@ -65,12 +65,17 @@
             {% include "generic_form_instance.html" %}
         {% endif %}
     
-	{% for formset in formsets %}
-	<fieldset class="formset">
-	<legend>{{formset.title }}</legend>
-		{{ formset }}
-	</fieldset>
-	{% endfor %}
+        {% for formset in formsets %}
+        <fieldset class="formset">
+        <legend>{{formset.title }}</legend>
+                {{ formset.management_form }}
+                <table class="table">
+                {% for form in formset %}
+                        <tr class="form-row inline {{ formset.prefix }}">{{ form }}</tr>
+                {% endfor %}
+                </table>
+        </fieldset>
+        {% endfor %}
         {% if not read_only %}
         <div class="group navform wat-cf">
             <button class="button" type="submit">
