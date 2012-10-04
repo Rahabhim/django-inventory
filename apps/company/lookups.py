@@ -18,7 +18,8 @@ class LocationLookup(LookupChannel):
 
     def get_query(self, q, request):
         # FIXME use Department algo
-        return Location.objects.filter(department__name__icontains=q).\
+        return Location.objects.filter(models.Q(department__name__icontains=q)| \
+                    models.Q(department=None, name__icontains=q)).\
                 order_by('department__name', 'name')[:20]
 
 #eof
