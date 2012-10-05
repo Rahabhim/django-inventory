@@ -15,6 +15,79 @@ def custom_options(parser):
     pgroup.add_option('--slice', type=int,
                 help="Slice of records to process at a time"),
 
+class One2ManyColumn(M.sColumn):
+    _log = logging.getLogger('MySQL.one2many')
+
+    def __init__(self, name, oname, ktable, kcolumn):
+        """
+            @param name the local ID column
+            @param oname key in `out` dict to store look-up data
+            @param ktable the SQL table to lookup
+            @param kcolumn column in ktable to match against this.name
+        """
+        super(One2ManyColumn,self).__init__(name)
+        self._oname = oname
+        self._ktable = ktable
+        self._kcolumn = kcolumn
+        self._columns = [ M.Str_Column(self._kcolumn, self._kcolumn),]
+
+    def __iadd__(self, column):
+        assert isinstance(column, M.sColumn), column
+        self._columns.append(column)
+        return self
+
+    def init(self, table):
+        assert isinstance(table, M.Table_SuckToo), table
+        table._result_handlers.append(self._result_handler)
+        for c in self._columns:
+            c.init(table)
+        self._qry, self._qargs = self.getQuery()
+        self._log.debug("Query: %s ; %r", self._qry, self._qargs)
+
+    def getQuery(self):
+        query = dict(cols=[], clause=[M.bq(self._kcolumn) +' IN %s',], \
+                args=[QPlaceholder(self),])
+        for c in self._columns:
+            c.makeMyQuery(query)
+
+        qstr = 'SELECT %s FROM %s' % ( ', '.join(map(M.bq, query['cols'])), M.bq(self._ktable))
+        qstr += ' WHERE ' + (' AND '.join(query['clause']))
+        return qstr, query['args']
+
+    def postProcess(self, qres, out, context=None):
+        out[self._oname] = []
+        out[self._oname+'+id'] = qres[self._myqindex]
+    
+    def _result_handler(self, cr, results):
+        if not results:
+            return
+        lcol = self._oname + '+id'
+        # Invert the results->out table. We want it indexed by its
+        # id column (assume it's unique!)
+        lres = {}
+        for r, o in results:
+            lres[o.pop(lcol)] = o
+        # results[*][1] won't have any [self._oname+'+id'] item any more
+
+        # now, we have a list of id columns to lookup, use it at the right
+        # place of self._qargs
+        args = QPlaceholder(self).replace(self._qargs, lres.keys())
+        print self, args
+        cr.execute(self._qry, args)
+        for rline in cr:
+            kout = {}
+            try:
+                for c in self._columns:
+                    c.postProcess(rline, kout)
+            except M.DiscardRow:
+                # go on with next rline
+                continue
+            self._log.debug("Kout data: %r", kout)
+            kid = kout[self._kcolumn]
+            lres[kid][self._oname].append(kout)
+
+        # now, what?
+
 
 class Command(BaseCommand):
     args = '<table ...>'
