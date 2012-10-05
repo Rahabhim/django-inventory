@@ -103,9 +103,17 @@ class One2ManyColumn(M.sColumn):
         # now, what?
 
 class KtimColumn(One2ManyColumn):
+    _bundle_product = None
+    def _get_bundle_product(self):
+        if not self._bundle_product:
+            product_obj = M._get_model('products.ItemTemplate')
+            self._bundle_product = product_obj.objects.get(description=u'Σύνθεση')
+        return self._bundle_product
+    
     def _result_handler(self, cr, results):
         super(KtimColumn, self)._result_handler(cr, results)
         loc_obj = M._get_model('common.Location')
+        itemgroup_obj = M._get_model('assets.ItemGroup')
         
         # and, now, use the values!
         for r, out in results:
@@ -133,8 +141,16 @@ class KtimColumn(One2ManyColumn):
                     pass # TODO
             else:
                 # Real Bundle, have to put multiple items
-                print "Skipping bundle with %d items: %s" %( len(out['_bundle']), r[0])
-                out['__skip_push'] = True
+                item = itemgroup_obj(item_template=self._get_bundle_product(), 
+                        location=out['location'])
+                item.save()
+                for bdl in out.pop('_bundle'):
+                    iout = dict(serial_number=bdl['serial_number'], is_bundled=True,
+                            item_template=bdl['item_template'])
+                    if bdl['property_number']:
+                        iout['property_number'] = str(bdl['property_number'])
+                    item.items.create(**iout)
+                out['__skip_push'] = item
 
 class Ref_Column_dafuq(M.Ref_Column):
     def postProcess(self, qres, out, context=None):
