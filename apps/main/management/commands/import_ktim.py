@@ -160,7 +160,8 @@ class Command(BaseCommand):
             return
         self.stderr.write("Connected. Start of sync\n")
 
-        self._myc.run_all( args or [
+        try:
+            self._myc.run_all( args or [
                 'KT_03_EIDOS',
                 'KT_08_KATASKEYASTHS',
                 'KT_05_PROIONTA',
@@ -172,7 +173,10 @@ class Command(BaseCommand):
                 'KT_06_YPOERGA',
                 'MONADES',
                 ], **options)
-        self._myc.close(save=True)
+            self._myc.close(save=True)
+        except Exception, e:
+            self.stderr.write("Exception: %s\n" % unicode(e).encode('utf-8'))
+            raise
         return
 
     def _init_tables(self):
