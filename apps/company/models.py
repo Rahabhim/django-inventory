@@ -26,7 +26,7 @@ class DepartmentType(models.Model):
 class Department(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=32)
-    code2 = models.CharField(max_length=32)
+    code2 = models.CharField(max_length=32, blank=True, null=True)
     deprecate = models.BooleanField()
     dept_type = models.ForeignKey(DepartmentType, verbose_name=_('Department Type'))
     merge = models.ForeignKey('Department', verbose_name=_('Merged in'), 
