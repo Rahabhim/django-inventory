@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.core.management.base import BaseCommand, CommandError
 from main.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 import optparse
 import logging
@@ -101,6 +102,39 @@ class One2ManyColumn(M.sColumn):
 
         # now, what?
 
+class KtimColumn(One2ManyColumn):
+    def _result_handler(self, cr, results):
+        super(KtimColumn, self)._result_handler(cr, results)
+        loc_obj = M._get_model('common.Location')
+        
+        # and, now, use the values!
+        for r, out in results:
+            loc_dict = dict(department=out.pop('_department'), \
+                            name=out.pop('_location_name'), usage='internal')
+            
+            try:
+                location = loc_obj.objects.get(**loc_dict)
+            except ObjectDoesNotExist:
+                location = loc_obj(**loc_dict)
+                location.save()
+            out['location'] = location
+            
+            if not out['_bundle']:
+                raise ValueError("Bundle id %s has no ktim entries!" % r['BUNDLE_ID'])
+            elif len(out['_bundle']) == 1:
+                bdl = out.pop('_bundle')[0]
+                func_status = out.pop('_func_status')
+                out.update(serial_number=bdl['serial_number'], item_template=bdl['item_template'])
+                if bdl['property_number']:
+                    out['property_number'] = str(bdl['property_number'])
+                # TODO _agreed_price, _ar_timol, _seira_timol, _used, _date_invoiced, _date_received
+                # _warranty, _contract
+                if func_status:
+                    pass # TODO
+            else:
+                # Real Bundle, have to put multiple items
+                print "Skipping bundle with %d items: %s" %( len(out['_bundle']), r[0])
+                out['__skip_push'] = True
 
 class Command(BaseCommand):
     args = '<table ...>'
