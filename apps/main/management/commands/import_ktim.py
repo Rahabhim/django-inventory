@@ -15,6 +15,19 @@ def custom_options(parser):
     pgroup.add_option('--slice', type=int,
                 help="Slice of records to process at a time"),
 
+class QPlaceholder(object):
+    def __init__(self, other):
+        self._id = id(other)
+
+    def __eq__(self, other):
+        return isinstance(other, QPlaceholder) and other._id == self._id
+
+    def __repr__(self):
+        return "<QPlaceholder for 0x%x>" % self._id
+
+    def replace(self, alist, rep):
+        return [ (self == a) and rep or a for a in alist]
+
 class One2ManyColumn(M.sColumn):
     _log = logging.getLogger('MySQL.one2many')
 
