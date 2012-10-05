@@ -8,6 +8,7 @@ from common.models import Partner, Supplier
 class ItemCategory(models.Model):
     name = models.CharField(max_length=64)
     parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True)
+    approved = models.BooleanField(default=False)
 
     @models.permalink
     def get_absolute_url(self):
@@ -72,6 +73,7 @@ class Manufacturer(Partner):
 class ItemTemplate(models.Model):
     description = models.CharField(verbose_name=_(u"description"), max_length=64)
     category = models.ForeignKey(ItemCategory,)
+    approved = models.BooleanField(default=False)
     brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True, 
         help_text=_("Brand name, if different from manufacturer"))
     manufacturer = models.ForeignKey(Manufacturer, )
