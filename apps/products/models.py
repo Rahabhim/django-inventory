@@ -8,6 +8,10 @@ from common.models import Partner, Supplier
 class ItemCategory(models.Model):
     name = models.CharField(max_length=64)
     parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True)
+    approved = models.BooleanField(default=False)
+    is_bundle = models.BooleanField(default=False)
+    may_contain = models.ManyToManyField('self', related_name='+', blank=True, null=True,
+            help_text=_(u'Bundles of this category may contain items of these categories'))
 
     @models.permalink
     def get_absolute_url(self):
@@ -30,7 +34,8 @@ class ItemAttrType(models.Model):
                 ('color', 'Color')])
     name = models.CharField(max_length=64, verbose_name=_("name"),
             blank=False)
-    applies_category = models.ManyToManyField(ItemCategory, related_name="applies_cat")
+    applies_category = models.ManyToManyField(ItemCategory, related_name="applies_cat", 
+            blank=True, null=True)
     max_entries = models.IntegerField()
     optional = models.BooleanField()
     in_name = models.BooleanField()
@@ -72,6 +77,7 @@ class Manufacturer(Partner):
 class ItemTemplate(models.Model):
     description = models.CharField(verbose_name=_(u"description"), max_length=64)
     category = models.ForeignKey(ItemCategory,)
+    approved = models.BooleanField(default=False)
     brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True, 
         help_text=_("Brand name, if different from manufacturer"))
     manufacturer = models.ForeignKey(Manufacturer, )
