@@ -192,7 +192,26 @@ class Command(BaseCommand):
         anadoxoi_addr += M.Str_Column('TELEPHONE', 'phone1')
         anadoxoi_addr += M.Str_Column('CONTACT_TEL', 'phone2')
 
-        # TODO KT_02_BUNDLES
+        # KT_02_BUNDLES
+        bundles = M.Table_SuckToo('KT_02_BUNDLES', 'assets.Item', myc)
+        bundles += M.IDmap_Column('BUNDLE_ID')
+        bundles += M.Ref_Column("GLUC", '_department', 'MONADES', 'company.Department')
+        bundles += M.Str_Column_Default("ONT_DESCR", '_location_name', '-')
+        bundles += M.Str_Column("FUNC_STATUS", '_func_status')
+        bundles_ktim = KtimColumn('BUNDLE_ID', '_bundle', 'KT_07_KTHMATOLOGIO', 'BUNDLE_ID')
+        bundles += bundles_ktim
+        
+        bundles_ktim += M.Str_Column('SERIAL_NO', 'serial_number')
+        bundles_ktim += M.Str_Column("KOSTOS_EUR", '_agreed_price')
+        bundles_ktim += M.Str_Column("AR_TIMOL", '_ar_timol')
+        bundles_ktim += M.Str_Column("SEIRA_TIMOL", '_seira_timol')
+        bundles_ktim += M.Str_Column("AR_KTHM", 'property_number')
+        bundles_ktim += M.Str_Column("USED", '_used')
+        bundles_ktim += M.Date_Column("DATE_PARALAVHS", '_date_received')
+        bundles_ktim += M.Date_Column("DATE_TIMOL", '_date_invoiced')
+        bundles_ktim += M.Str_Column("WARRANTY", '_warranty')
+        bundles_ktim += M.Ref_Column("PROION_ID", 'item_template', 'KT_05_PROIONTA')
+        bundles_ktim += M.Ref_Column("YPOERGO_ID", '_contract', 'KT_06_YPOERGA', 'procurements.Contract')
 
         product_cat = M.Table_Suck('KT_03_EIDOS', 'products.ItemCategory', myc)
         product_cat += M.IDmap_Column('EIDOS_ID')
@@ -275,8 +294,6 @@ class Command(BaseCommand):
         ypoerga += M.Ref_Column('ERGO_ID', 'parent', 'KT_18_ERGA')
         ypoerga += M.Ref_Column('ANADOXOS_ID', 'delegate', 'KT_01_ANADOXOI')
 
-        #TODO KT_07_KTHMATOLOGIO
-
         # MONADES
         monades = M.Table_Suck('MONADES', 'company.Department', myc)
         monades += M.IDmap_Column('GLUC')
@@ -292,6 +309,6 @@ class Command(BaseCommand):
         monades += M.Ref_Column('SYGXONEYSH_GLUC', 'merge', 'MONADES')
 
         self._tables += [ onto, anadoxoi, product_cat, products, katask, anath,
-                managers, erga, ypoerga, monades ]
+                managers, erga, ypoerga, monades, bundles ]
 
 #eof
