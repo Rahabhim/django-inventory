@@ -485,11 +485,13 @@ class M2O_Column(sColumn):
 class Ref_Column(simple_column):
     """ Reference column, corresponding to many2one
     """
-    def __init__(self, name, oname, otable):
+    def __init__(self, name, oname, otable, omodel=None):
         super(Ref_Column, self).__init__(name, oname,)
         self.otable = otable
         self._id_column = None
         self._omanager = None
+        if omodel:
+            self._omanager = weakref.ref(_get_model(omodel).objects)
 
     def init(self, table):
         """Try to keep a weakref of the other table
@@ -503,7 +505,8 @@ class Ref_Column(simple_column):
             raise KeyError("Cannnot find ID column in table %s" % self.otable)
         
         try:
-            self._omanager = weakref.ref(getattr(table._django_model, self._oname).field.rel.to.objects)
+            if not self._omanager:
+                self._omanager = weakref.ref(getattr(table._django_model, self._oname).field.rel.to.objects)
         except Exception, e:
             table._connector()._log.error("Cannot find related field %s.%s: %s", table.table_name, self._name, e)
             raise
