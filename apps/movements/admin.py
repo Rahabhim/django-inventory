@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
         PurchaseRequestItem, PurchaseOrderStatus, PurchaseOrderItemStatus, \
-        PurchaseOrder, PurchaseOrderItem
+        PurchaseOrder, PurchaseOrderItem, Movement
 
 class PurchaseRequestItemInline(admin.StackedInline):
     model = PurchaseRequestItem
@@ -33,3 +33,7 @@ admin.site.register(PurchaseOrderStatus)
 admin.site.register(PurchaseOrderItemStatus)
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchaseOrderItem)
+admin.site.register(Movement)
+
+#eof
+

@@ -218,7 +218,7 @@ def purchase_order_view(request, object_id):
         'subtemplates_dict':[{
             'name':'generic_list_subtemplate.html',
             'title':_(u'purchase order items'),
-            'object_list':purchase_order.purchaseorderitem_set.all(),
+            'object_list':purchase_order.items.all(),
             'extra_columns':[
                 {'name':_(u'qty'), 'attribute':'qty'},
                 {'name':_(u'qty received'), 'attribute':'received_qty'},
@@ -234,7 +234,7 @@ def purchase_order_view(request, object_id):
 
 def purchase_order_close(request, object_id):
     purchase_order = get_object_or_404(PurchaseOrder, pk=object_id)
-    items = purchase_order.purchaseorderitem_set.all()
+    items = purchase_order.items.all()
 
     data = {
         'object':purchase_order,
@@ -329,7 +329,7 @@ def transfer_to_inventory(request, object_to_transfer):
         }
         #Seed the formset for each PO item
         initial = []
-        items = object_to_transfer.purchaseorderitem_set.filter(active=True)
+        items = object_to_transfer.items.filter(active=True)
         if not items:
             #There are no PO items active
             context['title'] = _(u'All the items from this purchase order are either closed or transfered, continue to close the purchase order.')
@@ -453,15 +453,6 @@ def purchase_order_item_create(request, object_id):
         'title':_(u'add new purchase order item') ,
     },
     context_instance=RequestContext(request))
-
-def destroy_items(request):
-    raise NotImplementedError
-
-def lose_items(request):
-    raise NotImplementedError
-
-def move_items(request):
-    raise NotImplementedError
 
 def repair_itemgroup(request):
     raise NotImplementedError

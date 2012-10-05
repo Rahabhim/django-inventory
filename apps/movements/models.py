@@ -123,7 +123,7 @@ class PurchaseOrderItemStatus(models.Model):
 
 
 class PurchaseOrderItem(models.Model):
-    purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'))
+    purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'), related_name='items')
     item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'))
     status = models.ForeignKey(PurchaseRequestStatus, null=True, blank=True, verbose_name=_(u'status'))
     agreed_price = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name=_(u'agreed price'))
@@ -144,7 +144,11 @@ class PurchaseOrderItem(models.Model):
         return ('purchase_order_view', [str(self.purchase_order.id)])
 
 class Movement(models.Model):
-    date = models.DateField(auto_now_add=True, verbose_name=_(u'date'))
+    date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))
+    date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
+    create_user = models.ForeignKey('auth.User', related_name='+')
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
+    
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
     state = models.CharField(max_length=16, choices=[('draft', 'Draft'), ('done', 'Done')])
     stype = models.CharField(max_length=16, choices=[('in', 'Incoming'),('out',' Outgoing'), 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 17:03+0300\n"
+"POT-Creation-Date: 2012-09-30 22:38+0300\n"
 "PO-Revision-Date: 2012-09-21 16:37+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,19 +17,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:13
+#: __init__.py:14
 msgid "home"
 msgstr "κύρια σελίδα"
 
-#: __init__.py:16
-msgid "tools"
-msgstr "εργαλεία"
-
-#: __init__.py:17
-msgid "import"
-msgstr "εισαγωγή"
-
-#: __init__.py:20
+#: __init__.py:21
 msgid "setup"
 msgstr "ρύθμιση"
 
@@ -86,3 +78,9 @@ msgstr "Ενέργειες"
 #: templates/base.html:94
 msgid "Other available actions"
 msgstr "Άλλες διαθέσιμες ενέργειες"
+
+#~ msgid "tools"
+#~ msgstr "εργαλεία"
+
+#~ msgid "import"
+#~ msgstr "εισαγωγή"

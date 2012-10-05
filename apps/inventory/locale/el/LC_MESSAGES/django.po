@@ -1,134 +1,133 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
+# P. Christeas <xrg@linux.gr>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 17:03+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2012-09-30 22:38+0300\n"
+"PO-Revision-Date: 2012-09-30 22:43+0300\n"
+"Last-Translator: P. Christeas <xrg@linux.gr>\n"
+"Language-Team: Greek <>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10
+#: __init__.py:11
 msgid "view all inventories"
 msgstr ""
 
-#: __init__.py:11
+#: __init__.py:12
 msgid "create new inventory"
-msgstr ""
-
-#: __init__.py:13 __init__.py:21
-msgid "edit"
-msgstr ""
+msgstr "Νέα Απογραφή"
 
 #: __init__.py:14 __init__.py:22
-msgid "delete"
-msgstr ""
+msgid "edit"
+msgstr "επεξεργασία"
 
-#: __init__.py:15
+#: __init__.py:15 __init__.py:23
+msgid "delete"
+msgstr "διαγραφή"
+
+#: __init__.py:16
 msgid "add transaction"
 msgstr ""
 
-#: __init__.py:16 __init__.py:23
+#: __init__.py:17 __init__.py:24
 msgid "details"
-msgstr ""
+msgstr "Λεπτομέρειες"
 
-#: __init__.py:17 models.py:72 views.py:68
+#: __init__.py:18 models.py:73 views.py:69
 msgid "inventory transactions"
 msgstr ""
 
-#: __init__.py:19
+#: __init__.py:20
 msgid "view all transactions"
 msgstr ""
 
-#: __init__.py:20
+#: __init__.py:21
 msgid "create new transaction"
 msgstr ""
 
-#: __init__.py:25
-msgid "template"
-msgstr ""
-
 #: __init__.py:26
+msgid "template"
+msgstr "προϊόν"
+
+#: __init__.py:27
 msgid "return to inventory"
 msgstr ""
 
-#: __init__.py:42 models.py:41 urls.py:17
+#: __init__.py:44 models.py:42 urls.py:18
 msgid "inventories"
-msgstr ""
+msgstr "Απογραφές"
 
-#: models.py:17
+#: models.py:18
 msgid "timedate"
 msgstr ""
 
-#: models.py:19
+#: models.py:20
 msgid "description"
-msgstr ""
+msgstr "περιγραφή"
 
-#: models.py:36
+#: models.py:37
 msgid "name"
-msgstr ""
+msgstr "όνομα"
 
-#: models.py:37 urls.py:17
+#: models.py:38 urls.py:18
 msgid "location"
-msgstr ""
+msgstr "τοποθεσία"
 
-#: models.py:40 models.py:84 urls.py:18 urls.py:20 urls.py:21 views.py:40
-#: views.py:62
+#: models.py:41 models.py:85 urls.py:19 urls.py:21 urls.py:22 views.py:41
+#: views.py:63
 msgid "inventory"
 msgstr ""
 
-#: models.py:67 views.py:72
+#: models.py:68 views.py:73
 msgid "date"
-msgstr ""
+msgstr "ημερομηνία"
 
-#: models.py:71 urls.py:30
+#: models.py:72 urls.py:31
 msgid "inventory transaction"
 msgstr ""
 
-#: urls.py:26
+#: urls.py:27
 msgid "transactions"
-msgstr ""
+msgstr "Συναλλαγές"
 
-#: urls.py:27 urls.py:28 urls.py:29
+#: urls.py:28 urls.py:29 urls.py:30
 msgid "transaction"
-msgstr ""
+msgstr "Συναλλαγή"
 
-#: views.py:46
+#: views.py:47
 #, python-format
 msgid "current balances for inventory: %s"
 msgstr ""
 
-#: views.py:49
+#: views.py:50
 msgid "quantity"
-msgstr ""
-
-#: views.py:73
-msgid "item"
-msgstr ""
+msgstr "Ποσότητα"
 
 #: views.py:74
-msgid "qty"
-msgstr ""
+msgid "item"
+msgstr "προϊόν"
 
-#: views.py:88
+#: views.py:75
+msgid "qty"
+msgstr "Ποσ."
+
+#: views.py:89
 msgid "The inventory transaction was created successfully."
 msgstr ""
 
-#: views.py:97
+#: views.py:98
 msgid "add new transaction"
 msgstr ""
 
-#: views.py:131
+#: views.py:132
 msgid "purchase orders from supplier"
 msgstr ""
 
@@ -142,16 +141,19 @@ msgstr ""
 
 #: templates/report-items_per_person.html:22
 msgid "DESCRIPTION"
-msgstr ""
+msgstr "ΠΕΡΙΓΡΑΦΗ"
 
 #: templates/report-items_per_person.html:23
+#, fuzzy
 msgid "LOCATION"
-msgstr ""
+msgstr "τοποθεσία"
 
 #: templates/report-items_per_person.html:24
 msgid "ASSIGNED TO"
 msgstr ""
 
 #: templates/report-items_per_person.html:25
+#, fuzzy
 msgid "NOTES"
-msgstr ""
+msgstr "σημειώσεις"
+

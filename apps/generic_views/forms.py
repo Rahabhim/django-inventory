@@ -108,3 +108,15 @@ class FilterForm(forms.Form):
         for list_filter in list_filters:
             label = list_filter.get('title', list_filter['name'])
             self.fields[list_filter['name']] = forms.ModelChoiceField(queryset=list_filter['queryset'], label=label[0].upper() + label[1:], required=False)
+
+class InlineModelForm(forms.ModelForm):
+    def as_table(self):
+        "Returns this form rendered as HTML <td>s"
+        return self._html_output(
+            normal_row = u'<td %(html_class_attr)s>%(label)s%(errors)s%(field)s%(help_text)s</td>',
+            error_row = u'%s',
+            row_ender = u'</td>',
+            help_text_html = u'<br /><span class="helptext">%s</span>',
+            errors_on_separate_row = False)
+
+#eof

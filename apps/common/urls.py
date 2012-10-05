@@ -6,7 +6,7 @@ from generic_views.views import generic_delete, \
                                 generic_detail, generic_list
 
 from models import Location, Supplier
-from forms import LocationForm_view, SupplierForm
+from forms import LocationForm, LocationForm_view, SupplierForm
 
 urlpatterns = patterns('common.views',
     url(r'^about/$', direct_to_template, { 'template' : 'about.html'}, 'about'),
@@ -16,7 +16,7 @@ urlpatterns += patterns('',
     url(r'^set_language/$', 'django.views.i18n.set_language', name='set_language'),
 
     url(r'^location/list/$', generic_list, dict({'queryset':Location.objects.all()}, extra_context=dict(title =_(u'locations'))), 'location_list'),
-    url(r'^location/create/$', create_object, {'model':Location, 'template_name':'generic_form.html'}, 'location_create'),
+    url(r'^location/create/$', create_object, {'model':Location, 'form_class': LocationForm, 'template_name':'generic_form.html'}, 'location_create'),
     url(r'^location/(?P<object_id>\d+)/update/$', update_object, {'model':Location, 'template_name':'generic_form.html'}, 'location_update'),
     url(r'^location/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Location}, post_delete_redirect="location_list", extra_context=dict(object_name=_(u'locations'))), 'location_delete'),
     url(r'^location/(?P<object_id>\d+)/$', generic_detail, dict(form_class=LocationForm_view, queryset=Location.objects.all()), 'location_view'),

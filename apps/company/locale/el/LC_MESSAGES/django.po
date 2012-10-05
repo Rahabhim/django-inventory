@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 17:03+0300\n"
+"POT-Creation-Date: 2012-09-30 22:38+0300\n"
 "PO-Revision-Date: 2012-09-21 16:53+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,42 +17,76 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:8
+#: __init__.py:9
 msgid "company"
 msgstr "Διοικητική δομή"
 
-#: __init__.py:9
+#: __init__.py:10
 msgid "departments"
 msgstr "Μονάδες"
 
-#: __init__.py:10
+#: __init__.py:11 urls.py:16
 msgid "department types"
 msgstr "Τύποι Μονάδων"
 
-#: models.py:18
+#: models.py:14
+msgid ""
+"These will automatically be setup as locations, for each new department of "
+"this type"
+msgstr ""
+
+#: models.py:35
 msgid "Department Type"
 msgstr "Τύπος Μονάδας"
 
-#: models.py:19
+#: models.py:36
 msgid "Merged in"
 msgstr "Συγχωνεύτηκε σε"
 
-#: models.py:20
+#: models.py:38
 msgid "Nom Name"
 msgstr "Νομαρχία"
 
-#: models.py:21
+#: models.py:39
 msgid "Note"
 msgstr "Σημείωση"
 
-#: models.py:22
+#: models.py:40
 msgid "OTA Name"
 msgstr "ΟΤΑ"
 
-#: models.py:23
+#: models.py:41
 msgid "Parent Department"
 msgstr ""
 
-#: models.py:24
+#: models.py:42
 msgid "Section"
 msgstr "Τμήμα"
+
+#: models.py:43
+msgid "Serviced By"
+msgstr ""
+
+#: templates/department_list.html:6
+#, python-format
+msgid "List of %(title)s"
+msgstr ""
+
+#: templates/department_list.html:23
+#, python-format
+msgid "List of %(title)s (%(start)s - %(end)s out of %(total)s)"
+msgstr ""
+
+#: templates/department_list.html:25
+#, python-format
+msgid "List of %(title)s (%(total)s)"
+msgstr ""
+
+#: templates/department_list.html:38
+msgid "Identifier"
+msgstr ""
+
+#: templates/department_list.html:69
+#, python-format
+msgid "There are no %(title)s"
+msgstr ""

@@ -115,6 +115,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django.contrib.staticfiles',
     'pagination',
     'photologue',
     'photos',
@@ -130,18 +131,32 @@ INSTALLED_APPS = [
     'movements',
     'main',
     'web_theme',
+    'ajax_select',
     AUTH_BACKEND,
 ]
 
 
 TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.core.context_processors.auth",
+    "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     'django.core.context_processors.request',
+    'django.core.context_processors.static',
     "grappelli.context_processors.admin_template_path",
     'django.contrib.messages.context_processors.messages',
 ]
+
+AJAX_LOOKUP_CHANNELS = {
+    'department': ('company.lookups', 'DepartmentLookup'),
+    'location': ('company.lookups', 'LocationLookup'), # searches by department!
+    'product': ('products.lookups', 'ItemTemplateLookup'),
+    'manufacturer': ('products.lookups', 'ManufacturerLookup'),
+    'item': ('assets.lookups', 'ItemLookup'),
+    
+    # 'supplier':
+}
+AJAX_SELECT_BOOTSTRAP = False
+AJAX_SELECT_INLINES = False
 
 #===== Configuration options ===============
 #--------- Grappelli ----------------
@@ -177,6 +192,12 @@ LOGIN_EXEMPT_URLS = (
 PAGINATION_DEFAULT_PAGINATION = 10
 #--------- Web theme app ---------------
 WEB_THEME = 'warehouse'
+
+STATIC_URL= '/static/'
+STATIC_ROOT = './staticfiles/'
+# USE_ETAGS = False
+USE_THOUSAND_SEPARATOR = True
+
 #======== End of configuration options =======
 try:
     from settings_local import *
@@ -195,19 +216,22 @@ if DEVELOPMENT:
         import rosetta
         INSTALLED_APPS.append('rosetta')
     except ImportError:
-        print "rosetta is not installed"
+        pass
+        #print "rosetta is not installed"
 
     try:
         import django_extensions
         INSTALLED_APPS.append('django_extensions')
     except ImportError:
-        print "django_extensions is not installed"
+        pass
+        #print "django_extensions is not installed"
 
     try:
         import debug_toolbar
         #INSTALLED_APPS.append('debug_toolbar')
     except ImportError:
-        print "debug_toolbar is not installed"
+        pass
+        #print "debug_toolbar is not installed"
 
     TEMPLATE_CONTEXT_PROCESSORS.append("django.core.context_processors.debug")
 

@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 
 from dynamic_search.api import register
 from common.models import Location, Partner, Supplier
@@ -53,7 +54,12 @@ class Item(models.Model):
     serial_number = models.CharField(verbose_name=_(u"serial number"), max_length=48, null=True, blank=True)
     location = models.ForeignKey(Location, verbose_name=_(u"current location"), null=True, blank=True)
     active = models.BooleanField(default=True)
+    qty = models.PositiveIntegerField(default=1, verbose_name=_('quantity'),
+            help_text=_("Allows a batch of identical items to be referenced as one entity") )
+    is_bundled = models.BooleanField(default=False,
+            help_text=_("If true, this item is bundled in a group, and therefore has no location"))
 
+    # δυναμικό πεδίο: attributes και τύπος
     class Meta:
         ordering = ['property_number']
         verbose_name = _(u"asset")
@@ -71,6 +77,16 @@ class Item(models.Model):
     def states(self):
         return [State.objects.get(pk=id) for id in self.itemstate_set.all().values_list('state', flat=True)]
 
+    def clean(self):
+        if self.is_bundled and self.location:
+            raise ValidationError("A bundled item cannot be assigned to any location itself")
+        return super(Item, self).clean()
+
+    def get_specs(self):
+        if not self.active:
+            return "spec1"
+        else:
+            return "spec2"
 
 class ItemGroup(Item):
     """ A group (or bundle) is itself an item, behaves like one in the long run
@@ -91,8 +107,6 @@ class ItemGroup(Item):
     @models.permalink
     def get_absolute_url(self):
         return ('group_view', [str(self.id)])
-
-
 
 
 register(ItemState, _(u'states'), ['state__name'])

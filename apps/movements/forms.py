@@ -1,12 +1,11 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-
-from generic_views.forms import DetailForm
-
+from generic_views.forms import DetailForm, InlineModelForm
+from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from inventory.models import Inventory
 
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
-                   PurchaseOrderItem
+                   PurchaseOrderItem, Movement
 
 #TODO: Remove auto_add_now from models and implement custom save method to include date
 
@@ -40,6 +39,13 @@ class PurchaseOrderForm_view(DetailForm):
 
 
 class PurchaseOrderItemForm(forms.ModelForm):
+    item_template = AutoCompleteSelectField('product')
+    class Meta:
+        model = PurchaseOrderItem
+        exclude = ('active',)
+
+class PurchaseOrderItemForm_inline(InlineModelForm):
+    item_template = AutoCompleteSelectField('product')
     class Meta:
         model = PurchaseOrderItem
         exclude = ('active',)
@@ -66,23 +72,33 @@ class PurchaseOrderItemTransferForm(forms.Form):
     inventory = forms.ModelChoiceField(queryset = Inventory.objects.all(), help_text = _(u'Inventory that will receive the item.'))
     qty = forms.CharField(label=_(u'Qty received'))
 
-# todo: baseclass, maybe?
-class DestroyItemsForm(forms.Form):
+class _baseMovementForm(forms.ModelForm):
+    location_src = AutoCompleteSelectField('location', required=False)
+    location_dest = AutoCompleteSelectField('location', required=False)
+    items = AutoCompleteSelectMultipleField('item',)
+
+class DestroyItemsForm(_baseMovementForm):
     """This form is registered whenever defective equipment is trashed (destroyed)
-    
     """
-    name = forms.CharField(label=_("Protocol ID"),)
-    
-    
-class LoseItemsForm(forms.Form):
+    class Meta:
+        model = Movement
+        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
+
+class LoseItemsForm(_baseMovementForm):
     """ This form is completed whenever equipment is missing (lost/stolen)
     """
-    name = forms.CharField(label=_("Protocol ID"),)
+    class Meta:
+        model = Movement
+        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
 
-class MoveItemsForm(forms.Form):
+class MoveItemsForm(_baseMovementForm):
     """ Registered whenever equipment moves from one inventory to another
     """
-    name = forms.CharField(label=_("Protocol ID"),)
+
+    class Meta:
+        model = Movement
+        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'location_dest',
+                'items')
 
 class RepairGroupForm(forms.Form):
     """Used to mark repairs (changes within group) of Items

@@ -9,7 +9,6 @@ class ItemTemplateForm(forms.ModelForm):
         model = ItemTemplate
         exclude = ('photos', 'supplies', 'suppliers')
 
-
 class ItemTemplateForm_view(DetailForm):
     class Meta:
         model = ItemTemplate
