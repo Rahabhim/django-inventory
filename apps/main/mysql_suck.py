@@ -518,7 +518,7 @@ class Ref_Column(simple_column):
         if rid:
             mref = self._id_column()._map_data.get(rid, None)
             if mref is None:
-                raise ValueError("Don't have id #%d in table %s for %s" % (rid, self.otable, self._name))
+                raise ValueError("Don't have id #%s in table %s for %s" % (rid, self.otable, self._name))
             out[self._oname] = self._omanager().get(pk=mref)
         else:
             out[self._oname] = None
