@@ -136,6 +136,21 @@ class KtimColumn(One2ManyColumn):
                 print "Skipping bundle with %d items: %s" %( len(out['_bundle']), r[0])
                 out['__skip_push'] = True
 
+class Ref_Column_dafuq(M.Ref_Column):
+    def postProcess(self, qres, out, context=None):
+        assert self._myqindex is not None
+
+        rid = qres[self._myqindex]
+        if rid:
+            mref = self._id_column()._map_data.get(rid, None)
+            if mref is None:
+                mref = self._id_column()._map_data.get(rid.upper(), None)
+            if mref is None:
+                raise ValueError("Don't have id #%s in table %s for %s" % (rid, self.otable, self._name))
+            out[self._oname] = self._omanager().get(pk=mref)
+        else:
+            out[self._oname] = None
+
 class Command(BaseCommand):
     args = '<table ...>'
     help = 'Imports table from old Ktim. database'
@@ -195,7 +210,7 @@ class Command(BaseCommand):
         # KT_02_BUNDLES
         bundles = M.Table_SuckToo('KT_02_BUNDLES', 'assets.Item', myc)
         bundles += M.IDmap_Column('BUNDLE_ID')
-        bundles += M.Ref_Column("GLUC", '_department', 'MONADES', 'company.Department')
+        bundles += Ref_Column_dafuq("GLUC", '_department', 'MONADES', 'company.Department')
         bundles += M.Str_Column_Default("ONT_DESCR", '_location_name', '-')
         bundles += M.Str_Column("FUNC_STATUS", '_func_status')
         bundles_ktim = KtimColumn('BUNDLE_ID', '_bundle', 'KT_07_KTHMATOLOGIO', 'BUNDLE_ID')
