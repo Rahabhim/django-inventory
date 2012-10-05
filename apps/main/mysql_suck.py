@@ -677,5 +677,72 @@ class ParentName_Column(simple_column):
             out[self._parent_column] = rec
         except ObjectDoesNotExist, e:
             pass
+
+class Table_SuckToo(Table_Suck):
+    """Variant of Table_Suck that can work on multiple SQL tables
     
+        This one has a modified version of run(), able to handle more than one
+        relations in the source SQL.
+    """
+    def __init__(self, *args, **kwargs):
+        super(Table_SuckToo,self).__init__(*args, **kwargs)
+        self._result_handlers = []
+
+    def run(self, limit=None, dry=False, **kwargs):
+        log = self._connector()._log
+        log.debug("Running for table %s, limit=%s", self.table_name, limit)
+        nfound = 0
+        mycr = self._connector().cursor()
+        while (not limit) or (nfound < limit):
+
+            nlimit = BATCH_LIMIT
+            if limit and (limit - nfound < nlimit):
+                nlimit = limit - nfound
+            qry, args = self.getQuery(nlimit)
+            log.debug("Query: %s ; %r", qry, args)
+            mycr.execute(qry, args)
+            if not mycr.rowcount:
+                log.debug("No more results from %s", self.table_name)
+                break
+            log.debug("Got %d results", mycr.rowcount)
+            results = [] # may hold quite some data
+            self._offset += mycr.rowcount
+            for rline in mycr:
+                if limit and nfound >= limit:
+                    break
+
+                out = {}
+                try:
+                    for c in self._columns:
+                        c.postProcess(rline, out)
+                except DiscardRow:
+                    # go on with next rline
+                    continue
+                log.debug("Out data: %r", out)
+                nfound += 1
+                results.append((rline, out))
+            
+            # we have to finish with previous query in `mycr` before
+            # the result handlers can re-use the cursor. So, it's out
+            # of the first loop
+            if not dry:
+                for rh in self._result_handlers:
+                    rh(mycr, results)
+
+                for rline, out in results:
+                    if out.get('__skip_push', False):
+                        continue
+                    r = self._push_data(out)
+                    for ah in self._after_handlers:
+                        ah(r, rline)
+
+            if self._connector()._fstore_path:
+                # Just in case, we save at regular intervals
+                self._connector()._save()
+
+        log.debug("Finished table %s, %d results", self.table_name, nfound)
+        self._stats['found'] = nfound
+
+        return True
+
 #eof
