@@ -101,9 +101,6 @@ class ItemGroup(Item):
         verbose_name = _(u"item group")
         verbose_name_plural = _(u"item groups")
 
-    def __unicode__(self):
-        return self.name
-
     @models.permalink
     def get_absolute_url(self):
         return ('group_view', [str(self.id)])
