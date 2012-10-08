@@ -730,9 +730,15 @@ class Table_SuckToo(Table_Suck):
                     rh(mycr, results)
 
                 for rline, out in results:
+                    r = False
                     if out.get('__skip_push', False):
+                        if not isinstance(out['__skip_push'], bool):
+                            r = out['__skip_push']
+                        # but don't push anyway
+                    else:
+                        r = self._push_data(out)
+                    if r is False:
                         continue
-                    r = self._push_data(out)
                     for ah in self._after_handlers:
                         ah(r, rline)
 
