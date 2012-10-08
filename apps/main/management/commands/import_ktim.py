@@ -247,7 +247,7 @@ class Command(BaseCommand):
         product_cat = M.Table_Suck('KT_03_EIDOS', 'products.ItemCategory', myc)
         product_cat += M.IDmap_Column('EIDOS_ID')
         product_cat += M.Str_Column('EIDOS_DESCR', 'name')
-        # product_cat += M.Bool_Column('IS_BUNDLE', 'is_bundle')
+        product_cat += M.Bool_Column('IS_BUNDLE', 'is_bundle')
         #product_cat += M.Static_Ref_Column(dict(parent_id=False),
         #        'parent_id', 'products.ItemCategory') TODO
 
