@@ -141,10 +141,22 @@ class KtimColumn(One2ManyColumn):
                     pass # TODO
             else:
                 # Real Bundle, have to put multiple items
-                item = itemgroup_obj(item_template=self._get_bundle_product(), 
-                        location=out['location'])
+                bundles = out.pop('_bundle')
+                for bdl in bundles:
+                    if bdl['item_template'].category.is_bundle:
+                        item = itemgroup_obj(item_template=bdl['item_template'], is_bundled=False,
+                                serial_number=bdl['serial_number'], location=out['location'])
+                        if bdl['property_number']:
+                            item['property_number'] = str(bdl['property_number'])
+                        bdl['_skip'] = True
+                        break
+                else:
+                    item = itemgroup_obj(item_template=self._get_bundle_product(), 
+                            location=out['location'])
                 item.save()
-                for bdl in out.pop('_bundle'):
+                for bdl in bundles:
+                    if bdl.get('_skip', False):
+                        continue
                     iout = dict(serial_number=bdl['serial_number'], is_bundled=True,
                             item_template=bdl['item_template'])
                     if bdl['property_number']:
