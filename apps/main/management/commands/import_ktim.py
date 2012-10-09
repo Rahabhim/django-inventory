@@ -120,11 +120,7 @@ class KtimColumn(One2ManyColumn):
             loc_dict = dict(department=out.pop('_department'), \
                             name=out.pop('_location_name'), usage='internal')
             
-            try:
-                location = loc_obj.objects.get(**loc_dict)
-            except ObjectDoesNotExist:
-                location = loc_obj(**loc_dict)
-                location.save()
+            location, c = loc_obj.objects.get_or_create(**loc_dict)
             out['location'] = location
             
             if not out['_bundle']:
