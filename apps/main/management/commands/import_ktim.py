@@ -131,8 +131,7 @@ class KtimColumn(One2ManyColumn):
                 out.update(serial_number=bdl['serial_number'], item_template=bdl['item_template'])
                 if bdl['property_number']:
                     out['property_number'] = str(bdl['property_number'])
-                # TODO _agreed_price, _ar_timol, _seira_timol, _used, _date_invoiced, _date_received
-                # _warranty, _contract
+                self._do_po(bdl)
                 if func_status:
                     pass # TODO
             else:
@@ -145,6 +144,7 @@ class KtimColumn(One2ManyColumn):
                         if bdl['property_number']:
                             item['property_number'] = str(bdl['property_number'])
                         bdl['_skip'] = True
+                        self._do_po(bdl)
                         break
                 else:
                     item = itemgroup_obj(item_template=self._get_bundle_product(), 
@@ -158,7 +158,36 @@ class KtimColumn(One2ManyColumn):
                     if bdl['property_number']:
                         iout['property_number'] = str(bdl['property_number'])
                     item.items.create(**iout)
+                    self._do_po(bdl)
                 out['__skip_push'] = item
+
+    def _do_po(self, bdl):
+        # TODO _used, _warranty
+        purchase_order_obj = M._get_model('movements.PurchaseOrder')
+        supplier_obj = M._get_model('common.Supplier')
+
+        if bdl['_contract'].delegate:
+            supplier, c = supplier_obj.objects.\
+                    get_or_create(partner_ptr=bdl['_contract'].delegate)
+        else:
+            supplier, c = supplier_obj.objects.get_or_create(name=u'Άγνωστος')
+        assert supplier.name, supplier.id
+        if bdl['_seira_timol'] and bdl['_ar_timol']:
+            user_id = '%s %s' % (bdl['_seira_timol'], bdl['_ar_timol'])
+        else:
+            user_id = 'ct-%d' % bdl['_contract'].id
+        po, c = purchase_order_obj.objects.get_or_create( \
+                    issue_date=bdl['_date_invoiced'] or bdl['_date_received'] \
+                            or bdl['_contract'].date_start,
+                    supplier=supplier, user_id=user_id, )
+        # note, we wrap agreed_price in str(), because we want to round the
+        # float.
+        poit, c = po.items.get_or_create(item_template=bdl['item_template'],
+                    agreed_price=str(bdl['_agreed_price']))
+        if not c:
+            poit.qty = poit.qty + 1
+        poit.received_qty = poit.received_qty + 1
+        poit.save()
 
 class Ref_Column_dafuq(M.Ref_Column):
     def postProcess(self, qres, out, context=None):
