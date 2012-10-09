@@ -106,6 +106,12 @@ class PurchaseOrder(models.Model):
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.id)])
 
+    def fmt_active(self):
+        if self.active:
+            return _(u'Open')
+        else:
+            return _(u'Closed')
+
 
 class PurchaseOrderItemStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
@@ -142,6 +148,18 @@ class PurchaseOrderItem(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.purchase_order.id)])
+
+    def fmt_agreed_price(self):
+        if self.agreed_price:
+            return '€ %s' % self.agreed_price
+        else:
+            return ''
+
+    def fmt_active(self):
+        if self.active:
+            return _(u'Open')
+        else:
+            return _(u'Closed')
 
 class Movement(models.Model):
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))

@@ -43,7 +43,7 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/state/(?P<object_id>\d+)/update/$', update_object, {'model':PurchaseOrderStatus, 'template_name':'generic_form.html'}, 'purchase_order_state_update'),
     url(r'^purchase/order/state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderStatus}, post_delete_redirect="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), 'purchase_order_state_delete'),
 
-    url(r'^purchase/order/list/$', generic_list, dict({'queryset':PurchaseOrder.objects.all(), 'list_filters':[purchase_order_state_filter]}, extra_context=dict(title =_(u'purchase orders'), extra_columns = [{'name':_(u'Active'), 'attribute':lambda x: _(u'Open') if x.active == True else _(u'Closed')}])), 'purchase_order_list'),
+    url(r'^purchase/order/list/$', generic_list, dict({'queryset':PurchaseOrder.objects.all(), 'list_filters':[purchase_order_state_filter]}, extra_context=dict(title =_(u'purchase orders'), extra_columns = [{'name':_(u'Active'), 'attribute': 'fmt_active'}])), 'purchase_order_list'),
     url(r'^purchase/order/(?P<object_id>\d+)/$', 'purchase_order_view', (), 'purchase_order_view'),
     url(r'^purchase/order/create/$', GenericCreateView.as_view(form_class=PurchaseOrderForm, 
             inline_fields={'items': PurchaseOrderItemForm_inline},

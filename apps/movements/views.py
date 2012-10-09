@@ -222,9 +222,9 @@ def purchase_order_view(request, object_id):
             'extra_columns':[
                 {'name':_(u'qty'), 'attribute':'qty'},
                 {'name':_(u'qty received'), 'attribute':'received_qty'},
-                {'name':_(u'agreed price'), 'attribute':lambda x: '$%s' % x.agreed_price if x.agreed_price else '-'},
-                {'name':_(u'status'), 'attribute':'status'},
-                {'name':_(u'active'), 'attribute':lambda x: _(u'Open') if x.active == True else _(u'Closed')}
+                {'name':_(u'agreed price'), 'attribute': 'fmt_agreed_price'},
+                {'name':_(u'status'), 'attribute': 'status'},
+                {'name':_(u'active'), 'attribute': 'fmt_active'}
             ],
             #'extra_columns':[{'name':'type', 'attribute':lambda x:x._meta.verbose_name[0].upper() + x._meta.verbose_name[1:]}],
         }]
