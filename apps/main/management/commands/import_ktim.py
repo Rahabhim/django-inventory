@@ -270,7 +270,7 @@ class Command(BaseCommand):
         # KT_08_KATASKEYASTHS
         katask = M.Table_Suck('KT_08_KATASKEYASTHS', 'products.Manufacturer', myc)
         katask += M.IDmap_Column('KATASK_ID')
-        katask += M.Str_Column('KATASK_DESCR', 'name')
+        katask += M.ParentName_Column('KATASK_DESCR', 'name', 'partner_ptr')
         katask += M.Str_Column('WEB', 'web')
 
         # KT_11_MANAGERS
