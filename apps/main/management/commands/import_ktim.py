@@ -327,9 +327,8 @@ class Command(BaseCommand):
         ypoerga += M.Str_Column('XRONOS_APOKATASTASHS', 'repair_time')
         ypoerga += M.Str_Column('FILE_NAME', 'kp_filename')
         #ypoerga += M.Str_Column('TYPE_OF_ANATHETOUSA', 'kp_type')
-        # FIXME: they should set "partner" from the subclass'es partner
-        ypoerga += M.Ref_NN_Column('ANATH_FOREAS_ID', 'partner', 'KT_11_MANAGERS')
-        ypoerga += M.Ref_NN_Column('ANATH_OTHER_ID', 'partner', 'KT_16_ANATH_ARXH')
+        ypoerga += M.Ref_NN_Column('ANATH_FOREAS_ID', 'department', 'KT_11_MANAGERS')
+        ypoerga += M.Ref_NN_Column('ANATH_OTHER_ID', 'department', 'KT_16_ANATH_ARXH')
         ypoerga += M.Ref_Column('ERGO_ID', 'parent', 'KT_18_ERGA')
         ypoerga += M.Ref_Column('ANADOXOS_ID', 'delegate', 'KT_01_ANADOXOI')
 
