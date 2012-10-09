@@ -573,11 +573,8 @@ class Static_Ref_Column(sColumn):
     def postProcess(self, qres, out, context=None):
         if self._value is None:
             proxy = _get_model(self._model)
-            res = proxy.objects.filter(**self._expr)
-            if res:
-                self._value = res[0].id
-            else:
-                self._value = False
+            res, c = proxy.objects.get_or_create(**self._expr)
+            self._value = res.id
         out[self._oname] = self._value
 
 class Static_Ref2M_Column(Static_Ref_Column):
