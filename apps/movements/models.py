@@ -89,7 +89,7 @@ class PurchaseOrder(models.Model):
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
     purchase_request = models.ForeignKey(PurchaseRequest, null=True, blank=True, verbose_name=_(u'purchase request'))
     supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'))
-    issue_date = models.DateField(auto_now_add=True, verbose_name=_(u'issue date'))
+    issue_date = models.DateField(verbose_name=_(u'issue date'))
     required_date = models.DateField(null=True, blank=True, verbose_name=_(u'date required'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
@@ -135,7 +135,7 @@ class PurchaseOrderItem(models.Model):
     agreed_price = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name=_(u'agreed price'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     status = models.ForeignKey(PurchaseOrderItemStatus, null=True, blank=True, verbose_name=_(u'status'))
-    qty = models.PositiveIntegerField(verbose_name=_(u'quantity'))
+    qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
     received_qty = models.PositiveIntegerField(default=0, null=True, blank=True, verbose_name=_(u'received'))
 
     class Meta:
