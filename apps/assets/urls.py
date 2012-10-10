@@ -52,6 +52,9 @@ urlpatterns = patterns('assets.views',
     url(r'^state/create/$', create_object, {'model':State, 'template_name':'generic_form.html', 'extra_context':{'title':'create asset state'}}, 'state_create'),
     url(r'^state/(?P<object_id>\d+)/update/$', update_object, {'model':State, 'template_name':'generic_form.html'}, 'state_update'),
     url(r'^state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':State}, post_delete_redirect="state_list", extra_context=dict(object_name=_(u'states'))), 'state_delete'),
+    
+    url(r'^location/(?P<loc_id>\d+)/assets/$', 'location_assets', (), 'location_assets'),
+    url(r'^department/(?P<dept_id>\d+)/assets/$', 'department_assets', (), 'department_assets'),
 )
 
 

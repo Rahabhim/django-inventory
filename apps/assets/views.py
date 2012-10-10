@@ -13,6 +13,8 @@ from django.core.urlresolvers import reverse
 from generic_views.views import generic_assign_remove #, generic_list
 
 from common import location_filter
+from common.models import Location
+from company.models import Department
 
 from models import Item, ItemGroup, State, ItemState
 
@@ -103,6 +105,29 @@ def group_assign_remove_item(request, object_id):
         right_list_title=_(u"Assigned assets"),
         item_name=_(u"assets"),
         list_filter=[location_filter])
+
+
+def location_assets(request, loc_id):
+    location = get_object_or_404(Location, pk=loc_id)
+    return object_list(
+        request,
+        queryset = Item.objects.filter(location=location),
+        template_name = "generic_list.html",
+        extra_context=dict(
+            title = _(u"location assets: %s") % location,
+        ),
+    )
+
+def department_assets(request, dept_id):
+    department = get_object_or_404(Department, pk=dept_id)
+    return object_list(
+        request,
+        queryset = Item.objects.filter(location__department=department),
+        template_name = "generic_list.html",
+        extra_context=dict(
+            title = _(u"department assets: %s") % department,
+        ),
+    )
 
 
 #eof
