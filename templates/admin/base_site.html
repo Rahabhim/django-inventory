@@ -14,7 +14,7 @@
 
 {% block extrahead2 %}
 <script type="text/javascript">
- jQuery = django.jQuery;
+	(function($){jQuery = $.noConflict(true);})(django.jQuery);
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/ajax_select.js"></script>
 {% endblock %}
