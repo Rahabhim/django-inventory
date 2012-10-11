@@ -51,6 +51,11 @@ class PurchaseRequest(models.Model):
     def get_absolute_url(self):
         return ('purchase_request_view', [str(self.id)])
 
+    def fmt_active(self):
+        if self.active:
+            return _(u'Open')
+        else:
+            return _(u'Closed')
 
 class PurchaseRequestItem(models.Model):
     purchase_request = models.ForeignKey(PurchaseRequest, verbose_name=_(u'purchase request'))
