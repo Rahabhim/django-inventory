@@ -3,6 +3,7 @@ import urllib
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import messages
 from django.db.models import Q
+from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -40,6 +41,15 @@ def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs
             kwargs['queryset'] = kwargs['queryset'].filter(*filters)
 
         kwargs['extra_context']['filter_form'] = filter_form
+    
+    if 'queryset' in kwargs and not isinstance(kwargs['queryset'], QuerySet) \
+                and callable(kwargs['queryset']):
+        queryset_fn = kwargs.pop('queryset')
+        # since we evaluate the queryset here, this breaks the caching and
+        # allows different result set per request (as desired).
+        # Otherwise, the queryset would be queried once in db and reused
+        # across requests, with same rows.
+        kwargs['queryset'] = queryset_fn(request)
         
     return object_list(request,  template_name='generic_list.html', *args, **kwargs)
 
