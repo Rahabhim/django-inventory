@@ -48,7 +48,7 @@ class Contract(models.Model):
     service_response = models.CharField(max_length=64, blank=True, null=True)
     repair_time = models.CharField(max_length=64, blank=True, null=True)
     kp_filename = models.CharField(max_length=128, blank=True, null=True)
-    partner = models.ForeignKey(Partner, blank=True, null=True) # Either department or manager
+    department = models.ForeignKey('company.Department', blank=True, null=True) # Either department or manager
     parent = models.ForeignKey(Project)
     delegate = models.ForeignKey(Delegate, related_name='delegate', blank=True, null=True)
 

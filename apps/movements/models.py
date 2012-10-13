@@ -51,6 +51,11 @@ class PurchaseRequest(models.Model):
     def get_absolute_url(self):
         return ('purchase_request_view', [str(self.id)])
 
+    def fmt_active(self):
+        if self.active:
+            return _(u'Open')
+        else:
+            return _(u'Closed')
 
 class PurchaseRequestItem(models.Model):
     purchase_request = models.ForeignKey(PurchaseRequest, verbose_name=_(u'purchase request'))
@@ -89,7 +94,7 @@ class PurchaseOrder(models.Model):
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
     purchase_request = models.ForeignKey(PurchaseRequest, null=True, blank=True, verbose_name=_(u'purchase request'))
     supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'))
-    issue_date = models.DateField(auto_now_add=True, verbose_name=_(u'issue date'))
+    issue_date = models.DateField(verbose_name=_(u'issue date'))
     required_date = models.DateField(null=True, blank=True, verbose_name=_(u'date required'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
@@ -105,6 +110,12 @@ class PurchaseOrder(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.id)])
+
+    def fmt_active(self):
+        if self.active:
+            return _(u'Open')
+        else:
+            return _(u'Closed')
 
 
 class PurchaseOrderItemStatus(models.Model):
@@ -129,7 +140,7 @@ class PurchaseOrderItem(models.Model):
     agreed_price = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name=_(u'agreed price'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     status = models.ForeignKey(PurchaseOrderItemStatus, null=True, blank=True, verbose_name=_(u'status'))
-    qty = models.PositiveIntegerField(verbose_name=_(u'quantity'))
+    qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
     received_qty = models.PositiveIntegerField(default=0, null=True, blank=True, verbose_name=_(u'received'))
 
     class Meta:
@@ -142,6 +153,18 @@ class PurchaseOrderItem(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.purchase_order.id)])
+
+    def fmt_agreed_price(self):
+        if self.agreed_price:
+            return '€ %s' % self.agreed_price
+        else:
+            return ''
+
+    def fmt_active(self):
+        if self.active:
+            return _(u'Open')
+        else:
+            return _(u'Closed')
 
 class Movement(models.Model):
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))

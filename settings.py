@@ -24,6 +24,7 @@ MANAGERS = ADMINS
 
 AUTH_BACKEND = 'auth_passwd'
 AUTH_URLS = AUTH_BACKEND + '.urls'
+AUTH_PROFILE_MODULE = AUTH_BACKEND+'.UserProfile'
 
 DATABASES = {
     'default': {

@@ -18,13 +18,14 @@ location_list = {'text':_('locations'), 'view':'location_list', 'famfam':'map'}
 location_create = {'text':_(u'create new location'), 'view':'location_create', 'famfam':'map_add'}
 location_update = {'text':_(u'edit'), 'view':'location_update', 'args':'object.id', 'famfam':'map_edit'}
 location_delete = {'text':_(u'delete'), 'view':'location_delete', 'args':'object.id', 'famfam':'map_delete'}
+location_assets = {'text':_(u'assets'), 'view':'location_assets', 'args':'object.id', 'famfam':'computer'}
 
 
 register_links(['supplier_list', 'supplier_create', 'supplier_update', 'supplier_view', 'supplier_delete', 'supplier_assign_itemtemplates'], [supplier_create], menu_name='sidebar')
 register_links(Supplier, [supplier_update, supplier_delete, supplier_assign_itemtemplate, supplier_purchase_orders])
 
 register_links(['location_list', 'location_create', 'location_update', 'location_delete'], [location_create], menu_name='sidebar')
-register_links(Location, [location_update, location_delete])
+register_links(Location, [location_update, location_delete, location_assets])
 
 location_filter = {'name':'location', 'title':_(u'location'), 'queryset':Location.objects.all(), 'destination':'location'}
 

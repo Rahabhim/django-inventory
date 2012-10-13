@@ -75,7 +75,7 @@ class Manufacturer(Partner):
         return self.name
 
 class ItemTemplate(models.Model):
-    description = models.CharField(verbose_name=_(u"description"), max_length=64)
+    description = models.CharField(verbose_name=_(u"description"), max_length=256)
     category = models.ForeignKey(ItemCategory,)
     approved = models.BooleanField(default=False)
     brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True, 

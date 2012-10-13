@@ -7,6 +7,9 @@ from django.core.exceptions import ValidationError
 from dynamic_search.api import register
 from common.models import Location, Partner, Supplier
 from products.models import ItemTemplate, AbstractAttribute
+import logging
+
+logger = logging.getLogger(__name__)
 
 class State(models.Model):
     name = models.CharField(max_length=32, verbose_name=_(u'name'))
@@ -47,7 +50,21 @@ class ItemState(models.Model):
     def get_absolute_url(self):
         return ('state_update', [str(self.id)])
 
+class ItemManager(models.Manager):
+    def by_request(self, request):
+        try:
+            if request.user.is_superuser:
+                return self.all()
+            profile = request.user.get_profile()
+            if profile.department:
+                return self.filter(location__department=profile.department)
+                        #| models.Q(location__isnull=True))
+        except Exception:
+            logger.exception("cannot filter:")
+        return self.none()
+
 class Item(models.Model):
+    objects = ItemManager()
     item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u"item template"))
     property_number = models.CharField(verbose_name=_(u"asset number"), max_length=48)
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
@@ -93,6 +110,7 @@ class ItemGroup(Item):
     
         But the contained items must have their location set to empty.
     """
+    objects = ItemManager()
     items = models.ManyToManyField(Item, blank=True, null=True, verbose_name=_(u"item"), 
             related_name='items+')
 

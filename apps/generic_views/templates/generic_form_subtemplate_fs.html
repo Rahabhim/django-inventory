@@ -66,7 +66,7 @@
         {% endif %}
     
         {% for formset in formsets %}
-        <fieldset class="formset">
+        <fieldset class="formset" id="{{ formset.prefix }}-group">
         <legend>{{formset.title }}</legend>
                 {{ formset.management_form }}
                 <table class="table">

@@ -8,9 +8,12 @@ from generic_views.views import generic_delete, \
                                 generic_detail, generic_list
 
 from forms import DepartmentForm_view, DepartmentTypeForm_view
+from company import department_type_filter
 
 urlpatterns = patterns('',
-    url(r'^object/list/company_department$', ListView.as_view( model=Department, template_name="department_list.html" ),
+    url(r'^object/list/company_department$', generic_list, dict( queryset=Department.objects.all(), \
+            extra_context=dict(),
+            list_filters=[department_type_filter]),
             name='company_department_list'),
     url(r'^object/list/company_department_type$', generic_list, 
             dict({'queryset':DepartmentType.objects.all()}, extra_context=dict(title =_(u'department types'))),

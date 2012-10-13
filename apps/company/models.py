@@ -24,7 +24,7 @@ class DepartmentType(models.Model):
         return ('company_department_type_view', [str(self.id)])
 
 class Department(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=128)
     code = models.CharField(max_length=32)
     code2 = models.CharField(max_length=32, blank=True, null=True)
     deprecate = models.BooleanField()

@@ -21,7 +21,7 @@ urlpatterns = patterns('assets.views',
     url(r'^asset/create/$', create_object, {'form_class':ItemForm, 'template_name':'generic_form.html'}, 'item_create'),
     url(r'^asset/(?P<object_id>\d+)/update/$', update_object, {'form_class':ItemForm, 'template_name':'generic_form.html', 'extra_context':{'object_name':_(u'asset')}}, 'item_update'),
     url(r'^asset/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Item}, post_delete_redirect="item_list", extra_context=dict(object_name=_(u'asset'))), 'item_delete'),
-    url(r'^asset/list/$', generic_list, dict(queryset=Item.objects.all(),
+    url(r'^asset/list/$', generic_list, dict(queryset=Item.objects.by_request,
                 list_filters=[location_filter, state_filter],
                 extra_context=dict(title=_(u'assets'), 
                     extra_columns=[ dict(attribute='get_specs', name=_(u'specifications')),
@@ -39,7 +39,7 @@ urlpatterns = patterns('assets.views',
     url(r'^asset/(?P<object_id>\d+)/state/(?P<state_id>\d+)/set/$', 'item_setstate', (), 'item_setstate'),
     url(r'^asset/(?P<object_id>\d+)/state/(?P<state_id>\d+)/unset$', 'item_remove_state', (), 'item_remove_state'),
 
-    url(r'^group/list/$', generic_list, dict(queryset=ItemGroup.objects.all(), 
+    url(r'^group/list/$', generic_list, dict(queryset=ItemGroup.objects.by_request,
                 extra_context=dict(title=_(u'item groups'),
                         extra_columns=[{'name': _('Location'), 'attribute': 'location'}]),), 'group_list'),
     # my items?
@@ -52,6 +52,9 @@ urlpatterns = patterns('assets.views',
     url(r'^state/create/$', create_object, {'model':State, 'template_name':'generic_form.html', 'extra_context':{'title':'create asset state'}}, 'state_create'),
     url(r'^state/(?P<object_id>\d+)/update/$', update_object, {'model':State, 'template_name':'generic_form.html'}, 'state_update'),
     url(r'^state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':State}, post_delete_redirect="state_list", extra_context=dict(object_name=_(u'states'))), 'state_delete'),
+    
+    url(r'^location/(?P<loc_id>\d+)/assets/$', 'location_assets', (), 'location_assets'),
+    url(r'^department/(?P<dept_id>\d+)/assets/$', 'department_assets', (), 'department_assets'),
 )
 
 
