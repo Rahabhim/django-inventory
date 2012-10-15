@@ -1,6 +1,9 @@
 from django import forms 
+from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
+from django.utils.html import conditional_escape
 from django.utils.translation import ugettext as _
+from django.utils.encoding import force_unicode
 from django.db import models
 import types
 
@@ -50,11 +53,46 @@ class DetailSelectMultiple(forms.widgets.SelectMultiple):
                     except AttributeError:
                         output += u'<li>%s</li>' % (string)
                 else:
-                 output += u'<li>%s</li>' % string
+                    output += u'<li>%s</li>' % string
         else:
             output += u'<li>%s</li>' % _(u"None")
         return mark_safe(output + u'</ul>\n')
 
+class DetailForeignWidget(forms.widgets.Widget):
+    """A widget displaying read-only values of ForeignKey and ManyToMany fields
+    
+        Unlike Select* widgets, it won't query the db for choices
+    """
+    def __init__(self, queryset=None, *args, **kwargs):
+        super(DetailForeignWidget, self).__init__(*args, **kwargs)
+        self.queryset=queryset
+
+    def render(self, name, value, attrs=None, choices=()):
+        final_attrs = self.build_attrs(attrs, name=name)
+        objs = None
+        if value and hasattr(value, '__iter__'):
+            objs = self.queryset.filter(pk__in=value)
+        elif value:
+            objs = [self.queryset.get(pk=value),]
+        else:
+            objs = []
+        
+        ret = ''
+        for obj in objs:
+            href = None
+            if ret:
+                ret += '<br/>'
+            try:
+                href = obj.get_absolute_url()
+                ret += '<a href="%s">' % href
+            except AttributeError:
+                href = None
+    
+            ret += conditional_escape(unicode(obj))
+            if href is not None:
+                ret += '</a>'
+
+        return mark_safe(u'<span%s>%s</span>' % (flatatt(final_attrs), ret))
 
 class DetailForm(forms.ModelForm):
     def __init__(self, extra_fields=None, *args, **kwargs):
@@ -68,16 +106,8 @@ class DetailForm(forms.ModelForm):
                     self.fields[extra_field['field']]=forms.ModelMultipleChoiceField(queryset=result, label=label)
 
         for field_name, field in self.fields.items():
-            if isinstance(field.widget, forms.widgets.SelectMultiple):
-                self.fields[field_name].widget = DetailSelectMultiple(
-                    choices=field.widget.choices,
-                    attrs=field.widget.attrs,
-                    queryset=getattr(field, 'queryset', None),
-                )
-                self.fields[field_name].help_text=''
-            elif isinstance(field.widget, forms.widgets.Select):
-                self.fields[field_name].widget = DetailSelectMultiple(
-                    choices=field.widget.choices,
+            if isinstance(field.widget, (forms.widgets.Select, forms.widgets.SelectMultiple)):
+                self.fields[field_name].widget = DetailForeignWidget(
                     attrs=field.widget.attrs,
                     queryset=getattr(field, 'queryset', None),
                 )
