@@ -5,8 +5,13 @@ from django.utils.html import conditional_escape
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 from django.db import models
+# from ajax_select.fields import AutoCompleteSelectField # FIXME
+
 import types
 
+# FIXME once the "ajax_select" is merged in, remove this class:
+class AutoCompleteSelectField(object):
+    pass
 
 def return_attrib(obj, attrib, arguments=None):
     try:
@@ -135,8 +140,14 @@ class FilterForm(forms.Form):
     def __init__(self, list_filters, *args, **kwargs):
         super(FilterForm, self).__init__(*args, **kwargs)
         for list_filter in list_filters:
-            label = list_filter.get('title', list_filter['name'])
-            self.fields[list_filter['name']] = forms.ModelChoiceField(queryset=list_filter['queryset'], label=label[0].upper() + label[1:], required=False)
+            label = list_filter.get('title', list_filter['name']).title()
+            if 'lookup_channel' in list_filter:
+                self.fields[list_filter['name']] = AutoCompleteSelectField( \
+                        list_filter['lookup_channel'], label=label, required=False)
+            else:
+                self.fields[list_filter['name']] = forms.ModelChoiceField( \
+                        queryset=list_filter['queryset'], label=label, \
+                        required=False)
 
 class InlineModelForm(forms.ModelForm):
     def as_table(self):
