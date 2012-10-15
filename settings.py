@@ -246,10 +246,10 @@ if DEVELOPMENT:
 
     try:
         import debug_toolbar
-        #INSTALLED_APPS.append('debug_toolbar')
+        INSTALLED_APPS.append('debug_toolbar')
     except ImportError:
         pass
-        #print "debug_toolbar is not installed"
+        print "debug_toolbar is not installed"
 
     TEMPLATE_CONTEXT_PROCESSORS.append("django.core.context_processors.debug")
 
