@@ -88,10 +88,25 @@ class _baseMovementForm(forms.ModelForm):
 class DestroyItemsForm(_baseMovementForm):
     """This form is registered whenever defective equipment is trashed (destroyed)
     """
-    location_src = AutoCompleteSelectField('location', required=False)
+    location_src = AutoCompleteSelectField('location', required=True)
     class Meta:
         model = Movement
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
+        
+    def _init_by_user(self, user):
+        dept = user.get_profile().department
+        if dept:
+            locations = Location.objects.filter(department=dept)[:1]
+            if locations:
+                self.initial['location_src'] = locations[0].id
+
+    def _pre_save_by_user(self, user):
+        print "instance:", self.instance.__dict__
+        if not self.instance.create_user_id:
+            self.instance.create_user = user
+        if not self.instance.location_dest_id:
+            name = unicode( _(u'Destroy'))
+            self.instance.location_dest= Location.objects.get_or_create(name=name, department=None)[0]
 
 class LoseItemsForm(_baseMovementForm):
     """ This form is completed whenever equipment is missing (lost/stolen)

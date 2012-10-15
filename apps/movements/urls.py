@@ -67,9 +67,8 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/item/(?P<object_id>\d+)/close/$', 'purchase_order_item_close', (), 'purchase_order_item_close'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/transfer/$', 'purchase_order_item_transfer', (), 'purchase_order_item_transfer'),
 
-    url(r'^objects/items/destroy/$', create_object, {'form_class': DestroyItemsForm, 
-            'template_name': 'generic_form.html',
-            'extra_context': dict(object_name=_(u'Items destruction'))}, 'destroy_items'),
+    url(r'^objects/items/destroy/$', GenericCreateView.as_view(form_class=DestroyItemsForm, 
+            extra_context={'title':_(u'Items destruction')}), name='destroy_items'),
 
     url(r'^objects/items/lose/$', create_object, {'form_class': LoseItemsForm, 
             'template_name': 'generic_form.html',
