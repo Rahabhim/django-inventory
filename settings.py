@@ -20,6 +20,23 @@ ADMINS = (
         # ('Your Name', 'your_email@domain.com'),
 )
 
+LOGGING = {
+    'version': 1,
+    
+    'handlers': {
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console',],
+            'level': 'DEBUG',
+            }
+        }
+    }
+
 MANAGERS = ADMINS
 
 AUTH_BACKEND = 'auth_passwd'
