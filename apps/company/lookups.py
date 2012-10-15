@@ -7,7 +7,7 @@ from django.db import models
 from django.http import HttpResponseForbidden
 from models import Department
 from common.models import Location
-from ajax_select import LookupChannel
+from common.api import LookupChannel
 
 def _departments_by_q(q):
     """Select departments that match search `q`
