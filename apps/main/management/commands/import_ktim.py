@@ -143,7 +143,7 @@ class KtimColumn(One2ManyColumn):
                         item = itemgroup_obj(item_template=bdl['item_template'], is_bundled=False,
                                 serial_number=bdl['serial_number'], location=out['location'])
                         if bdl['property_number']:
-                            item['property_number'] = str(bdl['property_number'])
+                            item.property_number = str(bdl['property_number'])
                         bdl['_skip'] = True
                         self._do_po(bdl)
                         break
