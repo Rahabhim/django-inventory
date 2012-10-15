@@ -5,10 +5,11 @@ from django import forms
 from generic_views.forms import DetailForm
 
 from models import Item, ItemGroup
-
-
+from ajax_select.fields import AutoCompleteSelectField
 
 class ItemForm(forms.ModelForm):
+    item_template = AutoCompleteSelectField('product')
+    location = AutoCompleteSelectField('location', required=False)
     class Meta:
         model = Item
         exclude = ('photos', 'active')
@@ -19,7 +20,7 @@ class ItemForm_view(DetailForm):
         model = Item
         exclude = ('photos', 'active')
 
-class ItemGroupForm(forms.ModelForm):
+class ItemGroupForm(ItemForm):
     class Meta:
         model = ItemGroup
         exclude = ('items',)
