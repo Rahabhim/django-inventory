@@ -224,7 +224,7 @@ class Command(BaseCommand):
         return parser
 
     def handle(self, *args, **options):
-        logging.basicConfig(level=logging.DEBUG)
+        # logging.basicConfig(level=logging.DEBUG)
         self._init_tables()
 
         for d in settings.defaults:
