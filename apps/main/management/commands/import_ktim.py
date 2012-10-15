@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 import optparse
 import logging
+import datetime
 from main import mysql_suck as M
 
 def custom_options(parser):
@@ -178,7 +179,9 @@ class KtimColumn(One2ManyColumn):
             user_id = 'ct-%d' % bdl['_contract'].id
         po, c = purchase_order_obj.objects.get_or_create( \
                     issue_date=bdl['_date_invoiced'] or bdl['_date_received'] \
-                            or bdl['_contract'].date_start,
+                            or bdl['_contract'].date_start \
+                            or bdl['_contract'].end_date \
+                            or datetime.date(year=1990,month=1,day=1),
                     supplier=supplier, user_id=user_id, )
         # note, we wrap agreed_price in str(), because we want to round the
         # float.
