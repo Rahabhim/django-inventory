@@ -218,6 +218,17 @@ class _InlineViewMixin(object):
             context.update(self.extra_context)
         return context
 
+    def get_form(self, form_class):
+        form = super(_InlineViewMixin, self).get_form(form_class)
+        if hasattr(form, '_init_by_user'):
+            form._init_by_user(self.request.user)
+        return form
+
+    def form_valid(self, form):
+        if hasattr(form, '_pre_save_by_user'):
+            form._pre_save_by_user(self.request.user)
+        return super(_InlineViewMixin, self).form_valid(form)
+
 class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
 
