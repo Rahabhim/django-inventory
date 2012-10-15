@@ -73,13 +73,12 @@ class PurchaseOrderItemTransferForm(forms.Form):
     qty = forms.CharField(label=_(u'Qty received'))
 
 class _baseMovementForm(forms.ModelForm):
-    location_src = AutoCompleteSelectField('location', required=False)
-    location_dest = AutoCompleteSelectField('location', required=False)
     items = AutoCompleteSelectMultipleField('item',)
 
 class DestroyItemsForm(_baseMovementForm):
     """This form is registered whenever defective equipment is trashed (destroyed)
     """
+    location_src = AutoCompleteSelectField('location', required=False)
     class Meta:
         model = Movement
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
@@ -87,6 +86,7 @@ class DestroyItemsForm(_baseMovementForm):
 class LoseItemsForm(_baseMovementForm):
     """ This form is completed whenever equipment is missing (lost/stolen)
     """
+    location_src = AutoCompleteSelectField('location', required=False)
     class Meta:
         model = Movement
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
@@ -94,6 +94,8 @@ class LoseItemsForm(_baseMovementForm):
 class MoveItemsForm(_baseMovementForm):
     """ Registered whenever equipment moves from one inventory to another
     """
+    location_src = AutoCompleteSelectField('location', required=False)
+    location_dest = AutoCompleteSelectField('location', required=False)
 
     class Meta:
         model = Movement
