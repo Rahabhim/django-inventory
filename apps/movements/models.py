@@ -189,6 +189,10 @@ class Movement(models.Model):
         """
         pass
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('movement_view', [str(self.id)])
+        
 #class MovementLine(models.Model):
     #movement = models.ForeignKey(Movement)
     #asset = models.ForeignKey(Item)

@@ -3,7 +3,8 @@ from django.conf.urls.defaults import patterns, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
-from generic_views.views import generic_delete, generic_list, GenericCreateView, GenericUpdateView
+from generic_views.views import generic_delete, generic_list, generic_detail, \
+                GenericCreateView, GenericUpdateView
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
@@ -16,7 +17,8 @@ from movements import purchase_request_state_filter, \
 
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
         PurchaseOrderItemForm_inline, \
-        DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm
+        DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
+        MovementForm, MovementForm_view
 import views
 
 urlpatterns = patterns('movements.views',
@@ -76,7 +78,19 @@ urlpatterns = patterns('movements.views',
     url(r'^objects/items/move/$', create_object, {'form_class': MoveItemsForm, 
             'template_name': 'generic_form.html',
             'extra_context': dict(object_name=_(u'Items movement'))}, 'move_items'),
-    
+
+    url(r'^objects/moves/list/$', generic_list,
+            dict(queryset=Movement.objects.all(),
+                extra_context=dict(title =_(u'movements'))),
+            'movements_list'),
+    url(r'^objects/moves/(?P<object_id>\d+)/$', generic_detail,
+            dict(form_class=MovementForm_view,
+                queryset=Movement.objects.all(),
+                extra_context={'object_name':_(u'movement'), },
+                #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
+                ),
+            'movement_view'),
+
 )
 
 
