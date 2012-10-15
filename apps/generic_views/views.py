@@ -35,13 +35,11 @@ def add_filter(request, list_filters):
     return filter_form, filters
 
 def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs):
+    filters = None
     if list_filters:
         filter_form, filters = add_filter(request, list_filters)
-        if filters:
-            kwargs['queryset'] = kwargs['queryset'].filter(*filters)
-
         kwargs['extra_context']['filter_form'] = filter_form
-    
+
     if 'queryset' in kwargs and not isinstance(kwargs['queryset'], QuerySet) \
                 and callable(kwargs['queryset']):
         queryset_fn = kwargs.pop('queryset')
@@ -50,6 +48,9 @@ def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs
         # Otherwise, the queryset would be queried once in db and reused
         # across requests, with same rows.
         kwargs['queryset'] = queryset_fn(request)
+
+    if filters:
+        kwargs['queryset'] = kwargs['queryset'].filter(*filters)
 
     return object_list(request,  template_name='generic_list.html', *args, **kwargs)
 

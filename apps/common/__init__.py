@@ -27,7 +27,8 @@ register_links(Supplier, [supplier_update, supplier_delete, supplier_assign_item
 register_links(['location_list', 'location_create', 'location_update', 'location_delete'], [location_create], menu_name='sidebar')
 register_links(Location, [location_update, location_delete, location_assets])
 
-location_filter = {'name':'location', 'title':_(u'location'), 'queryset':Location.objects.all(), 'destination':'location'}
+location_filter = {'name':'location', 'title':_(u'location'), \
+                'lookup_channel': 'location', 'destination':'location'}
 
 
 #eof
