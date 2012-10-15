@@ -168,8 +168,13 @@ class KtimColumn(One2ManyColumn):
         supplier_obj = M._get_model('common.Supplier')
 
         if bdl['_contract'].delegate:
+            # unfortunately, get_or_create() will write to the parent Partner
+            # object all the columns again!
+            delegate = bdl['_contract'].delegate
+            defaults = dict(name=delegate.name, active=delegate.active, \
+                            web=delegate.web, comment=delegate.comment)
             supplier, c = supplier_obj.objects.\
-                    get_or_create(partner_ptr=bdl['_contract'].delegate)
+                    get_or_create(partner_ptr=delegate, defaults=defaults)
         else:
             supplier, c = supplier_obj.objects.get_or_create(name=u'Άγνωστος')
         assert supplier.name, supplier.id
