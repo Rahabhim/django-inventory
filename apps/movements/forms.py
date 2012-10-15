@@ -85,14 +85,9 @@ class MovementForm_view(DetailForm):
 class _baseMovementForm(forms.ModelForm):
     items = AutoCompleteSelectMultipleField('item',)
 
-class DestroyItemsForm(_baseMovementForm):
-    """This form is registered whenever defective equipment is trashed (destroyed)
-    """
+class _outboundMovementForm(_baseMovementForm):
     location_src = AutoCompleteSelectField('location', required=True)
-    class Meta:
-        model = Movement
-        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
-        
+
     def _init_by_user(self, user):
         dept = user.get_profile().department
         if dept:
@@ -100,32 +95,55 @@ class DestroyItemsForm(_baseMovementForm):
             if locations:
                 self.initial['location_src'] = locations[0].id
 
+class DestroyItemsForm(_outboundMovementForm):
+    """This form is registered whenever defective equipment is trashed (destroyed)
+    """
+    class Meta:
+        model = Movement
+        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
+
     def _pre_save_by_user(self, user):
-        print "instance:", self.instance.__dict__
         if not self.instance.create_user_id:
             self.instance.create_user = user
         if not self.instance.location_dest_id:
             name = unicode( _(u'Destroy'))
             self.instance.location_dest= Location.objects.get_or_create(name=name, department=None)[0]
 
-class LoseItemsForm(_baseMovementForm):
+class LoseItemsForm(_outboundMovementForm):
     """ This form is completed whenever equipment is missing (lost/stolen)
     """
-    location_src = AutoCompleteSelectField('location', required=False)
     class Meta:
         model = Movement
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
 
+    def _pre_save_by_user(self, user):
+        if not self.instance.create_user_id:
+            self.instance.create_user = user
+        if not self.instance.location_dest_id:
+            name = unicode( _(u'Lost'))
+            self.instance.location_dest= Location.objects.get_or_create(name=name, department=None)[0]
+
 class MoveItemsForm(_baseMovementForm):
     """ Registered whenever equipment moves from one inventory to another
     """
-    location_src = AutoCompleteSelectField('location', required=False)
-    location_dest = AutoCompleteSelectField('location', required=False)
+    location_src = AutoCompleteSelectField('location', required=True)
+    location_dest = AutoCompleteSelectField('location', required=True)
 
     class Meta:
         model = Movement
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'location_dest',
                 'items')
+
+    def _init_by_user(self, user):
+        dept = user.get_profile().department
+        if dept:
+            locations = Location.objects.filter(department=dept)[:1]
+            if locations:
+                self.initial['location_dest'] = locations[0].id
+
+    def _pre_save_by_user(self, user):
+        if not self.instance.create_user_id:
+            self.instance.create_user = user
 
 class RepairGroupForm(forms.Form):
     """Used to mark repairs (changes within group) of Items

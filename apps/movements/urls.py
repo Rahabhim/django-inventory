@@ -70,13 +70,11 @@ urlpatterns = patterns('movements.views',
     url(r'^objects/items/destroy/$', GenericCreateView.as_view(form_class=DestroyItemsForm, 
             extra_context={'title':_(u'Items destruction')}), name='destroy_items'),
 
-    url(r'^objects/items/lose/$', create_object, {'form_class': LoseItemsForm, 
-            'template_name': 'generic_form.html',
-            'extra_context': dict(object_name=_(u'Lost Items'))} , 'lose_items'),
+    url(r'^objects/items/lose/$', GenericCreateView.as_view(form_class=LoseItemsForm, 
+            extra_context={'title':_(u'Lost Items')}), name='lose_items'),
 
-    url(r'^objects/items/move/$', create_object, {'form_class': MoveItemsForm, 
-            'template_name': 'generic_form.html',
-            'extra_context': dict(object_name=_(u'Items movement'))}, 'move_items'),
+    url(r'^objects/items/move/$', GenericCreateView.as_view(form_class=MoveItemsForm, 
+            extra_context={'title':_(u'Items movement')}), name='move_items'),
 
     url(r'^objects/moves/list/$', generic_list,
             dict(queryset=Movement.objects.all(),
