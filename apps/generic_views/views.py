@@ -190,6 +190,8 @@ class _InlineViewMixin(object):
             self._inline_formsets[inlf].title = relo[0].model._meta.verbose_name_plural
 
     def form_valid(self, form):
+        if hasattr(form, '_pre_save_by_user'):
+            form._pre_save_by_user(self.request.user)
         context = self.get_context_data()
         if all([ inline_form.is_valid() for inline_form in context['formsets']]):
             self.object = form.save()
@@ -223,11 +225,6 @@ class _InlineViewMixin(object):
         if hasattr(form, '_init_by_user'):
             form._init_by_user(self.request.user)
         return form
-
-    def form_valid(self, form):
-        if hasattr(form, '_pre_save_by_user'):
-            form._pre_save_by_user(self.request.user)
-        return super(_InlineViewMixin, self).form_valid(form)
 
 class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
