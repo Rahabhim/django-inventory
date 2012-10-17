@@ -5,10 +5,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.contrib.auth.models import User, UserManager
-from django.core.urlresolvers import reverse
-
-from photos.models import GenericPhoto
+#from django.contrib.auth.models import User, UserManager
+#from django.core.urlresolvers import reverse
 
 from dynamic_search.api import register
 from common import models as common
@@ -62,7 +60,7 @@ class InventoryCPQty(models.Model):
 
 
 class InventoryTransaction(models.Model):
-    inventory = models.ForeignKey(Inventory)
+    inventory = models.ForeignKey(Inventory, related_name='transactions')
     supply = models.ForeignKey(products.ItemTemplate)
     quantity = models.IntegerField()
     date = models.DateField(default=datetime.date.today(), verbose_name=_(u"date"))
