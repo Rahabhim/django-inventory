@@ -286,7 +286,7 @@ def purchase_order_open(request, object_id):
     context_instance=RequestContext(request))
 
 
-def purchase_order_transfer(request, object_id):
+def purchase_order_receive(request, object_id):
     """
     Take a purchase order and call transfer_to_inventory to transfer and
     close all of its item and close the purchase order too
