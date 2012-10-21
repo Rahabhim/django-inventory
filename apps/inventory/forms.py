@@ -5,8 +5,7 @@ from ajax_select.fields import AutoCompleteSelectField
 
 from generic_views.forms import DetailForm, InlineModelForm
 
-from models import Log, \
-                   InventoryTransaction, Inventory
+from models import Log, Inventory, InventoryItem
 
 
 class LogForm(forms.ModelForm):
@@ -24,17 +23,16 @@ class InventoryForm_view(DetailForm):
     class Meta:
         model = Inventory
 
-class InventoryTransactionForm(forms.ModelForm):
-    supply = AutoCompleteSelectField('product')
+class InventoryItemForm(forms.ModelForm):
+    asset = AutoCompleteSelectField('item')
     class Meta:
-        model = InventoryTransaction
+        model = InventoryItem
 
 
-class InventoryTransactionForm_inline(InlineModelForm):
-    supply = AutoCompleteSelectField('product')
+class InventoryItemForm_inline(InlineModelForm):
+    asset = AutoCompleteSelectField('item')
     class Meta:
-        model = InventoryTransaction
+        model = InventoryItem
         exclude = ('notes',)
-
 
 #eof
