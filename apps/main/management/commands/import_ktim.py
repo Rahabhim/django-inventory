@@ -105,6 +105,15 @@ class One2ManyColumn(M.sColumn):
 
 class KtimColumn(One2ManyColumn):
     _bundle_product = None
+    
+    def init(self, table):
+        super(KtimColumn, self).init(table)
+        loc_obj = M._get_model('common.Location').objects
+        self._procurement_location, c = loc_obj.get_or_create(usage='procurement', 
+                department__isnull=True, defaults=dict(name=u'Προμήθειες'))
+        self._bundle_location, c = loc_obj.get_or_create(usage='production', 
+                department__isnull=True, defaults=dict(name=u'Συνθέσεις'))
+        
     def _get_bundle_product(self):
         if not self._bundle_product:
             product_obj = M._get_model('products.ItemTemplate')
@@ -114,6 +123,7 @@ class KtimColumn(One2ManyColumn):
     def _result_handler(self, cr, results):
         super(KtimColumn, self)._result_handler(cr, results)
         loc_obj = M._get_model('common.Location')
+        item_obj = M._get_model('assets.Item')
         itemgroup_obj = M._get_model('assets.ItemGroup')
         
         # and, now, use the values!
@@ -121,23 +131,28 @@ class KtimColumn(One2ManyColumn):
             loc_dict = dict(department=out.pop('_department'), \
                             name=out.pop('_location_name'), usage='internal')
             
-            location, c = loc_obj.objects.get_or_create(**loc_dict)
-            out['location'] = location
+            end_location, c = loc_obj.objects.get_or_create(**loc_dict)
+            out['location'] = self._procurement_location
             
             if not out['_bundle']:
                 raise ValueError("Bundle id %s has no ktim entries!" % r['BUNDLE_ID'])
-            elif len(out['_bundle']) == 1:
-                bdl = out.pop('_bundle')[0]
-                func_status = out.pop('_func_status')
+
+            bundles = out.pop('_bundle')
+            func_status = out.pop('_func_status')
+            if len(bundles) == 1:
+                # the simple case, just one item in "bundle"
+                # Import it to an asset.Item, generate PurchaseOrder and Movement
+                bdl = bundles[0]
+                
                 out.update(serial_number=bdl['serial_number'], item_template=bdl['item_template'])
                 if bdl['property_number']:
                     out['property_number'] = str(bdl['property_number'])
-                self._do_po(bdl)
-                if func_status:
-                    pass # TODO
+                item = item_obj(**out)
+                item.save()
+                out['__skip_push'] = item
+                self._do_po(bdl, item, end_location)
             else:
                 # Real Bundle, have to put multiple items
-                bundles = out.pop('_bundle')
                 for bdl in bundles:
                     if bdl['item_template'].category.is_bundle:
                         item = itemgroup_obj(item_template=bdl['item_template'], is_bundled=False,
@@ -145,24 +160,49 @@ class KtimColumn(One2ManyColumn):
                         if bdl['property_number']:
                             item.property_number = str(bdl['property_number'])
                         bdl['_skip'] = True
-                        self._do_po(bdl)
                         break
                 else:
-                    item = itemgroup_obj(item_template=self._get_bundle_product(), 
+                    self._log.warning("Did not found bundle head, creating a standard one.")
+                    # by now, 'bdl' will hold the last item in 'bundles', arbitrarily
+                    # reset a few fields and use that as if it were the container.
+                    bdl['item_template']=self._get_bundle_product()
+                    bdl['agreed_price'] = None
+                    item = itemgroup_obj(item_template=bdl['item_template'], 
                             location=out['location'])
                 item.save()
+                out['__skip_push'] = item
+                # get a Purchase Order, even if the item is the dummy one we
+                # have just invented!
+                self._do_po(bdl, item, end_location)
+                
                 for bdl in bundles:
                     if bdl.get('_skip', False):
+                        # it's the one we just converted to itemgroup, above
                         continue
                     iout = dict(serial_number=bdl['serial_number'], is_bundled=True,
                             item_template=bdl['item_template'])
                     if bdl['property_number']:
                         iout['property_number'] = str(bdl['property_number'])
-                    item.items.create(**iout)
-                    self._do_po(bdl)
-                out['__skip_push'] = item
+                    nitem = item.items.create(**iout)
+                    self._do_po(bdl, nitem, self._bundle_location)
 
-    def _do_po(self, bdl):
+    def _get_po_date(self, bdl):
+        """ Guess the date for some bundle
+        
+            We must find one, even if it's not the one at the right field.
+        """
+        return bdl['_date_invoiced'] or bdl['_date_received'] \
+                    or bdl['_contract'].date_start \
+                    or bdl['_contract'].end_date \
+                    or datetime.date(year=1990,month=1,day=1)
+
+    def _do_po(self, bdl, item, end_location):
+        """ Generate PurchaseOrder and Movement for some bundle+item+location
+        
+            @param bdl a dict of bundle information, from source results
+            @param item an Item, just created, to be used in the Movement
+            @param end_location the Location this Item will end up at
+        """
         # TODO _used, _warranty
         purchase_order_obj = M._get_model('movements.PurchaseOrder')
         supplier_obj = M._get_model('common.Supplier')
@@ -183,10 +223,7 @@ class KtimColumn(One2ManyColumn):
         else:
             user_id = 'ct-%d' % bdl['_contract'].id
         po, c = purchase_order_obj.objects.get_or_create( \
-                    issue_date=bdl['_date_invoiced'] or bdl['_date_received'] \
-                            or bdl['_contract'].date_start \
-                            or bdl['_contract'].end_date \
-                            or datetime.date(year=1990,month=1,day=1),
+                    issue_date=self._get_po_date(bdl),
                     supplier=supplier, user_id=user_id, )
         # note, we wrap agreed_price in str(), because we want to round the
         # float.
@@ -196,6 +233,21 @@ class KtimColumn(One2ManyColumn):
             poit.qty = poit.qty + 1
         poit.received_qty = poit.received_qty + 1
         poit.save()
+        
+        # now, generate a Movement
+        # We use 'filter' rather than get_or_create, because there might be
+        # multiple ones
+        moves = po.movements.filter(location_dest=end_location)
+        if moves.exists():
+            move = moves[0]
+        else:
+            move = po.movements.create(location_src=self._procurement_location,
+                        location_dest=end_location, name=user_id, 
+                        date_act=bdl['_date_received'] or po.issue_date,
+                        create_user_id=1, # TODO
+                        origin=user_id)
+        move.items.add(item)
+        return po
 
 class Ref_Column_dafuq(M.Ref_Column):
     def postProcess(self, qres, out, context=None):
