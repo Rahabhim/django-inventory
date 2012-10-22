@@ -78,7 +78,7 @@ register_links(['purchase_order_item_create'], [purchase_order_create], menu_nam
 
 
 register_menu([
-    {'text':_('purchases'), 'view':'purchase_request_list', 'links':[
+    {'text':_('purchases'), 'view':'purchase_order_list', 'links':[
         purchase_order_list, purchase_request_list,
     ],'famfam':'basket','position':4}])
 
