@@ -192,7 +192,7 @@ class PurchaseOrder(models.Model):
         for iid, two in cunmoved.items():
             qty, serials = two
             for s in serials:
-                new_item = Item.objects.get_or_create(item_template_id=iid, serial_number=s)
+                new_item, c = Item.objects.get_or_create(item_template_id=iid, serial_number=s)
                 new_move.items.add(new_item) #FIXME
             for i in range(qty):
                 # create individual items of item.qty=1
