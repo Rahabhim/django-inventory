@@ -5,13 +5,12 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.contrib.auth.models import User, UserManager
-from django.core.urlresolvers import reverse
-
-from photos.models import GenericPhoto
+#from django.contrib.auth.models import User, UserManager
+#from django.core.urlresolvers import reverse
 
 from dynamic_search.api import register
 from common import models as common
+from assets import models as assets
 from products import models as products
 
 class Log(models.Model):
@@ -34,8 +33,15 @@ class Log(models.Model):
 
 
 class Inventory(models.Model):
+    """ An inventory is a periodical check of all items at some locations
+    """
     name = models.CharField(max_length=32, verbose_name=_(u'name'))
     location = models.ForeignKey(common.Location, verbose_name=_(u'location'))
+    date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))
+    date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
+    create_user = models.ForeignKey('auth.User', related_name='+')
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
+
 
     class Meta:
         verbose_name = _(u'inventory')
@@ -49,37 +55,27 @@ class Inventory(models.Model):
         return self.name
 
 
-class InventoryCheckPoint(models.Model):
-    inventory = models.ForeignKey(Inventory)
-    datetime = models.DateTimeField(default=datetime.datetime.now())	
-    supplies = models.ManyToManyField(products.ItemTemplate, null=True, blank=True, through='InventoryCPQty')
-
-
-class InventoryCPQty(models.Model):
-    supply = models.ForeignKey(products.ItemTemplate)
-    check_point = models.ForeignKey(InventoryCheckPoint)
+class InventoryItem(models.Model):
+    inventory = models.ForeignKey(Inventory, related_name='items')
+    asset = models.ForeignKey(assets.Item)
     quantity = models.IntegerField()
-
-
-class InventoryTransaction(models.Model):
-    inventory = models.ForeignKey(Inventory)
-    supply = models.ForeignKey(products.ItemTemplate)
-    quantity = models.IntegerField()
-    date = models.DateField(default=datetime.date.today(), verbose_name=_(u"date"))
+    state = models.ForeignKey(assets.State, verbose_name=_(u"item state"), 
+            null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
 
     class Meta:
-        verbose_name = _(u'inventory transaction')
-        verbose_name_plural = _(u'inventory transactions')
-        ordering = ['-date', '-id']
+        verbose_name = _(u'inventory item')
+        verbose_name_plural = _(u'inventory items')
+        ordering = ['id',]
 
     @models.permalink
     def get_absolute_url(self):
-        return ('inventory_transaction_view', [str(self.id)])
+        return ('inventory_item_view', [str(self.id)])
 
     def __unicode__(self):
-        return "%s: '%s' qty=%s @ %s" % (self.inventory, self.supply, self.quantity, self.date)
-
+        return "%s: '%s' qty=%s @ %s" % (self.inventory, self.asset, self.quantity, self.date)
 
 
 register(Inventory, _(u'inventory'), ['name', 'location__name'])
+
+#eof

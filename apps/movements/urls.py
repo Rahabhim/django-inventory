@@ -3,7 +3,8 @@ from django.conf.urls.defaults import patterns, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
-from generic_views.views import generic_delete, generic_list, GenericCreateView, GenericUpdateView
+from generic_views.views import generic_delete, generic_list, generic_detail, \
+                GenericCreateView, GenericUpdateView
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
@@ -16,7 +17,8 @@ from movements import purchase_request_state_filter, \
 
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
         PurchaseOrderItemForm_inline, \
-        DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm
+        DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
+        MovementForm, MovementForm_view
 import views
 
 urlpatterns = patterns('movements.views',
@@ -53,7 +55,7 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/(?P<object_id>\d+)/close/$', 'purchase_order_close', (), 'purchase_order_close'),
     url(r'^purchase/order/(?P<object_id>\d+)/open/$', 'purchase_order_open', (), 'purchase_order_open'),
     url(r'^purchase/order/(?P<object_id>\d+)/add_item/$', 'purchase_order_item_create', (), 'purchase_order_item_create'),
-    url(r'^purchase/order/(?P<object_id>\d+)/transfer/$', 'purchase_order_transfer', (), 'purchase_order_transfer'),
+    url(r'^purchase/order/(?P<object_id>\d+)/receive/$', 'purchase_order_receive', (), 'purchase_order_receive'),
 
     url(r'^purchase/order/item/state/list/$', generic_list, dict({'queryset':PurchaseOrderItemStatus.objects.all()}, extra_context=dict(title =_(u'purchase order item states'))), 'purchase_order_item_state_list'),
     url(r'^purchase/order/item/state/create/$', create_object,{'model':PurchaseOrderItemStatus, 'template_name':'generic_form.html', 'extra_context':{'title':_(u'create new purchase order item state')}}, 'purchase_order_item_state_create'),
@@ -63,20 +65,28 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/item/(?P<object_id>\d+)/update/$', update_object, {'form_class':PurchaseOrderItemForm, 'template_name':'generic_form.html'}, 'purchase_order_item_update'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderItem}, post_delete_redirect="purchase_order_list", extra_context=dict(object_name=_(u'purchase order item'))), 'purchase_order_item_delete'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/close/$', 'purchase_order_item_close', (), 'purchase_order_item_close'),
-    url(r'^purchase/order/item/(?P<object_id>\d+)/transfer/$', 'purchase_order_item_transfer', (), 'purchase_order_item_transfer'),
 
-    url(r'^objects/items/destroy/$', create_object, {'form_class': DestroyItemsForm, 
-            'template_name': 'generic_form.html',
-            'extra_context': dict(object_name=_(u'Items destruction'))}, 'destroy_items'),
+    url(r'^objects/items/destroy/$', GenericCreateView.as_view(form_class=DestroyItemsForm, 
+            extra_context={'title':_(u'Items destruction')}), name='destroy_items'),
 
-    url(r'^objects/items/lose/$', create_object, {'form_class': LoseItemsForm, 
-            'template_name': 'generic_form.html',
-            'extra_context': dict(object_name=_(u'Lost Items'))} , 'lose_items'),
+    url(r'^objects/items/lose/$', GenericCreateView.as_view(form_class=LoseItemsForm, 
+            extra_context={'title':_(u'Lost Items')}), name='lose_items'),
 
-    url(r'^objects/items/move/$', create_object, {'form_class': MoveItemsForm, 
-            'template_name': 'generic_form.html',
-            'extra_context': dict(object_name=_(u'Items movement'))}, 'move_items'),
-    
+    url(r'^objects/items/move/$', GenericCreateView.as_view(form_class=MoveItemsForm, 
+            extra_context={'title':_(u'Items movement')}), name='move_items'),
+
+    url(r'^objects/moves/list/$', generic_list,
+            dict(queryset=Movement.objects.all(),
+                extra_context=dict(title =_(u'movements'))),
+            'movements_list'),
+    url(r'^objects/moves/(?P<object_id>\d+)/$', generic_detail,
+            dict(form_class=MovementForm_view,
+                queryset=Movement.objects.all(),
+                extra_context={'object_name':_(u'movement'), },
+                #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
+                ),
+            'movement_view'),
+
 )
 
 

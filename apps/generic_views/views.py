@@ -35,13 +35,11 @@ def add_filter(request, list_filters):
     return filter_form, filters
 
 def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs):
+    filters = None
     if list_filters:
         filter_form, filters = add_filter(request, list_filters)
-        if filters:
-            kwargs['queryset'] = kwargs['queryset'].filter(*filters)
-
         kwargs['extra_context']['filter_form'] = filter_form
-    
+
     if 'queryset' in kwargs and not isinstance(kwargs['queryset'], QuerySet) \
                 and callable(kwargs['queryset']):
         queryset_fn = kwargs.pop('queryset')
@@ -50,6 +48,9 @@ def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs
         # Otherwise, the queryset would be queried once in db and reused
         # across requests, with same rows.
         kwargs['queryset'] = queryset_fn(request)
+
+    if filters:
+        kwargs['queryset'] = kwargs['queryset'].filter(*filters)
 
     return object_list(request,  template_name='generic_list.html', *args, **kwargs)
 
@@ -140,6 +141,10 @@ def generic_assign_remove(request, title, obj, left_list_qryset, left_list_title
 
 def generic_detail(request, object_id, form_class, queryset, title=None, extra_context={}, extra_fields=[]):
     #if isinstance(form_class, DetailForm):
+    if queryset and not isinstance(queryset, QuerySet) \
+                and callable(queryset):
+        queryset = queryset(request)
+
     try:
         if extra_fields:
             form = form_class(instance=queryset.get(id=object_id), extra_fields=extra_fields)
@@ -189,6 +194,8 @@ class _InlineViewMixin(object):
             self._inline_formsets[inlf].title = relo[0].model._meta.verbose_name_plural
 
     def form_valid(self, form):
+        if hasattr(form, '_pre_save_by_user'):
+            form._pre_save_by_user(self.request.user)
         context = self.get_context_data()
         if all([ inline_form.is_valid() for inline_form in context['formsets']]):
             self.object = form.save()
@@ -216,6 +223,12 @@ class _InlineViewMixin(object):
         if self.extra_context:
             context.update(self.extra_context)
         return context
+
+    def get_form(self, form_class):
+        form = super(_InlineViewMixin, self).get_form(form_class)
+        if hasattr(form, '_init_by_user'):
+            form._init_by_user(self.request.user)
+        return form
 
 class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'

@@ -12,15 +12,14 @@ from django.contrib import messages
 #from django.views.generic.create_update import create_object
 from django.forms.formsets import formset_factory
 
-from common.models import Supplier
-from inventory.models import InventoryTransaction
+from common.models import Supplier, Location
 from assets.models import ItemTemplate
 
-from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder
+from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, Movement
 from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
                   PurchaseOrderForm_view, PurchaseOrderItemForm, \
                   PurchaseOrderItem, PurchaseOrderWizardItemForm, \
-                  PurchaseOrderItemTransferForm
+                  PurchaseOrderForm_short_view
 
 
 def purchase_request_view(request, object_id):
@@ -206,7 +205,6 @@ def purchase_order_wizard(request, object_id):
         'object':purchase_request,
     }, context_instance=RequestContext(request))
 
-
 def purchase_order_view(request, object_id):
     purchase_order = get_object_or_404(PurchaseOrder, pk=object_id)
     form = PurchaseOrderForm_view(instance=purchase_order)
@@ -286,129 +284,119 @@ def purchase_order_open(request, object_id):
     context_instance=RequestContext(request))
 
 
-def purchase_order_transfer(request, object_id):
+def purchase_order_receive(request, object_id):
     """
     Take a purchase order and call transfer_to_inventory to transfer and
     close all of its item and close the purchase order too
     """
     purchase_order = get_object_or_404(PurchaseOrder, pk=object_id)
 
-    if purchase_order.active == False:
+    msg = None
+    if purchase_order.validate_user:
         msg = _(u'This purchase order has already been closed.')
+    elif purchase_order.active == False:
+        msg = _(u'This purchase order has already been closed.')
+
+    if msg:
         messages.error(request, msg, fail_silently=True)
         return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
 
-    return transfer_to_inventory(request, purchase_order)
-
-
-def transfer_to_inventory(request, object_to_transfer):
-    """
-    Take an item from a purchase order, or an entire purchase order and
-    create inventory transaction entries to add the items to an inventory
-    and close the item and/or the purchase order
-    """
-    FormSet = formset_factory(PurchaseOrderItemTransferForm, extra=0)
-    context = {}
-
-    if isinstance(object_to_transfer, PurchaseOrderItem):
-        #A single purchase order item
-        context = {
-            'object_name':_(u'purchase order item'),
-            'title':_(u'Transfer and close the received purchase orders item: %s') % object_to_transfer,
-        }
-        #Seed a formset of a single form
-        initial = [{
-            'qty':object_to_transfer.received_qty,
-            'purchase_order_item':object_to_transfer,
-            'purchase_order_item_id':object_to_transfer.id
-        }]
-    elif isinstance(object_to_transfer, PurchaseOrder):
-        #An entire purchase order
-        context = {
-            'object_name':_(u'purchase order'),
-        }
-        #Seed the formset for each PO item
-        initial = []
-        items = object_to_transfer.items.filter(active=True)
-        if not items:
-            #There are no PO items active
-            context['title'] = _(u'All the items from this purchase order are either closed or transfered, continue to close the purchase order.')
-        else:
-            context['title'] = _(u'Transfer and close all the received items from the purchase order: %s') % object_to_transfer
-
-        for item in items:
-            initial.append({
-                'qty':item.received_qty,
-                'purchase_order_item':item,
-                'purchase_order_item_id':item.id
-            })
-    #TODO: Raise error if object_to_transfer is neither a PO nor a PO item?
-    #else:
-    #    raise 'Unknown object type'
 
     if request.method == 'POST':
-        formset = FormSet(request.POST)
-        if formset.is_valid():
-            if len(formset.forms):
-                #In case of empty PO or PO w/ no active items
-                for form in formset.forms:
-                    #Create inventory transaction for each PO item
-                    purchase_order_item = get_object_or_404(PurchaseOrderItem, pk=form.cleaned_data['purchase_order_item_id'])
-                    transaction = InventoryTransaction(
-                        inventory=form.cleaned_data['inventory'],
-                        supply=purchase_order_item.item_template,
-                        quantity=form.cleaned_data['qty'],
-                        date=datetime.date.today(),
-                        notes=_(u'Automatically transfered from purchase order:%s') % purchase_order_item.purchase_order
-                    )
-                    transaction.save()
-                    purchase_order_item.active = False
-                    purchase_order_item.save()
-
-                if isinstance(object_to_transfer, PurchaseOrderItem):
-                    msg = _(u'The purchase order item has been transfered and closed successfully.')
-                    messages.success(request, msg, fail_silently=True)
-                    return redirect(purchase_order_item.get_absolute_url())
-                elif isinstance(object_to_transfer, PurchaseOrder):
-                    object_to_transfer.active = False
-                    object_to_transfer.save()
-                    msg = _(u'All the purchase order items have been transfered and closed successfully, the purchase order has been closed as well.')
-                    messages.success(request, msg, fail_silently=True)
-                    return redirect(object_to_transfer.get_absolute_url())
-            else:
-                #Empty PO or PO w/ no active items
-                object_to_transfer.active = False
-                object_to_transfer.save()
-                msg = _(u'All the purchase order items were closed or already transfered, closing the purchase order.')
-                messages.success(request, msg, fail_silently=True)
-                return redirect(object_to_transfer.get_absolute_url())
-
+        raise NotImplementedError
     else:
-        formset = FormSet(initial=initial)
+        items_left = purchase_order.calc_unmoved_items()
 
-    context.update({
-        'object':object_to_transfer,
-        'form':formset,
-        'form_display_mode_table':True
-    })
+        form = PurchaseOrderForm_short_view(instance=purchase_order)
+        
+        if items_left and request.GET.get('do_create', False):
+            lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
+            dept = request.user.get_profile().department
+            if dept:
+                ldests = Location.objects.filter(department=dept)[:1]
+            if not lsrcs:
+                msg = _(u'There is no procurement location configured in the system!')
+                messages.error(request, msg, fail_silently=True)
+            elif not ldests:
+                msg = _(u'This is not default department and location for this user, please fix!')
+                messages.error(request, msg, fail_silently=True)
+            else:
+                movement = Movement(create_user=request.user, date_act=datetime.date.today(),
+                        stype='in', origin=purchase_order.user_id,
+                        location_src=lsrcs[0], location_dest=ldests[0],
+                        purchase_order=purchase_order)
+                movement.save()
+                purchase_order.fill_out_movement(items_left, movement)
+            pass
+        elif (not items_left) and request.GET.get('confirm', False):
+            raise NotImplementedError
 
-    return render_to_response('generic_form.html', context,
-        context_instance=RequestContext(request))
+        # we must ask about the remaining items or confirmation:
+        form_attrs = {
+            'title':_(u'details for purchase order: %s') % purchase_order,
+            'more_items_count': len(items_left),
+            'object':purchase_order,
+            'form':form,
+            'subtemplates_dict':[]
+            }
+        if not items_left:
+            form_attrs['subtemplates_dict'].append({
+                'name':'generic_list_subtemplate.html',
+                'title':_(u'order items received'),
+                'object_list':purchase_order.items.all(),
+                'hide_links': True,
+                'extra_columns':[
+                    {'name':_(u'qty received'), 'attribute':'received_qty'},
+                    {'name':_(u'status'), 'attribute': 'status'},
+                    {'name':_(u'active'), 'attribute': 'fmt_active'}
+                    ],
+                })
+        else:
+            items_in_moves = purchase_order.items.exclude(item_template__in=items_left.keys())
+            if items_in_moves.exists():
+                form_attrs['subtemplates_dict'].append({
+                    'name':'generic_list_subtemplate.html',
+                    'title':_(u'order items received and accounted'),
+                    'object_list': items_in_moves,
+                    'hide_links': True,
+                    'extra_columns':[
+                        {'name':_(u'qty received'), 'attribute':'received_qty'},
+                        {'name':_(u'status'), 'attribute': 'status'},
+                        {'name':_(u'active'), 'attribute': 'fmt_active'}
+                        ],
+                    })
+            items_wo_moves = purchase_order.items.filter(item_template__in=items_left.keys())
+            if items_wo_moves.exists():
+                form_attrs['subtemplates_dict'].append({
+                    'name':'generic_list_subtemplate.html',
+                    'title':_(u'order items received but NOT accounted'),
+                    'object_list': items_wo_moves,
+                    'hide_links': True,
+                    'extra_columns':[
+                        {'name':_(u'qty pending'), 'attribute':'received_qty'},
+                        {'name':_(u'status'), 'attribute': 'status'},
+                        {'name':_(u'active'), 'attribute': 'fmt_active'}
+                        ],
+                    })
+            
+        moves_list = purchase_order.movements.all()
+        if moves_list:
+            # add the pending movements as links
+            form_attrs['subtemplates_dict'].append({
+                'name':'generic_list_subtemplate.html',
+                'title':_(u'movements for this purchase order'),
+                'object_list': moves_list,
+                # 'hide_links': False, # we want 'edit' there
+                'extra_columns':[
+                    {'name':_(u'state'), 'attribute': 'state'},
+                    {'name':_(u'destination'), 'attribute': 'location_dest'}
+                    ],
+                })
 
+        return render_to_response('po_transfer_ask.html', form_attrs, context_instance=RequestContext(request))
 
-def purchase_order_item_transfer(request, object_id):
-    """
-    Take a purchase order item and call transfer_to_inventory to
-    transfer and close the item
-    """
-    purchase_order_item = get_object_or_404(PurchaseOrderItem, pk=object_id)
-
-    if purchase_order_item.active == False:
-        msg = _(u'This purchase order item has already been closed.')
-        messages.error(request, msg, fail_silently=True)
-        return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order_item.get_absolute_url())
-
-    return transfer_to_inventory(request, purchase_order_item)
+    raise RuntimeError
+    return {}
 
 
 def purchase_order_item_close(request, object_id):

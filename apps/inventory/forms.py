@@ -1,12 +1,11 @@
 # -*- encoding: utf-8 -*-
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from ajax_select.fields import AutoCompleteSelectField
 
+from generic_views.forms import DetailForm, InlineModelForm
 
-from generic_views.forms import DetailForm
-
-from models import Log, \
-                   InventoryTransaction, Inventory
+from models import Log, Inventory, InventoryItem
 
 
 class LogForm(forms.ModelForm):
@@ -15,6 +14,7 @@ class LogForm(forms.ModelForm):
 
 
 class InventoryForm(forms.ModelForm):
+    location = AutoCompleteSelectField('location')
     class Meta:
         model = Inventory
 
@@ -23,10 +23,16 @@ class InventoryForm_view(DetailForm):
     class Meta:
         model = Inventory
 
-class InventoryTransactionForm(forms.ModelForm):
+class InventoryItemForm(forms.ModelForm):
+    asset = AutoCompleteSelectField('item')
     class Meta:
-        model = InventoryTransaction
+        model = InventoryItem
 
 
+class InventoryItemForm_inline(InlineModelForm):
+    asset = AutoCompleteSelectField('item')
+    class Meta:
+        model = InventoryItem
+        exclude = ('notes',)
 
 #eof

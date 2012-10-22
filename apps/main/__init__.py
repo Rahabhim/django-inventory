@@ -8,7 +8,6 @@ import movements
 from common.api import register_menu
 
 from assets.models import Item, ItemGroup, State
-from inventory.models import Inventory, InventoryTransaction
 
 register_menu([
     {'text':_(u'home'), 'view':'home', 'famfam':'house', 'position':0},

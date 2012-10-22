@@ -89,10 +89,12 @@ class PurchaseOrderStatus(models.Model):
     def get_absolute_url(self):
         return ('purchase_order_state_list', [])
 
-
 class PurchaseOrder(models.Model):
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
     purchase_request = models.ForeignKey(PurchaseRequest, null=True, blank=True, verbose_name=_(u'purchase request'))
+    procurement = models.ForeignKey('procurements.Contract', null=True, blank=True)
+    create_user = models.ForeignKey('auth.User', related_name='+')
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
     supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'))
     issue_date = models.DateField(verbose_name=_(u'issue date'))
     required_date = models.DateField(null=True, blank=True, verbose_name=_(u'date required'))
@@ -117,6 +119,85 @@ class PurchaseOrder(models.Model):
         else:
             return _(u'Closed')
 
+    def calc_unmoved_items(self):
+        """Calculate items mentioned in this PO, prepare for a movement
+        
+            @return a dict of item_template.id: (qty, serials) for those left
+        """
+        po_items = {} # sets of serial numbers
+        po_items_qty = {} # counters of quantities
+        
+        # 1st step: fill dicts with the things we've ordered
+        for item in self.items.all():
+            if not item.received_qty:
+                continue
+            serials = []
+            for s in item.serial_nos.split(','):
+                s = s.strip()
+                if s:
+                    serials.append(s)
+            if item.received_qty < len(serials):
+                raise ValueError(_("You have given %d serials, but marked only %d received items. Please fix either of those") % \
+                        (len(serials), item.received_qty))
+            iid = item.item_template.id
+            old_serials = po_items.setdefault(iid, set())
+            assert not old_serials.intersection(serials), \
+                    "Some serials are repeated in po: %s "  % \
+                        ','.join(old_serials.intersection(serials))
+            old_serials.update(serials)
+            po_items_qty[iid] = po_items_qty.get(iid, 0) + item.received_qty - len(serials)
+
+        # 2st step: remove from dicts those items who are already in movements
+        #           linked to this one
+        for move in self.movements.all():
+            for item in move.items.all():
+                if item.qty < 1:
+                    raise ValueError("Zero or negative quantity found for asset #%d" % item.id)
+                iset = po_items.get(item.item_template.id, set())
+                iqty = po_items_qty.get(item.item_template.id, 0)
+                
+                if iset and item.serial_number and item.serial_number in iset:
+                    iset.pop(item.serial_number)
+                elif iqty:
+                    if item.qty > iqty:
+                        iqty = 0
+                    else:
+                        iqty -= item.qty
+                    po_items_qty[item.item_template.id] = iqty
+                else:
+                    # Item of movement is not in PO list, iz normal.
+                    continue
+
+        # 3rd step: prepare output dictionary
+        out = {}
+        for k, v in po_items.items():
+            if not v: continue
+            out[k] = (0, v)
+        for k, v in po_items_qty.items():
+            if not v: continue
+            if k in out:
+                # out[k][0] must be 0, still
+                ks = out[k][1]
+            else:
+                ks = set()
+            out[k] = (v, ks)
+        
+        print "Have left:", out
+        return out
+
+    def fill_out_movement(self, cunmoved, new_move):
+        """ fill the supplied movement with [new] items for those of calc_unmoved_items()
+        """
+        assert cunmoved
+        for iid, two in cunmoved.items():
+            qty, serials = two
+            for s in serials:
+                new_item = Item.objects.get_or_create(item_template_id=iid, serial_number=s)
+                new_move.items.add(new_item) #FIXME
+            for i in range(qty):
+                # create individual items of item.qty=1
+                new_move.items.create(item_template_id=iid)
+        
 
 class PurchaseOrderItemStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
@@ -142,6 +223,7 @@ class PurchaseOrderItem(models.Model):
     status = models.ForeignKey(PurchaseOrderItemStatus, null=True, blank=True, verbose_name=_(u'status'))
     qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
     received_qty = models.PositiveIntegerField(default=0, null=True, blank=True, verbose_name=_(u'received'))
+    serial_nos = models.CharField(max_length=512, verbose_name=_(u"Serial Numbers"), blank=True)
 
     class Meta:
         verbose_name = _(u'purchase order item')
@@ -173,21 +255,35 @@ class Movement(models.Model):
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
     
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
-    state = models.CharField(max_length=16, choices=[('draft', 'Draft'), ('done', 'Done')])
+    state = models.CharField(max_length=16, default='draft', choices=[('draft', 'Draft'), ('done', 'Done')])
     stype = models.CharField(max_length=16, choices=[('in', 'Incoming'),('out',' Outgoing'), 
                 ('internal', 'Internal'), ('other', 'Other')], verbose_name=_('type'))
     origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
     note = models.TextField(verbose_name=_('Notes'), blank=True)
     location_src = models.ForeignKey(Location, related_name='location_src')
     location_dest = models.ForeignKey(Location, related_name='location_dest')
-    items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='items')
-        # limit_choices_to
-    # todo: links with purchase or so..
+    items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='items', blank=True)
+    # limit_choices_to these at location_src
+    
+    checkpoint_src = models.ForeignKey('inventory.Inventory', verbose_name=_('Source checkpoint'),
+                null=True, blank=True, related_name='+')
+    checkpoint_dest = models.ForeignKey('inventory.Inventory', verbose_name=_('Destination checkpoint'),
+                null=True, blank=True, related_name='+')
 
-    def do_close(self):
-        """Closes the movement and updates the assets counters
+    purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements')
+
+    def do_close(self, val_user):
+        """Check the items and set the movement as 'done'
+        
+        This function does the most important processing of a movement. It will
+        check the integrity of all contained data, and then update the inventories
+        accordingly.
         """
-        pass
+        raise NotImplementedError
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('movement_view', [str(self.id)])
 
 #class MovementLine(models.Model):
     #movement = models.ForeignKey(Movement)

@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 import copy
+import ajax_select
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseForbidden
 
 object_navigation = {}
 menu_links = []
@@ -46,4 +49,24 @@ def register_submenu(menu_id, links):
     else:
         raise KeyError("No menu with id: %s" % menu_id)
 
+class LookupChannel(ajax_select.LookupChannel):
+    max_length = 50
+
+    def check_auth(self,request):
+        if not request.user.is_authenticated():
+            raise PermissionDenied()
+        return True
+
+    def get_query(self,q,request):
+        """ Query the departments for a name containing `q`
+        """
+        if not request.user.is_authenticated():
+            raise HttpResponseForbidden()
+        # filtering only this user's contacts
+        cur = self.model.objects
+        for r in q.split(' '):
+            cur = cur.filter(**{"%s__icontains" % self.search_field: r})
+        return cur.order_by(self.search_field)[:self.max_length]
+
 #eof
+
