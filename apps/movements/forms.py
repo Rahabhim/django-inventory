@@ -78,9 +78,6 @@ class PurchaseOrderItemTransferForm(forms.Form):
     inventory = forms.ModelChoiceField(queryset = Inventory.objects.all(), help_text = _(u'Inventory that will receive the item.'))
     qty = forms.CharField(label=_(u'Qty received'))
 
-class MovementForm(forms.ModelForm):
-    class Meta:
-        model = Movement
 
 class MovementForm_view(DetailForm):
     class Meta:
@@ -98,6 +95,16 @@ class _outboundMovementForm(_baseMovementForm):
             locations = Location.objects.filter(department=dept)[:1]
             if locations:
                 self.initial['location_src'] = locations[0].id
+
+class MovementForm(_baseMovementForm):
+    class Meta:
+        model = Movement
+
+class MovementForm_update_po(_baseMovementForm):
+    
+    class Meta:
+        fields = ('name', 'origin', 'note', 'items')
+        model = Movement
 
 class DestroyItemsForm(_outboundMovementForm):
     """This form is registered whenever defective equipment is trashed (destroyed)
@@ -148,6 +155,7 @@ class MoveItemsForm(_baseMovementForm):
     def _pre_save_by_user(self, user):
         if not self.instance.create_user_id:
             self.instance.create_user = user
+
 
 class RepairGroupForm(forms.Form):
     """Used to mark repairs (changes within group) of Items
