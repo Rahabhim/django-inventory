@@ -44,7 +44,8 @@ class Location(models.Model):
 
     usage = models.CharField(max_length=32, verbose_name=_("location type"),
             choices=[('customer','Customer'), ('procurement', 'Procurement'), ('internal', 'Internal'),
-                    ('inventory', 'Inventory'), ('supplier', 'Supplier Location')])
+                    ('inventory', 'Inventory'), ('supplier', 'Supplier Location'),
+                    ('production', 'Bundled')])
 
     class Meta:
         ordering = ['name']
