@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
@@ -18,7 +19,7 @@ from movements import purchase_request_state_filter, \
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
         PurchaseOrderItemForm_inline, \
         DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
-        MovementForm, MovementForm_view
+        MovementForm, MovementForm_view, MovementForm_update_po
 import views
 
 urlpatterns = patterns('movements.views',
@@ -86,6 +87,12 @@ urlpatterns = patterns('movements.views',
                 #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
                 ),
             'movement_view'),
+    url(r'^obects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
+                form_class=MovementForm_update_po,
+                success_url=lambda obj: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
+                extra_context={'object_name':_(u'movement')}
+            ),
+            name='movement_update_po'),
 
 )
 

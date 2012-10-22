@@ -6,7 +6,7 @@ from common.api import register_links, register_menu, register_submenu
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
                    PurchaseOrderItemStatus, PurchaseOrder, \
-                   PurchaseOrderItem
+                   PurchaseOrderItem, Movement
 
 purchase_request_state_list = {'text':_('purchase request states'), 'view':'purchase_request_state_list', 'famfam':'pencil_go'}
 purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add'}
@@ -89,4 +89,10 @@ register_links( ['item_list'],
         dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error'),
         dict(text=_(u'Move assets'), view='move_items', famfam='computer_go'),
         ], menu_name='sidebar')
+        
+register_links([('purchase_order_receive', Movement),], 
+        [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',
+            'famfam':'page_go', 'condition': lambda o,c: o.state == 'done'},
+          {'text':_(u'edit'), 'view':'movement_update_po', 'args':'object.id', 'famfam':'page_go',
+           'condition': lambda o,c: o.state == 'draft'}])
 # eof
