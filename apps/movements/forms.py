@@ -39,6 +39,10 @@ class PurchaseOrderForm_view(DetailForm):
         model = PurchaseOrder
         exclude = ('active',)
 
+class PurchaseOrderForm_short_view(DetailForm):
+    class Meta:
+        model = PurchaseOrder
+        fields = ('user_id', 'create_user', 'supplier', 'issue_date')
 
 class PurchaseOrderItemForm(forms.ModelForm):
     item_template = AutoCompleteSelectField('product')
