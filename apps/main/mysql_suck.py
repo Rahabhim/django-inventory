@@ -387,6 +387,14 @@ class Str_Column_Default(Str_Column):
             val = self._default
         out[self._oname] = val
 
+class Str_Column_NotNull(Str_Column):
+    """ Str_Column, which will map "NULL" (string) to empty
+    """
+    def postProcess(self, qres, out, context=None):
+        super(Str_Column_NotNull, self).postProcess(qres, out, context=context)
+        if out[self._oname] == 'NULL':
+            out[self._oname] = None
+
 class Enum2Bool_Column(simple_column):
     """ Convert a 'Y'/ 'N' enum to pg. boolean
 
