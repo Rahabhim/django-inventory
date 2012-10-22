@@ -279,8 +279,8 @@ class Command(BaseCommand):
         
         bundles_ktim += M.Str_Column('SERIAL_NO', 'serial_number')
         bundles_ktim += M.Str_Column("KOSTOS_EUR", '_agreed_price')
-        bundles_ktim += M.Str_Column("AR_TIMOL", '_ar_timol')
-        bundles_ktim += M.Str_Column("SEIRA_TIMOL", '_seira_timol')
+        bundles_ktim += M.Str_Column_NotNull("AR_TIMOL", '_ar_timol')
+        bundles_ktim += M.Str_Column_NotNull("SEIRA_TIMOL", '_seira_timol')
         bundles_ktim += M.Str_Column("AR_KTHM", 'property_number')
         bundles_ktim += M.Str_Column("USED", '_used')
         bundles_ktim += M.Date_Column("DATE_PARALAVHS", '_date_received')
