@@ -285,6 +285,10 @@ class Movement(models.Model):
     def get_absolute_url(self):
         return ('movement_view', [str(self.id)])
 
+    def __unicode__(self):
+        return _(u'%s from %s to %s') % (self.name or self.origin or _('Move'), \
+                    self.location_src, self.location_dest)
+
 #class MovementLine(models.Model):
     #movement = models.ForeignKey(Movement)
     #asset = models.ForeignKey(Item)
