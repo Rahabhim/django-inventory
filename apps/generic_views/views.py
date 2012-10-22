@@ -230,6 +230,12 @@ class _InlineViewMixin(object):
             form._init_by_user(self.request.user)
         return form
 
+    def get_success_url(self):
+        if callable(self.success_url):
+            return self.success_url(self.object)
+        else:
+            return super(_InlineViewMixin, self).get_success_url()
+
 class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
 
