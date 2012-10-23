@@ -72,7 +72,7 @@ class PurchaseRequestItem(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('purchase_request_view', [str(self.purchase_request.id)])
+        return ('purchase_request_view', [str(self.purchase_request_id)])
 
 
 class PurchaseOrderStatus(models.Model):
@@ -139,7 +139,7 @@ class PurchaseOrder(models.Model):
             if item.received_qty < len(serials):
                 raise ValueError(_("You have given %d serials, but marked only %d received items. Please fix either of those") % \
                         (len(serials), item.received_qty))
-            iid = item.item_template.id
+            iid = item.item_template_id
             old_serials = po_items.setdefault(iid, set())
             assert not old_serials.intersection(serials), \
                     "Some serials are repeated in po: %s "  % \
@@ -149,12 +149,14 @@ class PurchaseOrder(models.Model):
 
         # 2st step: remove from dicts those items who are already in movements
         #           linked to this one
-        for move in self.movements.all():
-            for item in move.items.all():
+        #for move in self.movements.all(): #.prefetch_related('items'): Django 1.4
+        #    for item in move.items.iterator():
+        if True:
+            for item in Item.objects.filter(movements__purchase_order=self).iterator():
                 if item.qty < 1:
                     raise ValueError("Zero or negative quantity found for asset #%d" % item.id)
-                iset = po_items.get(item.item_template.id, set())
-                iqty = po_items_qty.get(item.item_template.id, 0)
+                iset = po_items.get(item.item_template_id, set())
+                iqty = po_items_qty.get(item.item_template_id, 0)
                 
                 if iset and item.serial_number and item.serial_number in iset:
                     iset.pop(item.serial_number)
@@ -163,7 +165,7 @@ class PurchaseOrder(models.Model):
                         iqty = 0
                     else:
                         iqty -= item.qty
-                    po_items_qty[item.item_template.id] = iqty
+                    po_items_qty[item.item_template_id] = iqty
                 else:
                     # Item of movement is not in PO list, iz normal.
                     continue
@@ -234,7 +236,7 @@ class PurchaseOrderItem(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('purchase_order_view', [str(self.purchase_order.id)])
+        return ('purchase_order_view', [str(self.purchase_order_id)])
 
     def fmt_agreed_price(self):
         if self.agreed_price:
@@ -262,7 +264,7 @@ class Movement(models.Model):
     note = models.TextField(verbose_name=_('Notes'), blank=True)
     location_src = models.ForeignKey(Location, related_name='location_src')
     location_dest = models.ForeignKey(Location, related_name='location_dest')
-    items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='items', blank=True)
+    items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='movements', blank=True)
     # limit_choices_to these at location_src
     
     checkpoint_src = models.ForeignKey('inventory.Inventory', verbose_name=_('Source checkpoint'),
