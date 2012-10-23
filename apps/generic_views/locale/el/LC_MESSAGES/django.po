@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-30 22:38+0300\n"
+"POT-Creation-Date: 2012-10-23 11:18+0300\n"
 "PO-Revision-Date: 2012-09-30 22:42+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,16 +17,16 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: forms.py:56
+#: forms.py:61
 msgid "None"
 msgstr "Κανένα"
 
-#: views.py:106
+#: views.py:121
 #, python-format
 msgid "The selected %s were added."
 msgstr "Προστέθηκαν %s"
 
-#: views.py:112
+#: views.py:127
 #, python-format
 msgid "The selected %s were removed."
 msgstr "Αφαιρέθηκαν %s"
@@ -96,14 +96,17 @@ msgstr "Όχι"
 
 #: templates/generic_form_instance.html:33
 #: templates/generic_form_subtemplate.html:49
+#: templates/generic_form_subtemplate_fs.html:49
 msgid "required"
 msgstr "Απαιτείται"
 
 #: templates/generic_form_subtemplate.html:71
+#: templates/generic_form_subtemplate_fs.html:82
 msgid "Save"
 msgstr "Αποθήκευση"
 
 #: templates/generic_form_subtemplate.html:71
+#: templates/generic_form_subtemplate_fs.html:82
 msgid "Submit"
 msgstr "Υποβολή"
 
@@ -134,4 +137,3 @@ msgstr ""
 #: templatetags/generic_views_tags.py:13
 msgid "Filter"
 msgstr "Φίλτρο"
-

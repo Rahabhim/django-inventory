@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-30 22:38+0300\n"
-"PO-Revision-Date: 2012-09-28 00:20+0300\n"
+"POT-Creation-Date: 2012-10-23 11:18+0300\n"
+"PO-Revision-Date: 2012-10-23 11:42+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -65,163 +65,189 @@ msgstr "συνθέσεις"
 
 #: __init__.py:23
 msgid "create group"
-msgstr ""
+msgstr "δημιουργία σύνθεσης"
 
-#: __init__.py:27 models.py:16 models.py:34
+#: __init__.py:27 models.py:19 models.py:37
 msgid "state"
 msgstr "κατάσταση"
 
-#: __init__.py:44 models.py:66 models.py:109 urls.py:24 views.py:104
+#: __init__.py:44 models.py:83 models.py:137 urls.py:26 views.py:106
 msgid "assets"
 msgstr "εξοπλισμός"
 
-#: models.py:12
+#: models.py:15
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:13 models.py:20
+#: models.py:16 models.py:23
 msgid "exclusive"
 msgstr ""
 
-#: models.py:17 models.py:108 urls.py:38 urls.py:41
+#: models.py:20 models.py:136 urls.py:51 urls.py:54
 msgid "states"
-msgstr ""
+msgstr "καταστάσεις"
 
-#: models.py:20
+#: models.py:23
 msgid "inclusive"
-msgstr ""
+msgstr "αποκλειστική"
 
-#: models.py:33 models.py:90
+#: models.py:36 models.py:123
 msgid "item"
 msgstr "προϊόν"
 
-#: models.py:35
+#: models.py:38
 msgid "date"
 msgstr "ημερομηνία"
 
-#: models.py:40
+#: models.py:43
 msgid "item state"
 msgstr "κατάσταση προϊόντος"
 
-#: models.py:41
+#: models.py:44
 msgid "item states"
 msgstr ""
 
-#: models.py:44
+#: models.py:47
 #, python-format
 msgid "%(asset)s, %(state)s since %(date)s"
 msgstr ""
 
-#: models.py:51
+#: models.py:68
 msgid "item template"
-msgstr ""
+msgstr "προϊόν"
 
-#: models.py:52
+#: models.py:69
+#, fuzzy
 msgid "asset number"
-msgstr ""
+msgstr "αριθμός παγίου"
 
-#: models.py:53
+#: models.py:70
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:54
+#: models.py:71
 msgid "serial number"
 msgstr "Σειριακός αριθμός"
 
-#: models.py:55
+#: models.py:72
 msgid "current location"
 msgstr "Τρέχουσα τοποθεσία"
 
-#: models.py:57
+#: models.py:74
 msgid "quantity"
-msgstr ""
+msgstr "Ποσότητα"
 
-#: models.py:58
+#: models.py:75
 msgid "Allows a batch of identical items to be referenced as one entity"
 msgstr ""
 
-#: models.py:60
+#: models.py:77
 msgid "If true, this item is bundled in a group, and therefore has no location"
 msgstr ""
+"Δηλώνει ότι ο εξοπλισμός είναι μέρος Σύνθεσης, και γι' αυτό δεν έχει "
+"τοποθεσία."
 
-#: models.py:65 urls.py:22 urls.py:23 urls.py:25 urls.py:26
+#: models.py:82 urls.py:22 urls.py:23 urls.py:33 urls.py:38
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:95 urls.py:36
+#: models.py:128 urls.py:49
 msgid "item group"
 msgstr "σύνθεση"
 
-#: models.py:96 models.py:110 urls.py:31
+#: models.py:129 models.py:138 urls.py:43
 msgid "item groups"
 msgstr "συνθέσεις"
 
-#: urls.py:25
+#: urls.py:27
+msgid "specifications"
+msgstr "προδιαγραφές"
+
+#: urls.py:28
+#, fuzzy
+msgid "Serial number"
+msgstr "Σειριακός αριθμός"
+
+#: urls.py:29 urls.py:44
+msgid "Location"
+msgstr "τοποθεσία"
+
+#: urls.py:36
 msgid "Assigned to:"
 msgstr ""
 
-#: views.py:26
+#: views.py:28
 #, python-format
 msgid "This asset has already been marked as '%s'."
 msgstr ""
 
-#: views.py:33
+#: views.py:35
 #, python-format
 msgid "Are you sure you wish to mark this asset as '%s'?"
 msgstr ""
 
-#: views.py:37
+#: views.py:39
 msgid "Any other states this asset may be marked as, will be cleared."
 msgstr ""
 
-#: views.py:47
+#: views.py:49
 #, python-format
 msgid ""
 "This asset has already been exclusively marked as '%s'.  Clear this state "
 "first."
 msgstr ""
 
-#: views.py:54
+#: views.py:56
 #, python-format
 msgid "The asset has been marked as '%s'."
 msgstr ""
 
-#: views.py:69
+#: views.py:71
 #, python-format
 msgid "This asset is not marked as '%s'"
 msgstr ""
 
-#: views.py:75
+#: views.py:77
 #, python-format
 msgid "Are you sure you wish to unmark this asset as '%s'?"
 msgstr ""
 
-#: views.py:81
+#: views.py:83
 #, python-format
 msgid "The asset has been unmarked as '%s'."
 msgstr ""
 
-#: views.py:83
+#: views.py:85
 #, python-format
 msgid "Unable to unmark this asset as '%s'"
 msgstr ""
 
-#: views.py:96
+#: views.py:98
 #, python-format
 msgid "Assign assets to the group: <a href=\"%(url)s\">%(obj)s</a>"
 msgstr ""
 
-#: views.py:102
+#: views.py:104
 msgid "Unassigned assets"
 msgstr ""
 
-#: views.py:103
+#: views.py:105
 msgid "Assigned assets"
 msgstr ""
 
+#: views.py:117
+#, python-format
+msgid "location assets: %s"
+msgstr "Εξοπλισμός τοποθεσίας: %s"
+
+#: views.py:128
+#, python-format
+msgid "department assets: %s"
+msgstr "εξοπλισμός μονάδας: %s"
+
 #: templates/state_subtemplate.html:7
 msgid "Item states"
-msgstr ""
+msgstr "καταστάσεις εξοπλισμού"
 
 #: templates/state_subtemplate.html:12
 #, python-format
@@ -235,7 +261,7 @@ msgstr ""
 
 #: templates/state_subtemplate.html:18
 msgid "There are no states defined."
-msgstr ""
+msgstr "Δεν έχουν οριστεί καταστάσεις"
 
 #~ msgid "asset groups"
 #~ msgstr "συνθέσεις εξοπλισμού"

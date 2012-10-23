@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-30 22:38+0300\n"
+"POT-Creation-Date: 2012-10-23 11:18+0300\n"
 "PO-Revision-Date: 2012-09-30 22:43+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,117 +17,95 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:11
+#: __init__.py:12
 msgid "view all inventories"
 msgstr ""
 
-#: __init__.py:12
+#: __init__.py:13
 msgid "create new inventory"
 msgstr "Νέα Απογραφή"
 
-#: __init__.py:14 __init__.py:22
+#: __init__.py:15
 msgid "edit"
 msgstr "επεξεργασία"
 
-#: __init__.py:15 __init__.py:23
+#: __init__.py:16
 msgid "delete"
 msgstr "διαγραφή"
 
-#: __init__.py:16
-msgid "add transaction"
-msgstr ""
-
-#: __init__.py:17 __init__.py:24
+#: __init__.py:17
 msgid "details"
 msgstr "Λεπτομέρειες"
 
-#: __init__.py:18 models.py:73 views.py:69
-msgid "inventory transactions"
-msgstr ""
-
-#: __init__.py:20
-msgid "view all transactions"
-msgstr ""
-
-#: __init__.py:21
-msgid "create new transaction"
-msgstr ""
-
-#: __init__.py:26
+#: __init__.py:25
 msgid "template"
 msgstr "προϊόν"
 
-#: __init__.py:27
+#: __init__.py:26
 msgid "return to inventory"
 msgstr ""
 
-#: __init__.py:44 models.py:42 urls.py:18
+#: __init__.py:43 models.py:48 urls.py:19
 msgid "inventories"
 msgstr "Απογραφές"
 
-#: models.py:18
+#: models.py:17
 msgid "timedate"
 msgstr ""
 
-#: models.py:20
+#: models.py:19
 msgid "description"
 msgstr "περιγραφή"
 
-#: models.py:37
+#: models.py:38
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:38 urls.py:18
+#: models.py:39 urls.py:20
 msgid "location"
 msgstr "τοποθεσία"
 
-#: models.py:41 models.py:85 urls.py:19 urls.py:21 urls.py:22 views.py:41
-#: views.py:63
+#: models.py:40
+msgid "date performed"
+msgstr ""
+
+#: models.py:41
+msgid "date validated"
+msgstr ""
+
+#: models.py:47 models.py:79 urls.py:24 urls.py:29 urls.py:32 views.py:40
 msgid "inventory"
 msgstr ""
 
-#: models.py:68 views.py:73
-msgid "date"
-msgstr "ημερομηνία"
-
-#: models.py:72 urls.py:31
-msgid "inventory transaction"
+#: models.py:62
+msgid "item state"
 msgstr ""
 
-#: urls.py:27
-msgid "transactions"
-msgstr "Συναλλαγές"
+#: models.py:67 urls.py:40
+#, fuzzy
+msgid "inventory item"
+msgstr "Απογραφές"
 
-#: urls.py:28 urls.py:29 urls.py:30
-msgid "transaction"
-msgstr "Συναλλαγή"
+#: models.py:68
+#, fuzzy
+msgid "inventory items"
+msgstr "Απογραφές"
 
-#: views.py:47
-#, python-format
-msgid "current balances for inventory: %s"
-msgstr ""
+#: urls.py:36
+#, fuzzy
+msgid "items"
+msgstr "προϊόν"
 
-#: views.py:50
+#: views.py:46
+#, fuzzy
+msgid "current balances for inventory"
+msgstr "Νέα Απογραφή"
+
+#: views.py:49
 msgid "quantity"
 msgstr "Ποσότητα"
 
-#: views.py:74
-msgid "item"
-msgstr "προϊόν"
-
-#: views.py:75
-msgid "qty"
-msgstr "Ποσ."
-
-#: views.py:89
-msgid "The inventory transaction was created successfully."
-msgstr ""
-
-#: views.py:98
-msgid "add new transaction"
-msgstr ""
-
-#: views.py:132
+#: views.py:64
 msgid "purchase orders from supplier"
 msgstr ""
 
@@ -157,3 +135,14 @@ msgstr ""
 msgid "NOTES"
 msgstr "σημειώσεις"
 
+#~ msgid "date"
+#~ msgstr "ημερομηνία"
+
+#~ msgid "transactions"
+#~ msgstr "Συναλλαγές"
+
+#~ msgid "transaction"
+#~ msgstr "Συναλλαγή"
+
+#~ msgid "qty"
+#~ msgstr "Ποσ."

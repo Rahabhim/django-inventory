@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-30 22:38+0300\n"
+"POT-Creation-Date: 2012-10-23 11:18+0300\n"
 "PO-Revision-Date: 2012-09-21 16:47+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -61,78 +61,82 @@ msgstr "κατηγορίες"
 msgid "manufacturers"
 msgstr "κατασκευαστές"
 
-#: __init__.py:33 models.py:101 views.py:35
+#: __init__.py:33 models.py:105 views.py:35
 msgid "templates"
 msgstr "προϊόντα"
 
-#: models.py:30
+#: models.py:14
+msgid "Bundles of this category may contain items of these categories"
+msgstr ""
+
+#: models.py:32
 msgid "units"
 msgstr "μονάδες"
 
-#: models.py:33
+#: models.py:35
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:49
+#: models.py:52
 msgid "attribute"
 msgstr "χαρακτηριστικό"
 
-#: models.py:62
+#: models.py:65
 msgid "country of origin"
 msgstr "χώρα προέλευσης"
 
-#: models.py:75
+#: models.py:78
 msgid "description"
 msgstr "περιγραφή"
 
-#: models.py:77
+#: models.py:81
 msgid "brand"
 msgstr "μάρκα"
 
-#: models.py:78
+#: models.py:82
 msgid "Brand name, if different from manufacturer"
 msgstr ""
 
-#: models.py:80
+#: models.py:84
 msgid "model"
 msgstr "μοντέλο"
 
-#: models.py:81
+#: models.py:85
 msgid "part number"
 msgstr ""
 
-#: models.py:82
+#: models.py:86
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:83 views.py:51
+#: models.py:87 views.py:51
 msgid "supplies"
 msgstr ""
 
-#: models.py:88 urls.py:20 urls.py:23 urls.py:27 urls.py:31 urls.py:37
-#: urls.py:40
+#: models.py:92 urls.py:21 urls.py:24 urls.py:28 urls.py:32 urls.py:38
+#: urls.py:41
 msgid "item template"
 msgstr "προϊόν"
 
-#: models.py:89
+#: models.py:93
 msgid "item templates"
 msgstr "προϊόντα"
 
-#: urls.py:32
+#: urls.py:33
 msgid ""
 "Will be deleted from any user that may have it assigned and from any item "
 "group."
 msgstr ""
 
-#: urls.py:35
+#: urls.py:36
 msgid "orphan templates"
 msgstr ""
 
-#: urls.py:51 urls.py:54 urls.py:58 urls.py:62 urls.py:68
+#: urls.py:52 urls.py:55 urls.py:59 urls.py:63 urls.py:69
 msgid "item category"
 msgstr "κατηγορία προϊόντων"
 
-#: urls.py:72 urls.py:75 urls.py:79 urls.py:83 urls.py:89
+#: urls.py:73 urls.py:76 urls.py:80 urls.py:84 urls.py:90
 msgid "manufacturer"
 msgstr "κατασκευαστής"
 
