@@ -15,8 +15,14 @@ class LogForm(forms.ModelForm):
 
 class InventoryForm(forms.ModelForm):
     location = AutoCompleteSelectField('location')
+
     class Meta:
         model = Inventory
+        exclude = ('create_user', 'validate_user', 'date_val')
+
+    def _pre_save_by_user(self, user):
+        if not self.instance.create_user_id:
+            self.instance.create_user = user
 
 
 class InventoryForm_view(DetailForm):
