@@ -8,6 +8,8 @@ import logging
 import datetime
 from main import mysql_suck as M
 
+ADMIN_USER = 1
+
 def custom_options(parser):
     M.MyS_Connector.add_mysql_options(parser)
     pgroup = optparse.OptionGroup(parser, "Iteration options")
@@ -222,7 +224,7 @@ class KtimColumn(One2ManyColumn):
             user_id = '%s %s' % (bdl['_seira_timol'], bdl['_ar_timol'])
         else:
             user_id = 'ct-%d' % bdl['_contract'].id
-        po, c = purchase_order_obj.objects.get_or_create( \
+        po, c = purchase_order_obj.objects.get_or_create(create_user_id=ADMIN_USER,
                     issue_date=self._get_po_date(bdl),
                     supplier=supplier, user_id=user_id, )
         # note, we wrap agreed_price in str(), because we want to round the
@@ -244,7 +246,7 @@ class KtimColumn(One2ManyColumn):
             move = po.movements.create(location_src=self._procurement_location,
                         location_dest=end_location, name=user_id, 
                         date_act=bdl['_date_received'] or po.issue_date,
-                        create_user_id=1, # TODO
+                        create_user_id=ADMIN_USER,
                         origin=user_id)
         move.items.add(item)
         return po
