@@ -302,6 +302,7 @@ class Command(BaseCommand):
                 'KT_18_ERGA',
                 'KT_06_YPOERGA',
                 'MONADES',
+                'KT_02_BUNDLES',
                 ], **options)
             self._myc.close(save=True)
         except Exception, e:
