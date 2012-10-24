@@ -220,6 +220,8 @@ class sColumn(object):
         raise NotImplementedError(self.__class__.__name__)
 
 class Table_Suck(object):
+    batch_limit = BATCH_LIMIT
+
     def __init__(self, table_name, orm_model, connector):
         self.table_name = table_name
         assert isinstance(connector, MyS_Connector), type(connector)
@@ -268,7 +270,7 @@ class Table_Suck(object):
         mycr = self._connector().cursor()
         while (not limit) or (nfound < limit):
 
-            nlimit = BATCH_LIMIT
+            nlimit = self.batch_limit
             if limit and (limit - nfound < nlimit):
                 nlimit = limit - nfound
             qry, args = self.getQuery(nlimit)
@@ -700,7 +702,7 @@ class Table_SuckToo(Table_Suck):
         mycr = self._connector().cursor()
         while (not limit) or (nfound < limit):
 
-            nlimit = BATCH_LIMIT
+            nlimit = self.batch_limit
             if limit and (limit - nfound < nlimit):
                 nlimit = limit - nfound
             qry, args = self.getQuery(nlimit)
