@@ -249,7 +249,7 @@ class KtimColumn(One2ManyColumn):
         # now, generate a Movement
         # We use 'filter' rather than get_or_create, because there might be
         # multiple ones
-        moves = po.movements.filter(location_dest=end_location)
+        moves = po.movements.filter(location_dest=end_location, state='draft')
         if moves.exists():
             move = moves[0]
         else:
