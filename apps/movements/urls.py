@@ -87,7 +87,7 @@ urlpatterns = patterns('movements.views',
                 #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
                 ),
             'movement_view'),
-    url(r'^obects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
+    url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
                 form_class=MovementForm_update_po,
                 success_url=lambda obj: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
                 extra_context={'object_name':_(u'movement')}
