@@ -6,11 +6,7 @@ from common.models import Supplier, Location
 from assets.models import Item, ItemTemplate
 
 from dynamic_search.api import register
-
-
-"""
-TODO: PR Change Order model ?
-"""
+import datetime
 
 
 class PurchaseRequestStatus(models.Model):
@@ -274,14 +270,36 @@ class Movement(models.Model):
 
     purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements')
 
-    def do_close(self, val_user):
+    def do_close(self, val_user, val_date=None):
         """Check the items and set the movement as 'done'
-        
+
         This function does the most important processing of a movement. It will
         check the integrity of all contained data, and then update the inventories
         accordingly.
         """
-        raise NotImplementedError
+        if val_date is None:
+            val_date = datetime.date.today()
+
+        if self.state != 'draft':
+            raise ValueError(_("Cannot close movement %s (id: %s) because it is not in draft state") % (self.name, self.id))
+        if self.validate_user:
+            raise ValueError(_("Cannot close movement because it seems already validated!"))
+
+        all_items = self.items.all()
+        for item in all_items:
+            if item.location_id != self.location_src_id:
+                raise ValueError(_("Item %s is at %s, rather than the move source location!") % \
+                        (unicode(item), item.location))
+
+        # TODO: validate that all itemgroups of items are active
+
+        # everything seems OK by now...
+        all_items.update(location=self.location_dest)
+        self.validate_user = val_user
+        self.date_val = val_date
+        self.state = 'done'
+        self.save()
+        return True
 
     @models.permalink
     def get_absolute_url(self):

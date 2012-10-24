@@ -95,4 +95,7 @@ register_links([('purchase_order_receive', Movement),],
             'famfam':'page_go', 'condition': lambda o,c: o.state == 'done'},
           {'text':_(u'edit'), 'view':'movement_update_po', 'args':'object.id', 'famfam':'page_go',
            'condition': lambda o,c: o.state == 'draft'}])
+register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movement_do_close',
+            'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.state == 'draft'},
+            ])
 # eof

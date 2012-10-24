@@ -94,6 +94,9 @@ urlpatterns = patterns('movements.views',
             ),
             name='movement_update_po'),
 
+    url(r'^objects/moves/(?P<object_id>\d+)/close/$', 'movement_do_close',
+            name='movement_do_close'),
+
 )
 
 

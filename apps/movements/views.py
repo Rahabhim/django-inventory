@@ -454,6 +454,16 @@ def purchase_order_item_create(request, object_id):
     },
     context_instance=RequestContext(request))
 
+def movement_do_close(request, object_id):
+    movement = get_object_or_404(Movement, pk=object_id)
+    try:
+        movement.do_close(request.user)
+        messages.success(request, _(u'The movement has been validated.'))
+    except Exception, e:
+        messages.error(request, unicode(e))
+
+    return redirect(movement.get_absolute_url())
+
 def repair_itemgroup(request):
     raise NotImplementedError
 
