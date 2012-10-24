@@ -335,6 +335,7 @@ class Command(BaseCommand):
 
         # KT_02_BUNDLES
         bundles = M.Table_SuckToo('KT_02_BUNDLES', 'assets.Item', myc)
+        bundles.batch_limit = 100
         bundles += M.IDmap_Column('BUNDLE_ID')
         bundles += Ref_Column_dafuq("GLUC", '_department', 'MONADES', 'company.Department')
         bundles += M.Str_Column_Default("ONT_DESCR", '_location_name', '-')
