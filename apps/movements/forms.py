@@ -31,7 +31,11 @@ class PurchaseRequestItemForm(forms.ModelForm):
 class PurchaseOrderForm(forms.ModelForm):
     class Meta:
         model = PurchaseOrder
-        exclude = ('active',)
+        exclude = ('active', 'validate_user', 'date_val', 'status', 'create_user')
+    
+    def _pre_save_by_user(self, user):
+        if not self.instance.create_user_id:
+            self.instance.create_user = user
 
 
 class PurchaseOrderForm_view(DetailForm):
