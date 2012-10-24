@@ -141,7 +141,7 @@ def generic_assign_remove(request, title, obj, left_list_qryset, left_list_title
 
 def generic_detail(request, object_id, form_class, queryset, title=None, extra_context={}, extra_fields=[]):
     #if isinstance(form_class, DetailForm):
-    if queryset and not isinstance(queryset, QuerySet) \
+    if queryset is not None and not isinstance(queryset, QuerySet) \
                 and callable(queryset):
         queryset = queryset(request)
 
