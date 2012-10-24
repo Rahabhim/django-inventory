@@ -89,7 +89,6 @@ class One2ManyColumn(M.sColumn):
         # now, we have a list of id columns to lookup, use it at the right
         # place of self._qargs
         args = QPlaceholder(self).replace(self._qargs, lres.keys())
-        print self, args
         cr.execute(self._qry, args)
         for rline in cr:
             kout = {}
