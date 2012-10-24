@@ -114,6 +114,7 @@ class KtimColumn(One2ManyColumn):
                 department__isnull=True, defaults=dict(name=u'Προμήθειες'))
         self._bundle_location, c = loc_obj.get_or_create(usage='production', 
                 department__isnull=True, defaults=dict(name=u'Συνθέσεις'))
+        self._suppliers_d = {}
         
     def _get_bundle_product(self):
         if not self._bundle_product:
@@ -197,6 +198,28 @@ class KtimColumn(One2ManyColumn):
                     or bdl['_contract'].end_date \
                     or datetime.date(year=1990,month=1,day=1)
 
+    def _get_supplier(self, contract):
+        """ From the `delegate` of some contract, return the supplier_id
+        """
+        dlg_id = contract.delegate_id or False
+        if dlg_id not in self._suppliers_d:
+            supplier_obj = M._get_model('common.Supplier')
+            if dlg_id:
+                # unfortunately, get_or_create() will write to the parent Partner
+            # object all the columns again!
+                delegate = contract.delegate
+                defaults = dict(name=delegate.name, active=delegate.active, \
+                            web=delegate.web, comment=delegate.comment)
+                supplier, c = supplier_obj.objects.\
+                        get_or_create(partner_ptr=delegate, defaults=defaults)
+            else:
+                supplier, c = supplier_obj.objects.get_or_create(name=u'Άγνωστος')
+            
+            self._suppliers_d[dlg_id] = supplier.id
+            assert supplier.name, supplier.id
+        
+        return self._suppliers_d[dlg_id]
+
     def _do_po(self, bdl, item, end_location):
         """ Generate PurchaseOrder and Movement for some bundle+item+location
         
@@ -206,26 +229,14 @@ class KtimColumn(One2ManyColumn):
         """
         # TODO _used, _warranty
         purchase_order_obj = M._get_model('movements.PurchaseOrder')
-        supplier_obj = M._get_model('common.Supplier')
 
-        if bdl['_contract'].delegate:
-            # unfortunately, get_or_create() will write to the parent Partner
-            # object all the columns again!
-            delegate = bdl['_contract'].delegate
-            defaults = dict(name=delegate.name, active=delegate.active, \
-                            web=delegate.web, comment=delegate.comment)
-            supplier, c = supplier_obj.objects.\
-                    get_or_create(partner_ptr=delegate, defaults=defaults)
-        else:
-            supplier, c = supplier_obj.objects.get_or_create(name=u'Άγνωστος')
-        assert supplier.name, supplier.id
         if bdl['_seira_timol'] and bdl['_ar_timol']:
             user_id = '%s %s' % (bdl['_seira_timol'], bdl['_ar_timol'])
         else:
             user_id = 'ct-%d' % bdl['_contract'].id
         po, c = purchase_order_obj.objects.get_or_create(create_user_id=ADMIN_USER,
                     issue_date=self._get_po_date(bdl),
-                    supplier=supplier, user_id=user_id, )
+                    supplier_id=self._get_supplier(bdl['_contract']), user_id=user_id, )
         # note, we wrap agreed_price in str(), because we want to round the
         # float.
         poit, c = po.items.get_or_create(item_template=bdl['item_template'],
