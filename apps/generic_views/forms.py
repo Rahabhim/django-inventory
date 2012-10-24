@@ -120,6 +120,7 @@ class DetailForm(forms.ModelForm):
             if isinstance(field.widget, (forms.widgets.Select, forms.widgets.SelectMultiple)):
                 self.fields[field_name].widget = DetailForeignWidget(
                     attrs=field.widget.attrs,
+                    choices=field.choices,
                     queryset=getattr(field, 'queryset', None),
                 )
                 self.fields[field_name].help_text=''
