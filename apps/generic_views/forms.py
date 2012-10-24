@@ -52,7 +52,7 @@ class DetailSelectMultiple(forms.widgets.SelectMultiple):
                 
         if options:
             for index, string in options:
-                if self.queryset:
+                if self.queryset is not None:
                     try:
                         output += u'<li><a href="%s">%s</a></li>' % (self.queryset.get(pk=index).get_absolute_url(), string)
                     except AttributeError:
@@ -70,16 +70,15 @@ class DetailForeignWidget(forms.widgets.Widget):
     """
     def __init__(self, queryset=None, choices=(), *args, **kwargs):
         super(DetailForeignWidget, self).__init__(*args, **kwargs)
-        self.queryset=queryset
+        self.queryset = queryset
         self.choices = choices # but don't render them to list
 
     def render(self, name, value, attrs=None, choices=()):
         final_attrs = self.build_attrs(attrs, name=name)
         objs = None
-        if value and hasattr(value, '__iter__') and self.queryset:
+        if value and hasattr(value, '__iter__') and self.queryset is not None:
             objs = self.queryset.filter(pk__in=value)
-        elif value and self.queryset:
-            assert self.queryset, self
+        elif value and self.queryset is not None:
             objs = [self.queryset.get(pk=value),]
         elif value and self.choices:
             # only works with choices, so far
