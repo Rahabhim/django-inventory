@@ -151,10 +151,12 @@ class FilterForm(forms.Form):
             if 'lookup_channel' in list_filter:
                 self.fields[list_filter['name']] = AutoCompleteSelectField( \
                         list_filter['lookup_channel'], label=label, required=False)
-            else:
+            elif 'queryset' in list_filter:
                 self.fields[list_filter['name']] = forms.ModelChoiceField( \
                         queryset=list_filter['queryset'], label=label, \
                         required=False)
+            else:
+                self.fields[list_filter['name']] = forms.CharField(label=label, required=False)
 
 class InlineModelForm(forms.ModelForm):
     def as_table(self):
