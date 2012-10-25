@@ -29,6 +29,8 @@ def add_filter(request, list_filters):
             'destination' required, the field filter name. It can be a string like
                         "name__icontains", a plain field like "manufacturer" or
                         a list/tuple of strings, that will be OR-ed together
+                        If it is a callable, it will be called like fn(data)
+                        and expected to return a Q() filter-expression
             'queryset' optional, if set, it will be a ModelChoice form (selection) with
                     the queryset records as options
             'lookup_channel': optional, if set, it will present an AutoComplete for that
@@ -53,6 +55,11 @@ def add_filter(request, list_filters):
                             q = nq
                         else:
                             q = q | nq
+                    filters.append(q)
+                elif callable(dest):
+                    q = dest(data)
+                    if not isinstance(q, Q):
+                        raise TypeError("Callable at filter %s returned a %s" % (name, type(q)))
                     filters.append(q)
                 else:
                     raise TypeError("invalid destination: %s" % type(dest))
