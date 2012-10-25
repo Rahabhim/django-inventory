@@ -105,6 +105,21 @@ class Item(models.Model):
         else:
             return "spec2"
 
+    def current_location(self):
+        if self.location:
+            if self.location.usage == 'production':
+                if self.itemgroup:
+                    return self.itemgroup.current_location()
+                return None
+            else:
+                return self.location
+
+    def get_manufacturer(self):
+        return self.item_template.manufacturer.name
+
+    def get_category(self):
+        return unicode(self.item_template.category)
+
 class ItemGroup(Item):
     """ A group (or bundle) is itself an item, behaves like one in the long run
     
