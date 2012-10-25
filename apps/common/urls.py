@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.conf.urls.defaults import patterns, url
 from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
@@ -8,6 +9,12 @@ from generic_views.views import generic_delete, \
 from models import Location, Supplier
 from forms import LocationForm, LocationForm_view, SupplierForm
 
+from company.models import Department
+from company.lookups import _department_filter_q
+
+location_dept_filter = {'name': 'dept', 'title': _('department'), 
+            'destination': lambda q: Q(department__in=Department.objects.filter(_department_filter_q(q)))}
+
 urlpatterns = patterns('common.views',
     url(r'^about/$', direct_to_template, { 'template' : 'about.html'}, 'about'),
 )
@@ -15,7 +22,9 @@ urlpatterns = patterns('common.views',
 urlpatterns += patterns('',
     url(r'^set_language/$', 'django.views.i18n.set_language', name='set_language'),
 
-    url(r'^location/list/$', generic_list, dict({'queryset':Location.objects.all()}, extra_context=dict(title =_(u'locations'))), 'location_list'),
+    url(r'^location/list/$', generic_list, dict(queryset=Location.objects.all(), 
+                list_filters=[location_dept_filter],
+                extra_context=dict(title =_(u'locations'))), 'location_list'),
     url(r'^location/create/$', create_object, {'model':Location, 'form_class': LocationForm, 'template_name':'generic_form.html'}, 'location_create'),
     url(r'^location/(?P<object_id>\d+)/update/$', update_object, {'model':Location, 'template_name':'generic_form.html'}, 'location_update'),
     url(r'^location/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Location}, post_delete_redirect="location_list", extra_context=dict(object_name=_(u'locations'))), 'location_delete'),

@@ -23,7 +23,8 @@ category_filter = { 'name': 'category', 'title': _(u'category'),
             'queryset': ItemCategory.objects.all(), 'destination': 'item_template__category'}
 
 product_filter = {'name': 'product_name', 'title': _('product'),
-            'destination': 'item_template__description__icontains' }
+            'destination': ('item_template__description__icontains', 'item_template__model__icontains',
+                            'item_template__part_number')}
 
 urlpatterns = patterns('assets.views',
 
