@@ -20,14 +20,42 @@ from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   DetailForm, InlineModelForm
 
 def add_filter(request, list_filters):
+    """ Add list filters to form and eventually filter the queryset
+
+        @param list_filter a list of dicts, each describing a filter
+
+        A filter can have the following items:
+            'name' required, the field name in the html form
+            'destination' required, the field filter name. It can be a string like
+                        "name__icontains", a plain field like "manufacturer" or
+                        a list/tuple of strings, that will be OR-ed together
+            'queryset' optional, if set, it will be a ModelChoice form (selection) with
+                    the queryset records as options
+            'lookup_channel': optional, if set, it will present an AutoComplete for that
+                    completion "channel"
+    """
     filters = []
     filter_dict = dict([(f['name'], f) for f in list_filters])
     if request.method == 'GET':
         filter_form = FilterForm(list_filters, request.GET)
         if filter_form.is_valid():
             for name, data in filter_form.cleaned_data.items():
-                if data:
-                    filters.append(Q(**{filter_dict[name]['destination']:data}))
+                if not data:
+                    continue
+                dest = filter_dict[name]['destination']
+                if isinstance(dest, basestring):
+                    filters.append(Q(**{dest:data}))
+                elif isinstance(dest, (tuple, list)):
+                    q = None
+                    for idest in dest:
+                        nq = Q(**{idest:data})
+                        if q is None:
+                            q = nq
+                        else:
+                            q = q | nq
+                    filters.append(q)
+                else:
+                    raise TypeError("invalid destination: %s" % type(dest))
 
     else:
         filter_form = FilterForm(list_filters)
