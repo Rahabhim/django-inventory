@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from generic_views.forms import DetailForm, InlineModelForm
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
@@ -94,7 +95,10 @@ class _outboundMovementForm(_baseMovementForm):
     location_src = AutoCompleteSelectField('location', required=True)
 
     def _init_by_user(self, user):
-        dept = user.get_profile().department
+        try:
+            dept = user.get_profile().department
+        except ObjectDoesNotExist:
+            dept = None
         if dept:
             locations = Location.objects.filter(department=dept)[:1]
             if locations:
@@ -150,7 +154,10 @@ class MoveItemsForm(_baseMovementForm):
                 'items')
 
     def _init_by_user(self, user):
-        dept = user.get_profile().department
+        try:
+            dept = user.get_profile().department
+        except ObjectDoesNotExist:
+            dept = None
         if dept:
             locations = Location.objects.filter(department=dept)[:1]
             if locations:
