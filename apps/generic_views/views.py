@@ -70,6 +70,10 @@ def add_filter(request, list_filters):
     return filter_form, filters
 
 def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs):
+    """
+        Remember that choice fields may need the "get_FOO_display" method rather than
+        a direct value of "FOO".
+    """
     filters = None
     if list_filters:
         filter_form, filters = add_filter(request, list_filters)
