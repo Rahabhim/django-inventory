@@ -287,7 +287,12 @@ class Movement(models.Model):
 
         all_items = self.items.all()
         for item in all_items:
-            if item.location_id != self.location_src_id:
+            if item.location_id == self.location_src_id:
+                pass
+            elif item.location is None and self.location_src.usage in ('procurement', 'supplier'):
+                # Bundled items can come from None, end up in 'bundles'
+                pass
+            else:
                 raise ValueError(_("Item %s is at %s, rather than the move source location!") % \
                         (unicode(item), item.location))
 

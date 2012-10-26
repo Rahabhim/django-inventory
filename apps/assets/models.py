@@ -95,7 +95,7 @@ class Item(models.Model):
         return [State.objects.get(pk=id) for id in self.itemstate_set.all().values_list('state', flat=True)]
 
     def clean(self):
-        if self.is_bundled and self.location:
+        if self.is_bundled and self.location and self.location.usage != 'production':
             raise ValidationError("A bundled item cannot be assigned to any location itself")
         return super(Item, self).clean()
 
