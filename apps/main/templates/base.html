@@ -3,6 +3,7 @@
 {% load project_tags %}
 {% load assets_tags %}
 {% load navigation %}
+{% load carts %}
 {% load generic_views_tags %}
 {% load generic_views_helpers %}
 
@@ -25,6 +26,7 @@
 {% endblock %}
 
 {% block web_theme_user_navigation %}
+    {% session_carts %}
     <li><strong>{% trans 'User' %}:</strong>
         {% if user.is_anonymous %}
             {% trans 'Anonymous' %}

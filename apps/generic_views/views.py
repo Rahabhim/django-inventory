@@ -15,6 +15,7 @@ from django.views.generic.create_update import delete_object # create_object, up
 import django.views.generic as django_gv
 from django.core.exceptions import ImproperlyConfigured
 from django.forms.models import inlineformset_factory, ModelForm
+from main import cart_utils
 
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   InlineModelForm
@@ -280,5 +281,26 @@ class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
 
 class GenericUpdateView(_InlineViewMixin, django_gv.UpdateView):
     template_name = 'generic_form_fs.html'
+
+
+class CartOpenView(django_gv.detail.SingleObjectMixin, django_gv.TemplateView):
+    """ A view that immediately adds the object as a cart, and then gives instructions
+    """
+    template_name = 'generic_cart_open.html'
+    extra_context = None
+
+    # TODO def get_queryset() w. callable
+
+    def get_context_data(self, **kwargs):
+        context = super(CartOpenView, self).get_context_data(**kwargs)
+        if self.extra_context:
+            context.update(self.extra_context)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        cart_utils.open_as_cart(self.object, request.session)
+        return super(CartOpenView, self).get(request, object=self.object, **kwargs)
+
 
 #eof
