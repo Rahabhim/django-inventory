@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-30 22:38+0300\n"
-"PO-Revision-Date: 2012-09-30 22:43+0300\n"
+"PO-Revision-Date: 2012-10-23 11:37+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -27,11 +27,11 @@ msgstr ""
 
 #: __init__.py:13 __init__.py:30 __init__.py:35
 msgid "edit state"
-msgstr ""
+msgstr "επεξεργασία κατάστασης"
 
 #: __init__.py:14 __init__.py:31 __init__.py:36
 msgid "delete state"
-msgstr ""
+msgstr "διαγραφή κατάστασης"
 
 #: __init__.py:16 models.py:45 urls.py:27
 msgid "purchase requests"
@@ -63,15 +63,15 @@ msgstr ""
 
 #: __init__.py:24 __init__.py:46
 msgid "add new item"
-msgstr ""
+msgstr "Νέο αντικείμενο"
 
 #: __init__.py:25 __init__.py:47
 msgid "edit item"
-msgstr ""
+msgstr "επεξεργασία αντικειμένου"
 
 #: __init__.py:26 __init__.py:48
 msgid "delete item"
-msgstr ""
+msgstr "διαγραφή αντικειμένου"
 
 #: __init__.py:28 urls.py:40
 msgid "purchase order states"
@@ -91,27 +91,27 @@ msgstr ""
 
 #: __init__.py:38 models.py:101 urls.py:45
 msgid "purchase orders"
-msgstr ""
+msgstr "Εντολές Αγοράς"
 
 #: __init__.py:39
 msgid "create new order"
-msgstr ""
+msgstr "Νέα εντολή αγοράς"
 
 #: __init__.py:40
 msgid "edit order"
-msgstr ""
+msgstr "επεξεργασία εντολής"
 
 #: __init__.py:41
 msgid "delete order"
-msgstr ""
+msgstr "διαγραφή εντολής"
 
 #: __init__.py:42
 msgid "close order"
-msgstr ""
+msgstr "κλείσιμο εντολής"
 
 #: __init__.py:43
 msgid "open order"
-msgstr ""
+msgstr "άνοιγμα εντολής"
 
 #: __init__.py:44
 msgid "transfer entire order"
@@ -132,23 +132,23 @@ msgstr "προϊόν"
 #: __init__.py:55 __init__.py:56 models.py:37 models.py:97 models.py:129
 #: models.py:132 views.py:226
 msgid "status"
-msgstr ""
+msgstr "Κατάσταση"
 
 #: __init__.py:82
 msgid "purchases"
-msgstr ""
+msgstr "Αγορές"
 
 #: __init__.py:89
 msgid "Destroy assets"
-msgstr ""
+msgstr "Καταστροφή εξοπλισμού"
 
 #: __init__.py:90
 msgid "Lose assets"
-msgstr ""
+msgstr "Απώλεια εξοπλισμού"
 
 #: __init__.py:91
 msgid "Move assets"
-msgstr ""
+msgstr "Μετακίνηση εξοπλισμού"
 
 #: forms.py:58
 #, fuzzy
@@ -175,7 +175,7 @@ msgstr ""
 
 #: forms.py:67
 msgid "Qty received"
-msgstr ""
+msgstr "Παραληφθείσα Ποσ."
 
 #: forms.py:80 forms.py:98
 msgid "Protocol ID"
@@ -195,7 +195,7 @@ msgstr ""
 
 #: models.py:33 models.py:93
 msgid "issue date"
-msgstr ""
+msgstr "Ημερομηνία έκδοσης"
 
 #: models.py:34 models.py:94
 msgid "date required"
@@ -203,7 +203,7 @@ msgstr ""
 
 #: models.py:35
 msgid "budget"
-msgstr ""
+msgstr "Προϋπολογισμός"
 
 #: models.py:36 models.py:95 models.py:131 views.py:227
 msgid "active"
@@ -239,7 +239,7 @@ msgstr ""
 
 #: models.py:77 models.py:78 models.py:177 urls.py:43
 msgid "purchase order status"
-msgstr ""
+msgstr "Κατάσταση Εντολής"
 
 #: models.py:92
 msgid "supplier"
@@ -247,7 +247,7 @@ msgstr "προμηθευτής"
 
 #: models.py:100 models.py:127 models.py:179 urls.py:49 views.py:329
 msgid "purchase order"
-msgstr ""
+msgstr "Εντολή Αγοράς"
 
 #: models.py:115 models.py:116 models.py:178 urls.py:58
 msgid "purchase order item status"
@@ -255,11 +255,11 @@ msgstr ""
 
 #: models.py:130 views.py:225
 msgid "agreed price"
-msgstr ""
+msgstr "τελική τιμή"
 
 #: models.py:134
 msgid "received"
-msgstr ""
+msgstr "Παραλήφθηκε"
 
 #: models.py:137 models.py:180 urls.py:61 views.py:317
 msgid "purchase order item"
@@ -271,23 +271,23 @@ msgstr ""
 
 #: models.py:148
 msgid "date performed"
-msgstr ""
+msgstr "ημερομηνία εκτέλεσης"
 
 #: models.py:149
 msgid "date validated"
-msgstr ""
+msgstr "ημερομηνία επικύρωσης"
 
 #: models.py:153
 msgid "reference"
-msgstr ""
+msgstr "αναφορά"
 
 #: models.py:156
 msgid "type"
-msgstr ""
+msgstr "τύπος"
 
 #: models.py:157
 msgid "origin"
-msgstr ""
+msgstr "έγγραφο προέλευσης"
 
 #: models.py:158
 #, fuzzy
@@ -296,7 +296,7 @@ msgstr "σημειώσεις"
 
 #: models.py:161
 msgid "items"
-msgstr ""
+msgstr "εξοπλισμός"
 
 #: urls.py:25
 msgid "purchase request state"
@@ -309,11 +309,11 @@ msgstr "ενεργό"
 
 #: urls.py:27 urls.py:45 views.py:227
 msgid "Open"
-msgstr ""
+msgstr "Ανοιχτό"
 
 #: urls.py:27 urls.py:45 views.py:227
 msgid "Closed"
-msgstr ""
+msgstr "Κλειστό"
 
 #: urls.py:29
 msgid "create new purchase request"
@@ -329,7 +329,7 @@ msgstr ""
 
 #: urls.py:67
 msgid "Items destruction"
-msgstr ""
+msgstr "Καταστροφή εξοπλισμού"
 
 #: urls.py:71
 msgid "Lost Items"
@@ -409,11 +409,11 @@ msgstr ""
 #: views.py:215
 #, python-format
 msgid "details for purchase order: %s"
-msgstr ""
+msgstr "λεπτομέρειες της εντολής: %s"
 
 #: views.py:224
 msgid "qty received"
-msgstr ""
+msgstr "Παραληφθείσα Ποσ."
 
 #: views.py:241
 #, python-format
@@ -422,7 +422,7 @@ msgstr ""
 
 #: views.py:244
 msgid "There are still open items."
-msgstr ""
+msgstr "Υπάρχουν ακόμα εκκρεμείς εγγραφές"
 
 #: views.py:248 views.py:297
 msgid "This purchase order has already been closed."
@@ -502,4 +502,5 @@ msgstr ""
 #: views.py:454
 msgid "add new purchase order item"
 msgstr ""
+
 

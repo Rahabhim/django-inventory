@@ -209,11 +209,7 @@ def purchase_order_view(request, object_id):
     purchase_order = get_object_or_404(PurchaseOrder, pk=object_id)
     form = PurchaseOrderForm_view(instance=purchase_order)
 
-    return render_to_response('generic_detail.html', {
-        'title':_(u'details for purchase order: %s') % purchase_order,
-        'object':purchase_order,
-        'form':form,
-        'subtemplates_dict':[{
+    subtemplates = [{
             'name':'generic_list_subtemplate.html',
             'title':_(u'purchase order items'),
             'object_list':purchase_order.items.all(),
@@ -223,9 +219,25 @@ def purchase_order_view(request, object_id):
                 {'name':_(u'agreed price'), 'attribute': 'fmt_agreed_price'},
                 {'name':_(u'status'), 'attribute': 'status'},
                 {'name':_(u'active'), 'attribute': 'fmt_active'}
-            ],
-            #'extra_columns':[{'name':'type', 'attribute':lambda x:x._meta.verbose_name[0].upper() + x._meta.verbose_name[1:]}],
-        }]
+                ],
+            },
+            {
+                'name':'generic_list_subtemplate.html',
+                'title':_(u'movements for this purchase order'),
+                'object_list': purchase_order.movements.all(),
+                # 'hide_links': False, # we want 'edit' there
+                'extra_columns':[
+                    {'name':_(u'state'), 'attribute': 'state'},
+                    {'name':_(u'date'), 'attribute': 'date_act'},
+                    # {'name':_(u'destination'), 'attribute': 'location_dest'}
+                    ],
+            },
+        ]
+    return render_to_response('generic_detail.html', {
+        'title':_(u'details for purchase order: %s') % purchase_order,
+        'object':purchase_order,
+        'form':form,
+        'subtemplates_dict': subtemplates,
     },
     context_instance=RequestContext(request))
 
@@ -441,6 +453,16 @@ def purchase_order_item_create(request, object_id):
         'title':_(u'add new purchase order item') ,
     },
     context_instance=RequestContext(request))
+
+def movement_do_close(request, object_id):
+    movement = get_object_or_404(Movement, pk=object_id)
+    try:
+        movement.do_close(request.user)
+        messages.success(request, _(u'The movement has been validated.'))
+    except Exception, e:
+        messages.error(request, unicode(e))
+
+    return redirect(movement.get_absolute_url())
 
 def repair_itemgroup(request):
     raise NotImplementedError

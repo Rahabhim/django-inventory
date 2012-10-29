@@ -6,11 +6,7 @@ from common.models import Supplier, Location
 from assets.models import Item, ItemTemplate
 
 from dynamic_search.api import register
-
-
-"""
-TODO: PR Change Order model ?
-"""
+import datetime
 
 
 class PurchaseRequestStatus(models.Model):
@@ -72,7 +68,7 @@ class PurchaseRequestItem(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('purchase_request_view', [str(self.purchase_request.id)])
+        return ('purchase_request_view', [str(self.purchase_request_id)])
 
 
 class PurchaseOrderStatus(models.Model):
@@ -139,7 +135,7 @@ class PurchaseOrder(models.Model):
             if item.received_qty < len(serials):
                 raise ValueError(_("You have given %d serials, but marked only %d received items. Please fix either of those") % \
                         (len(serials), item.received_qty))
-            iid = item.item_template.id
+            iid = item.item_template_id
             old_serials = po_items.setdefault(iid, set())
             assert not old_serials.intersection(serials), \
                     "Some serials are repeated in po: %s "  % \
@@ -149,12 +145,14 @@ class PurchaseOrder(models.Model):
 
         # 2st step: remove from dicts those items who are already in movements
         #           linked to this one
-        for move in self.movements.all():
-            for item in move.items.all():
+        #for move in self.movements.all(): #.prefetch_related('items'): Django 1.4
+        #    for item in move.items.iterator():
+        if True:
+            for item in Item.objects.filter(movements__purchase_order=self).iterator():
                 if item.qty < 1:
                     raise ValueError("Zero or negative quantity found for asset #%d" % item.id)
-                iset = po_items.get(item.item_template.id, set())
-                iqty = po_items_qty.get(item.item_template.id, 0)
+                iset = po_items.get(item.item_template_id, set())
+                iqty = po_items_qty.get(item.item_template_id, 0)
                 
                 if iset and item.serial_number and item.serial_number in iset:
                     iset.pop(item.serial_number)
@@ -163,7 +161,7 @@ class PurchaseOrder(models.Model):
                         iqty = 0
                     else:
                         iqty -= item.qty
-                    po_items_qty[item.item_template.id] = iqty
+                    po_items_qty[item.item_template_id] = iqty
                 else:
                     # Item of movement is not in PO list, iz normal.
                     continue
@@ -192,7 +190,7 @@ class PurchaseOrder(models.Model):
         for iid, two in cunmoved.items():
             qty, serials = two
             for s in serials:
-                new_item = Item.objects.get_or_create(item_template_id=iid, serial_number=s)
+                new_item, c = Item.objects.get_or_create(item_template_id=iid, serial_number=s)
                 new_move.items.add(new_item) #FIXME
             for i in range(qty):
                 # create individual items of item.qty=1
@@ -234,7 +232,7 @@ class PurchaseOrderItem(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('purchase_order_view', [str(self.purchase_order.id)])
+        return ('purchase_order_view', [str(self.purchase_order_id)])
 
     def fmt_agreed_price(self):
         if self.agreed_price:
@@ -262,7 +260,7 @@ class Movement(models.Model):
     note = models.TextField(verbose_name=_('Notes'), blank=True)
     location_src = models.ForeignKey(Location, related_name='location_src')
     location_dest = models.ForeignKey(Location, related_name='location_dest')
-    items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='items', blank=True)
+    items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='movements', blank=True)
     # limit_choices_to these at location_src
     
     checkpoint_src = models.ForeignKey('inventory.Inventory', verbose_name=_('Source checkpoint'),
@@ -272,18 +270,49 @@ class Movement(models.Model):
 
     purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements')
 
-    def do_close(self, val_user):
+    def do_close(self, val_user, val_date=None):
         """Check the items and set the movement as 'done'
-        
+
         This function does the most important processing of a movement. It will
         check the integrity of all contained data, and then update the inventories
         accordingly.
         """
-        raise NotImplementedError
+        if val_date is None:
+            val_date = datetime.date.today()
+
+        if self.state != 'draft':
+            raise ValueError(_("Cannot close movement %s (id: %s) because it is not in draft state") % (self.name, self.id))
+        if self.validate_user:
+            raise ValueError(_("Cannot close movement because it seems already validated!"))
+
+        all_items = self.items.all()
+        for item in all_items:
+            if item.location_id == self.location_src_id:
+                pass
+            elif item.location is None and self.location_src.usage in ('procurement', 'supplier'):
+                # Bundled items can come from None, end up in 'bundles'
+                pass
+            else:
+                raise ValueError(_("Item %s is at %s, rather than the move source location!") % \
+                        (unicode(item), item.location))
+
+        # TODO: validate that all itemgroups of items are active
+
+        # everything seems OK by now...
+        all_items.update(location=self.location_dest)
+        self.validate_user = val_user
+        self.date_val = val_date
+        self.state = 'done'
+        self.save()
+        return True
 
     @models.permalink
     def get_absolute_url(self):
         return ('movement_view', [str(self.id)])
+
+    def __unicode__(self):
+        return _(u'%s from %s to %s') % (self.name or self.origin or _('Move'), \
+                    self.location_src, self.location_dest)
 
 #class MovementLine(models.Model):
     #movement = models.ForeignKey(Movement)

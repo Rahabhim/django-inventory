@@ -3,13 +3,15 @@
 # Only a few rights reserved
 
 from django.db import models
-
 from django.http import HttpResponseForbidden
 from models import Department
 from common.models import Location
 from common.api import LookupChannel
 
 def _departments_by_q(q):
+    return Department.objects.filter(_department_filter_q(q))
+
+def _department_filter_q(q):
     """Select departments that match search `q`
     
         We have too many departments, so this search must be smart enough.
@@ -21,14 +23,19 @@ def _departments_by_q(q):
            q="ales"  return = ["Sales", "Males", "Ales"]
            q="ent ales" return= ["Enterprize Sales",]
            q="ales 10" return=["10 Sales",] not ["110 Sales", "Sales 10"]
+        
+        @param qset If given, the base Department.objects queryset to start from
     """
-    qset = Department.objects
+    filters = []
     for r in q.split(' '):
         if r.isdigit():
-            qset = qset.filter(name__regex=r'^%s[^0-9]' % r)
+            filters.append(models.Q(name__regex=r'^%s[^0-9]' % r))
         else:
-            qset = qset.filter(name__icontains=r)
-    return qset
+            filters.append(models.Q(name__icontains=r))
+    
+    if not filters:
+        return models.Q()
+    return reduce(lambda a, b: a & b, filters)
 
 class DepartmentLookup(LookupChannel):
     model = Department

@@ -20,14 +20,49 @@ from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   InlineModelForm
 
 def add_filter(request, list_filters):
+    """ Add list filters to form and eventually filter the queryset
+
+        @param list_filter a list of dicts, each describing a filter
+
+        A filter can have the following items:
+            'name' required, the field name in the html form
+            'destination' required, the field filter name. It can be a string like
+                        "name__icontains", a plain field like "manufacturer" or
+                        a list/tuple of strings, that will be OR-ed together
+                        If it is a callable, it will be called like fn(data)
+                        and expected to return a Q() filter-expression
+            'queryset' optional, if set, it will be a ModelChoice form (selection) with
+                    the queryset records as options
+            'lookup_channel': optional, if set, it will present an AutoComplete for that
+                    completion "channel"
+    """
     filters = []
     filter_dict = dict([(f['name'], f) for f in list_filters])
     if request.method == 'GET':
         filter_form = FilterForm(list_filters, request.GET)
         if filter_form.is_valid():
             for name, data in filter_form.cleaned_data.items():
-                if data:
-                    filters.append(Q(**{filter_dict[name]['destination']:data}))
+                if not data:
+                    continue
+                dest = filter_dict[name]['destination']
+                if isinstance(dest, basestring):
+                    filters.append(Q(**{dest:data}))
+                elif isinstance(dest, (tuple, list)):
+                    q = None
+                    for idest in dest:
+                        nq = Q(**{idest:data})
+                        if q is None:
+                            q = nq
+                        else:
+                            q = q | nq
+                    filters.append(q)
+                elif callable(dest):
+                    q = dest(data)
+                    if not isinstance(q, Q):
+                        raise TypeError("Callable at filter %s returned a %s" % (name, type(q)))
+                    filters.append(q)
+                else:
+                    raise TypeError("invalid destination: %s" % type(dest))
 
     else:
         filter_form = FilterForm(list_filters)
@@ -35,6 +70,10 @@ def add_filter(request, list_filters):
     return filter_form, filters
 
 def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs):
+    """
+        Remember that choice fields may need the "get_FOO_display" method rather than
+        a direct value of "FOO".
+    """
     filters = None
     if list_filters:
         filter_form, filters = add_filter(request, list_filters)
@@ -141,7 +180,7 @@ def generic_assign_remove(request, title, obj, left_list_qryset, left_list_title
 
 def generic_detail(request, object_id, form_class, queryset, title=None, extra_context={}, extra_fields=[]):
     #if isinstance(form_class, DetailForm):
-    if queryset and not isinstance(queryset, QuerySet) \
+    if queryset is not None and not isinstance(queryset, QuerySet) \
                 and callable(queryset):
         queryset = queryset(request)
 
@@ -229,6 +268,12 @@ class _InlineViewMixin(object):
         if hasattr(form, '_init_by_user'):
             form._init_by_user(self.request.user)
         return form
+
+    def get_success_url(self):
+        if callable(self.success_url):
+            return self.success_url(self.object)
+        else:
+            return super(_InlineViewMixin, self).get_success_url()
 
 class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'

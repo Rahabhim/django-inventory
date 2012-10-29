@@ -14,7 +14,17 @@ from assets import state_filter
 from models import Item, ItemGroup, State
 from forms import ItemForm, ItemForm_view, ItemGroupForm, ItemGroupForm_view
 from conf import settings as asset_settings
+from products.models import Manufacturer, ItemCategory
 
+manufacturer_filter = {'name':'manufacturer', 'title':_(u'manufacturer'), 
+            'queryset':Manufacturer.objects.all(), 'destination':'item_template__manufacturer'}
+
+category_filter = { 'name': 'category', 'title': _(u'category'),
+            'queryset': ItemCategory.objects.all(), 'destination': 'item_template__category'}
+
+product_filter = {'name': 'product_name', 'title': _('product'),
+            'destination': ('item_template__description__icontains', 'item_template__model__icontains',
+                            'item_template__part_number')}
 
 urlpatterns = patterns('assets.views',
 
@@ -22,11 +32,14 @@ urlpatterns = patterns('assets.views',
     url(r'^asset/(?P<object_id>\d+)/update/$', update_object, {'form_class':ItemForm, 'template_name':'generic_form.html', 'extra_context':{'object_name':_(u'asset')}}, 'item_update'),
     url(r'^asset/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Item}, post_delete_redirect="item_list", extra_context=dict(object_name=_(u'asset'))), 'item_delete'),
     url(r'^asset/list/$', generic_list, dict(queryset=Item.objects.by_request,
-                list_filters=[location_filter, state_filter],
+                list_filters=[ product_filter, manufacturer_filter, category_filter,
+                            location_filter, state_filter],
                 extra_context=dict(title=_(u'assets'), 
                     extra_columns=[ dict(attribute='get_specs', name=_(u'specifications')),
                             dict(name=_('Serial number'), attribute='serial_number'),
-                            dict(name=_('Location'), attribute='location'),],)), 
+                            dict(name=_('Location'), attribute='location'),
+                            dict(name=_(u'Manufacturer'), attribute='get_manufacturer'),
+                            dict(name=_(u'Category'), attribute='get_category'),],)), 
             'item_list'),
     url(r'^asset/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemForm_view, 
                 queryset=Item.objects.all(), 
@@ -41,7 +54,9 @@ urlpatterns = patterns('assets.views',
 
     url(r'^group/list/$', generic_list, dict(queryset=ItemGroup.objects.by_request,
                 extra_context=dict(title=_(u'item groups'),
-                        extra_columns=[{'name': _('Location'), 'attribute': 'location'}]),), 'group_list'),
+                        extra_columns=[{'name': _('Location'), 'attribute': 'current_location'},
+                                    {'name': _(u'Manufacturer'), 'attribute': 'get_manufacturer'},
+                                    {'name': _(u'Category'), 'attribute': 'get_category'},]),), 'group_list'),
     # my items?
     url(r'^group/create/$', create_object, {'form_class':ItemGroupForm, 'template_name':'generic_form.html'}, 'group_create'),
     url(r'^group/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemGroupForm_view, queryset=ItemGroup.objects.all()), 'group_view'),

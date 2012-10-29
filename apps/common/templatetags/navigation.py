@@ -134,9 +134,25 @@ def resolve_arguments(context, src_args):
     return args, kwargs
 
 
-def resolve_links(context, links, current_view, current_path):
+def resolve_links(context, links, current_view, current_path, obj=None):
+    """ prepare list of links to be used by the jinja2 template
+    
+        This function will also check the "condition" of a link, a callable
+        in the form "func(obj, context)" as a filter for desired/undesired
+        links per object.
+    """
     context_links = []
     for link in links:
+        if 'condition' in link:
+            cond_fn = link['condition']
+            assert callable(cond_fn), repr(cond_fn)
+            res = False
+            try:
+                res = cond_fn(obj, context)
+            except Exception, e:
+                res = False
+            if not res:
+                continue
         args, kwargs = resolve_arguments(context, link.get('args', {}))
 
         if 'view' in link:
@@ -174,19 +190,19 @@ def _get_object_navigation_links(context, menu_name=None):
     except VariableDoesNotExist:
         obj = None
 
-    try:
-        links = object_navigation[menu_name][current_view]['links']
-        for link in resolve_links(context, links, current_view, current_path):
-            context_links.append(link)
-    except KeyError:
-        pass
+    links = []
 
-    try:
-        links = object_navigation[menu_name][type(obj)]['links']
-        for link in resolve_links(context, links, current_view, current_path):
-            context_links.append(link)
-    except KeyError:
-        pass
+    onm = object_navigation.get(menu_name, {})
+    if onm:
+        if current_view in onm:
+            links.extend(onm[current_view].get('links', []))
+        if obj and type(obj) in onm:
+            links.extend(onm[type(obj)].get('links', []))
+        if obj and (current_view, type(obj)) in onm:
+            links.extend(onm[(current_view, type(obj))].get('links', []))
+
+    for link in resolve_links(context, links, current_view, current_path, obj):
+        context_links.append(link)
 
     return context_links
 
@@ -223,6 +239,5 @@ def object_navigation_template(context):
         'horizontal':True,
         'object_navigation_links':_get_object_navigation_links(context)
     }
-    return new_context
 register.inclusion_tag('generic_navigation.html', takes_context=True)(object_navigation_template)
 

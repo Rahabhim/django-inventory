@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
+from django.db.models import Q
 
 from generic_views.views import generic_delete, generic_list, generic_detail, \
                 GenericCreateView, GenericUpdateView
@@ -18,8 +20,34 @@ from movements import purchase_request_state_filter, \
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
         PurchaseOrderItemForm_inline, \
         DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
-        MovementForm, MovementForm_view
+        MovementForm, MovementForm_view, MovementForm_update_po
+
+from company.models import Department
+from company.lookups import _department_filter_q
+
 import views
+
+state_filter = {'name':'state', 'title':_(u'state'), 
+            'choices':'movements.Movement.state' , 'destination':'state'}
+
+stype_filter = {'name':'stype', 'title':_(u'stype'), 
+            'choices':'movements.Movement.stype' , 'destination':'stype'}
+
+def make_mv_location(destination):
+    """ Constructs the filter clojure for a destination column
+    """
+    dept_col = destination + '__department__in'
+    dept_col2 = destination + '__department__isnull'
+    lname_col = destination + '__name__icontains'
+    return lambda q: Q(**{dept_col: Department.objects.filter(_department_filter_q(q))}) | \
+                    Q(**{dept_col2:True, lname_col: q})
+
+location_src_filter = {'name': 'location_src', 'title': _('Source location'), 
+            'destination': make_mv_location('location_src')}
+
+location_dest_filter = {'name': 'location_dest', 'title': _('Destination location'), 
+            'destination': make_mv_location('location_dest')}
+
 
 urlpatterns = patterns('movements.views',
     url(r'^purchase/request/state/list/$', generic_list, dict({'queryset':PurchaseRequestStatus.objects.all()}, extra_context=dict(title =_(u'purchase request states'))), 'purchase_request_state_list'),
@@ -50,7 +78,9 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/create/$', GenericCreateView.as_view(form_class=PurchaseOrderForm, 
             inline_fields={'items': PurchaseOrderItemForm_inline},
             extra_context={'title':_(u'create new purchase order')}), name='purchase_order_create'),
-    url(r'^purchase/order/(?P<object_id>\d+)/update/$', update_object, {'form_class':PurchaseOrderForm, 'template_name':'generic_form.html'}, 'purchase_order_update'),
+    url(r'^purchase/order/(?P<pk>\d+)/update/$',GenericUpdateView.as_view(form_class=PurchaseOrderForm, 
+            inline_fields={'items': PurchaseOrderItemForm_inline},
+            extra_context={'title':_(u'update purchase order')}) , name='purchase_order_update'),
     url(r'^purchase/order/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrder}, post_delete_redirect="purchase_order_list", extra_context=dict(object_name=_(u'purchase order'))), 'purchase_order_delete'),
     url(r'^purchase/order/(?P<object_id>\d+)/close/$', 'purchase_order_close', (), 'purchase_order_close'),
     url(r'^purchase/order/(?P<object_id>\d+)/open/$', 'purchase_order_open', (), 'purchase_order_open'),
@@ -77,7 +107,11 @@ urlpatterns = patterns('movements.views',
 
     url(r'^objects/moves/list/$', generic_list,
             dict(queryset=Movement.objects.all(),
-                extra_context=dict(title =_(u'movements'))),
+                list_filters=[state_filter, stype_filter, location_src_filter, location_dest_filter],
+                extra_context=dict(title =_(u'movements'),
+                    extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
+                            {'name':_(u'state'), 'attribute': 'get_state_display'},
+                            {'name':_(u'type'), 'attribute': 'get_stype_display'}])),
             'movements_list'),
     url(r'^objects/moves/(?P<object_id>\d+)/$', generic_detail,
             dict(form_class=MovementForm_view,
@@ -86,6 +120,15 @@ urlpatterns = patterns('movements.views',
                 #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
                 ),
             'movement_view'),
+    url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
+                form_class=MovementForm_update_po,
+                success_url=lambda obj: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
+                extra_context={'object_name':_(u'movement')}
+            ),
+            name='movement_update_po'),
+
+    url(r'^objects/moves/(?P<object_id>\d+)/close/$', 'movement_do_close',
+            name='movement_do_close'),
 
 )
 

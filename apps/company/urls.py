@@ -9,11 +9,14 @@ from generic_views.views import generic_delete, \
 
 from forms import DepartmentForm_view, DepartmentTypeForm_view
 from company import department_type_filter
+from lookups import _department_filter_q
+
+dept_name_filter = {'name': 'name', 'title': _('name'), 'destination': _department_filter_q}
 
 urlpatterns = patterns('',
     url(r'^object/list/company_department$', generic_list, dict( queryset=Department.objects.all(), \
             extra_context=dict(),
-            list_filters=[department_type_filter]),
+            list_filters=[dept_name_filter, department_type_filter]),
             name='company_department_list'),
     url(r'^object/list/company_department_type$', generic_list, 
             dict({'queryset':DepartmentType.objects.all()}, extra_context=dict(title =_(u'department types'))),

@@ -95,7 +95,7 @@ class Item(models.Model):
         return [State.objects.get(pk=id) for id in self.itemstate_set.all().values_list('state', flat=True)]
 
     def clean(self):
-        if self.is_bundled and self.location:
+        if self.is_bundled and self.location and self.location.usage != 'production':
             raise ValidationError("A bundled item cannot be assigned to any location itself")
         return super(Item, self).clean()
 
@@ -104,6 +104,21 @@ class Item(models.Model):
             return "spec1"
         else:
             return "spec2"
+
+    def current_location(self):
+        if self.location:
+            if self.location.usage == 'production':
+                if self.itemgroup:
+                    return self.itemgroup.current_location()
+                return None
+            else:
+                return self.location
+
+    def get_manufacturer(self):
+        return self.item_template.manufacturer.name
+
+    def get_category(self):
+        return unicode(self.item_template.category)
 
 class ItemGroup(Item):
     """ A group (or bundle) is itself an item, behaves like one in the long run
