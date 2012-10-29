@@ -264,7 +264,7 @@ class KtimColumn(One2ManyColumn):
             move = po.movements.create(location_src=self._procurement_location,
                         location_dest=end_location, name=user_id, 
                         date_act=bdl['_date_received'] or po.issue_date,
-                        create_user_id=ADMIN_USER,
+                        create_user_id=ADMIN_USER, stype='in',
                         origin=user_id)
         move.items.add(item)
         return po
