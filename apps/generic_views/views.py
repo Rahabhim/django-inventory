@@ -288,6 +288,7 @@ class CartOpenView(django_gv.detail.SingleObjectMixin, django_gv.TemplateView):
     """
     template_name = 'generic_cart_open.html'
     extra_context = None
+    dest_model = None
 
     # TODO def get_queryset() w. callable
 
@@ -299,8 +300,38 @@ class CartOpenView(django_gv.detail.SingleObjectMixin, django_gv.TemplateView):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        cart_utils.open_as_cart(self.object, request.session)
+        cart_utils.open_as_cart(self.object, request.session, self.dest_model)
         return super(CartOpenView, self).get(request, object=self.object, **kwargs)
 
+class CartCloseView(django_gv.detail.SingleObjectMixin, django_gv.RedirectView):
+    """ A view that immediately adds the object as a cart, and then gives instructions
+    """
+    # TODO def get_queryset() w. callable
+    
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        cart_utils.close_cart(self.object, request.session)
+        if 'HTTP_REFERER' in request.META:
+            url = request.META['HTTP_REFERER']
+        else:
+            url = self.object.get_absolute_url()
+        return HttpResponseRedirect(url)
+
+class AddToCart(django_gv.RedirectView):
+    """ Adds some item to a cart
+    """
+    model = None
+    cart_model = None
+    extra_context = None
+
+    def get_context_data(self, **kwargs):
+        context = super(CartOpenView, self).get_context_data(**kwargs)
+        if self.extra_context:
+            context.update(self.extra_context)
+        return context
+
+    def get(self, request, **kwargs):
+        #if 
+        raise
 
 #eof

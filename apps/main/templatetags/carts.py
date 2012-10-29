@@ -2,6 +2,7 @@
 from django import template
 import logging
 from main import cart_utils
+from django.db import models
 import settings
 
 register = template.Library()
@@ -46,13 +47,31 @@ def session_carts(context):
 def object_carts(context, obj):
     """ Carts to appear as "actions" inside some object's line
     """
-    pass
+    ret = {}
+    try:
+        session = template.Variable('request').resolve(context).session
+        if session is not None and obj is not None and isinstance(obj, models.Model)\
+                and cart_utils.needed_in_cart(obj, session):
+            ret['has_cart'] = True
+    except Exception:
+        logger.warning("Cannot resolve session carts:", exc_info=True)
+    
+    return ret
 
 @register.inclusion_tag('object_list_carts.html', takes_context=True)
-def object_list_carts(context, obj):
+def object_list_carts(context, queryset):
     """ Carts to appear as "actions" at the bottom of some objects list
     """
-    pass
+    ret = {}
+    try:
+        session = template.Variable('request').resolve(context).session
+        if session is not None and queryset is not None:
+            ret['carts'] = cart_utils.get_session_carts(session, init=False, for_model=queryset.model)
+            ret['has_cart'] = bool(ret['carts'])
+    except Exception:
+        logger.warning("Cannot resolve session carts:", exc_info=True)
+    
+    return ret
 
 
 # Post-login: retrieve the session carts...
