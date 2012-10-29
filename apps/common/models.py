@@ -8,7 +8,7 @@ from dynamic_search.api import register
 from django.core.exceptions import ValidationError
 
 class Partner(models.Model):
-    name = models.CharField(max_length=128, unique=True)
+    name = models.CharField(max_length=128, db_index=True, unique=True)
     active = models.BooleanField(verbose_name=_("active"), default=False)
     web = models.CharField(max_length=128, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
@@ -39,7 +39,7 @@ class Location(models.Model):
         The usage is modelled after the OpenERP values.
         inventory is a virtual location, used to correct stock levels
     """
-    name = models.CharField(max_length=32, verbose_name=_("name"))
+    name = models.CharField(max_length=32, verbose_name=_("name"), db_index=True)
     department = models.ForeignKey('company.Department', null=True, blank=True)
 
     usage = models.CharField(max_length=32, verbose_name=_("location type"),
