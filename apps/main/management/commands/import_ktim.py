@@ -106,6 +106,7 @@ class One2ManyColumn(M.sColumn):
 
 class KtimColumn(One2ManyColumn):
     _bundle_product = None
+    _func_statuses = {'BROKEN': u'Χαλασμένο', 'STOLEN':u'Κλεμμένο', 'RETIRED':u'Αποσυρμένο'}
     
     def init(self, table):
         super(KtimColumn, self).init(table)
@@ -187,6 +188,13 @@ class KtimColumn(One2ManyColumn):
                         iout['property_number'] = str(bdl['property_number'])
                     nitem = item.items.create(**iout)
                     self._do_po(bdl, nitem, self._bundle_location)
+
+            if func_status and func_status != 'OK':
+                status2 = self._func_statuses.get(func_status, func_status)
+                st, c = M._get_model('assets.State').objects.get_or_create(name=status2)
+                itsmodel = M._get_model('assets.ItemState')
+                its2 = itsmodel(state=st, item=item)
+                its2.save()
 
     def _get_po_date(self, bdl):
         """ Guess the date for some bundle
