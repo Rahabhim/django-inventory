@@ -5,7 +5,8 @@ from django.views.generic.create_update import create_object, update_object
 
 from generic_views.views import generic_delete, \
                                 generic_detail, generic_list, \
-                                GenericCreateView, GenericUpdateView
+                                GenericCreateView, GenericUpdateView, \
+                                CartOpenView, CartCloseView
 
 #from photos.views import generic_photos
 
@@ -30,6 +31,10 @@ urlpatterns = patterns('inventory.views',
     url(r'^inventory/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Inventory},
                 post_delete_redirect="inventory_list", 
                 extra_context=dict(object_name=_(u'inventory'))), 'inventory_delete'),
+    url(r'^inventory/(?P<pk>\d+)/open/$', CartOpenView.as_view(
+                model=Inventory, dest_model='assets.Item',
+                extra_context={'object_name':_(u'inventory')}), name='inventory_open'),
+    url(r'^inventory/(?P<pk>\d+)/close/$', CartCloseView.as_view( model=Inventory), name='inventory_close'),
     #url(r'^inventory/(?P<object_id>\d+)/current/$', 'inventory_current', (), 'inventory_current'),
 
     url(r'^inventory_item/list/$', generic_list, dict(queryset=InventoryItem.objects.all(), 

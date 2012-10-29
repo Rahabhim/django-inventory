@@ -54,6 +54,18 @@ class Inventory(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_cart_name(self):
+        """ Returns the "shopping-cart" name of this model
+        """
+        return _("Inventory: %s") % self.name
+
+    def get_cart_itemcount(self):
+        """ Returns the number of items currently at the cart
+        """
+        return 42
+    
+    def get_cart_url(self):
+        return self.get_absolute_url()
 
 class InventoryItem(models.Model):
     inventory = models.ForeignKey(Inventory, related_name='items')

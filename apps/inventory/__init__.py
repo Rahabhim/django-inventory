@@ -15,6 +15,8 @@ inventory_create = {'text':_('create new inventory'), 'view':'inventory_create',
 inventory_update = {'text':_(u'edit'), 'view':'inventory_update', 'args':'object.id', 'famfam':'package_green'}
 inventory_delete = {'text':_(u'delete'), 'view':'inventory_delete', 'args':'object.id', 'famfam':'package_delete'}
 inventory_view = {'text':_(u'details'), 'view':'inventory_view', 'args':'object.id', 'famfam':'package_go'}
+inventory_open = {'text':_(u'open'), 'view':'inventory_open', 'args':'object.id', 'famfam':'package_green'}
+inventory_close = {'text':_(u'close'), 'view':'inventory_close', 'args':'object.id', 'famfam':'package_red'}
 
 #inventory_transaction_list = {'text':_('view all transactions'), 'view':'inventory_transaction_list', 'famfam':'book_go'}
 #inventory_transaction_create = {'text':_('create new transaction'), 'view':'inventory_transaction_create', 'famfam':'book_add'}
@@ -31,7 +33,7 @@ inventory_menu_links = [
 
 register_links(['inventory_view', 'inventory_list', 'inventory_create', 
         'inventory_update', 'inventory_delete',], [inventory_create], menu_name='sidebar')
-register_links(Inventory, [inventory_update, inventory_delete])
+register_links(Inventory, [inventory_update, inventory_delete, inventory_open, inventory_close])
 register_links(Inventory, [inventory_view], menu_name='sidebar')
 
 #register_links(['inventory_transaction_list', 'inventory_transaction_create', 'inventory_transaction_update', 'inventory_transaction_delete', 'inventory_transaction_view'], [inventory_create_transaction], menu_name='sidebar')
