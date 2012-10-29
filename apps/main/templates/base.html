@@ -37,17 +37,6 @@
         <li><a href="/admin">{% trans "Admin site" %}</a></li>
     {% endif %}
 
-
-    <li>
-        <form action="{% url set_language %}" method="post">{% csrf_token %}
-            <select name="language">
-                {% for lang in LANGUAGES %}
-                    <option value="{{ lang.0 }}">{{ lang.1 }}</option>
-                {% endfor %}
-            </select>
-            <input type="submit" value="{% trans 'Go' %}" />
-        </form>
-    </li>
     <li><a class="logout" href="{% if user.is_anonymous %}{% url login_view %}?next=/{% else %}{% url logout_view %}{% endif %}">{% if user.is_anonymous %}{% trans 'Login' %}{% else %}{% trans 'Logout' %}{% endif %}</a></li>
 {% endblock %}
 
