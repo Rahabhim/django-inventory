@@ -1,11 +1,12 @@
 from django.template import Library, Node, Variable, VariableDoesNotExist
 from django.utils.translation import ugettext as _
+from copy import copy
 
 register = Library()
 
 
 def filter_form(context):
-    new_context = context
+    new_context = copy(context)
 
     new_context.update({
         'form':context['filter_form'],
