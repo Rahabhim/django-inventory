@@ -308,7 +308,7 @@ class Command(BaseCommand):
 
         if not self._myc.connect(options, load=True):
             self.stderr.write("Cannot connect to MySQL!\n")
-            return
+            raise IOError('MySQL Connection failed')
         self.stderr.write("Connected. Start of sync\n")
 
         try:
