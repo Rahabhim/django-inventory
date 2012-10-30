@@ -496,11 +496,12 @@ class M2O_Column(sColumn):
 class Ref_Column(simple_column):
     """ Reference column, corresponding to many2one
     """
-    def __init__(self, name, oname, otable, omodel=None):
+    def __init__(self, name, oname, otable, omodel=None, fast_mode=True):
         super(Ref_Column, self).__init__(name, oname,)
         self.otable = otable
         self._id_column = None
         self._omanager = None
+        self._fast_mode = fast_mode
         if omodel:
             self._omanager = weakref.ref(_get_model(omodel).objects)
 
@@ -530,7 +531,10 @@ class Ref_Column(simple_column):
             mref = self._id_column()._map_data.get(rid, None)
             if mref is None:
                 raise ValueError("Don't have id #%s in table %s for %s" % (rid, self.otable, self._name))
-            out[self._oname] = self._omanager().get(pk=mref)
+            if self._fast_mode:
+                out[self._oname + '_id'] = mref
+            else:
+                out[self._oname] = self._omanager().get(pk=mref)
         else:
             out[self._oname] = None
 
@@ -549,7 +553,10 @@ class Ref_NN_Column(Ref_Column):
         mref = self._id_column()._map_data.get(rid, None)
         if mref is None:
             raise ValueError("Don't have id #%d in table %s for %s" % (rid, self.otable, self._name))
-        out[self._oname] = self._omanager().get(pk=mref)
+        if self._fast_mode:
+            out[self._oname + '_id'] = mref
+        else:
+            out[self._oname] = self._omanager().get(pk=mref)
 
 class Static_Column(sColumn):
     """Column that pushes a constant value into every pg row
@@ -725,6 +732,8 @@ class Table_SuckToo(Table_Suck):
                         c.postProcess(rline, out)
                 except DiscardRow:
                     # go on with next rline
+                    if out:
+                        raise RuntimeError("Non-empty out")
                     continue
                 log.debug("Out data: %r", out)
                 nfound += 1

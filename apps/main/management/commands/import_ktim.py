@@ -131,7 +131,7 @@ class KtimColumn(One2ManyColumn):
         
         # and, now, use the values!
         for r, out in results:
-            loc_dict = dict(department=out.pop('_department'), \
+            loc_dict = dict(department_id=out.pop('_department_id'), \
                             name=out.pop('_location_name'), usage='internal')
             
             end_location, c = loc_obj.objects.get_or_create(**loc_dict)
@@ -280,7 +280,10 @@ class Ref_Column_dafuq(M.Ref_Column):
                 mref = self._id_column()._map_data.get(rid.upper(), None)
             if mref is None:
                 raise ValueError("Don't have id #%s in table %s for %s" % (rid, self.otable, self._name))
-            out[self._oname] = self._omanager().get(pk=mref)
+            if self._fast_mode:
+                out[self._oname + '_id'] = mref
+            else:
+                out[self._oname] = self._omanager().get(pk=mref)
         else:
             out[self._oname] = None
 
@@ -360,8 +363,8 @@ class Command(BaseCommand):
         bundles_ktim += M.Date_Column("DATE_PARALAVHS", '_date_received')
         bundles_ktim += M.Date_Column("DATE_TIMOL", '_date_invoiced')
         bundles_ktim += M.Str_Column("WARRANTY", '_warranty')
-        bundles_ktim += M.Ref_Column("PROION_ID", 'item_template', 'KT_05_PROIONTA')
-        bundles_ktim += M.Ref_Column("YPOERGO_ID", '_contract', 'KT_06_YPOERGA', 'procurements.Contract')
+        bundles_ktim += M.Ref_Column("PROION_ID", 'item_template', 'KT_05_PROIONTA', fast_mode=False)
+        bundles_ktim += M.Ref_Column("YPOERGO_ID", '_contract', 'KT_06_YPOERGA', 'procurements.Contract', fast_mode=False)
 
         product_cat = M.Table_Suck('KT_03_EIDOS', 'products.ItemCategory', myc)
         product_cat += M.IDmap_Column('EIDOS_ID')
