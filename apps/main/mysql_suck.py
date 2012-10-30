@@ -24,6 +24,7 @@ import weakref
 
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
+import settings
 
 try:
     import cPickle as pickle
@@ -96,7 +97,7 @@ class MyS_Connector(object):
                 (myconn_kwargs['user'], myconn_kwargs.get('db','*')))
 
         if options['my_fstore']:
-            self._fstore_path = os.path.expanduser(options['my_fstore'])
+            self._fstore_path = os.path.expanduser(options['my_fstore'] % dict(dbname=settings.DATABASES['default']['SUCK']))
 
         self._log.info("Init. Connecting to MySQL db...")
 
