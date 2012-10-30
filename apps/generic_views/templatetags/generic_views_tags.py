@@ -14,4 +14,6 @@ def filter_form(context):
         'title':_(u'Filter'),
     })
     return new_context
-register.inclusion_tag('generic_form_subtemplate.html', takes_context=True)(filter_form)
+register.inclusion_tag('filter_form_subtemplate.html', takes_context=True)(filter_form)
+
+#eof

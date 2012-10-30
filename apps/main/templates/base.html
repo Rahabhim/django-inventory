@@ -95,17 +95,15 @@
         </div>
     {% endif %}
 
-    {% if filter_form %}
-        {% with 'true' as side_bar %}
-            {% filter_form %}
-        {% endwith %}
-    {% endif %}
-
     {% block sidebar %}{% endblock %}
 {% endblock %}
 
 
-{% block web_theme_content %}{% block content %}{% endblock %}{% endblock %}
+{% block web_theme_content %}
+    {% if filter_form %} {% filter_form %} {% endif %}
+
+    {% block content %}{% endblock %}
+{% endblock %}
 
 {% block web_theme_footer %}{% block footer %}{% endblock %}{% endblock %}
 
