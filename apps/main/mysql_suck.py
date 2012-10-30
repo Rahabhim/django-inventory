@@ -18,6 +18,7 @@
 
 import logging
 import os
+import sys
 import MySQLdb
 import optparse
 import weakref
@@ -167,6 +168,8 @@ class MyS_Connector(object):
         try:
             fp = open(self._fstore_path, 'wb')
             pickle.dump(ldata, fp)
+            sys.stdout.write('S')
+            sys.stdout.flush()
             self._log.debug("Sucessfully saved data into \"%s\"", self._fstore_path)
 
         except EnvironmentError, e:
@@ -299,6 +302,8 @@ class Table_Suck(object):
                     r = self._push_data(out)
                     for ah in self._after_handlers:
                         ah(r, rline)
+                sys.stdout.write('.')
+                sys.stdout.flush()
 
             if self._connector()._fstore_path:
                 # Just in case, we save at regular intervals
@@ -738,7 +743,13 @@ class Table_SuckToo(Table_Suck):
                 log.debug("Out data: %r", out)
                 nfound += 1
                 results.append((rline, out))
-            
+                sys.stdout.write('.')
+                sys.stdout.flush()
+
+            if not results:
+                # all of the above had DiscardRow
+                continue
+
             # we have to finish with previous query in `mycr` before
             # the result handlers can re-use the cursor. So, it's out
             # of the first loop
