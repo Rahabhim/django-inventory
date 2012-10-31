@@ -1,4 +1,5 @@
-import urllib
+# -*- encoding: utf-8 -*-
+#import urllib
 
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import messages
@@ -14,7 +15,7 @@ from django.views.generic.list_detail import object_detail, object_list
 from django.views.generic.create_update import delete_object # create_object, update_object, 
 import django.views.generic as django_gv
 from django.core.exceptions import ImproperlyConfigured
-from django.forms.models import inlineformset_factory, ModelForm
+from django.forms.models import inlineformset_factory #, ModelForm
 from main import cart_utils
 
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
