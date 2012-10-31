@@ -87,7 +87,9 @@
             <tr class="{% cycle 'odd' 'even2' %}">
             {% if group_fields %}{% for gf in group_fields %}
 		<td {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>
-	            {% if forloop.first %}<a href="{{ group.url }}">{% endif %}
+	            {% if forloop.first %}
+			<span class="famfam active famfam-{% if not group.items %}add{% else %}database_go{% endif %}"></span>
+			<a href="{{ group.url }}">{% endif %}
 		    {% if gf.attribute %}{{ group.group|object_property:gf.attribute }}{% else %}{{ group.group }}{% endif %}
 		    {% if forloop.first %}({{group.items_count}}) </a>{% endif %}
 	    {% endfor %}{% else %}
