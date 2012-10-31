@@ -325,7 +325,8 @@ def generic_assign_remove(request, title, obj, left_list_qryset, left_list_title
     context_instance=RequestContext(request))
 
 
-def generic_detail(request, object_id, form_class, queryset, title=None, extra_context={}, extra_fields=[]):
+def generic_detail(request, object_id, form_class, queryset, title=None, extra_context={}, extra_fields=[],
+                template_name='generic_detail.html'):
     #if isinstance(form_class, DetailForm):
     if queryset is not None and not isinstance(queryset, QuerySet) \
                 and callable(queryset):
@@ -344,7 +345,7 @@ def generic_detail(request, object_id, form_class, queryset, title=None, extra_c
 
     return object_detail(
         request,
-        template_name='generic_detail.html',
+        template_name=template_name,
         extra_context=extra_context,
         queryset=queryset,
         object_id=object_id,
