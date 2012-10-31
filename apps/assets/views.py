@@ -6,18 +6,30 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 # from django.db.models import Q
 from django.contrib import messages
-# from django.contrib.contenttypes.models import ContentType
-from django.views.generic.list_detail import object_list # object_detail,
 from django.core.urlresolvers import reverse
 
-from generic_views.views import generic_assign_remove #, generic_list
-
-from common import location_filter
-from common.models import Location
-from company.models import Department
+from generic_views.views import generic_assign_remove, GenericBloatedListView
 
 from models import Item, ItemGroup, State, ItemState
 
+from common.models import Location
+from company.models import Department
+from assets import state_filter
+from company import make_mv_location
+from products.models import Manufacturer, ItemCategory
+
+manufacturer_filter = {'name':'manufacturer', 'title':_(u'manufacturer'),
+            'queryset':Manufacturer.objects.all(), 'destination':'item_template__manufacturer'}
+
+category_filter = { 'name': 'category', 'title': _(u'category'),
+            'queryset': ItemCategory.objects.all(), 'destination': 'item_template__category'}
+
+product_filter = {'name': 'product_name', 'title': _('product'),
+            'destination': ('item_template__description__icontains', 'item_template__model__icontains',
+                            'item_template__part_number')}
+
+location_filter = {'name': 'location', 'title': _('location'),
+            'destination': make_mv_location('location')}
 
 
 def item_setstate(request, object_id, state_id):
@@ -107,27 +119,43 @@ def group_assign_remove_item(request, object_id):
         list_filter=[location_filter])
 
 
-def location_assets(request, loc_id):
-    location = get_object_or_404(Location, pk=loc_id)
-    return object_list(
-        request,
-        queryset = Item.objects.filter(location=location),
-        template_name = "generic_list.html",
-        extra_context=dict(
-            title = _(u"location assets: %s") % location,
-        ),
-    )
+class AssetListView(GenericBloatedListView):
+    """ The default Assets view
+    
+        It is merely a BloatedListView, configured with all settings about assets
+    """
+    queryset=Item.objects.by_request
+    list_filters=[ product_filter, manufacturer_filter, category_filter,
+                            location_filter, state_filter]
+    url_attribute='get_details_url'
+    prefetch_fields=('item_template', 'item_template.category', 'item_template.manufacturer')
+    group_by='item_template'
+    group_fields=[ dict(name=_(u'Item Template'), colspan=2),
+                    dict(name=_(u'Manufacturer'), attribute='manufacturer'),
+                    dict(name=_(u'Category'), attribute='category'),]
+    extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
+                            dict(name=_('Serial number'), attribute='serial_number'),
+                            dict(name=_('Location'), attribute='location'),
+                            ]
 
-def department_assets(request, dept_id):
-    department = get_object_or_404(Department, pk=dept_id)
-    return object_list(
-        request,
-        queryset = Item.objects.filter(location__department=department),
-        template_name = "generic_list.html",
-        extra_context=dict(
-            title = _(u"department assets: %s") % department,
-        ),
-    )
+class LocationAssetsView(AssetListView):
+    extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
+                            dict(name=_('Serial number'), attribute='serial_number'),
+                  ]
+    def get(self, request, loc_id, **kwargs):
+        location = get_object_or_404(Location, pk=loc_id)
+        kwargs['title'] = _(u"location assets: %s") % location,
+        self.queryset = Item.objects.filter(location=location)
+        return super(LocationAssetsView, self).get(request, **kwargs)
 
+class DepartmentAssetsView(AssetListView):
+    extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
+                            dict(name=_('Serial number'), attribute='serial_number'),
+                  ]
+    def get(self, request, dept_id, **kwargs):
+        department = get_object_or_404(Department, pk=dept_id)
+        kwargs['title'] = _(u"department assets: %s") % department
+        self.queryset = Item.objects.filter(location__department=department)
+        return super(DepartmentAssetsView, self).get(request, **kwargs)
 
 #eof
