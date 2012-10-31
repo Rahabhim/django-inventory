@@ -105,7 +105,7 @@ class GenericBloatedListView(django_gv.ListView):
             - second-row fields TODO
             [ - cart actions ] TODO
     """
-    template_name = 'generic_list.html'
+    template_name = 'bloated_list.html'
     extra_context = None
     group_by = False
     order_by = False
@@ -114,8 +114,13 @@ class GenericBloatedListView(django_gv.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(GenericBloatedListView, self).get_context_data(**kwargs)
+        ctx_columns = [ {'name': self.object_list.model._meta.verbose_name }, ]
         if self.extra_context:
             context.update(self.extra_context)
+            for column in context.pop('extra_columns', []):
+                # pop from the copied 'context'
+                ctx_columns.append(column)
+        context['columns'] = ctx_columns
         if self.filter_form:
             context['filter_form'] = self.filter_form
         return context
