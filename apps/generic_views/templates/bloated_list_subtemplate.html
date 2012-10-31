@@ -31,6 +31,14 @@
     <table class="table">
       {% if not hide_header %}
 	<thead>
+	{%if group_fields %}
+          <tr>{% for gf in group_fields %}
+		<th {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>{{ gf.name }}
+		    {% if forloop.first %}({% trans "count" %}){% endif %}
+		</th>
+	      {% endfor %}
+	  </tr>
+	{% endif %}
           <tr>
 	    {% for col in columns %}
 	    <th>{% if column.sortable %}<a href="{{ header.url }}">{% endif %}
@@ -77,8 +85,16 @@
     {% else %} {# We have groupped results #}
         {% for group in group_results %}
             <tr class="{% cycle 'odd' 'even2' %}">
-	    <td colspan="{{ columns|length}}"><a href="{{ group.url }}"> {{ group.group }} ({{group.items_count }}) </a>
-	    </td></tr>
+            {% if group_fields %}{% for gf in group_fields %}
+		<td {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>
+	            {% if forloop.first %}<a href="{{ group.url }}">{% endif %}
+		    {% if gf.attribute %}{{ group.group|object_property:gf.attribute }}{% else %}{{ group.group }}{% endif %}
+		    {% if forloop.first %}({{group.items_count}}) </a>{% endif %}
+	    {% endfor %}{% else %}
+		<td colspan="{{ columns|length}}"><a href="{{ group.url }}"> {{ group.group }} ({{group.items_count }}) </a>
+		</td>
+	    {% endif %}
+	    </tr>
 	    {% if group.items %}
                 {% for object in group.items %}
 		<tr class="{% cycle 'odd' 'even2' %}">

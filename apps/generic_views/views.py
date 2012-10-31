@@ -110,11 +110,12 @@ class GenericBloatedListView(django_gv.ListView):
     template_name = 'bloated_list.html'
     extra_context = None
     group_by = False
+    group_fields = None
     order_by = False
     list_filters = None
-    extra_fields = None
+    prefetch_fields = None
     filter_form = None
-    url_attribute = None
+    url_attribute = 'get_absolute_url'
 
     def get_context_data(self, **kwargs):
         if 'object_list' not in kwargs:
@@ -131,6 +132,12 @@ class GenericBloatedListView(django_gv.ListView):
         if self.filter_form:
             context['filter_form'] = self.filter_form
         return context
+
+    def _select_prefetch(self, queryset, fields_list):
+        if fields_list:
+            queryset = queryset.select_related(*(tuple(set(fields_list))))
+        # TODO: in Django 1.4 there is also prefetch_related(), which is more optimal
+        return queryset
 
     def get_queryset(self):
         filters = None
@@ -163,6 +170,7 @@ class GenericBloatedListView(django_gv.ListView):
 
     def get(self, request, *args, **kwargs):
         self.object_list = base_queryset = self.get_queryset()
+        
         if self.group_by:
             # so far, the 'group_by' must be a field!
             group = self.group_by
@@ -177,6 +185,8 @@ class GenericBloatedListView(django_gv.ListView):
             
             # We query on the foreign field now, and paginate that to limit the results
             grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
+            if self.group_fields:
+                grp_queryset = self._select_prefetch(grp_queryset, [ f['attribute'] for f in self.group_fields if f.get('attribute', None)])
             page_size = self.get_paginate_by(grp_queryset) \
                     or getattr(settings, 'PAGINATION_DEFAULT_PAGINATION', 20)
             
@@ -186,19 +196,23 @@ class GenericBloatedListView(django_gv.ListView):
                 paginator = page = is_paginated = None
 
             context = self.get_context_data(paginator=paginator, page_obj=page, \
-                    is_paginated=is_paginated, object_list=base_queryset.none())
+                    is_paginated=is_paginated, object_list=base_queryset.none(),
+                    group_fields=self.group_fields)
             
             # Now, iterate over the group and prepare the list(dict) of results
             
             grp_results = []
             grp_expand = self.kwargs.get('grp_expand') or self.request.GET.get('grp_expand', None)
             get_params = request.GET.copy()
+            relations = list(self.prefetch_fields)
+            relations.append(group)
             for grp in grp_queryset:
                 items = None
                 if unicode(grp.id) == grp_expand:
                     # TODO: perhaps expand all if grp_expand == '*' , but then
                     # we would have an issue with limiting at page_size
-                    items = base_queryset.filter(**{group:grp})
+                    
+                    items = self._select_prefetch(base_queryset.filter(**{group:grp}), relations)
                     if self.order_by:
                         items = self.apply_order(items)
                     if page_size:
@@ -209,15 +223,9 @@ class GenericBloatedListView(django_gv.ListView):
                         items_count=grp_rdict1[grp.id], items=items))
             context['group_results'] = grp_results
         else:
-            relations = set()
-            if self.extra_fields:
-                for r in self.extra_fields:
-                    relations.add(r.replace('.', '__'))
             #if extra_context and 'extra_columns' self.extra_context:
             #    TODO
-            
-            if relations:
-                base_queryset = base_queryset.select_related(*(tuple(relations)))
+            base_queryset = self._select_prefetch(base_queryset, self.prefetch_fields)
             allow_empty = self.get_allow_empty()
             if not allow_empty and len(self.object_list) == 0:
                 raise Http404(_(u"Empty list and '%(class_name)s.allow_empty' is False.")
