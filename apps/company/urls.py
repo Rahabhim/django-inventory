@@ -5,7 +5,8 @@ from django.views.generic import ListView
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 from generic_views.views import generic_delete, \
-                                generic_detail, generic_list
+                                generic_detail, generic_list, \
+                                GenericBloatedListView
 
 from forms import DepartmentForm_view, DepartmentTypeForm_view
 from company import department_type_filter
@@ -14,7 +15,7 @@ from lookups import _department_filter_q
 dept_name_filter = {'name': 'name', 'title': _('name'), 'destination': _department_filter_q}
 
 urlpatterns = patterns('',
-    url(r'^object/list/company_department$', generic_list, dict( queryset=Department.objects.all(), \
+    url(r'^object/list/company_department$', GenericBloatedListView.as_view( queryset=Department.objects.all(), \
             extra_context=dict(),
             list_filters=[dept_name_filter, department_type_filter]),
             name='company_department_list'),
