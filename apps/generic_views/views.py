@@ -95,6 +95,61 @@ def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs
 
     return object_list(request,  template_name='generic_list.html', *args, **kwargs)
 
+class GenericBloatedListView(django_gv.ListView):
+    """ A list view with all (?) the features
+
+        Supports:
+            - Filter sub-form
+            - dynamic (callable) queryset
+            - selectable sorting TODO
+            - groupping TODO
+            - second-row fields TODO
+            [ - cart actions ] TODO
+    """
+    template_name = 'generic_list.html'
+    extra_context = None
+    group_by = False
+    order_by = False
+    list_filters = None
+    filter_form = None
+
+    def get_context_data(self, **kwargs):
+        context = super(GenericBloatedListView, self).get_context_data(**kwargs)
+        if self.extra_context:
+            context.update(self.extra_context)
+        if self.filter_form:
+            context['filter_form'] = self.filter_form
+        return context
+
+    def get_queryset(self):
+        filters = None
+        if self.list_filters:
+            filter_form, filters = add_filter(self.request, self.list_filters)
+            self.filter_form = filter_form
+        if self.queryset and not isinstance(self.queryset, QuerySet) \
+                and callable(self.queryset):
+            # since we evaluate the queryset here, this breaks the caching and
+            # allows different result set per request (as desired).
+            # Otherwise, the queryset would be queried once in db and reused
+            # across requests, with same rows.
+            queryset = self.queryset(self.request)
+        else:
+            queryset = super(GenericBloatedListView, self).get_queryset()
+
+        if filters:
+            queryset = queryset.filter(*filters)
+
+        if self.order_by and not self.group_by:
+            if isinstance(self.order_by, basestring):
+                order = (self.order_by, )
+            else:
+                order = self.order_by
+            queryset = queryset.order_by(*order)
+        return queryset
+
+    #def get():
+    #    TODO for groupping
+
 def generic_delete(*args, **kwargs):
     try:
         kwargs['post_delete_redirect'] = reverse(kwargs['post_delete_redirect'])
