@@ -116,6 +116,7 @@ class GenericBloatedListView(django_gv.ListView):
     prefetch_fields = None
     filter_form = None
     url_attribute = 'get_absolute_url'
+    extra_columns = None
 
     def get_context_data(self, **kwargs):
         if 'object_list' not in kwargs:
@@ -123,11 +124,17 @@ class GenericBloatedListView(django_gv.ListView):
         else:
             context = kwargs.copy()
         ctx_columns = [ {'name': self.object_list.model._meta.verbose_name }, ]
+        extra_columns = self.extra_columns
         if self.extra_context:
             context.update(self.extra_context)
-            for column in context.pop('extra_columns', []):
+            if not extra_columns:
                 # pop from the copied 'context'
+                extra_columns = context.pop('extra_columns', None)
+
+        if extra_columns:
+            for column in extra_columns:
                 ctx_columns.append(column)
+
         context['columns'] = ctx_columns
         if self.filter_form:
             context['filter_form'] = self.filter_form
