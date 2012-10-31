@@ -3,7 +3,6 @@ from django.conf.urls.defaults import patterns, url
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
-from django.db.models import Q
 
 from generic_views.views import generic_delete, generic_list, generic_detail, \
                 GenericCreateView, GenericUpdateView
@@ -22,9 +21,7 @@ from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm,
         DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
         MovementForm, MovementForm_view, MovementForm_update_po
 
-from company.models import Department
-from company.lookups import _department_filter_q
-
+from company import make_mv_location
 import views
 
 state_filter = {'name':'state', 'title':_(u'state'), 
@@ -33,14 +30,6 @@ state_filter = {'name':'state', 'title':_(u'state'),
 stype_filter = {'name':'stype', 'title':_(u'stype'), 
             'choices':'movements.Movement.stype' , 'destination':'stype'}
 
-def make_mv_location(destination):
-    """ Constructs the filter clojure for a destination column
-    """
-    dept_col = destination + '__department__in'
-    dept_col2 = destination + '__department__isnull'
-    lname_col = destination + '__name__icontains'
-    return lambda q: Q(**{dept_col: Department.objects.filter(_department_filter_q(q))}) | \
-                    Q(**{dept_col2:True, lname_col: q})
 
 location_src_filter = {'name': 'location_src', 'title': _('Source location'), 
             'destination': make_mv_location('location_src')}

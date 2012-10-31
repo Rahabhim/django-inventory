@@ -9,13 +9,12 @@ from generic_views.views import generic_delete, \
 
 from photos.views import generic_photos
 
-from common import location_filter
-
 from assets import state_filter
 from models import Item, ItemGroup, State
 from forms import ItemForm, ItemForm_view, ItemGroupForm, ItemGroupForm_view
 from conf import settings as asset_settings
 from products.models import Manufacturer, ItemCategory
+from company import make_mv_location
 
 manufacturer_filter = {'name':'manufacturer', 'title':_(u'manufacturer'), 
             'queryset':Manufacturer.objects.all(), 'destination':'item_template__manufacturer'}
@@ -26,6 +25,9 @@ category_filter = { 'name': 'category', 'title': _(u'category'),
 product_filter = {'name': 'product_name', 'title': _('product'),
             'destination': ('item_template__description__icontains', 'item_template__model__icontains',
                             'item_template__part_number')}
+
+location_filter = {'name': 'location', 'title': _('location'), 
+            'destination': make_mv_location('location')}
 
 urlpatterns = patterns('assets.views',
 
