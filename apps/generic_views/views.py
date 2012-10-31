@@ -3,7 +3,7 @@
 
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.core.exceptions import ObjectDoesNotExist
@@ -20,6 +20,7 @@ from main import cart_utils
 
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   InlineModelForm
+import settings
 
 def add_filter(request, list_filters):
     """ Add list filters to form and eventually filter the queryset
@@ -102,7 +103,7 @@ class GenericBloatedListView(django_gv.ListView):
             - Filter sub-form
             - dynamic (callable) queryset
             - selectable sorting TODO
-            - groupping TODO
+            - groupping
             - second-row fields TODO
             [ - cart actions ] TODO
     """
@@ -111,10 +112,15 @@ class GenericBloatedListView(django_gv.ListView):
     group_by = False
     order_by = False
     list_filters = None
+    extra_fields = None
     filter_form = None
+    url_attribute = None
 
     def get_context_data(self, **kwargs):
-        context = super(GenericBloatedListView, self).get_context_data(**kwargs)
+        if 'object_list' not in kwargs:
+            context = super(GenericBloatedListView, self).get_context_data(**kwargs)
+        else:
+            context = kwargs.copy()
         ctx_columns = [ {'name': self.object_list.model._meta.verbose_name }, ]
         if self.extra_context:
             context.update(self.extra_context)
@@ -145,15 +151,79 @@ class GenericBloatedListView(django_gv.ListView):
             queryset = queryset.filter(*filters)
 
         if self.order_by and not self.group_by:
-            if isinstance(self.order_by, basestring):
-                order = (self.order_by, )
-            else:
-                order = self.order_by
-            queryset = queryset.order_by(*order)
+            queryset = self.apply_order(queryset)
         return queryset
 
-    #def get():
-    #    TODO for groupping
+    def apply_order(self, queryset):
+        if isinstance(self.order_by, basestring):
+            order = (self.order_by, )
+        else:
+            order = self.order_by
+        return queryset.order_by(*order)
+
+    def get(self, request, *args, **kwargs):
+        self.object_list = base_queryset = self.get_queryset()
+        if self.group_by:
+            # so far, the 'group_by' must be a field!
+            group = self.group_by
+            rel_field = base_queryset.model._meta.get_field(group)
+            # we need the order by (group__id) so that any natural ordering on our model
+            # or the foreign models is avoided (too expensive)
+            grp_results = base_queryset.order_by(group + '__id').values(group).annotate(items_count=Count('pk'))
+            
+            assert rel_field.rel, rel_field # assume it's a Foreign key
+            grp_rdict1 = dict([(gd[group], gd['items_count']) for gd in grp_results])
+            del grp_results
+            
+            # We query on the foreign field now, and paginate that to limit the results
+            grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
+            page_size = self.get_paginate_by(grp_queryset) \
+                    or getattr(settings, 'PAGINATION_DEFAULT_PAGINATION', 20)
+            
+            if page_size:
+                paginator, page, grp_queryset, is_paginated = self.paginate_queryset(grp_queryset, page_size)
+            else:
+                paginator = page = is_paginated = None
+
+            context = self.get_context_data(paginator=paginator, page_obj=page, \
+                    is_paginated=is_paginated, object_list=base_queryset.none())
+            
+            # Now, iterate over the group and prepare the list(dict) of results
+            
+            grp_results = []
+            grp_expand = self.kwargs.get('grp_expand') or self.request.GET.get('grp_expand', None)
+            get_params = request.GET.copy()
+            for grp in grp_queryset:
+                items = None
+                if unicode(grp.id) == grp_expand:
+                    # TODO: perhaps expand all if grp_expand == '*' , but then
+                    # we would have an issue with limiting at page_size
+                    items = base_queryset.filter(**{group:grp})
+                    if self.order_by:
+                        items = self.apply_order(items)
+                    if page_size:
+                        items = items[:page_size] # no way, so far, to display more!
+                get_params['grp_expand'] = grp.id
+                grp_url = '?' + get_params.urlencode()
+                grp_results.append(dict(group=grp, url=grp_url, \
+                        items_count=grp_rdict1[grp.id], items=items))
+            context['group_results'] = grp_results
+        else:
+            relations = set()
+            if self.extra_fields:
+                for r in self.extra_fields:
+                    relations.add(r.replace('.', '__'))
+            #if extra_context and 'extra_columns' self.extra_context:
+            #    TODO
+            
+            if relations:
+                base_queryset = base_queryset.select_related(*(tuple(relations)))
+            allow_empty = self.get_allow_empty()
+            if not allow_empty and len(self.object_list) == 0:
+                raise Http404(_(u"Empty list and '%(class_name)s.allow_empty' is False.")
+                            % {'class_name': self.__class__.__name__})
+            context = self.get_context_data(object_list=base_queryset)
+        return self.render_to_response(context)
 
 def generic_delete(*args, **kwargs):
     try:

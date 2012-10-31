@@ -12,7 +12,9 @@
     <div class="content">
         <p>
 {% else %}
-    {% autopaginate object_list %} 
+    {% if not group_results %}
+        {% autopaginate object_list %} 
+    {% endif %}
     <div class="content">
     <h2 class="title">
         {% ifnotequal page_obj.paginator.num_pages 1 %}
@@ -46,6 +48,7 @@
       {% endif %}
 
     <tbody>
+    {% if not group_results %}
         {% for object in object_list %}
             <tr class="{% cycle 'odd' 'even2' %}">
 	    {% for col in columns %}
@@ -71,6 +74,40 @@
         {% empty %}
             <tr><td colspan=99 class="tc">{% blocktrans %}There are no {{ title }}{% endblocktrans %}</td></tr>
         {% endfor %}
+    {% else %} {# We have groupped results #}
+        {% for group in group_results %}
+            <tr class="{% cycle 'odd' 'even2' %}">
+	    <td colspan="{{ columns|length}}"><a href="{{ group.url }}"> {{ group.group }} ({{group.items_count }}) </a>
+	    </td></tr>
+	    {% if group.items %}
+                {% for object in group.items %}
+		<tr class="{% cycle 'odd' 'even2' %}">
+	    {% for col in columns %}
+		{% if not col.attribute %}
+		    {% if main_object %}
+		    {% with object|object_property:main_object as object %}
+			<td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+		    {% endwith %}
+		    {% else %}
+			<td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+		    {% endif %}
+                {% else %}
+                    <td>{{ object|object_property:col.attribute|safe }}</td>
+                {% endif %}
+            {% endfor %}
+	    {% if not hide_links %}
+		<td class='last'>
+		{% object_navigation_template %}
+		</td>
+	    {% endif %}
+            {% object_carts object %}
+            </tr>
+            {% endfor %}{% endif %}
+        {% empty %}
+            <tr><td colspan=99 class="tc">{% blocktrans %}There are no {{ title }}{% endblocktrans %}</td></tr>
+        {% endfor %}
+
+    {% endif %}
         </tbody>
     </table>
          {% object_list_carts object_list %}
