@@ -4,7 +4,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
 from generic_views.views import generic_delete, \
-                                generic_detail, generic_list
+                                generic_detail, generic_list, \
+                                GenericBloatedListView
 
 from photos.views import generic_photos
 
@@ -31,7 +32,7 @@ urlpatterns = patterns('assets.views',
     url(r'^asset/create/$', create_object, {'form_class':ItemForm, 'template_name':'generic_form.html'}, 'item_create'),
     url(r'^asset/(?P<object_id>\d+)/update/$', update_object, {'form_class':ItemForm, 'template_name':'generic_form.html', 'extra_context':{'object_name':_(u'asset')}}, 'item_update'),
     url(r'^asset/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Item}, post_delete_redirect="item_list", extra_context=dict(object_name=_(u'asset'))), 'item_delete'),
-    url(r'^asset/list/$', generic_list, dict(queryset=Item.objects.by_request,
+    url(r'^asset/list/$', GenericBloatedListView.as_view(queryset=Item.objects.by_request,
                 list_filters=[ product_filter, manufacturer_filter, category_filter,
                             location_filter, state_filter],
                 extra_context=dict(title=_(u'assets'), 
@@ -40,7 +41,7 @@ urlpatterns = patterns('assets.views',
                             dict(name=_('Location'), attribute='location'),
                             dict(name=_(u'Manufacturer'), attribute='get_manufacturer'),
                             dict(name=_(u'Category'), attribute='get_category'),],)), 
-            'item_list'),
+            name='item_list'),
     url(r'^asset/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemForm_view, 
                 queryset=Item.objects.all(), 
                 extra_context={'object_name':_(u'asset'), 
