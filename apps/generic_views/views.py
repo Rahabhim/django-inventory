@@ -117,25 +117,17 @@ class GenericBloatedListView(django_gv.ListView):
     filter_form = None
     url_attribute = 'get_absolute_url'
     extra_columns = None
+    enable_sorting = True
 
     def get_context_data(self, **kwargs):
         if 'object_list' not in kwargs:
             context = super(GenericBloatedListView, self).get_context_data(**kwargs)
         else:
             context = kwargs.copy()
-        ctx_columns = [ {'name': self.object_list.model._meta.verbose_name }, ]
-        extra_columns = self.extra_columns
         if self.extra_context:
             context.update(self.extra_context)
-            if not extra_columns:
-                # pop from the copied 'context'
-                extra_columns = context.pop('extra_columns', None)
+            context.pop('extra_columns', None)
 
-        if extra_columns:
-            for column in extra_columns:
-                ctx_columns.append(column)
-
-        context['columns'] = ctx_columns
         context['url_attribute'] = self.url_attribute
         if self.filter_form:
             context['filter_form'] = self.filter_form
@@ -146,6 +138,53 @@ class GenericBloatedListView(django_gv.ListView):
             queryset = queryset.select_related(*(tuple(set(fields_list))))
         # TODO: in Django 1.4 there is also prefetch_related(), which is more optimal
         return queryset
+
+    def _calc_columns(self, request):
+        """ Construct the "columns" list, order_by of fields
+        """
+        object_model_meta = self.object_list.model._meta
+        ctx_columns = [ {'name': object_model_meta.verbose_name }, ]
+        if object_model_meta.ordering:
+            # the model ordering will be the one used when clicking the first column
+            ctx_columns[0]['order_attribute'] = object_model_meta.ordering[0]
+
+        extra_columns = self.extra_columns
+        if (not extra_columns) and self.extra_context \
+                    and 'extra_columns' in self.extra_context:
+            extra_columns = self.extra_context['extra_columns']
+        if extra_columns:
+            for column in extra_columns:
+                ctx_columns.append(column.copy())
+
+        if self.enable_sorting:
+            get_params = request.GET.copy()
+            if 'order_by' in get_params:
+                self.order_by = (get_params['order_by'], )
+            order_field = None
+            descending = False
+            if self.order_by:
+                if self.order_by[0].startswith('-'):
+                    descending = True
+                    order_field = self.order_by[0][1:]
+                else:
+                    order_field = self.order_by[0]
+            for col in ctx_columns:
+                attr = col.get('order_attribute', col.get('attribute', None))
+                # Note that we allow order_attribute=False to deactivate ordering
+                # for this field.
+                if not attr:
+                    continue
+                col['sortable'] = True
+                get_params['order_by'] = attr
+                if attr == order_field:
+                    col['url_class'] = 'sorted'
+                    if descending:
+                        col['url_spanclass'] = 'famfam active famfam-arrow_up'
+                    else:
+                        col['url_spanclass'] = 'famfam active famfam-arrow_down'
+                        get_params['order_by'] = '-' + attr
+                col['url']= '?' + get_params.urlencode()
+        return ctx_columns
 
     def get_queryset(self):
         filters = None
@@ -165,8 +204,6 @@ class GenericBloatedListView(django_gv.ListView):
         if filters:
             queryset = queryset.filter(*filters)
 
-        if self.order_by and not self.group_by:
-            queryset = self.apply_order(queryset)
         return queryset
 
     def apply_order(self, queryset):
@@ -178,6 +215,7 @@ class GenericBloatedListView(django_gv.ListView):
 
     def get(self, request, *args, **kwargs):
         self.object_list = base_queryset = self.get_queryset()
+        columns = self._calc_columns(request)
         
         if self.group_by:
             # so far, the 'group_by' must be a field!
@@ -205,7 +243,7 @@ class GenericBloatedListView(django_gv.ListView):
 
             context = self.get_context_data(paginator=paginator, page_obj=page, \
                     is_paginated=is_paginated, object_list=base_queryset.none(),
-                    group_fields=self.group_fields)
+                    group_fields=self.group_fields, columns=columns)
             
             # Now, iterate over the group and prepare the list(dict) of results
             
@@ -231,6 +269,8 @@ class GenericBloatedListView(django_gv.ListView):
                         items_count=grp_rdict1[grp.id], items=items))
             context['group_results'] = grp_results
         else:
+            if self.order_by:
+                base_queryset = self.apply_order(base_queryset)
             #if extra_context and 'extra_columns' self.extra_context:
             #    TODO
             base_queryset = self._select_prefetch(base_queryset, self.prefetch_fields)
@@ -238,7 +278,7 @@ class GenericBloatedListView(django_gv.ListView):
             if not allow_empty and len(self.object_list) == 0:
                 raise Http404(_(u"Empty list and '%(class_name)s.allow_empty' is False.")
                             % {'class_name': self.__class__.__name__})
-            context = self.get_context_data(object_list=base_queryset)
+            context = self.get_context_data(object_list=base_queryset, columns=columns)
         return self.render_to_response(context)
 
 def generic_delete(*args, **kwargs):
