@@ -124,6 +124,8 @@ class DetailForm(forms.ModelForm):
                     queryset=getattr(field, 'queryset', None),
                 )
                 self.fields[field_name].help_text=''
+            elif isinstance(field.widget, ColumnsDetailWidget):
+                self.fields[field_name].help_text=''
 
 
 class GenericConfirmForm(forms.Form):
@@ -183,5 +185,73 @@ class InlineModelForm(forms.ModelForm):
             row_ender = u'</td>',
             help_text_html = u'<br /><span class="helptext">%s</span>',
             errors_on_separate_row = False)
+
+class ColumnsDetailWidget(forms.widgets.Widget):
+    """Read-only values of ForeignKey or ManyToMany fields, with columns
+
+        Unlike Select* widgets, it won't query the db for choices
+    """
+    columns = []
+    order_by = False
+    show_header = True
+
+    def __init__(self, queryset=None, choices=(), *args, **kwargs):
+        super(ColumnsDetailWidget, self).__init__(*args, **kwargs)
+        self.queryset = queryset
+        self.choices = choices # but don't render them to list
+
+    def render(self, name, value, attrs=None, choices=()):
+        final_attrs = self.build_attrs(attrs, name=name)
+        objs = None
+        if isinstance(self.choices, forms.models.ModelChoiceIterator):
+            # The ModelChoiceIterator is a *very* slow object, we must extract
+            # its queryset and use it directly
+            self.queryset = self.choices.queryset
+            self.choices = ()
+
+        if value and hasattr(value, '__iter__') and self.queryset is not None:
+            objs = self.queryset.filter(pk__in=value)
+            if self.order_by:
+                objs = objs.order_by(self.order_by)
+        elif value and self.queryset is not None:
+            objs = [self.queryset.get(pk=value),]
+        elif value and self.choices:
+            # only works with choices, so far
+            objs = []
+            for k, v in self.choices:
+                if k == value:
+                    objs.append(v)
+                    break
+        else:
+            objs = []
+
+        ret = ['<table%s>' % flatatt(final_attrs),]
+        if self.show_header:
+            ret.append('<thead><tr>')
+            for c in self.columns:
+                ret.append('\t<th>%s</th>\n' % unicode(c['name']))
+            ret.append('</tr></thead>\n')
+        ret.append('<tbody>\n')
+
+        for obj in objs:
+            ret.append('\t<tr>')
+            for c in self.columns:
+                cell = '<td>%s</td>'
+                if c.get('attribute', False):
+                    val = return_attrib(obj, c['attribute'])
+                else:
+                    # no attribute, this must be the unicode(obj)
+                    val = obj
+                    try:
+                        cell = '<td><a href="%s">%%s</a></td>' % obj.get_absolute_url()
+                    except AttributeError:
+                        pass
+
+                val = conditional_escape(unicode(val))
+                ret.append(cell % val)
+            ret.append('</tr>\n')
+        ret.append('</table>\n\n')
+
+        return mark_safe(''.join(ret))
 
 #eof
