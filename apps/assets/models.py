@@ -66,6 +66,13 @@ class Item(models.Model):
     def get_absolute_url(self):
         return ('item_view', [str(self.id)])
 
+    @models.permalink
+    def get_details_url(self):
+        try:
+            return ('group_view', [str(self.itemgroup.id)])
+        except self.DoesNotExist:
+            return ('item_view', [str(self.id)])
+
     def __unicode__(self):
         states = ', '.join([itemstate.state.name for itemstate in ItemState.objects.states_for_item(self)])
                 
