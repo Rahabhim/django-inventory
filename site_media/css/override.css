@@ -10,3 +10,10 @@
   line-height: 23px;
 }
  
+table.filter_form td select {
+  width: 10em;
+}
+
+.table th a {
+   color: white;
+}
