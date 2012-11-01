@@ -44,10 +44,11 @@
         {% endif %}
           <tr>
             {% for col in columns %}
-            <th>{% if column.sortable %}<a href="{{ header.url }}">{% endif %}
+            <th>{% if col.sortable %}<a href="{{ col.url }}" class="{{col.url_class}}">{% endif %}
                 {{ col.name|capfirst }}
-                {% if header.sortable %}</a>{% endif %}
-                {% if column.subrows %}{% for row in column.subrows %}<br/>
+                {% if col.url_spanclass %}<span class="{{ col.url_spanclass }}"></span>{% endif %}
+                {% if col.sortable %}</a>{% endif %}
+                {% if col.subrows %}{% for row in col.subrows %}<br/>
                         {{ row.name|capfirst }}
                 {% endfor %}{%endif %}
             </th>

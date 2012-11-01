@@ -184,6 +184,8 @@ class GenericBloatedListView(django_gv.ListView):
                 # for this field.
                 if not attr:
                     continue
+                else:
+                    attr = attr.replace('.', '__')
                 col['sortable'] = True
                 get_params['order_by'] = attr
                 if attr == order_field:
@@ -241,8 +243,49 @@ class GenericBloatedListView(django_gv.ListView):
             
             # We query on the foreign field now, and paginate that to limit the results
             grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
+            self.group_order = False
+            new_group_fields = False
             if self.group_fields:
                 grp_queryset = self._select_prefetch(grp_queryset, [ f['attribute'] for f in self.group_fields if f.get('attribute', None)])
+
+                if self.enable_sorting:
+                    descending = False
+                    if self.order_by and self.order_by[0].startswith(group+'__'):
+                        # Order shall apply to the groupping field!
+                        self.group_order = self.order_by[0][len(group)+2:]
+                        descending = False
+                    elif self.order_by and self.order_by[0].startswith('-' + group +'__'):
+                        self.group_order = self.order_by[0][len(group)+3:]
+                        descending = True
+
+                    get_params = request.GET.copy()
+
+                new_group_fields = []
+                for col in self.group_fields:
+                    col = col.copy()
+                    new_group_fields.append(col)
+                    attr = col.get('order_attribute', col.get('attribute', None))
+                    if not attr:
+                        continue
+                    else:
+                        attr = attr.replace('.', '__')
+                    
+                    if self.enable_sorting:
+                        col['sortable'] = True
+                        get_params['order_by'] = group + '__' + attr
+                        if self.group_order and attr == self.group_order:
+                            col['url_class'] = 'sorted'
+                            if descending:
+                                col['url_spanclass'] = 'famfam active famfam-arrow_up'
+                            else:
+                                col['url_spanclass'] = 'famfam active famfam-arrow_down'
+                                get_params['order_by'] = '-' + get_params['order_by']
+                        col['url']= '?' + get_params.urlencode()
+                if self.group_order:
+                    if descending:
+                        self.group_order = '-' + self.group_order
+                    grp_queryset = grp_queryset.order_by(self.group_order)
+
             page_size = self.get_paginate_by(grp_queryset) \
                     or getattr(settings, 'PAGINATION_DEFAULT_PAGINATION', 20)
             
@@ -253,7 +296,7 @@ class GenericBloatedListView(django_gv.ListView):
 
             context = self.get_context_data(paginator=paginator, page_obj=page, \
                     is_paginated=is_paginated, object_list=base_queryset.none(),
-                    group_fields=self.group_fields, columns=columns)
+                    group_fields=new_group_fields, columns=columns)
             
             # Now, iterate over the group and prepare the list(dict) of results
             
@@ -269,7 +312,7 @@ class GenericBloatedListView(django_gv.ListView):
                     # we would have an issue with limiting at page_size
                     
                     items = self._select_prefetch(base_queryset.filter(**{group:grp}), relations)
-                    if self.order_by:
+                    if self.order_by and not self.group_order:
                         items = self.apply_order(items)
                     if page_size:
                         items = items[:page_size] # no way, so far, to display more!
