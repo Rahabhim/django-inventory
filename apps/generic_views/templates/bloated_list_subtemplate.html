@@ -63,10 +63,10 @@
 		{% if not col.attribute %}
 		    {% if main_object %}
 		    {% with object|object_property:main_object as object %}
-			<td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+			<td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
 		    {% endwith %}
 		    {% else %}
-			<td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+			<td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
 		    {% endif %}
                 {% else %}
                     <td>{{ object|object_property:col.attribute|safe }}</td>
@@ -104,10 +104,10 @@
 		{% if not col.attribute %}
 		    {% if main_object %}
 		    {% with object|object_property:main_object as object %}
-			<td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+			<td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
 		    {% endwith %}
 		    {% else %}
-			<td>{% if not hide_link %}<a href="{{ object.get_absolute_url }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
+			<td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}</td>
 		    {% endif %}
                 {% else %}
                     <td>{{ object|object_property:col.attribute|safe }}</td>

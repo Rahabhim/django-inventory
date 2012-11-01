@@ -136,6 +136,7 @@ class GenericBloatedListView(django_gv.ListView):
                 ctx_columns.append(column)
 
         context['columns'] = ctx_columns
+        context['url_attribute'] = self.url_attribute
         if self.filter_form:
             context['filter_form'] = self.filter_form
         return context
