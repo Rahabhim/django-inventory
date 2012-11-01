@@ -41,6 +41,7 @@ class Department(models.Model):
 
     class Meta:
         # admin = True
+        ordering = ['name']
         permissions = [('admin_company', 'Can manage companies'),]
 
     def __unicode__(self):
