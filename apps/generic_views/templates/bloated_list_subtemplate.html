@@ -33,7 +33,10 @@
         <thead>
         {%if group_fields %}
           <tr>{% for gf in group_fields %}
-                <th {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>{{ gf.name }}
+                <th {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>
+                    {% if gf.url %}<a href="{{ gf.url }}" class="{{gf.url_class}}">{% endif %}
+                        {{ gf.name }}{% if gf.url_spanclass %}<span class="{{ gf.url_spanclass }}"></span>{% endif %}
+                    {% if gf.url %}</a> {% endif %}
                     {% if forloop.first %}({% trans "count" %}){% endif %}
                 </th>
               {% endfor %}
