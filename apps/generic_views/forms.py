@@ -65,7 +65,7 @@ class DetailSelectMultiple(forms.widgets.SelectMultiple):
 
 class DetailForeignWidget(forms.widgets.Widget):
     """A widget displaying read-only values of ForeignKey and ManyToMany fields
-    
+
         Unlike Select* widgets, it won't query the db for choices
     """
     def __init__(self, queryset=None, choices=(), *args, **kwargs):
@@ -89,7 +89,7 @@ class DetailForeignWidget(forms.widgets.Widget):
                     break
         else:
             objs = []
-        
+
         ret = ''
         for obj in objs:
             href = None
@@ -100,7 +100,7 @@ class DetailForeignWidget(forms.widgets.Widget):
                 ret += '<a href="%s">' % href
             except AttributeError:
                 href = None
-    
+
             ret += conditional_escape(unicode(obj))
             if href is not None:
                 ret += '</a>'
