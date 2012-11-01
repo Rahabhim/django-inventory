@@ -103,7 +103,7 @@ class GenericBloatedListView(django_gv.ListView):
             - dynamic (callable) queryset
             - selectable sorting TODO
             - groupping
-            - second-row fields TODO
+            - second-row fields
             [ - cart actions ] TODO
     """
     template_name = 'bloated_list.html'
@@ -153,6 +153,17 @@ class GenericBloatedListView(django_gv.ListView):
             extra_columns = self.extra_context['extra_columns']
         if extra_columns:
             for column in extra_columns:
+                if column.get('under', False):
+                    # This must become the second row of some other column
+                    cunder = column['under']
+                    for par in ctx_columns:
+                        if (cunder == par.get('attribute', 'id')):
+                            par.setdefault('subrows', []).append(column)
+                            break
+                    else:
+                        raise KeyError("Column %s not found to place %s under it" % \
+                                (cunder, column.get('attribute', column['name'])))
+                    continue
                 ctx_columns.append(column.copy())
 
         if self.enable_sorting:
