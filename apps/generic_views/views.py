@@ -309,6 +309,7 @@ class GenericBloatedListView(django_gv.ListView):
             for grp in grp_queryset:
                 items = None
                 if unicode(grp.id) == grp_expand:
+                    get_params['grp_expand'] = '' # second click collapses the item
                     # TODO: perhaps expand all if grp_expand == '*' , but then
                     # we would have an issue with limiting at page_size
                     
@@ -317,7 +318,8 @@ class GenericBloatedListView(django_gv.ListView):
                         items = self.apply_order(items)
                     if page_size:
                         items = items[:page_size] # no way, so far, to display more!
-                get_params['grp_expand'] = grp.id
+                else:
+                    get_params['grp_expand'] = grp.id
                 grp_url = '?' + get_params.urlencode()
                 grp_results.append(dict(group=grp, url=grp_url, \
                         items_count=grp_rdict1[grp.id], items=items))
