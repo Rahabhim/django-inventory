@@ -118,6 +118,14 @@ class GenericBloatedListView(django_gv.ListView):
     extra_columns = None
     enable_sorting = True
 
+    def get_title(self):
+        if getattr(self, 'title', None):
+            return self.title
+        elif self.object_list:
+            return _("List of %s") % self.object_list.model._meta.verbose_name_plural
+        else:
+            return _("List")
+
     def get_context_data(self, **kwargs):
         if 'object_list' not in kwargs:
             context = super(GenericBloatedListView, self).get_context_data(**kwargs)
@@ -128,6 +136,7 @@ class GenericBloatedListView(django_gv.ListView):
             context.pop('extra_columns', None)
 
         context['url_attribute'] = self.url_attribute
+        context['title'] = self.get_title()
         if self.filter_form:
             context['filter_form'] = self.filter_form
         return context
