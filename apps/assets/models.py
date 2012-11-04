@@ -96,7 +96,10 @@ class Item(models.Model):
     def __unicode__(self):
         states = ', '.join([itemstate.state.name for itemstate in ItemState.objects.states_for_item(self)])
 
-        return "#%s, '%s' %s" % (self.property_number, self.item_template.description, states and "(%s)" % states)
+        if self.property_number:
+            return "#%s, %s %s" % (self.property_number, self.item_template.description, states and "(%s)" % states)
+        else:
+            return "%s %s" % (self.item_template.description, states and "(%s)" % states)
 
     def states(self):
         return [State.objects.get(pk=id) for id in self.itemstate_set.all().values_list('state', flat=True)]
