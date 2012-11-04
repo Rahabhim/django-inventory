@@ -144,7 +144,7 @@ class LocationAssetsView(AssetListView):
                   ]
     def get(self, request, loc_id, **kwargs):
         location = get_object_or_404(Location, pk=loc_id)
-        kwargs['title'] = _(u"location assets: %s") % location,
+        self.title = _(u"location assets: %s") % location,
         self.queryset = Item.objects.filter(location=location)
         return super(LocationAssetsView, self).get(request, **kwargs)
 
@@ -154,7 +154,7 @@ class DepartmentAssetsView(AssetListView):
                   ]
     def get(self, request, dept_id, **kwargs):
         department = get_object_or_404(Department, pk=dept_id)
-        kwargs['title'] = _(u"department assets: %s") % department
+        self.title = _(u"department assets: %s") % department
         self.queryset = Item.objects.filter(location__department=department)
         return super(DepartmentAssetsView, self).get(request, **kwargs)
 
