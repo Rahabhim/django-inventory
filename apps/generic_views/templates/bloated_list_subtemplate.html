@@ -32,7 +32,7 @@
       {% if not hide_header %}
         <thead>
         {%if group_fields %}
-          <tr>{% for gf in group_fields %}
+          <tr class="bl_group">{% for gf in group_fields %}
                 <th {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>
                     {% if gf.url %}<a href="{{ gf.url }}" class="{{gf.url_class}}">{% endif %}
                         {{ gf.name }}{% if gf.url_spanclass %}<span class="{{ gf.url_spanclass }}"></span>{% endif %}
@@ -42,10 +42,11 @@
               {% endfor %}
           </tr>
         {% endif %}
-          <tr>
+          <tr {% if group_fields %}class="bl_inrow"{% endif %}>
             {% for col in columns %}
-            <th>{% if col.sortable %}<a href="{{ col.url }}" class="{{col.url_class}}">{% endif %}
-                {{ col.name|capfirst }}
+            <th {% if forloop.first %}class="first_col"{% endif %}>
+                {% if col.sortable %}<a href="{{ col.url }}" class="{{col.url_class}}">{% endif %}
+                    {{ col.name|capfirst }}
                 {% if col.url_spanclass %}<span class="{{ col.url_spanclass }}"></span>{% endif %}
                 {% if col.sortable %}</a>{% endif %}
                 {% if col.subrows %}{% for row in col.subrows %}<br/>
@@ -92,12 +93,13 @@
         {% endfor %}
     {% else %} {# We have groupped results #}
         {% for group in group_results %}
-            <tr class="{% cycle 'odd' 'even2' %}">
+            <tr class="bl_group {% cycle 'odd' 'even2' %}">
             {% if group_fields %}{% for gf in group_fields %}
-                <td {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>
+                <td {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}{% if forloop.first %}class="first_col"{% endif %}>
                     {% if forloop.first %}
+                        <a href="{{ group.url }}">
                         <span class="famfam active famfam-{% if not group.items %}add{% else %}database_go{% endif %}"></span>
-                        <a href="{{ group.url }}">{% endif %}
+                    {% endif %}
                     {% if gf.attribute %}{{ group.group|object_property:gf.attribute }}{% else %}{{ group.group }}{% endif %}
                     {% if forloop.first %}({{group.items_count}}) </a>{% endif %}
             {% endfor %}{% else %}
@@ -107,23 +109,23 @@
             </tr>
             {% if group.items %}
                 {% for object in group.items %}
-                <tr class="{% cycle 'odd' 'even2' %}">
+                <tr class="bl_inrow {% cycle 'odd' 'even2' %}">
             {% for col in columns %}
                 {% if not col.attribute %}
                     {% if main_object %}
                     {% with object|object_property:main_object as object %}
-                        <td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                        <td {% if forloop.first %}class="first_col"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
                     {% endwith %}
                     {% else %}
-                        <td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                        <td {% if forloop.first %}class="first_col"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
                     {% endif %}
                 {% else %}
-                    <td>{{ object|object_property:col.attribute|default_if_none:'' }}
+                    <td {% if forloop.first %}class="first_col"{% endif %}>{{ object|object_property:col.attribute|default_if_none:'' }}
                 {% endif %}
-		{% if col.subrows %}{% for row in col.subrows %}<br/>
+                {% if col.subrows %}{% for row in col.subrows %}<br/>
                         {{ object|object_property:row.attribute }}
                 {% endfor %}{%endif %}
-		</td>
+                </td>
             {% endfor %}
             {% if not hide_links %}
                 <td class='last'>

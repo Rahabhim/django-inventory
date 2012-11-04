@@ -12,8 +12,27 @@
  
 table.filter_form td select {
   width: 10em;
+  /* konqueror ? */
 }
 
 .table th a {
    color: white;
+}
+
+.table tr.bl_group th {
+	background: #038058;
+}
+
+.table tr.bl_group td {
+	background: #A3F2BB;
+}
+
+.table tr.bl_inrow th.first_col {
+	padding-left: 24px;
+}
+.table tr.bl_inrow td.first_col {
+	padding-left: 24px;
+}
+.table tr.bl_group td.first_col {
+	padding-left: 0px;
 }
