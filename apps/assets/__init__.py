@@ -32,7 +32,6 @@ register_links(['item_list', 'item_view', 'item_create', # 'item_orphans_list',
         'template_items_list'], [asset_create], menu_name='sidebar')
 
 register_links(Item, [asset_edit, asset_delete, asset_template], menu_name='sidebar')
-register_links(Item, [asset_edit,])
 
 register_links(['group_list', 'group_view', 'group_create', 'group_update', 'group_delete'], [group_create], menu_name='sidebar')
 register_links(ItemGroup, [group_update, group_delete])
