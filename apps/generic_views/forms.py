@@ -156,6 +156,7 @@ class FilterForm(forms.Form):
             elif 'queryset' in list_filter:
                 self.fields[list_filter['name']] = forms.ModelChoiceField( \
                         queryset=list_filter['queryset'], label=label, \
+                        empty_label= "(%s)" % unicode(list_filter['queryset'].model._meta.verbose_name),
                         required=False)
             elif 'choices' in list_filter:
                 if isinstance(list_filter['choices'], tuple):
@@ -166,10 +167,11 @@ class FilterForm(forms.Form):
                     aapp, amodel, afield = list_filter['choices'].rsplit('.', 2)
                     mmodel = models.get_model(aapp, amodel)
                     assert mmodel, "Model not found: %s.%s" %(aapp, amodel)
-                    choices = mmodel._meta.get_field(afield).choices
+                    mfield = mmodel._meta.get_field(afield)
+                    choices = mfield.choices
                     assert choices, "Model %s.%s does not have choices" %(amodel.afield)
                     # don't do insert, but copy the list!
-                    choices = [('','---')] + choices
+                    choices = [('','(%s)' % unicode(mfield.verbose_name))] + choices
                 else:
                     raise TypeError("Invalid type for list_filters.choices: %s" % type(list_filter['choices']))
                 self.fields[list_filter['name']] = forms.ChoiceField(choices=choices, label=label, required=False)
