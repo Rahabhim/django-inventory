@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-30 22:38+0300\n"
-"PO-Revision-Date: 2012-10-23 11:37+0300\n"
+"PO-Revision-Date: 2012-11-05 17:35+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -136,7 +136,7 @@ msgstr "Κατάσταση"
 
 #: __init__.py:82
 msgid "purchases"
-msgstr "Αγορές"
+msgstr "Παραλαβές"
 
 #: __init__.py:89
 msgid "Destroy assets"
@@ -211,7 +211,7 @@ msgstr "ενεργό"
 
 #: models.py:38
 msgid "originator"
-msgstr ""
+msgstr "προέλευση"
 
 #: models.py:39 models.py:59 models.py:96
 msgid "notes"
@@ -333,11 +333,11 @@ msgstr "Καταστροφή εξοπλισμού"
 
 #: urls.py:71
 msgid "Lost Items"
-msgstr ""
+msgstr "Απώλεια εξοπλισμού"
 
 #: urls.py:75
 msgid "Items movement"
-msgstr ""
+msgstr "Μετακίνηση εξοπλισμού"
 
 #: views.py:31
 msgid "Related purchase orders"
