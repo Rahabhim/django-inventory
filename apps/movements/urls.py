@@ -62,7 +62,13 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/state/(?P<object_id>\d+)/update/$', update_object, {'model':PurchaseOrderStatus, 'template_name':'generic_form.html'}, 'purchase_order_state_update'),
     url(r'^purchase/order/state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderStatus}, post_delete_redirect="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), 'purchase_order_state_delete'),
 
-    url(r'^purchase/order/list/$', generic_list, dict({'queryset':PurchaseOrder.objects.all(), 'list_filters':[purchase_order_state_filter]}, extra_context=dict(title =_(u'purchase orders'), extra_columns = [{'name':_(u'Active'), 'attribute': 'fmt_active'}])), 'purchase_order_list'),
+    url(r'^purchase/order/list/$', views.PurchaseOrderListView.as_view( \
+                list_filters=[purchase_order_state_filter]),
+            name='purchase_order_list'),
+    url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
+                queryset=PurchaseOrder.objects.filter(active=True)), 
+            name='purchase_order_pending_list'),
+
     url(r'^purchase/order/(?P<object_id>\d+)/$', 'purchase_order_view', (), 'purchase_order_view'),
     url(r'^purchase/order/create/$', GenericCreateView.as_view(form_class=PurchaseOrderForm, 
             inline_fields={'items': PurchaseOrderItemForm_inline},
@@ -94,14 +100,15 @@ urlpatterns = patterns('movements.views',
     url(r'^objects/items/move/$', GenericCreateView.as_view(form_class=MoveItemsForm, 
             extra_context={'title':_(u'Items movement')}), name='move_items'),
 
-    url(r'^objects/moves/list/$', generic_list,
-            dict(queryset=Movement.objects.all(),
-                list_filters=[state_filter, stype_filter, location_src_filter, location_dest_filter],
-                extra_context=dict(title =_(u'movements'),
-                    extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
-                            {'name':_(u'state'), 'attribute': 'get_state_display'},
-                            {'name':_(u'type'), 'attribute': 'get_stype_display'}])),
-            'movements_list'),
+    url(r'^objects/moves/list/$', views.MovementListView.as_view( \
+                    list_filters=[state_filter, stype_filter, \
+                                location_src_filter, location_dest_filter],),
+            name='movements_list'),
+    url(r'^objects/moves/pending_list/$', views.MovementListView.as_view( \
+                    queryset=Movement.objects.filter(state='draft'),
+                    list_filters=[ stype_filter, \
+                                location_src_filter, location_dest_filter],),
+            name='movements_pending_list'),
     url(r'^objects/moves/(?P<object_id>\d+)/$', generic_detail,
             dict(form_class=MovementForm_view,
                 queryset=Movement.objects.all(),

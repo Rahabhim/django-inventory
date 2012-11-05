@@ -83,13 +83,13 @@ register_menu([
     ],'famfam':'basket','position':4}])
 
 # register_submenu('menu_assets', .. )
+action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete')
+action_lose = dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error')
+action_move = dict(text=_(u'Move assets'), view='move_items', famfam='computer_go')
 
-register_links( ['item_list'],
-        [dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete'), 
-        dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error'),
-        dict(text=_(u'Move assets'), view='move_items', famfam='computer_go'),
-        ], menu_name='sidebar')
-        
+register_links( ['item_list'], [ action_destroy, action_lose, action_move ], menu_name='sidebar')
+register_links(['home',], [action_destroy, action_lose, action_move ], menu_name='start_actions')
+
 register_links([('purchase_order_receive', Movement),], 
         [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',
             'famfam':'page_go', 'condition': lambda o,c: o.state == 'done'},
@@ -98,4 +98,15 @@ register_links([('purchase_order_receive', Movement),],
 register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movement_do_close',
             'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.state == 'draft'},
             ])
+
+purchase_pending_orders = {'text':_('pending purchase orders'), \
+        'condition': lambda *a: PurchaseOrder.objects.filter(active=False).exists(),
+        'view':'purchase_order_pending_list', 'famfam':'cart_go'}
+
+action_movements_pending = {'text':_('pending moves'), \
+        'condition': lambda *a: Movement.objects.filter(state='draft').exists(),
+        'view':'movements_pending_list', 'famfam':'page_go'}
+
+register_links(['home',], [purchase_pending_orders, action_movements_pending ], menu_name='my_pending')
+
 # eof

@@ -14,6 +14,7 @@ from django.forms.formsets import formset_factory
 
 from common.models import Supplier, Location
 from assets.models import ItemTemplate
+from generic_views.views import GenericBloatedListView
 
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, Movement
 from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
@@ -453,6 +454,18 @@ def purchase_order_item_create(request, object_id):
         'title':_(u'add new purchase order item') ,
     },
     context_instance=RequestContext(request))
+
+class PurchaseOrderListView(GenericBloatedListView):
+    queryset=PurchaseOrder.objects.all()
+    title =_(u'purchase orders')
+    extra_columns = [{'name':_(u'Active'), 'attribute': 'fmt_active'}]
+
+class MovementListView(GenericBloatedListView):
+    queryset=Movement.objects.all()
+    title =_(u'movements')
+    extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
+                    {'name':_(u'state'), 'attribute': 'get_state_display'},
+                    {'name':_(u'type'), 'attribute': 'get_stype_display'}]
 
 def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
