@@ -512,7 +512,8 @@ class _InlineViewMixin(object):
 
         context['formsets'] = []
         for inlf in self.inline_fields:
-            context['formsets'].append(self._inline_formsets[inlf](*iargs))
+            kwargs = dict(instance=self.object)
+            context['formsets'].append(self._inline_formsets[inlf](*iargs, **kwargs))
         if self.extra_context:
             context.update(self.extra_context)
         return context
