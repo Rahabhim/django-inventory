@@ -41,22 +41,10 @@
                 </th>
               {% endfor %}
           </tr>
+        {% else %}
+            {% include "bloated_list_header_row.html" %}
         {% endif %}
-          <tr {% if group_fields %}class="bl_inrow"{% endif %}>
-            {% for col in columns %}
-            <th {% if forloop.first %}class="first_col"{% endif %}>
-                {% if col.sortable %}<a href="{{ col.url }}" class="{{col.url_class}}">{% endif %}
-                    {{ col.name|capfirst }}
-                {% if col.url_spanclass %}<span class="{{ col.url_spanclass }}"></span>{% endif %}
-                {% if col.sortable %}</a>{% endif %}
-                {% if col.subrows %}{% for row in col.subrows %}<br/>
-                        {{ row.name|capfirst }}
-                {% endfor %}{%endif %}
-            </th>
-            {% endfor %}
-            {% if not hide_links %}<th class="">&nbsp;</th>{% endif %}
-            {% if request.session.carts %}<th class="">&nbsp;</th>{% endif %}
-          </tr>
+          
         </thead>
       {% endif %}
 
@@ -108,6 +96,7 @@
             {% endif %}
             </tr>
             {% if group.items %}
+            {% include "bloated_list_header_row.html" %}
                 {% for object in group.items %}
                 <tr class="bl_inrow {% cycle 'odd' 'even2' %}">
             {% for col in columns %}
