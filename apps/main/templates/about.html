@@ -13,7 +13,7 @@
 </div>
 <div class="content">
         <form action="{% url set_language %}" method="post">{% csrf_token %}
-		Language:
+            Language:
             <select name="language">
                 {% for lang in LANGUAGES %}
                     <option value="{{ lang.0 }}">{{ lang.1 }}</option>
