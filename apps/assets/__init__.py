@@ -39,7 +39,7 @@ register_links(ItemGroup, [group_update, group_delete])
 register_links(['state_list', 'state_create', 'state_update', 'state_delete'], [state_create], menu_name='sidebar')
 register_links(State, [state_edit, state_delete])
 
-
+register_links(['home'], [asset_list,], menu_name='start_actions')
 
 register_menu([
     {'text':_('assets'), 'view':'item_list', 'id': 'menu_assets',
