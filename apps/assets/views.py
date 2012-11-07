@@ -145,7 +145,7 @@ class LocationAssetsView(AssetListView):
                   ]
     def get(self, request, loc_id, **kwargs):
         location = get_object_or_404(Location, pk=loc_id)
-        self.title = _(u"location assets: %s") % location,
+        self.title = _(u"location assets: %s") % location
         self.queryset = Item.objects.filter(location=location)
         return super(LocationAssetsView, self).get(request, **kwargs)
 
