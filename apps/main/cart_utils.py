@@ -52,12 +52,11 @@ class CartsContainer(object):
             if dest is None or dest == for_dest:
                 yield c
 
-    def open_as_cart(self, obj, destination=None):
+    @classmethod
+    def _add_cart_to_session(cls, ref, session_carts, destination):
         """Register object to be used as a cart
         """
-        assert isinstance(obj, models.Model), "obj: %s %s" % (type(obj), repr(obj))
-        ref = (obj._meta.app_label, obj._meta.object_name, obj.pk)
-        for c in self._session_carts:
+        for c in session_carts:
             # scan and avoid duplicates
             if c.get('ref',None) == ref:
                 return False
@@ -66,27 +65,52 @@ class CartsContainer(object):
             destination = (destination._meta.app_label, destination._meta.object_name)
         elif isinstance(destination, basestring):
             destination = tuple(destination.split('.', 1))
-        self._session_carts.append(dict(ref=ref, dest=destination))
+        session_carts.append(dict(ref=ref, dest=destination))
+
+    def open_as_cart(self, obj, destination=None):
+        assert isinstance(obj, models.Model), "obj: %s %s" % (type(obj), repr(obj))
+        ref = (obj._meta.app_label, obj._meta.object_name, obj.pk)
+        self._add_cart_to_session(ref, self._session_carts, destination)
         self._carts[ref] = (obj, destination)
         return True
 
     def close_cart(self, obj):
         assert isinstance(obj, models.Model), "obj: %s %s" % (type(obj), repr(obj))
         ref = (obj._meta.app_label, obj._meta.object_name, obj.pk)
+        modified = self._remove_from_session(ref, self._session_carts)
+        self._carts.pop(ref, None)
+        return modified
 
-        modified = False
+    @classmethod
+    def _remove_from_session(cls, ref, session_carts):
         to_del = []
-        for scart in self._session_carts:
+        modified = False
+        for scart in session_carts:
             if scart.get('ref') == ref:
                 to_del.append(scart)
 
         for td in to_del:
             # not optimal, but safe...
-            self._session_carts.remove(td)
+            session_carts.remove(td)
             modified = True
-
-        self._carts.pop(ref, None)
         return modified
+
+
+def remove_from_session(request, obj):
+    assert isinstance(obj, models.Model), "obj: %s %s" % (type(obj), repr(obj))
+    ref = (obj._meta.app_label, obj._meta.object_name, obj.pk)
+    ret = CartsContainer._remove_from_session(ref, request.session['carts'])
+    request.session.modified = True
+    return ret
+
+def add_cart_to_session(obj, request, destination=None):
+    """Register object to be used as a cart
+    """
+    assert isinstance(obj, models.Model), "obj: %s %s" % (type(obj), repr(obj))
+    ref = (obj._meta.app_label, obj._meta.object_name, obj.pk)
+    ret = CartsContainer._add_cart_to_session(ref, request.session['carts'], destination)
+    request.session.modified = True
+    return ret
 
 def in_context(request):
     if 'carts' not in request.session:
