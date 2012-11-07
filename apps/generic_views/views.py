@@ -122,7 +122,7 @@ class GenericBloatedListView(django_gv.ListView):
         if getattr(self, 'title', None):
             return self.title
         elif self.object_list:
-            return _("List of %s") % self.object_list.model._meta.verbose_name_plural
+            return _("List of %s") % unicode(self.object_list.model._meta.verbose_name_plural)
         else:
             return _("List")
 
