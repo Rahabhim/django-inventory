@@ -27,7 +27,8 @@
 <div class="inner">
 {% endif %}
 
-  <form action="#" class="form">
+  <form action="#" class="form" id="bl_list_form" method="POST">
+    {% csrf_token %}
     <table class="table">
       {% if not hide_header %}
         <thead>
