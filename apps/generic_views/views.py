@@ -3,14 +3,15 @@
 
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import messages
-from django.db.models import Q, Count
+from django.db.models import Q, Count, get_model
 from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseRedirect, Http404 # , HttpResponse
-from django.shortcuts import render_to_response #, get_object_or_404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
+from django.utils import simplejson
 from django.views.generic.list_detail import object_detail, object_list
 from django.views.generic.create_update import delete_object # create_object, update_object, 
 import django.views.generic as django_gv
@@ -536,47 +537,75 @@ class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
 class GenericUpdateView(_InlineViewMixin, django_gv.UpdateView):
     template_name = 'generic_form_fs.html'
 
+class _CartOpenCloseView(django_gv.detail.SingleObjectMixin, django_gv.TemplateView):
+    # TODO def get_queryset() w. callable
 
-class CartOpenView(django_gv.detail.SingleObjectMixin, django_gv.TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super(_CartOpenCloseView, self).get_context_data(**kwargs)
+        if self.extra_context:
+            context.update(self.extra_context)
+        context['action_fn'] = self._action_fn
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(_CartOpenCloseView, self).get(request, object=self.object, **kwargs)
+
+class CartOpenView(_CartOpenCloseView):
     """ A view that immediately adds the object as a cart, and then gives instructions
     """
     template_name = 'generic_cart_open.html'
     extra_context = None
     dest_model = None
 
-    # TODO def get_queryset() w. callable
-
-    def get_context_data(self, **kwargs):
-        context = super(CartOpenView, self).get_context_data(**kwargs)
-        if self.extra_context:
-            context.update(self.extra_context)
-        return context
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        cart_utils.open_as_cart(self.object, request.session, self.dest_model)
-        return super(CartOpenView, self).get(request, object=self.object, **kwargs)
-
-class CartCloseView(django_gv.detail.SingleObjectMixin, django_gv.RedirectView):
-    """ A view that immediately adds the object as a cart, and then gives instructions
-    """
-    # TODO def get_queryset() w. callable
-    
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        cart_utils.close_cart(self.object, request.session)
-        if 'HTTP_REFERER' in request.META:
-            url = request.META['HTTP_REFERER']
+    def _action_fn(self, context):
+        if context['carts'].open_as_cart(self.object, self.dest_model):
+            self.request.session.modified = True
         else:
-            url = self.object.get_absolute_url()
-        return HttpResponseRedirect(url)
+            context['action_failed'] = _("The cart is already open.")
 
-class AddToCart(django_gv.RedirectView):
-    """ Adds some item to a cart
+
+class CartCloseView(_CartOpenCloseView):
+
+    template_name = 'generic_cart_close.html'
+    extra_context = None
+    dest_model = None
+
+    def _action_fn(self, context):
+        if context['carts'].close_cart(self.object):
+            self.request.session.modified = True
+        else:
+            context['action_failed'] = _("The cart is not open.")
+
+class JSON_RPC_ResponseMixin(object):
+    def _render_to_response(self, context):
+        return self.get_json_response(self.convert_context_to_json(context))
+
+    def get_json_response(self, content, **httpresponse_kwargs):
+        print "JSON:", content
+        return HttpResponse(content, content_type='application/json', **httpresponse_kwargs)
+
+    def convert_context_to_json(self, context):
+        return simplejson.dumps(context)
+
+class _ModifyCartView(JSON_RPC_ResponseMixin, django_gv.RedirectView):
+    """ Adds some item to a cart. Works both in HTML and JSON mode (AJAX)
+
+        It will try to add `model` into `cart_model #pk`.
+
+        In HTML mode, it will redirect to the page
     """
-    model = None
+    item_model = None
     cart_model = None
     extra_context = None
+    url_attribute = 'get_absolute_url'
+
+    def __init__(self, *args, **kwargs):
+        super(_ModifyCartView, self).__init__(*args, **kwargs)
+        if isinstance(self.item_model, basestring):
+            self.item_model = get_model(*(self.item_model.split('.',1)))
+        if isinstance(self.cart_model, basestring):
+            self.cart_model = get_model(*(self.cart_model.split('.',1)))
 
     def get_context_data(self, **kwargs):
         context = super(CartOpenView, self).get_context_data(**kwargs)
@@ -584,8 +613,54 @@ class AddToCart(django_gv.RedirectView):
             context.update(self.extra_context)
         return context
 
-    def get(self, request, **kwargs):
-        #if 
-        raise
+    def _add_or_remove(self, cart, obj):
+        raise NotImplementedError
+
+    def get_redirect_url(self, **kwargs):
+        if 'HTTP_REFERER' in self.request.META:
+            return self.request.META['HTTP_REFERER']
+        else:
+            fn = getattr(self.cart_object, self.url_attribute)
+            return fn()
+
+    def get(self, request, pk, **kwargs):
+        # pk = kwargs['pk']
+        self.cart_object = get_object_or_404(self.cart_model, pk=pk)
+        error_msg = None
+        try:
+            item_pk = request.GET.get('item', None)
+            if not item_pk:
+                raise ObjectDoesNotExist
+            item_object = self.item_model.objects.get(pk=item_pk)
+            msg, verb = self._add_or_remove(self.cart_object, item_object)
+            messages.success(request, msg)
+        except ObjectDoesNotExist:
+            error_msg = _('Item %s could not be found.') % (kwargs.get('item', '?'),)
+            messages.error(request, error_msg)
+        except Exception, e:
+            error_msg = str(e)
+            messages.error(request, error_msg)
+
+        if self.request.is_ajax():
+            resp = dict(id=None, result=None, error=None)
+            if verb:
+                resp['result'] = verb
+            else:
+                resp['error']= dict(code=1, message= error_msg or _("Could not alter item"), data=None)
+            return JSON_RPC_ResponseMixin._render_to_response(self, resp)
+        else:
+            return super(_ModifyCartView, self).get(request, **kwargs)
+
+class AddToCartView(_ModifyCartView):
+    def _add_or_remove(self, cart, obj):
+        verb = cart.add_to_cart(obj)
+        message = _("%s added to %s") %(unicode(obj), unicode(cart.get_cart_name()))
+        return message, verb
+
+class RemoveFromCartView(_ModifyCartView):
+    def _add_or_remove(self, cart, obj):
+        verb = cart.remove_from_cart(obj)
+        message = _("%s removed from %s") %(unicode(obj), unicode(cart.get_cart_name()))
+        return message, verb
 
 #eof

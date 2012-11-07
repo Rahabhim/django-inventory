@@ -1,3 +1,13 @@
 {% if has_cart %}
-<td><input type="checkbox" name="#" /></td>
+<td>{% for cart in carts %}{% if cart.item_state %}
+        <a href="{{ cart.action_url }}" class="cart_action" id="cart_action_{{cart.cart_id}}">
+        {% if cart.item_state == 'added' %}
+            <span class="famfam famfam active famfam-tick"></span>
+        {% endif %}
+        {% if cart.item_state == 'removed' %}
+            <span class="famfam famfam active famfam-basket_add"></span>
+        {% endif %}
+        </a>
+    {% endif %}{% endfor %}
+</td>
 {% endif %}
