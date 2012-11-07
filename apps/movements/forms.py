@@ -42,7 +42,7 @@ class PurchaseOrderForm(forms.ModelForm):
 class PurchaseOrderForm_view(DetailForm):
     class Meta:
         model = PurchaseOrder
-        exclude = ('active',)
+        fields = ('user_id', 'procurement', 'issue_date', 'status', 'supplier') # , 'notes') later
 
 class PurchaseOrderForm_short_view(DetailForm):
     class Meta:
@@ -50,13 +50,13 @@ class PurchaseOrderForm_short_view(DetailForm):
         fields = ('user_id', 'create_user', 'supplier', 'issue_date')
 
 class PurchaseOrderItemForm(forms.ModelForm):
-    item_template = AutoCompleteSelectField('product')
+    item_template = AutoCompleteSelectField('product', show_help_text=False)
     class Meta:
         model = PurchaseOrderItem
         exclude = ('active',)
 
 class PurchaseOrderItemForm_inline(InlineModelForm):
-    item_template = AutoCompleteSelectField('product')
+    item_template = AutoCompleteSelectField('product', show_help_text=False)
     class Meta:
         model = PurchaseOrderItem
         exclude = ('active',)
@@ -89,10 +89,10 @@ class MovementForm_view(DetailForm):
         model = Movement
 
 class _baseMovementForm(forms.ModelForm):
-    items = AutoCompleteSelectMultipleField('item',)
+    items = AutoCompleteSelectMultipleField('item', show_help_text=False)
 
 class _outboundMovementForm(_baseMovementForm):
-    location_src = AutoCompleteSelectField('location', required=True)
+    location_src = AutoCompleteSelectField('location', required=True, show_help_text=False)
 
     def _init_by_user(self, user):
         try:
@@ -145,8 +145,8 @@ class LoseItemsForm(_outboundMovementForm):
 class MoveItemsForm(_baseMovementForm):
     """ Registered whenever equipment moves from one inventory to another
     """
-    location_src = AutoCompleteSelectField('location', required=True)
-    location_dest = AutoCompleteSelectField('location', required=True)
+    location_src = AutoCompleteSelectField('location', required=True, show_help_text=False)
+    location_dest = AutoCompleteSelectField('location', required=True, show_help_text=False)
 
     class Meta:
         model = Movement
