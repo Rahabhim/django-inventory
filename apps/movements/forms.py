@@ -89,7 +89,7 @@ class MovementForm_view(DetailForm):
         model = Movement
 
 class _baseMovementForm(forms.ModelForm):
-    items = AutoCompleteSelectMultipleField('item', show_help_text=False)
+    items = AutoCompleteSelectMultipleField('item', show_help_text=False, required=False)
 
 class _outboundMovementForm(_baseMovementForm):
     location_src = AutoCompleteSelectField('location', required=True, show_help_text=False)
@@ -103,6 +103,7 @@ class _outboundMovementForm(_baseMovementForm):
             locations = Location.objects.filter(department=dept)[:1]
             if locations:
                 self.initial['location_src'] = locations[0].id
+        self.initial['stype'] = 'out'
 
 class MovementForm(_baseMovementForm):
     class Meta:
@@ -122,6 +123,7 @@ class DestroyItemsForm(_outboundMovementForm):
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
 
     def _pre_save_by_user(self, user):
+        self.instance.stype = 'out'
         if not self.instance.create_user_id:
             self.instance.create_user = user
         if not self.instance.location_dest_id:
@@ -136,6 +138,7 @@ class LoseItemsForm(_outboundMovementForm):
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
 
     def _pre_save_by_user(self, user):
+        self.instance.stype = 'out'
         if not self.instance.create_user_id:
             self.instance.create_user = user
         if not self.instance.location_dest_id:
@@ -164,6 +167,7 @@ class MoveItemsForm(_baseMovementForm):
                 self.initial['location_dest'] = locations[0].id
 
     def _pre_save_by_user(self, user):
+        self.instance.stype = 'internal'
         if not self.instance.create_user_id:
             self.instance.create_user = user
 
