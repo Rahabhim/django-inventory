@@ -179,6 +179,14 @@ class FilterForm(forms.Form):
                 self.fields[list_filter['name']] = forms.CharField(label=label, required=False)
 
 class InlineModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(InlineModelForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if isinstance(field, forms.IntegerField):
+                field.widget.attrs['class'] = 'integer'
+            elif isinstance(field, forms.DecimalField):
+                field.widget.attrs['class'] = 'decimal'
+
     def as_table(self):
         "Returns this form rendered as HTML <td>s"
         return self._html_output(
