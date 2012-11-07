@@ -5,7 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
 from generic_views.views import generic_delete, generic_list, generic_detail, \
-                GenericCreateView, GenericUpdateView
+                GenericCreateView, GenericUpdateView, \
+                CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
@@ -22,6 +23,7 @@ from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm,
         MovementForm, MovementForm_view, MovementForm_update_po
 
 from company import make_mv_location
+from main import cart_utils
 import views
 
 state_filter = {'name':'state', 'title':_(u'state'), 
@@ -37,6 +39,9 @@ location_src_filter = {'name': 'location_src', 'title': _('Source location'),
 location_dest_filter = {'name': 'location_dest', 'title': _('Destination location'), 
             'destination': make_mv_location('location_dest')}
 
+def open_move_as_cart(obj, request):
+    cart_utils.add_cart_to_session(obj, request)
+    return obj.get_absolute_url()
 
 urlpatterns = patterns('movements.views',
     url(r'^purchase/request/state/list/$', generic_list, dict({'queryset':PurchaseRequestStatus.objects.all()}, extra_context=dict(title =_(u'purchase request states'))), 'purchase_request_state_list'),
@@ -92,13 +97,19 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/item/(?P<object_id>\d+)/close/$', 'purchase_order_item_close', (), 'purchase_order_item_close'),
 
     url(r'^objects/items/destroy/$', GenericCreateView.as_view(form_class=DestroyItemsForm, 
-            extra_context={'title':_(u'Items destruction')}), name='destroy_items'),
+            extra_context={'title':_(u'Items destruction')},
+            success_url=open_move_as_cart),
+        name='destroy_items'),
 
     url(r'^objects/items/lose/$', GenericCreateView.as_view(form_class=LoseItemsForm, 
-            extra_context={'title':_(u'Lost Items')}), name='lose_items'),
+            extra_context={'title':_(u'Lost Items')},
+            success_url=open_move_as_cart),
+        name='lose_items'),
 
     url(r'^objects/items/move/$', GenericCreateView.as_view(form_class=MoveItemsForm, 
-            extra_context={'title':_(u'Items movement')}), name='move_items'),
+            extra_context={'title':_(u'Items movement')},
+            success_url=open_move_as_cart),
+        name='move_items'),
 
     url(r'^objects/moves/list/$', views.MovementListView.as_view( \
                     list_filters=[state_filter, stype_filter, \
@@ -125,6 +136,20 @@ urlpatterns = patterns('movements.views',
 
     url(r'^objects/moves/(?P<object_id>\d+)/close/$', 'movement_do_close',
             name='movement_do_close'),
+
+    url(r'^objects/moves/(?P<pk>\d+)/cart_open/$', CartOpenView.as_view(
+                model=Movement, dest_model='assets.Item',
+                extra_context={'object_name':_(u'movement')}), 
+            name='movement_cart_open'),
+    url(r'^objects/moves/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=Movement), 
+            name='movement_cart_close'),
+
+    url(r'^objects/moves/(?P<pk>\d+)/add_item/$', AddToCartView.as_view( \
+                cart_model=Movement, item_model='assets.Item'), \
+            name='movement_item_add'),
+    url(r'^objects/moves/(?P<pk>\d+)/remove_item/$', RemoveFromCartView.as_view(\
+                cart_model=Movement, item_model='assets.Item'), \
+            name='movement_item_remove'),
 
 )
 

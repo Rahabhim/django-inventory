@@ -15,6 +15,7 @@ from django.forms.formsets import formset_factory
 from common.models import Supplier, Location
 from assets.models import ItemTemplate
 from generic_views.views import GenericBloatedListView
+from main import cart_utils
 
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, Movement
 from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
@@ -471,6 +472,7 @@ def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
     try:
         movement.do_close(request.user)
+        cart_utils.remove_from_session(request.session, movement)
         messages.success(request, _(u'The movement has been validated.'))
     except Exception, e:
         messages.error(request, unicode(e))

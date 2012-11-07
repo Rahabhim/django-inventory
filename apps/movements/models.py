@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 from common.models import Supplier, Location
 from assets.models import Item, ItemTemplate
@@ -313,6 +314,67 @@ class Movement(models.Model):
     def __unicode__(self):
         return _(u'%s from %s to %s') % (self.name or self.origin or _('Move'), \
                     self.location_src, self.location_dest)
+
+    def get_cart_name(self):
+        """ Returns the "shopping-cart" name of this model
+        """
+        # TODO by type
+        return _("Movement: %s") % self.name
+
+    def get_cart_itemcount(self):
+        """ Returns the number of items currently at the cart
+        """
+        return self.items.count()
+
+    @models.permalink
+    def get_cart_url(self):
+        # TODO
+        return ('movement_view', [str(self.id)])
+
+    def get_cart_objcap(self, obj):
+        """ Return the state of `obj` in our cart, + the action url
+        """
+        if obj is None or not isinstance(obj, Item):
+            # "incorrect object passed:", repr(obj)
+            return None, None
+
+        if self.items.filter(id=obj.id).exists():
+            state = 'added'
+            view_name = 'movement_item_remove'
+        else:
+            if obj.location == self.location_src:
+                state = 'removed'
+                view_name = 'movement_item_add'
+            else:
+                # "wrong location"
+                return False, None
+
+        # prepare the url (TODO cache)
+        href = reverse(view_name, args=(str(self.id),))
+        return state, href
+
+    def add_to_cart(self, obj):
+        if obj is None or not isinstance(obj, Item):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        if self.items.filter(id=obj.id).exists():
+            raise ValueError(_("Item already in movement"))
+
+        self.items.add(obj)
+        return 'added'
+
+    def remove_from_cart(self, obj):
+        if obj is None or not isinstance(obj, Item):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        done = False
+        for item in self.items.filter(id=obj.id):
+            item.delete()
+            done = True
+        if not done:
+            raise ValueError(_("Item %s not in movement!") % unicode(obj))
+        self.save()
+        return 'removed'
 
 #class MovementLine(models.Model):
     #movement = models.ForeignKey(Movement)
