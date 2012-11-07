@@ -256,4 +256,11 @@ class ColumnsDetailWidget(forms.widgets.Widget):
 
         return mark_safe(''.join(ret))
 
+class ReadOnlyInput(forms.widgets.Input):
+    def _has_changed(self, initial, data):
+        return False
+
+    def build_attrs(self, extra_attrs=None, **kwargs):
+        return super(ReadOnlyInput, self).build_attrs(extra_attrs=extra_attrs, disabled=True, **kwargs)
+
 #eof
