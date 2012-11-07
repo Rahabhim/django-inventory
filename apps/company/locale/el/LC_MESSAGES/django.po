@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 11:18+0300\n"
+"POT-Creation-Date: 2012-11-05 23:32+0200\n"
 "PO-Revision-Date: 2012-09-21 16:53+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,23 +17,23 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:9
+#: __init__.py:12
 msgid "type"
 msgstr ""
 
-#: __init__.py:11
+#: __init__.py:14
 msgid "assets"
 msgstr ""
 
-#: __init__.py:15
+#: __init__.py:27
 msgid "company"
 msgstr "Διοικητική δομή"
 
-#: __init__.py:16
+#: __init__.py:28
 msgid "departments"
 msgstr "Μονάδες"
 
-#: __init__.py:17 urls.py:19
+#: __init__.py:29 urls.py:23
 msgid "department types"
 msgstr "Τύποι Μονάδων"
 
@@ -73,6 +73,10 @@ msgstr "Τμήμα"
 
 #: models.py:39
 msgid "Serviced By"
+msgstr ""
+
+#: urls.py:15
+msgid "name"
 msgstr ""
 
 #: templates/department_list.html:6

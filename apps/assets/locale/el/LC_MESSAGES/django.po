@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 11:18+0300\n"
+"POT-Creation-Date: 2012-11-05 23:32+0200\n"
 "PO-Revision-Date: 2012-10-23 11:42+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -71,9 +71,21 @@ msgstr "δημιουργία σύνθεσης"
 msgid "state"
 msgstr "κατάσταση"
 
-#: __init__.py:44 models.py:83 models.py:137 urls.py:26 views.py:106
+#: __init__.py:45 models.py:83 models.py:153 views.py:118
 msgid "assets"
 msgstr "εξοπλισμός"
+
+#: forms.py:29
+msgid "Contained Item"
+msgstr ""
+
+#: forms.py:30 urls.py:37 views.py:134
+msgid "Manufacturer"
+msgstr ""
+
+#: forms.py:31 urls.py:38 views.py:135
+msgid "Category"
+msgstr ""
 
 #: models.py:15
 msgid "name"
@@ -83,7 +95,7 @@ msgstr "όνομα"
 msgid "exclusive"
 msgstr ""
 
-#: models.py:20 models.py:136 urls.py:51 urls.py:54
+#: models.py:20 models.py:152 urls.py:47 urls.py:50
 msgid "states"
 msgstr "καταστάσεις"
 
@@ -91,7 +103,7 @@ msgstr "καταστάσεις"
 msgid "inclusive"
 msgstr "αποκλειστική"
 
-#: models.py:36 models.py:123
+#: models.py:36 models.py:139
 msgid "item"
 msgstr "προϊόν"
 
@@ -147,103 +159,147 @@ msgstr ""
 "Δηλώνει ότι ο εξοπλισμός είναι μέρος Σύνθεσης, και γι' αυτό δεν έχει "
 "τοποθεσία."
 
-#: models.py:82 urls.py:22 urls.py:23 urls.py:33 urls.py:38
+#: models.py:82 urls.py:19 urls.py:20 urls.py:25 urls.py:30
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:128 urls.py:49
+#: models.py:144 urls.py:45
 msgid "item group"
 msgstr "σύνθεση"
 
-#: models.py:129 models.py:138 urls.py:43
+#: models.py:145 models.py:154 urls.py:35
 msgid "item groups"
 msgstr "συνθέσεις"
 
-#: urls.py:27
-msgid "specifications"
-msgstr "προδιαγραφές"
+#: urls.py:21
+#, fuzzy
+msgid "list of assets"
+msgstr "εύρεση εξοπλισμού"
 
 #: urls.py:28
-#, fuzzy
-msgid "Serial number"
-msgstr "Σειριακός αριθμός"
-
-#: urls.py:29 urls.py:44
-msgid "Location"
-msgstr "τοποθεσία"
-
-#: urls.py:36
 msgid "Assigned to:"
 msgstr ""
 
-#: views.py:28
+#: urls.py:36 views.py:138
+msgid "Location"
+msgstr "τοποθεσία"
+
+#: views.py:21
+msgid "manufacturer"
+msgstr ""
+
+#: views.py:24
+msgid "category"
+msgstr ""
+
+#: views.py:27
+msgid "product"
+msgstr ""
+
+#: views.py:31
+#, fuzzy
+msgid "location"
+msgstr "τοποθεσία"
+
+#: views.py:40
 #, python-format
 msgid "This asset has already been marked as '%s'."
 msgstr ""
 
-#: views.py:35
+#: views.py:47
 #, python-format
 msgid "Are you sure you wish to mark this asset as '%s'?"
 msgstr ""
 
-#: views.py:39
+#: views.py:51
 msgid "Any other states this asset may be marked as, will be cleared."
 msgstr ""
 
-#: views.py:49
+#: views.py:61
 #, python-format
 msgid ""
 "This asset has already been exclusively marked as '%s'.  Clear this state "
 "first."
 msgstr ""
 
-#: views.py:56
+#: views.py:68
 #, python-format
 msgid "The asset has been marked as '%s'."
 msgstr ""
 
-#: views.py:71
+#: views.py:83
 #, python-format
 msgid "This asset is not marked as '%s'"
 msgstr ""
 
-#: views.py:77
+#: views.py:89
 #, python-format
 msgid "Are you sure you wish to unmark this asset as '%s'?"
 msgstr ""
 
-#: views.py:83
+#: views.py:95
 #, python-format
 msgid "The asset has been unmarked as '%s'."
 msgstr ""
 
-#: views.py:85
+#: views.py:97
 #, python-format
 msgid "Unable to unmark this asset as '%s'"
 msgstr ""
 
-#: views.py:98
+#: views.py:110
 #, python-format
 msgid "Assign assets to the group: <a href=\"%(url)s\">%(obj)s</a>"
 msgstr ""
 
-#: views.py:104
+#: views.py:116
 msgid "Unassigned assets"
 msgstr ""
 
-#: views.py:105
+#: views.py:117
 msgid "Assigned assets"
 msgstr ""
 
-#: views.py:117
+#: views.py:133
+#, fuzzy
+msgid "Item Template"
+msgstr "προϊόν"
+
+#: views.py:136 views.py:142 views.py:152
+msgid "specifications"
+msgstr "προδιαγραφές"
+
+#: views.py:137 views.py:143 views.py:153
+#, fuzzy
+msgid "Serial number"
+msgstr "Σειριακός αριθμός"
+
+#: views.py:147
 #, python-format
 msgid "location assets: %s"
 msgstr "Εξοπλισμός τοποθεσίας: %s"
 
-#: views.py:128
+#: views.py:157
 #, python-format
 msgid "department assets: %s"
 msgstr "εξοπλισμός μονάδας: %s"
+
+#: templates/asset_detail.html:5
+#, fuzzy
+msgid "Asset Details"
+msgstr "καταστάσεις εξοπλισμού"
+
+#: templates/asset_detail.html:82
+msgid "Save"
+msgstr ""
+
+#: templates/asset_detail.html:82
+msgid "Submit"
+msgstr ""
+
+#: templates/asset_field.html:5
+msgid "required"
+msgstr ""
 
 #: templates/state_subtemplate.html:7
 msgid "Item states"

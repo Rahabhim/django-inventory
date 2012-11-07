@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 11:18+0300\n"
+"POT-Creation-Date: 2012-11-05 23:32+0200\n"
 "PO-Revision-Date: 2012-09-21 16:47+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -73,7 +73,7 @@ msgstr ""
 msgid "units"
 msgstr "μονάδες"
 
-#: models.py:35
+#: models.py:35 urls.py:26 urls.py:30
 msgid "name"
 msgstr "όνομα"
 
@@ -113,8 +113,8 @@ msgstr "σημειώσεις"
 msgid "supplies"
 msgstr ""
 
-#: models.py:92 urls.py:21 urls.py:24 urls.py:28 urls.py:32 urls.py:38
-#: urls.py:41
+#: models.py:92 urls.py:35 urls.py:42 urls.py:46 urls.py:50 urls.py:56
+#: urls.py:59
 msgid "item template"
 msgstr "προϊόν"
 
@@ -122,23 +122,38 @@ msgstr "προϊόν"
 msgid "item templates"
 msgstr "προϊόντα"
 
-#: urls.py:33
+#: urls.py:20 urls.py:93 urls.py:96 urls.py:100 urls.py:104 urls.py:110
+msgid "manufacturer"
+msgstr "κατασκευαστής"
+
+#: urls.py:23
+#, fuzzy
+msgid "category"
+msgstr "κατηγορίες"
+
+#: urls.py:36
+#, fuzzy
+msgid "Manufacturer"
+msgstr "κατασκευαστής"
+
+#: urls.py:37
+#, fuzzy
+msgid "Category"
+msgstr "κατηγορία προϊόντων"
+
+#: urls.py:51
 msgid ""
 "Will be deleted from any user that may have it assigned and from any item "
 "group."
 msgstr ""
 
-#: urls.py:36
+#: urls.py:54
 msgid "orphan templates"
 msgstr ""
 
-#: urls.py:52 urls.py:55 urls.py:59 urls.py:63 urls.py:69
+#: urls.py:71 urls.py:74 urls.py:78 urls.py:82 urls.py:88
 msgid "item category"
 msgstr "κατηγορία προϊόντων"
-
-#: urls.py:73 urls.py:76 urls.py:80 urls.py:84 urls.py:90
-msgid "manufacturer"
-msgstr "κατασκευαστής"
 
 #: views.py:17
 msgid "assets that use the template"

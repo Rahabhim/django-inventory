@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 11:18+0300\n"
+"POT-Creation-Date: 2012-11-05 23:32+0200\n"
 "PO-Revision-Date: 2012-09-21 16:52+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10 models.py:96 urls.py:25
+#: __init__.py:10 models.py:96 urls.py:35
 msgid "suppliers"
 msgstr "προμηθευτές"
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "related purchase orders"
 msgstr ""
 
-#: __init__.py:17 models.py:53 models.py:103 urls.py:18 urls.py:21
+#: __init__.py:17 models.py:53 models.py:103 urls.py:28 urls.py:31
 msgid "locations"
 msgstr "τοποθεσίες"
 
@@ -95,9 +95,13 @@ msgstr "τοποθεσίες"
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:95 models.py:104 urls.py:28
+#: models.py:95 models.py:104 urls.py:38
 msgid "supplier"
 msgstr "προμηθευτής"
+
+#: urls.py:15
+msgid "department"
+msgstr ""
 
 #~ msgid "address"
 #~ msgstr "Διεύθυνση"

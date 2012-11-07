@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-05 17:21+0200\n"
+"POT-Creation-Date: 2012-11-05 23:32+0200\n"
 "PO-Revision-Date: 2012-11-05 17:27+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -149,12 +149,12 @@ msgid "required"
 msgstr "Απαιτείται"
 
 #: templates/generic_form_subtemplate.html:71
-#: templates/generic_form_subtemplate_fs.html:82
+#: templates/generic_form_subtemplate_fs.html:83
 msgid "Save"
 msgstr "Αποθήκευση"
 
 #: templates/generic_form_subtemplate.html:71
-#: templates/generic_form_subtemplate_fs.html:82
+#: templates/generic_form_subtemplate_fs.html:83
 msgid "Submit"
 msgstr "Υποβολή"
 
@@ -180,4 +180,3 @@ msgstr "Όνομα"
 #: templatetags/generic_views_tags.py:14
 msgid "Filter"
 msgstr "Φίλτρο"
-

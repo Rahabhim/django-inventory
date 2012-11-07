@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 11:18+0300\n"
+"POT-Creation-Date: 2012-11-05 23:32+0200\n"
 "PO-Revision-Date: 2012-09-30 22:43+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -37,15 +37,23 @@ msgstr "διαγραφή"
 msgid "details"
 msgstr "Λεπτομέρειες"
 
-#: __init__.py:25
+#: __init__.py:18
+msgid "open"
+msgstr ""
+
+#: __init__.py:19
+msgid "close"
+msgstr ""
+
+#: __init__.py:27
 msgid "template"
 msgstr "προϊόν"
 
-#: __init__.py:26
+#: __init__.py:28
 msgid "return to inventory"
 msgstr ""
 
-#: __init__.py:43 models.py:48 urls.py:19
+#: __init__.py:45 models.py:48 urls.py:20
 msgid "inventories"
 msgstr "Απογραφές"
 
@@ -61,7 +69,7 @@ msgstr "περιγραφή"
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:39 urls.py:20
+#: models.py:39 urls.py:21
 msgid "location"
 msgstr "τοποθεσία"
 
@@ -73,25 +81,31 @@ msgstr ""
 msgid "date validated"
 msgstr ""
 
-#: models.py:47 models.py:79 urls.py:24 urls.py:29 urls.py:32 views.py:40
+#: models.py:47 models.py:91 urls.py:25 urls.py:30 urls.py:33 urls.py:36
+#: views.py:40
 msgid "inventory"
 msgstr ""
 
-#: models.py:62
+#: models.py:60
+#, fuzzy, python-format
+msgid "Inventory: %s"
+msgstr "Απογραφές"
+
+#: models.py:74
 msgid "item state"
 msgstr ""
 
-#: models.py:67 urls.py:40
+#: models.py:79 urls.py:45
 #, fuzzy
 msgid "inventory item"
 msgstr "Απογραφές"
 
-#: models.py:68
+#: models.py:80
 #, fuzzy
 msgid "inventory items"
 msgstr "Απογραφές"
 
-#: urls.py:36
+#: urls.py:41
 #, fuzzy
 msgid "items"
 msgstr "προϊόν"
