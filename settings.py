@@ -164,6 +164,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.media",
     'django.core.context_processors.request',
     'django.core.context_processors.static',
+    'main.cart_utils.in_context',
     "grappelli.context_processors.admin_template_path",
     'django.contrib.messages.context_processors.messages',
 ]
