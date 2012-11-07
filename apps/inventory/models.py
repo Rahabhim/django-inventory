@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 #from django.contrib.auth.models import User, UserManager
-#from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse
 
 from dynamic_search.api import register
 from common import models as common
@@ -62,10 +62,56 @@ class Inventory(models.Model):
     def get_cart_itemcount(self):
         """ Returns the number of items currently at the cart
         """
-        return 42
-    
+        return self.items.count()
+
+    @models.permalink
     def get_cart_url(self):
-        return self.get_absolute_url()
+        return ('inventory_view', [str(self.id)])
+
+    def get_cart_objcap(self, obj):
+        """ Return the state of `obj` in our cart, + the action url
+        """
+        if obj is None or not isinstance(obj, assets.Item):
+            # "incorrect object passed:", repr(obj)
+            return None, None
+
+        if self.items.filter(asset__id=obj.id).exists():
+            state = 'added'
+            view_name = 'inventory_item_remove'
+        else:
+            if obj.location == self.location:
+                state = 'removed'
+                view_name = 'inventory_item_add'
+            else:
+                # "wrong location"
+                return False, None
+
+        # prepare the url (TODO cache)
+        href = reverse(view_name, args=(str(self.id),))
+        return state, href
+
+    def add_to_cart(self, obj):
+        if obj is None or not isinstance(obj, assets.Item):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        if self.items.filter(asset__id=obj.id).exists():
+            raise ValueError(_("Item already in inventory"))
+
+        self.items.create(asset=obj, quantity=1)
+        return 'added'
+
+    def remove_from_cart(self, obj):
+        if obj is None or not isinstance(obj, assets.Item):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        done = False
+        for item in self.items.filter(asset__id=obj.id):
+            item.delete()
+            done = True
+        if not done:
+            raise ValueError(_("Item %s not in inventory!") % unicode(obj))
+        self.save()
+        return 'removed'
 
 class InventoryItem(models.Model):
     inventory = models.ForeignKey(Inventory, related_name='items')
@@ -85,7 +131,7 @@ class InventoryItem(models.Model):
         return ('inventory_item_view', [str(self.id)])
 
     def __unicode__(self):
-        return "%s: '%s' qty=%s @ %s" % (self.inventory, self.asset, self.quantity, self.date)
+        return u"%s: '%s' qty=%s" % (unicode(self.inventory), unicode(self.asset), self.quantity)
 
 
 register(Inventory, _(u'inventory'), ['name', 'location__name'])

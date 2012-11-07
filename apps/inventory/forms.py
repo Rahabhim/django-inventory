@@ -3,7 +3,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectField
 
-from generic_views.forms import DetailForm, InlineModelForm
+from generic_views.forms import DetailForm, InlineModelForm, ReadOnlyInput
 
 from models import Log, Inventory, InventoryItem
 
@@ -14,7 +14,7 @@ class LogForm(forms.ModelForm):
 
 
 class InventoryForm(forms.ModelForm):
-    location = AutoCompleteSelectField('location')
+    location = AutoCompleteSelectField('location', show_help_text=False)
 
     class Meta:
         model = Inventory
@@ -30,13 +30,14 @@ class InventoryForm_view(DetailForm):
         model = Inventory
 
 class InventoryItemForm(forms.ModelForm):
-    asset = AutoCompleteSelectField('item')
+    asset = AutoCompleteSelectField('item', show_help_text=False)
     class Meta:
         model = InventoryItem
 
 
 class InventoryItemForm_inline(InlineModelForm):
-    asset = AutoCompleteSelectField('item')
+    asset = AutoCompleteSelectField('item', show_help_text=False)
+    quantity = forms.fields.IntegerField(required=False, widget=ReadOnlyInput)
     class Meta:
         model = InventoryItem
         exclude = ('notes',)
