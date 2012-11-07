@@ -527,7 +527,7 @@ class _InlineViewMixin(object):
 
     def get_success_url(self):
         if callable(self.success_url):
-            return self.success_url(self.object)
+            return self.success_url(self.object, self.request)
         else:
             return super(_InlineViewMixin, self).get_success_url()
 

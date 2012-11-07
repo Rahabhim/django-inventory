@@ -118,7 +118,7 @@ urlpatterns = patterns('movements.views',
             'movement_view'),
     url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
                 form_class=MovementForm_update_po,
-                success_url=lambda obj: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
+                success_url=lambda obj, *a: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
                 extra_context={'object_name':_(u'movement')}
             ),
             name='movement_update_po'),
