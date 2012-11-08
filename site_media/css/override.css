@@ -50,3 +50,7 @@ input.integer {
 input.decimal {
     width: 7em;
 }
+
+ul.subtasks {
+    padding-left: 2em;
+}

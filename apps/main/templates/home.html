@@ -10,7 +10,7 @@
         {% get_object_navigation_links "my_pending" %}
         {% if object_navigation_links %}
             <h2>{% blocktrans %}My pending actions {% endblocktrans %}</h2>
-            <ul class="navigation">
+            <ul class="navigation subtasks">
                 {% with 'true' as as_li %}
                     {% include 'generic_navigation.html' %}
                 {% endwith %}
@@ -19,7 +19,7 @@
         {% get_object_navigation_links "start_actions" %}
         {% if object_navigation_links %}
             <h2>{% blocktrans %}Available actions{% endblocktrans %}</h2>
-            <ul class="navigation">
+            <ul class="navigation subtasks">
                 {% with 'true' as as_li %}
                     {% include 'generic_navigation.html' %}
                 {% endwith %}
