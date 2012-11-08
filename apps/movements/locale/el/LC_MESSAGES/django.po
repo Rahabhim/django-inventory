@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-30 22:38+0300\n"
-"PO-Revision-Date: 2012-11-08 08:18+0200\n"
+"PO-Revision-Date: 2012-11-08 08:53+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -119,11 +119,11 @@ msgstr ""
 
 #: __init__.py:49
 msgid "close item"
-msgstr ""
+msgstr "κλείσιμο"
 
 #: __init__.py:50
 msgid "transfer item"
-msgstr ""
+msgstr "μεταφορά"
 
 #: __init__.py:52
 msgid "template"
@@ -167,7 +167,7 @@ msgstr "Ποσ."
 
 #: forms.py:65
 msgid "Purchase order item"
-msgstr ""
+msgstr "γραμμή εντολής προμήθειας"
 
 #: forms.py:66
 msgid "Inventory that will receive the item."
@@ -187,7 +187,7 @@ msgstr "όνομα"
 
 #: models.py:20 models.py:21 models.py:174
 msgid "purchase request status"
-msgstr ""
+msgstr "κατάσταση αίτησης"
 
 #: models.py:32 models.py:89
 msgid "user defined id"
@@ -325,7 +325,7 @@ msgstr "δημιουργία εντολής προμήθειας"
 
 #: urls.py:56
 msgid "create new purchase order item state"
-msgstr ""
+msgstr "δημιουργία νέας κατάστασης εντολής"
 
 #: urls.py:67
 msgid "Items destruction"

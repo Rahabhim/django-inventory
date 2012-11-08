@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 08:01+0200\n"
+"POT-Creation-Date: 2012-11-08 08:47+0200\n"
 "PO-Revision-Date: 2012-11-08 08:20+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -61,6 +61,11 @@ msgstr "Απογραφές"
 msgid "timedate"
 msgstr "ημερομηνία"
 
+#: models.py:18
+#, fuzzy
+msgid "action"
+msgstr "τοποθεσία"
+
 #: models.py:19
 msgid "description"
 msgstr "περιγραφή"
@@ -79,6 +84,15 @@ msgstr "ημερομηνία εκτέλεσης"
 
 #: models.py:41
 msgid "date validated"
+msgstr "ημερομηνία επικύρωσης"
+
+#: models.py:42
+msgid "created by"
+msgstr ""
+
+#: models.py:43
+#, fuzzy
+msgid "validated by"
 msgstr "ημερομηνία επικύρωσης"
 
 #: models.py:47 models.py:137 urls.py:25 urls.py:30 urls.py:33 urls.py:36
@@ -106,9 +120,21 @@ msgstr "Νέα Απογραφή"
 msgid "Item %s not in inventory!"
 msgstr "Νέα Απογραφή"
 
+#: models.py:118
+msgid "asset"
+msgstr ""
+
+#: models.py:119 views.py:49
+msgid "quantity"
+msgstr "Ποσότητα"
+
 #: models.py:120
 msgid "item state"
 msgstr "κατάσταση"
+
+#: models.py:122
+msgid "notes"
+msgstr ""
 
 #: models.py:125 urls.py:45
 #, fuzzy
@@ -129,10 +155,6 @@ msgstr "προϊόν"
 #, fuzzy
 msgid "current balances for inventory"
 msgstr "Νέα Απογραφή"
-
-#: views.py:49
-msgid "quantity"
-msgstr "Ποσότητα"
 
 #: views.py:64
 msgid "purchase orders from supplier"

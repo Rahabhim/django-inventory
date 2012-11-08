@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 08:01+0200\n"
+"POT-Creation-Date: 2012-11-08 08:47+0200\n"
 "PO-Revision-Date: 2012-09-21 16:53+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "company"
 msgstr "Διοικητική δομή"
 
-#: __init__.py:28
+#: __init__.py:28 models.py:48
 msgid "departments"
 msgstr "Μονάδες"
 
@@ -43,41 +43,63 @@ msgid ""
 "this type"
 msgstr ""
 
+#: models.py:18
+#, fuzzy
+msgid "department type"
+msgstr "Τύποι Μονάδων"
+
+#: models.py:28 urls.py:15
+msgid "name"
+msgstr ""
+
+#: models.py:29
+msgid "code"
+msgstr ""
+
+#: models.py:30
+msgid "code 2"
+msgstr ""
+
 #: models.py:31
+msgid "deprecated"
+msgstr ""
+
+#: models.py:32
 msgid "Department Type"
 msgstr "Τύπος Μονάδας"
 
-#: models.py:32
+#: models.py:33
 msgid "Merged in"
 msgstr "Συγχωνεύτηκε σε"
 
-#: models.py:34
+#: models.py:35
 msgid "Nom Name"
 msgstr "Νομαρχία"
 
-#: models.py:35
+#: models.py:36
 msgid "Note"
 msgstr "Σημείωση"
 
-#: models.py:36
+#: models.py:37
 msgid "OTA Name"
 msgstr "ΟΤΑ"
 
-#: models.py:37
+#: models.py:38
 msgid "Parent Department"
 msgstr ""
 
-#: models.py:38
+#: models.py:39
 msgid "Section"
 msgstr "Τμήμα"
 
-#: models.py:39
+#: models.py:40
 msgid "Serviced By"
 msgstr ""
 
-#: urls.py:15
-msgid "name"
-msgstr ""
+#: models.py:47
+#, fuzzy
+msgid "department"
+msgstr "Μονάδες"
 
 #: templates/department_list.html:6
 #, python-format

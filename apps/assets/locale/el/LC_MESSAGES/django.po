@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 07:57+0200\n"
-"PO-Revision-Date: 2012-11-08 08:27+0200\n"
+"POT-Creation-Date: 2012-11-08 08:47+0200\n"
+"PO-Revision-Date: 2012-11-08 08:52+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -23,15 +23,15 @@ msgstr "καταστάσεις εξοπλισμού"
 
 #: __init__.py:10
 msgid "create new asset state"
-msgstr ""
+msgstr "δημιουργία κατάστασης εξοπλισμού"
 
 #: __init__.py:11
 msgid "edit asset state"
-msgstr ""
+msgstr "επεξεργασία κατάστασης εξοπλισμού"
 
 #: __init__.py:12
 msgid "delete asset state"
-msgstr ""
+msgstr "διαγραφή κατάστασης εξοπλισμού"
 
 #: __init__.py:15
 msgid "list all assets"
@@ -142,6 +142,10 @@ msgstr "Σειριακός αριθμός"
 msgid "current location"
 msgstr "Τρέχουσα τοποθεσία"
 
+#: models.py:73
+msgid "active"
+msgstr "ενεργό"
+
 #: models.py:74
 msgid "quantity"
 msgstr "Ποσότητα"
@@ -149,6 +153,8 @@ msgstr "Ποσότητα"
 #: models.py:75
 msgid "Allows a batch of identical items to be referenced as one entity"
 msgstr ""
+"Επιτρέπει σε ένα πλήθος όμοιων αντικειμένων εξοπλισμού να θεωρούνται ένα "
+"κομμάτι."
 
 #: models.py:77
 msgid "If true, this item is bundled in a group, and therefore has no location"
@@ -199,12 +205,12 @@ msgstr "τοποθεσία"
 #: views.py:40
 #, python-format
 msgid "This asset has already been marked as '%s'."
-msgstr ""
+msgstr "Ο εξοπλισμός έχει ήδη σημανθεί ως '%s'."
 
 #: views.py:47
 #, python-format
 msgid "Are you sure you wish to mark this asset as '%s'?"
-msgstr ""
+msgstr "Θέλετε να σημάνετε τον εξοπλισμό ως '%s' ;"
 
 #: views.py:51
 msgid "Any other states this asset may be marked as, will be cleared."
@@ -216,31 +222,32 @@ msgid ""
 "This asset has already been exclusively marked as '%s'.  Clear this state "
 "first."
 msgstr ""
+"Ο εξοπλισμός έχει ήδη την αποκλειστική σήμανση '%s'. Αφαιρέστε αυτήν πρώτα."
 
 #: views.py:68
 #, python-format
 msgid "The asset has been marked as '%s'."
-msgstr ""
+msgstr "Ο εξοπλισμός σημάνθηκε ως '%s'."
 
 #: views.py:83
 #, python-format
 msgid "This asset is not marked as '%s'"
-msgstr ""
+msgstr "Ο εξοπλισμός δεν σημαίνεται ως '%s'."
 
 #: views.py:89
 #, python-format
 msgid "Are you sure you wish to unmark this asset as '%s'?"
-msgstr ""
+msgstr "Θέλετε σίγουρα να αφαιρέσετε την σήμανση '%s' από τον εξοπλισμό;"
 
 #: views.py:95
 #, python-format
 msgid "The asset has been unmarked as '%s'."
-msgstr ""
+msgstr "Ο εξοπλισμός πλέον δεν σημαίνεται ως '%s'."
 
 #: views.py:97
 #, python-format
 msgid "Unable to unmark this asset as '%s'"
-msgstr ""
+msgstr "Δεν γίνεται να αφαιρεθεί η σήμανση '%s'."
 
 #: views.py:110
 #, python-format
