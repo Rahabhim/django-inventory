@@ -41,7 +41,7 @@ location_dest_filter = {'name': 'location_dest', 'title': _('Destination locatio
 
 def open_move_as_cart(obj, request):
     cart_utils.add_cart_to_session(obj, request)
-    return obj.get_absolute_url()
+    return reverse('location_assets', kwargs=dict(loc_id=obj.location_src.id))
 
 urlpatterns = patterns('movements.views',
     url(r'^purchase/request/state/list/$', generic_list, dict({'queryset':PurchaseRequestStatus.objects.all()}, extra_context=dict(title =_(u'purchase request states'))), 'purchase_request_state_list'),

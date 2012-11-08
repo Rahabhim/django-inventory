@@ -115,4 +115,8 @@ action_movements_pending = {'text':_('pending moves'), \
 
 register_links(['home',], [purchase_pending_orders, action_movements_pending ], menu_name='my_pending')
 
+location_src_assets = {'text': _('assets at that location'), 'view': 'location_assets', \
+            'args': dict(loc_id='object.location_src.id'), 'famfam': 'package_link'}
+register_links(['movement_cart_open',], [location_src_assets,], menu_name='after_cart_open')
+
 # eof
