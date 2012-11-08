@@ -36,3 +36,17 @@ table.filter_form td select {
 .table tr.bl_group td.first_col {
 	padding-left: 0px;
 }
+
+a.delete-row {
+    width: 16px; height: 16px; background-image: url(images/ui-icons_444444_256x240.png);
+    display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat;
+    background-position: -176px -96px;
+}
+
+input.integer {
+    width: 4em;
+}
+
+input.decimal {
+    width: 7em;
+}
