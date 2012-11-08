@@ -110,10 +110,11 @@ class Item(models.Model):
         return super(Item, self).clean()
 
     def get_specs(self):
-        if not self.active:
-            return "spec1"
-        else:
-            return "spec2"
+        return ""
+        #if not self.active:
+        #    return "spec1"
+        #else:
+        #    return "spec2"
 
     def current_location(self):
         if self.location:
