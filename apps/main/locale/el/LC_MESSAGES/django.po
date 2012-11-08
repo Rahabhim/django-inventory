@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-05 23:32+0200\n"
+"POT-Creation-Date: 2012-11-08 08:01+0200\n"
 "PO-Revision-Date: 2012-11-05 17:21+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -37,45 +37,45 @@ msgstr "Ένα σύστημα κτηματολογίου και διαχείρι
 msgid "Go"
 msgstr "Πήγαινε"
 
-#: templates/base.html:30
+#: templates/base.html:34
 msgid "User"
 msgstr "Χρήστης"
 
-#: templates/base.html:32
+#: templates/base.html:36
 msgid "Anonymous"
 msgstr "Ανώνυμος"
 
-#: templates/base.html:35
+#: templates/base.html:39
 msgid "New password"
 msgstr "Νέος κωδικός"
 
-#: templates/base.html:39
+#: templates/base.html:43
 msgid "Admin site"
 msgstr "Διαχείριση"
 
-#: templates/base.html:42
+#: templates/base.html:46
 msgid "Login"
 msgstr "Σύνδεση"
 
-#: templates/base.html:42
+#: templates/base.html:46
 msgid "Logout"
 msgstr "Αποσύνδεση"
 
-#: templates/base.html:71
+#: templates/base.html:75
 #, python-format
 msgid "Actions for %(object_name)s: %(object)s"
 msgstr "Ενέργειες για %(object_name)s: %(object)s"
 
-#: templates/base.html:73
+#: templates/base.html:77
 #, python-format
 msgid "Actions for: %(object)s"
 msgstr "Ενέργειες για: %(object)s"
 
-#: templates/base.html:76
+#: templates/base.html:80
 msgid "Actions"
 msgstr "Ενέργειες"
 
-#: templates/base.html:89
+#: templates/base.html:93
 msgid "Other available actions"
 msgstr "Άλλες διαθέσιμες ενέργειες"
 
@@ -86,6 +86,10 @@ msgstr "Ενέργειες σε εκκρεμότητα"
 #: templates/home.html:21
 msgid "Available actions"
 msgstr "Διαθέσιμες ενέργειες"
+
+#: templates/object_list_carts.html:6
+msgid "Add items to "
+msgstr ""
 
 #~ msgid "tools"
 #~ msgstr "εργαλεία"

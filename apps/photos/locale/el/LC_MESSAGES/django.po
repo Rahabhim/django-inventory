@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-05 23:32+0200\n"
-"PO-Revision-Date: 2012-09-30 22:44+0300\n"
+"POT-Creation-Date: 2012-11-08 08:01+0200\n"
+"PO-Revision-Date: 2012-11-08 08:09+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -57,15 +57,15 @@ msgstr ""
 #: views.py:54
 #, python-format
 msgid " (maximum of %s)"
-msgstr ""
+msgstr " (μέγιστες %s)"
 
 #: views.py:61
 msgid "main photo"
-msgstr ""
+msgstr "κύρια φωτογραφία"
 
 #: views.py:62
 msgid "title"
-msgstr ""
+msgstr "τίτλος"
 
 #: views.py:71
 msgid "Upload new photo"
@@ -94,13 +94,14 @@ msgid "Are you sure you wish to delete this photo?"
 msgstr ""
 
 #: templates/generic_photos_subtemplate.html:15
+#, fuzzy
 msgid "Photos"
-msgstr ""
+msgstr "φωτογραφίες"
 
 #: templates/generic_photos_subtemplate.html:48
-#, python-format
+#, fuzzy, python-format
 msgid "There are no %(title)s "
-msgstr ""
+msgstr "Δεν υπάρχουν %(title)s"
 
 #: templates/generic_photos_subtemplate.html:50
 msgid "There are no photos"
@@ -114,3 +115,4 @@ msgstr ""
 #, fuzzy
 msgid "Add / remove photos"
 msgstr "προσθήκη / αφαίρεση φωτογραφιών"
+

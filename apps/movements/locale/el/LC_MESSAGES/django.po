@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-30 22:38+0300\n"
-"PO-Revision-Date: 2012-11-05 17:35+0200\n"
+"PO-Revision-Date: 2012-11-08 08:18+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: __init__.py:11 urls.py:22
 msgid "purchase request states"
-msgstr ""
+msgstr "καταστάσεις αιτήσεων προμηθειών"
 
 #: __init__.py:12 urls.py:23
 msgid "create new purchase request state"
-msgstr ""
+msgstr "δημιουργία κατάστασης αίτησης προμηθειών"
 
 #: __init__.py:13 __init__.py:30 __init__.py:35
 msgid "edit state"
@@ -35,27 +35,27 @@ msgstr "διαγραφή κατάστασης"
 
 #: __init__.py:16 models.py:45 urls.py:27
 msgid "purchase requests"
-msgstr ""
+msgstr "αιτήσεις προμηθειών"
 
 #: __init__.py:17
 msgid "create new request"
-msgstr ""
+msgstr "δημιουργία αίτησης"
 
 #: __init__.py:18
 msgid "edit request"
-msgstr ""
+msgstr "επεξεργασία αίτησης"
 
 #: __init__.py:19
 msgid "delete request"
-msgstr ""
+msgstr "διαγραφή αίτησης"
 
 #: __init__.py:20
 msgid "close request"
-msgstr ""
+msgstr "κλείσιμο αίτησης"
 
 #: __init__.py:21
 msgid "open request"
-msgstr ""
+msgstr "άνοιγμα αίτησης"
 
 #: __init__.py:22
 msgid "purchase order wizard"
@@ -75,19 +75,19 @@ msgstr "διαγραφή αντικειμένου"
 
 #: __init__.py:28 urls.py:40
 msgid "purchase order states"
-msgstr ""
+msgstr "καταστάσεις εντολών προμήθειας"
 
 #: __init__.py:29 urls.py:41
 msgid "create new purchase order state"
-msgstr ""
+msgstr "δημιουργία εντολής προμήθειας"
 
 #: __init__.py:33 urls.py:55
 msgid "purchase order item states"
-msgstr ""
+msgstr "καταστάσεις εντολών προμήθειας"
 
 #: __init__.py:34
 msgid "create new item state"
-msgstr ""
+msgstr "δημιουργία κατάστασης εξοπλισμού"
 
 #: __init__.py:38 models.py:101 urls.py:45
 msgid "purchase orders"
@@ -179,7 +179,7 @@ msgstr "Παραληφθείσα Ποσ."
 
 #: forms.py:80 forms.py:98
 msgid "Protocol ID"
-msgstr ""
+msgstr "Αρ. Πρωτοκόλλου"
 
 #: models.py:17 models.py:74 models.py:112
 msgid "name"
@@ -191,7 +191,7 @@ msgstr ""
 
 #: models.py:32 models.py:89
 msgid "user defined id"
-msgstr ""
+msgstr "Αριθμός εντολής"
 
 #: models.py:33 models.py:93
 msgid "issue date"
@@ -199,7 +199,7 @@ msgstr "Ημερομηνία έκδοσης"
 
 #: models.py:34 models.py:94
 msgid "date required"
-msgstr ""
+msgstr "αναμενόμενη ημερομηνία"
 
 #: models.py:35
 msgid "budget"
@@ -219,7 +219,7 @@ msgstr "σημειώσεις"
 
 #: models.py:44 models.py:56 models.py:90 models.py:175 urls.py:31
 msgid "purchase request"
-msgstr ""
+msgstr "αίτηση προμήθειας"
 
 #: models.py:57 models.py:128
 msgid "item template"
@@ -231,11 +231,11 @@ msgstr "Ποσότητα"
 
 #: models.py:62 models.py:176 urls.py:38
 msgid "purchase request item"
-msgstr ""
+msgstr "γραμμή αίτησης προμήθειας"
 
 #: models.py:63 views.py:42
 msgid "purchase request items"
-msgstr ""
+msgstr "γραμμές αίτησης προμήθειας"
 
 #: models.py:77 models.py:78 models.py:177 urls.py:43
 msgid "purchase order status"
@@ -251,7 +251,7 @@ msgstr "Εντολή Αγοράς"
 
 #: models.py:115 models.py:116 models.py:178 urls.py:58
 msgid "purchase order item status"
-msgstr ""
+msgstr "κατάσταση γραμμής"
 
 #: models.py:130 views.py:225
 msgid "agreed price"
@@ -263,11 +263,11 @@ msgstr "Παραλήφθηκε"
 
 #: models.py:137 models.py:180 urls.py:61 views.py:317
 msgid "purchase order item"
-msgstr ""
+msgstr "γραμμή εντολής προμήθειας"
 
 #: models.py:138 views.py:220
 msgid "purchase order items"
-msgstr ""
+msgstr "γραμμές εντολών προμήθειας"
 
 #: models.py:148
 msgid "date performed"
@@ -300,7 +300,7 @@ msgstr "εξοπλισμός"
 
 #: urls.py:25
 msgid "purchase request state"
-msgstr ""
+msgstr "κατάσταση αίτησης"
 
 #: urls.py:27 urls.py:45
 #, fuzzy
@@ -317,11 +317,11 @@ msgstr "Κλειστό"
 
 #: urls.py:29
 msgid "create new purchase request"
-msgstr ""
+msgstr "δημιουργία αίτησης προμήθειας"
 
 #: urls.py:47
 msgid "create new purchase order"
-msgstr ""
+msgstr "δημιουργία εντολής προμήθειας"
 
 #: urls.py:56
 msgid "create new purchase order item state"
@@ -341,12 +341,12 @@ msgstr "Μετακίνηση εξοπλισμού"
 
 #: views.py:31
 msgid "Related purchase orders"
-msgstr ""
+msgstr "Σχετικές εντολές προμήθειας"
 
 #: views.py:36
 #, python-format
 msgid "details for purchase request: %s"
-msgstr ""
+msgstr "λεπτομέρειες για την αίτηση: %s"
 
 #: views.py:44 views.py:223
 msgid "qty"

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-05 23:32+0200\n"
-"PO-Revision-Date: 2012-09-30 22:43+0300\n"
+"POT-Creation-Date: 2012-11-08 08:01+0200\n"
+"PO-Revision-Date: 2012-11-08 08:20+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: __init__.py:12
 msgid "view all inventories"
-msgstr ""
+msgstr "όλες οι απογραφές"
 
 #: __init__.py:13
 msgid "create new inventory"
@@ -39,11 +39,11 @@ msgstr "Λεπτομέρειες"
 
 #: __init__.py:18
 msgid "open"
-msgstr ""
+msgstr "άνοιγμα"
 
 #: __init__.py:19
 msgid "close"
-msgstr ""
+msgstr "κλείσιμο"
 
 #: __init__.py:27
 msgid "template"
@@ -51,7 +51,7 @@ msgstr "προϊόν"
 
 #: __init__.py:28
 msgid "return to inventory"
-msgstr ""
+msgstr "επιστροφή στην απογραφή"
 
 #: __init__.py:45 models.py:48 urls.py:20
 msgid "inventories"
@@ -59,7 +59,7 @@ msgstr "Απογραφές"
 
 #: models.py:17
 msgid "timedate"
-msgstr ""
+msgstr "ημερομηνία"
 
 #: models.py:19
 msgid "description"
@@ -75,32 +75,47 @@ msgstr "τοποθεσία"
 
 #: models.py:40
 msgid "date performed"
-msgstr ""
+msgstr "ημερομηνία εκτέλεσης"
 
 #: models.py:41
 msgid "date validated"
-msgstr ""
+msgstr "ημερομηνία επικύρωσης"
 
-#: models.py:47 models.py:91 urls.py:25 urls.py:30 urls.py:33 urls.py:36
+#: models.py:47 models.py:137 urls.py:25 urls.py:30 urls.py:33 urls.py:36
 #: views.py:40
 msgid "inventory"
-msgstr ""
+msgstr "απογραφή"
 
 #: models.py:60
 #, fuzzy, python-format
 msgid "Inventory: %s"
 msgstr "Απογραφές"
 
-#: models.py:74
-msgid "item state"
-msgstr ""
+#: models.py:95 models.py:105
+#, python-format
+msgid "Incorrect object passed: %s"
+msgstr "Λάθος αντικείμενο: %s"
 
-#: models.py:79 urls.py:45
+#: models.py:98
+#, fuzzy
+msgid "Item already in inventory"
+msgstr "Νέα Απογραφή"
+
+#: models.py:112
+#, fuzzy, python-format
+msgid "Item %s not in inventory!"
+msgstr "Νέα Απογραφή"
+
+#: models.py:120
+msgid "item state"
+msgstr "κατάσταση"
+
+#: models.py:125 urls.py:45
 #, fuzzy
 msgid "inventory item"
 msgstr "Απογραφές"
 
-#: models.py:80
+#: models.py:126
 #, fuzzy
 msgid "inventory items"
 msgstr "Απογραφές"
@@ -121,7 +136,7 @@ msgstr "Ποσότητα"
 
 #: views.py:64
 msgid "purchase orders from supplier"
-msgstr ""
+msgstr "εντολές προμήθειας από προμηθευτή"
 
 #: templates/report-items_per_person.html:14
 msgid "User assets report"
