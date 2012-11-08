@@ -545,6 +545,8 @@ class _CartOpenCloseView(django_gv.detail.SingleObjectMixin, django_gv.TemplateV
         if self.extra_context:
             context.update(self.extra_context)
         context['action_fn'] = self._action_fn
+        context['object'] = self.object
+        context['object_name'] = self.object._meta.verbose_name
         return context
 
     def get(self, request, *args, **kwargs):

@@ -9,11 +9,8 @@
     {% if action_done and not action_failed %}
     <div class="block">
         <div class="tc"><h1>{% blocktrans %}Closed cart{% endblocktrans %}</h1></div>
-
-
-    {% blocktrans %}The cart {{ object }} is now closed.
-    {% endblocktrans %}
- 
+        {% blocktrans %}The cart {{ object }} is now closed.
+        {% endblocktrans %}
     </div>
     {% else %}
     <div class="block">
@@ -21,5 +18,8 @@
         {{ action_failed }}
     </div>
     {% endif %}
+    <div>
+    <a href="{{object.get_absolute_url }}">{% blocktrans %}Back to {{object_name}}{% endblocktrans %}</a>
+    </div>
 </div>
 {% endblock %}
