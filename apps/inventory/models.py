@@ -15,7 +15,7 @@ from products import models as products
 
 class Log(models.Model):
     timedate = models.DateTimeField(auto_now_add=True, verbose_name=_(u"timedate"))
-    action = models.CharField(max_length=32)
+    action = models.CharField(max_length=32, verbose_name=_("action"))
     description = models.TextField(verbose_name=_(u"description"), null=True, blank=True)
     #user = models.ForeignKey(User, unique=True)
 
@@ -39,8 +39,8 @@ class Inventory(models.Model):
     location = models.ForeignKey(common.Location, verbose_name=_(u'location'))
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
-    create_user = models.ForeignKey('auth.User', related_name='+')
-    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))
 
 
     class Meta:
@@ -115,11 +115,11 @@ class Inventory(models.Model):
 
 class InventoryItem(models.Model):
     inventory = models.ForeignKey(Inventory, related_name='items')
-    asset = models.ForeignKey(assets.Item)
-    quantity = models.IntegerField()
+    asset = models.ForeignKey(assets.Item, verbose_name=_("asset"))
+    quantity = models.IntegerField(verbose_name=_("quantity"))
     state = models.ForeignKey(assets.State, verbose_name=_(u"item state"), 
             null=True, blank=True)
-    notes = models.TextField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True, verbose_name=_("notes"))
 
     class Meta:
         verbose_name = _(u'inventory item')

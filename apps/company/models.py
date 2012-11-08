@@ -15,6 +15,7 @@ class DepartmentType(models.Model):
 
     class Meta:
         permissions = [('admin_company', 'Can manage companies'),]
+        verbose_name = _("department type")
 
     def __unicode__(self):
         return self.name
@@ -24,10 +25,10 @@ class DepartmentType(models.Model):
         return ('company_department_type_view', [str(self.id)])
 
 class Department(models.Model):
-    name = models.CharField(max_length=128)
-    code = models.CharField(max_length=32)
-    code2 = models.CharField(max_length=32, blank=True, null=True)
-    deprecate = models.BooleanField()
+    name = models.CharField(max_length=128,verbose_name=_("name"))
+    code = models.CharField(max_length=32, verbose_name=_("code"))
+    code2 = models.CharField(max_length=32, blank=True, null=True, verbose_name=_("code 2"))
+    deprecate = models.BooleanField(verbose_name=_("deprecated"))
     dept_type = models.ForeignKey(DepartmentType, verbose_name=_('Department Type'))
     merge = models.ForeignKey('Department', verbose_name=_('Merged in'), 
             related_name='dept_merge_id', blank=True, null=True)
@@ -43,6 +44,8 @@ class Department(models.Model):
         # admin = True
         ordering = ['name']
         permissions = [('admin_company', 'Can manage companies'),]
+        verbose_name = _("department")
+        verbose_name_plural = _("departments")
 
     def __unicode__(self):
         return self.name

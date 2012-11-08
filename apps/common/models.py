@@ -8,14 +8,15 @@ from dynamic_search.api import register
 from django.core.exceptions import ValidationError
 
 class Partner(models.Model):
-    name = models.CharField(max_length=128, db_index=True, unique=True)
+    name = models.CharField(max_length=128, db_index=True, unique=True, verbose_name=_("name"))
     active = models.BooleanField(verbose_name=_("active"), default=False)
     web = models.CharField(max_length=128, blank=True, null=True)
-    comment = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True, verbose_name=_("comment"))
     # category = 
 
     class Meta:
         ordering = ['name']
+        verbose_name = _("partner")
 
     def __unicode__(self):
         return self.name
@@ -23,8 +24,8 @@ class Partner(models.Model):
 
 class Address(models.Model):
     name = models.CharField(max_length=128, verbose_name=_("contact"))
-    partner = models.ForeignKey(Partner, db_index=True)
-    address = models.TextField(blank=True, null=True)
+    partner = models.ForeignKey(Partner, db_index=True, verbose_name=_("partner"))
+    address = models.TextField(blank=True, null=True, verbose_name=_("address"))
     active = models.BooleanField(verbose_name=_("active"), default=False)
     phone1 = models.CharField(max_length=32, verbose_name=_("phone"), blank=True, null=True)
     phone2 = models.CharField(max_length=32, verbose_name=_("phone 2"), blank=True, null=True)
@@ -32,6 +33,10 @@ class Address(models.Model):
 
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = _("address")
+        verbose_name_plural = _("addresses")
 
 class Location(models.Model):
     """
@@ -40,12 +45,12 @@ class Location(models.Model):
         inventory is a virtual location, used to correct stock levels
     """
     name = models.CharField(max_length=32, verbose_name=_("name"), db_index=True)
-    department = models.ForeignKey('company.Department', null=True, blank=True)
+    department = models.ForeignKey('company.Department', null=True, blank=True, verbose_name=_("department"))
 
     usage = models.CharField(max_length=32, verbose_name=_("location type"),
-            choices=[('customer','Customer'), ('procurement', 'Procurement'), ('internal', 'Internal'),
-                    ('inventory', 'Inventory'), ('supplier', 'Supplier Location'),
-                    ('production', 'Bundled')])
+            choices=[('customer', _('Customer')), ('procurement', _('Procurement')), 
+                    ('internal', _('Internal')), ('inventory', _('Inventory')), 
+                    ('supplier', _('Supplier Location')), ('production', _('Bundled'))])
 
     class Meta:
         ordering = ['name']

@@ -216,7 +216,6 @@ class PurchaseOrderItemStatus(models.Model):
 class PurchaseOrderItem(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'), related_name='items')
     item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'))
-    status = models.ForeignKey(PurchaseRequestStatus, null=True, blank=True, verbose_name=_(u'status'))
     agreed_price = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name=_(u'agreed price'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     status = models.ForeignKey(PurchaseOrderItemStatus, null=True, blank=True, verbose_name=_(u'status'))
@@ -250,17 +249,17 @@ class PurchaseOrderItem(models.Model):
 class Movement(models.Model):
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
-    create_user = models.ForeignKey('auth.User', related_name='+')
-    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_('created by'))
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('validated by'))
     
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
-    state = models.CharField(max_length=16, default='draft', choices=[('draft', 'Draft'), ('done', 'Done')])
-    stype = models.CharField(max_length=16, choices=[('in', 'Incoming'),('out',' Outgoing'), 
-                ('internal', 'Internal'), ('other', 'Other')], verbose_name=_('type'))
+    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('done', _('Done'))])
+    stype = models.CharField(max_length=16, choices=[('in', _('Incoming')),('out', _(' Outgoing')), 
+                ('internal', _('Internal')), ('other', _('Other'))], verbose_name=_('type'))
     origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
     note = models.TextField(verbose_name=_('Notes'), blank=True)
-    location_src = models.ForeignKey(Location, related_name='location_src')
-    location_dest = models.ForeignKey(Location, related_name='location_dest')
+    location_src = models.ForeignKey(Location, related_name='location_src', verbose_name=_("source location"))
+    location_dest = models.ForeignKey(Location, related_name='location_dest', verbose_name=_("destination location"))
     items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='movements', blank=True)
     # limit_choices_to these at location_src
     
@@ -270,6 +269,10 @@ class Movement(models.Model):
                 null=True, blank=True, related_name='+')
 
     purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements')
+
+    class Meta:
+        verbose_name = _("movement")
+        verbose_name_plural = _("movements")
 
     def do_close(self, val_user, val_date=None):
         """Check the items and set the movement as 'done'

@@ -70,7 +70,7 @@ class Item(models.Model):
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
     serial_number = models.CharField(verbose_name=_(u"serial number"), max_length=48, null=True, blank=True)
     location = models.ForeignKey(Location, verbose_name=_(u"current location"), null=True, blank=True)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=True, verbose_name=_("active"))
     qty = models.PositiveIntegerField(default=1, verbose_name=_('quantity'),
             help_text=_("Allows a batch of identical items to be referenced as one entity") )
     is_bundled = models.BooleanField(default=False,
