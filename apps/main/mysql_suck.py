@@ -508,7 +508,7 @@ class Ref_Column(simple_column):
         self._omanager = None
         self._fast_mode = fast_mode
         if omodel:
-            self._omanager = weakref.ref(_get_model(omodel).objects)
+            self._omanager = CachingPkSet(_get_model(omodel).objects)
 
     def init(self, table):
         """Try to keep a weakref of the other table
@@ -523,7 +523,7 @@ class Ref_Column(simple_column):
         
         try:
             if not self._omanager:
-                self._omanager = weakref.ref(getattr(table._django_model, self._oname).field.rel.to.objects)
+                self._omanager = CachingPkSet(getattr(table._django_model, self._oname).field.rel.to.objects)
         except Exception, e:
             table._connector()._log.error("Cannot find related field %s.%s: %s", table.table_name, self._name, e)
             raise
@@ -539,7 +539,7 @@ class Ref_Column(simple_column):
             if self._fast_mode:
                 out[self._oname + '_id'] = mref
             else:
-                out[self._oname] = self._omanager().get(pk=mref)
+                out[self._oname] = self._omanager.get(pk=mref)
         else:
             out[self._oname] = None
 
@@ -561,7 +561,7 @@ class Ref_NN_Column(Ref_Column):
         if self._fast_mode:
             out[self._oname + '_id'] = mref
         else:
-            out[self._oname] = self._omanager().get(pk=mref)
+            out[self._oname] = self._omanager.get(pk=mref)
 
 class Static_Column(sColumn):
     """Column that pushes a constant value into every pg row
@@ -778,5 +778,17 @@ class Table_SuckToo(Table_Suck):
         self._stats['found'] = nfound
 
         return True
+
+class CachingPkSet(object):
+    def __init__(self, queryset):
+        self._cached_ids = {}
+        self._queryset = queryset
+
+    def get(self, pk):
+        if pk not in self._cached_ids:
+            # if len(self._cached_ids) > 1000:
+            #    prune some cache...
+            self._cached_ids[pk] = self._queryset.get(pk=pk)
+        return self._cached_ids[pk]
 
 #eof

@@ -284,7 +284,7 @@ class Ref_Column_dafuq(M.Ref_Column):
             if self._fast_mode:
                 out[self._oname + '_id'] = mref
             else:
-                out[self._oname] = self._omanager().get(pk=mref)
+                out[self._oname] = self._omanager.get(pk=mref)
         else:
             out[self._oname] = None
 
