@@ -2,6 +2,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from main.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+import threading
 
 import optparse
 import logging
@@ -104,9 +105,71 @@ class One2ManyColumn(M.sColumn):
 
         # now, what?
 
+class CachingModelSet(object):
+    """ Cache items of some Model, based on their fields (keys)
+    
+        non_model_keys is a list of keys that will /not/ be pushed to the Model,
+        but will participate in the dictionary
+    """
+    def __init__(self, model, keys, model_fields=(), no_translate_fields=()):
+        """
+            @param model_fields will be used to match the model attributes
+            @param keys will be stored in the dict
+        """
+        self._cache = {}
+        self._cache_hit = self._cache_miss = 0
+        self._model_fields = model_fields or keys
+        self._keys = keys
+        if isinstance(model, basestring):
+            model = M._get_model(model)
+        self._model = model
+        self._no_translate_fields = no_translate_fields
+        assert hasattr(model, '_meta'), "Is %r a model class?" % model
+
+    def print_stats(self):
+        print "Cache stats for %s: %d items %d hits, %d misses" % \
+                (self._model._meta.object_name, len(self._cache), self._cache_hit, self._cache_miss)
+
+    def flush(self):
+        self._cache = {}
+
+    def get(self, **kwargs):
+        key = tuple([kwargs[k] for k in self._keys])
+        if key not in self._cache:
+            mkeys = {}
+            _keys_fn = kwargs.pop('_keys_fn', None)
+            _all_fn = kwargs.pop('_all_fn', None)
+            for k in kwargs.keys():
+                if k in self._model_fields:
+                    k2 = k
+                    if k.endswith('_id') and k not in self._no_translate_fields:
+                        k2 = k[:-2] + '_id'
+                    mkeys[k2] = kwargs[k]
+                elif k in self._keys:
+                    # keys not in _model_fields must never reach the model
+                    del kwargs[k]
+                # else leave it in kwargs
+            if _keys_fn:
+                mkeys.update(_keys_fn())
+            # print "searching %s for %r " %( self._model._meta.object_name, mkeys)
+            res = self._model.objects.filter(**mkeys)[:1]
+            if not res: # this triggers the query, possibly gets 'res'
+                if _all_fn:
+                    kwargs.update(_all_fn())
+                # print "adding to %s: %r " %( self._model._meta.object_name, kwargs)
+                res = (self._model(**kwargs),)
+                res[0].save()
+            self._cache[key] = res[0]
+            self._cache_miss += 1
+        else:
+            self._cache_hit += 1
+
+        return self._cache[key]
+
 class KtimColumn(One2ManyColumn):
     _bundle_product = None
     _func_statuses = {'BROKEN': u'Χαλασμένο', 'STOLEN':u'Κλεμμένο', 'RETIRED':u'Αποσυρμένο'}
+    _po_worker = None
     
     def init(self, table):
         super(KtimColumn, self).init(table)
@@ -115,28 +178,28 @@ class KtimColumn(One2ManyColumn):
                 department__isnull=True, defaults=dict(name=u'Προμήθειες'))
         self._bundle_location, c = loc_obj.get_or_create(usage='production', 
                 department__isnull=True, defaults=dict(name=u'Συνθέσεις'))
-        self._suppliers_d = {}
-        
+        self.assets_state_cache = CachingModelSet('assets.State', keys=('name',))
+
     def _get_bundle_product(self):
         if not self._bundle_product:
             product_obj = M._get_model('products.ItemTemplate')
             self._bundle_product = product_obj.objects.get(description=u'Σύνθεση')
         return self._bundle_product
-    
+
+    def _get_status(self, func_status):
+        if func_status in self._func_statuses:
+            func_status = self._func_statuses[func_status]
+        return self.assets_state_cache.get(name=func_status)
+
     def _result_handler(self, cr, results):
         super(KtimColumn, self)._result_handler(cr, results)
-        loc_obj = M._get_model('common.Location')
         item_obj = M._get_model('assets.Item')
         itemgroup_obj = M._get_model('assets.ItemGroup')
         
         # and, now, use the values!
         for r, out in results:
-            loc_dict = dict(department_id=out.pop('_department_id'), \
-                            name=out.pop('_location_name'), usage='internal')
-            
-            end_location, c = loc_obj.objects.get_or_create(**loc_dict)
-            out['location'] = self._procurement_location
-            
+            end_location = (out.pop('_department_id'), out.pop('_location_name'))
+
             if not out['_bundle']:
                 raise ValueError("Bundle id %s has no ktim entries!" % r['BUNDLE_ID'])
 
@@ -159,7 +222,7 @@ class KtimColumn(One2ManyColumn):
                 for bdl in bundles:
                     if bdl['item_template'].category.is_bundle:
                         item = itemgroup_obj(item_template=bdl['item_template'], is_bundled=False,
-                                serial_number=bdl['serial_number'], location=out['location'], 
+                                serial_number=bdl['serial_number'], location=self._procurement_location, 
                                 property_number=str(bdl['property_number']))
                         if bdl['_ar_kthm']:
                             item.notes = u'Αρ. κτημ.: %d' % bdl['_ar_kthm']
@@ -172,7 +235,7 @@ class KtimColumn(One2ManyColumn):
                     bdl['item_template']=self._get_bundle_product()
                     bdl['agreed_price'] = None
                     item = itemgroup_obj(item_template=bdl['item_template'], 
-                            location=out['location'])
+                            location=self._procurement_location)
                 item.save()
                 out['__skip_push'] = item
                 # get a Purchase Order, even if the item is the dummy one we
@@ -191,11 +254,97 @@ class KtimColumn(One2ManyColumn):
                     self._do_po(bdl, nitem, self._bundle_location)
 
             if func_status and func_status != 'OK':
-                status2 = self._func_statuses.get(func_status, func_status)
-                st, c = M._get_model('assets.State').objects.get_or_create(name=status2)
                 itsmodel = M._get_model('assets.ItemState')
-                its2 = itsmodel(state=st, item=item)
+                its2 = itsmodel(state=self._get_status(func_status), item=item)
                 its2.save()
+
+    def _do_po(self, bdl, item, end_location):
+        self._po_worker.push_po(bdl, item, end_location)
+
+class POWorker(threading.Thread):
+    _wait_time = 10.0 # seconds
+    _log = logging.getLogger('import_ktim.POWorker')
+    
+    def __init__(self, *args, **kwargs):
+        super(POWorker, self).__init__(*args, **kwargs)
+        self._must_stop = False
+        self.__cond = threading.Condition()
+        self._queue = list()
+        self.suppliers = CachingModelSet('common.Supplier', keys=('dlg_id',), model_fields=('partner_ptr',),)
+        self.locations = CachingModelSet('common.Location', keys=('department_id', 'name'))
+        self.movements = CachingModelSet('movements.Movement', \
+                keys=('purchase_order_id', 'location_dest', 'state'))
+        self.purchase_orders = CachingModelSet('movements.PurchaseOrder',
+                keys=('create_user_id', 'issue_date', 'supplier_id', 'user_id'), 
+                no_translate_fields=('user_id',) )
+
+    def start(self):
+        loc_obj = M._get_model('common.Location').objects
+        self._procurement_location, c = loc_obj.get_or_create(usage='procurement', 
+                department__isnull=True, defaults=dict(name=u'Προμήθειες'))
+        self._bundle_location, c = loc_obj.get_or_create(usage='production', 
+                department__isnull=True, defaults=dict(name=u'Συνθέσεις'))
+        super(POWorker, self).start()
+
+    def run(self):
+        try:
+            while True:
+                line = False
+                self.__cond.acquire()
+                if self._queue:
+                    line = self._queue.pop(0)
+                else:
+                    self.__cond.wait(self._wait_time)
+                self.__cond.release()
+                
+                if not line:
+                    # we ONLY break the loop (and exit the thread) if the queue is empty
+                    # or else we risk skipping data.
+                    if self._must_stop:
+                        break
+                    else:
+                        continue
+
+                try:
+                    self._do_po(*line)
+                except Exception:
+                    self._log.exception("Cannot _do_po:")
+        
+            # after the loop
+            self.suppliers.print_stats()
+            self.locations.print_stats()
+            self.movements.print_stats()
+            self.purchase_orders.print_stats()
+        except Exception:
+            self._log.exception("General problem at run():")
+
+    def stop(self):
+        self.__cond.acquire()
+        self._must_stop = True
+        self.__cond.notify_all()
+        self.__cond.release()
+
+    def trigger(self):
+        self.__cond.acquire()
+        self.__cond.notify_all()
+        self.__cond.release()
+
+    def push_po(self, bdl, item, end_location):
+        if self._must_stop:
+            raise RuntimeError("Must stop!")
+        self.__cond.acquire()
+        self._queue.append((bdl, item, end_location))
+        self.__cond.notify_all()
+        self.__cond.release()
+
+    def _get_location(self, loc):
+        Location = M._get_model('common.Location')
+        if isinstance(loc, Location):
+            return loc
+        elif isinstance(loc, tuple):
+            return self.locations.get(usage='internal', department_id=loc[0], name=loc[1])
+        else:
+            raise ValueError("Strange location: %r" % loc)
 
     def _get_po_date(self, bdl):
         """ Guess the date for some bundle
@@ -210,24 +359,18 @@ class KtimColumn(One2ManyColumn):
     def _get_supplier(self, contract):
         """ From the `delegate` of some contract, return the supplier_id
         """
-        dlg_id = contract.delegate_id or False
-        if dlg_id not in self._suppliers_d:
-            supplier_obj = M._get_model('common.Supplier')
-            if dlg_id:
-                # unfortunately, get_or_create() will write to the parent Partner
-            # object all the columns again!
-                delegate = contract.delegate
-                defaults = dict(name=delegate.name, active=delegate.active, \
-                            web=delegate.web, comment=delegate.comment)
-                supplier, c = supplier_obj.objects.\
-                        get_or_create(partner_ptr=delegate, defaults=defaults)
-            else:
-                supplier, c = supplier_obj.objects.get_or_create(name=u'Άγνωστος')
-            
-            self._suppliers_d[dlg_id] = supplier.id
-            assert supplier.name, supplier.id
-        
-        return self._suppliers_d[dlg_id]
+        if contract.delegate_id:
+            return self.suppliers.get(dlg_id=contract.delegate_id,
+                    _keys_fn=lambda : { 'partner_ptr': contract.delegate},
+                    # unfortunately, get_or_create() will write to the parent Partner
+                    # object all the columns again!
+                    _all_fn = lambda: {'partner_ptr': contract.delegate, \
+                            'name': contract.delegate.name, \
+                            'active': contract.delegate.active, \
+                            'web': contract.delegate.web, \
+                            'comment': contract.delegate.comment})
+        else:
+            return self.suppliers.get(dlg_id=False, name=u'Άγνωστος')
 
     def _do_po(self, bdl, item, end_location):
         """ Generate PurchaseOrder and Movement for some bundle+item+location
@@ -237,15 +380,14 @@ class KtimColumn(One2ManyColumn):
             @param end_location the Location this Item will end up at
         """
         # TODO _used, _warranty
-        purchase_order_obj = M._get_model('movements.PurchaseOrder')
 
         if bdl['_seira_timol'] and bdl['_ar_timol']:
             user_id = '%s %s' % (bdl['_seira_timol'], bdl['_ar_timol'])
         else:
             user_id = 'ct-%d' % bdl['_contract'].id
-        po, c = purchase_order_obj.objects.get_or_create(create_user_id=ADMIN_USER,
-                    issue_date=self._get_po_date(bdl),
-                    supplier_id=self._get_supplier(bdl['_contract']), user_id=user_id, )
+        po = self.purchase_orders.get(create_user_id=ADMIN_USER,
+                    issue_date=self._get_po_date(bdl), user_id=user_id,
+                    supplier_id=self._get_supplier(bdl['_contract']).id)
         # note, we wrap agreed_price in str(), because we want to round the
         # float.
         poit, c = po.items.get_or_create(item_template=bdl['item_template'],
@@ -258,15 +400,12 @@ class KtimColumn(One2ManyColumn):
         # now, generate a Movement
         # We use 'filter' rather than get_or_create, because there might be
         # multiple ones
-        moves = po.movements.filter(location_dest=end_location, state='draft')
-        if moves.exists():
-            move = moves[0]
-        else:
-            move = po.movements.create(location_src=self._procurement_location,
-                        location_dest=end_location, name=user_id, 
-                        date_act=bdl['_date_received'] or po.issue_date,
-                        create_user_id=ADMIN_USER, stype='in',
-                        origin=user_id)
+        location_dest = self._get_location(end_location)
+        move = self.movements.get(location_dest=location_dest, state='draft', stype='in',
+                        purchase_order_id=po.id,
+                        location_src=self._procurement_location,
+                        name=user_id, date_act=bdl['_date_received'] or po.issue_date,
+                        create_user_id=ADMIN_USER, origin=user_id)
         move.items.add(item)
         return po
 
@@ -300,7 +439,7 @@ class Command(BaseCommand):
         return parser
 
     def handle(self, *args, **options):
-        # logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.INFO)
         self._init_tables()
 
         for d in settings.defaults:
@@ -313,6 +452,7 @@ class Command(BaseCommand):
         self.stderr.write("Connected. Start of sync\n")
 
         try:
+            self._po_worker.start()
             self._myc.run_all( args or [
                 'KT_03_EIDOS',
                 'KT_08_KATASKEYASTHS',
@@ -330,6 +470,9 @@ class Command(BaseCommand):
         except Exception, e:
             self.stderr.write("Exception: %s\n" % unicode(e).encode('utf-8'))
             raise
+        self._po_worker.stop()
+        self._po_worker.join()
+        del self._po_worker
         return
 
     def _init_tables(self):
@@ -347,13 +490,14 @@ class Command(BaseCommand):
 
         # KT_02_BUNDLES
         bundles = M.Table_SuckToo('KT_02_BUNDLES', 'assets.Item', myc)
-        bundles.batch_limit = 100
+        bundles.batch_limit = 500
         bundles += M.IDmap_Column('BUNDLE_ID')
         bundles += Ref_Column_dafuq("GLUC", '_department', 'MONADES', 'company.Department')
         bundles += M.Str_Column_Default("ONT_DESCR", '_location_name', '-')
         bundles += M.Str_Column("FUNC_STATUS", '_func_status')
         bundles_ktim = KtimColumn('BUNDLE_ID', '_bundle', 'KT_07_KTHMATOLOGIO', 'BUNDLE_ID')
         bundles += bundles_ktim
+        self._po_worker = bundles_ktim._po_worker = POWorker()
         
         bundles_ktim += M.Str_Column('SERIAL_NO', 'serial_number')
         bundles_ktim += M.Str_Column("KOSTOS_EUR", '_agreed_price')
