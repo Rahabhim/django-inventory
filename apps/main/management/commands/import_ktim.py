@@ -159,9 +159,10 @@ class KtimColumn(One2ManyColumn):
                 for bdl in bundles:
                     if bdl['item_template'].category.is_bundle:
                         item = itemgroup_obj(item_template=bdl['item_template'], is_bundled=False,
-                                serial_number=bdl['serial_number'], location=out['location'])
-                        if bdl['property_number']:
-                            item.property_number = str(bdl['property_number'])
+                                serial_number=bdl['serial_number'], location=out['location'], 
+                                property_number=str(bdl['property_number']))
+                        if bdl['_ar_kthm']:
+                            item.notes = u'Αρ. κτημ.: %d' % bdl['_ar_kthm']
                         bdl['_skip'] = True
                         break
                 else:
@@ -183,9 +184,9 @@ class KtimColumn(One2ManyColumn):
                         # it's the one we just converted to itemgroup, above
                         continue
                     iout = dict(serial_number=bdl['serial_number'], is_bundled=True,
-                            item_template=bdl['item_template'])
-                    if bdl['property_number']:
-                        iout['property_number'] = str(bdl['property_number'])
+                            item_template=bdl['item_template'],property_number=str(bdl['property_number']))
+                    if bdl['_ar_kthm']:
+                        iout.notes = u'Αρ. κτημ.: %d' % bdl['_ar_kthm']
                     nitem = item.items.create(**iout)
                     self._do_po(bdl, nitem, self._bundle_location)
 
@@ -358,7 +359,8 @@ class Command(BaseCommand):
         bundles_ktim += M.Str_Column("KOSTOS_EUR", '_agreed_price')
         bundles_ktim += M.Str_Column_NotNull("AR_TIMOL", '_ar_timol')
         bundles_ktim += M.Str_Column_NotNull("SEIRA_TIMOL", '_seira_timol')
-        bundles_ktim += M.Str_Column("AR_KTHM", 'property_number')
+        bundles_ktim += M.Str_Column("KTHM_ID", 'property_number')
+        bundles_ktim += M.Str_Column("AR_KTHM", "_ar_kthm")
         bundles_ktim += M.Str_Column("USED", '_used')
         bundles_ktim += M.Date_Column("DATE_PARALAVHS", '_date_received')
         bundles_ktim += M.Date_Column("DATE_TIMOL", '_date_invoiced')
