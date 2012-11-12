@@ -10,6 +10,7 @@ from ajax_select.fields import AutoCompleteSelectField
 import types
 
 import settings
+from tree_field import ModelTreeChoiceField
 
 def return_attrib(obj, attrib, arguments=None):
     try:
@@ -163,7 +164,15 @@ class FilterForm(forms.Form):
                     queryset = qfn(form=self, **qargs)
                 else:
                     queryset = list_filter['queryset']
-                self.fields[list_filter['name']] = forms.ModelChoiceField( \
+
+                if 'tree_by_parent' in list_filter:
+                    self.fields[list_filter['name']] = ModelTreeChoiceField( \
+                        parent_name= list_filter['tree_by_parent'], \
+                        queryset=queryset, label=label, \
+                        empty_label= "(%s)" % unicode(queryset.model._meta.verbose_name),
+                        required=False)
+                else:
+                    self.fields[list_filter['name']] = forms.ModelChoiceField( \
                         queryset=queryset, label=label, \
                         empty_label= "(%s)" % unicode(queryset.model._meta.verbose_name),
                         required=False)
