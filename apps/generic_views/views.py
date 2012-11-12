@@ -246,12 +246,14 @@ class GenericBloatedListView(django_gv.ListView):
             rel_field = base_queryset.model._meta.get_field(group)
             # we need the order by (group__id) so that any natural ordering on our model
             # or the foreign models is avoided (too expensive)
+            #    A strange thing, here: if base_queryset == none(), it will still yield
+            #    all groups available!
             grp_results = base_queryset.order_by(group + '__id').values(group).annotate(items_count=Count('pk'))
-            
+
             assert rel_field.rel, rel_field # assume it's a Foreign key
-            grp_rdict1 = dict([(gd[group], gd['items_count']) for gd in grp_results])
+            grp_rdict1 = dict([(gd[group], gd['items_count']) for gd in grp_results if gd['items_count']])
             del grp_results
-            
+
             # We query on the foreign field now, and paginate that to limit the results
             grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
             self.group_order = False
