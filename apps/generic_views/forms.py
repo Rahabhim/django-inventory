@@ -147,6 +147,10 @@ class GenericAssignRemoveForm(forms.Form):
 
 class FilterForm(forms.Form):
     def __init__(self, list_filters, *args, **kwargs):
+        """
+            @param qargs optionally, a dict to be passed to callable querysets
+        """
+        qargs = kwargs.pop('qargs', {})
         super(FilterForm, self).__init__(*args, **kwargs)
         for list_filter in list_filters:
             label = list_filter.get('title', list_filter['name']).title()
@@ -154,9 +158,14 @@ class FilterForm(forms.Form):
                 self.fields[list_filter['name']] = AutoCompleteSelectField( \
                         list_filter['lookup_channel'], label=label, required=False)
             elif 'queryset' in list_filter:
+                if callable(list_filter['queryset']):
+                    qfn = list_filter['queryset']
+                    queryset = qfn(form=self, **qargs)
+                else:
+                    queryset = list_filter['queryset']
                 self.fields[list_filter['name']] = forms.ModelChoiceField( \
-                        queryset=list_filter['queryset'], label=label, \
-                        empty_label= "(%s)" % unicode(list_filter['queryset'].model._meta.verbose_name),
+                        queryset=queryset, label=label, \
+                        empty_label= "(%s)" % unicode(queryset.model._meta.verbose_name),
                         required=False)
             elif 'choices' in list_filter:
                 if isinstance(list_filter['choices'], tuple):

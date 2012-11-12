@@ -23,7 +23,7 @@ from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   InlineModelForm
 import settings
 
-def add_filter(request, list_filters):
+def add_filter(request, list_filters, **kwargs):
     """ Add list filters to form and eventually filter the queryset
 
         @param list_filter a list of dicts, each describing a filter
@@ -43,7 +43,7 @@ def add_filter(request, list_filters):
     filters = []
     filter_dict = dict([(f['name'], f) for f in list_filters])
     if request.method == 'GET':
-        filter_form = FilterForm(list_filters, request.GET)
+        filter_form = FilterForm(list_filters, request.GET, qargs=kwargs)
         if filter_form.is_valid():
             for name, data in filter_form.cleaned_data.items():
                 if not data:
@@ -69,7 +69,7 @@ def add_filter(request, list_filters):
                     raise TypeError("invalid destination: %s" % type(dest))
 
     else:
-        filter_form = FilterForm(list_filters)
+        filter_form = FilterForm(list_filters, qargs=kwargs)
 
     return filter_form, filters
 
@@ -211,9 +211,6 @@ class GenericBloatedListView(django_gv.ListView):
 
     def get_queryset(self):
         filters = None
-        if self.list_filters:
-            filter_form, filters = add_filter(self.request, self.list_filters)
-            self.filter_form = filter_form
         if self.queryset and not isinstance(self.queryset, QuerySet) \
                 and callable(self.queryset):
             # since we evaluate the queryset here, this breaks the caching and
@@ -223,6 +220,12 @@ class GenericBloatedListView(django_gv.ListView):
             queryset = self.queryset(self.request)
         else:
             queryset = super(GenericBloatedListView, self).get_queryset()
+
+        if self.list_filters:
+            # must be after basic queryset has been computed!
+            filter_form, filters = add_filter(self.request, self.list_filters, \
+                        parent=self, parent_queryset=queryset)
+            self.filter_form = filter_form
 
         if filters:
             queryset = queryset.filter(*filters)
