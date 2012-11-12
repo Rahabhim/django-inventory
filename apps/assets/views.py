@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404 #, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-# from django.db.models import Q
+from django.db.models import Q, Count
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 
@@ -18,11 +18,17 @@ from assets import state_filter
 from company import make_mv_location
 from products.models import Manufacturer, ItemCategory
 
+def manufacturer_filter_queryset(form, parent, parent_queryset):
+    return Manufacturer.objects.filter(id__in=parent_queryset.order_by('item_template__id').values('item_template__manufacturer'))
+
 manufacturer_filter = {'name':'manufacturer', 'title':_(u'manufacturer'),
-            'queryset':Manufacturer.objects.all(), 'destination':'item_template__manufacturer'}
+            'queryset': manufacturer_filter_queryset, 'destination':'item_template__manufacturer'}
+
+def category_filter_queryset(form, parent, parent_queryset):
+    return ItemCategory.objects.filter(id__in=parent_queryset.order_by('item_template__id').values('item_template__category'))
 
 category_filter = { 'name': 'category', 'title': _(u'category'),
-            'queryset': ItemCategory.objects.all(), 'destination': 'item_template__category'}
+            'queryset': category_filter_queryset, 'destination': 'item_template__category'}
 
 product_filter = {'name': 'product_name', 'title': _('product'),
             'destination': ('item_template__description__icontains', 'item_template__model__icontains',
