@@ -80,7 +80,7 @@ class ItemTemplate(models.Model):
     approved = models.BooleanField(default=False)
     brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True, 
         help_text=_("Brand name, if different from manufacturer"))
-    manufacturer = models.ForeignKey(Manufacturer, )
+    manufacturer = models.ForeignKey(Manufacturer, related_name="products")
     model = models.CharField(verbose_name=_(u"model"), max_length=32, null=True, blank=True)
     part_number = models.CharField(verbose_name=_(u"part number"), max_length=32, null=True, blank=True)
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)

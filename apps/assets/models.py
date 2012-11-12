@@ -65,7 +65,7 @@ class ItemManager(models.Manager):
 
 class Item(models.Model):
     objects = ItemManager()
-    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u"item template"))
+    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u"item template"), related_name="item")
     property_number = models.CharField(verbose_name=_(u"asset number"), max_length=48)
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
     serial_number = models.CharField(verbose_name=_(u"serial number"), max_length=48, null=True, blank=True)
