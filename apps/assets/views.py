@@ -27,7 +27,7 @@ manufacturer_filter = {'name':'manufacturer', 'title':_(u'manufacturer'),
 def category_filter_queryset(form, parent, parent_queryset):
     return ItemCategory.objects.filter(id__in=parent_queryset.order_by('item_template__id').values('item_template__category'))
 
-category_filter = { 'name': 'category', 'title': _(u'category'),
+category_filter = { 'name': 'category', 'title': _(u'category'), 'tree_by_parent': 'parent',
             'queryset': category_filter_queryset, 'destination': 'item_template__category'}
 
 product_filter = {'name': 'product_name', 'title': _('product'),
