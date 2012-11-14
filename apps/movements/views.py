@@ -472,7 +472,7 @@ def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
     try:
         movement.do_close(request.user)
-        cart_utils.remove_from_session(request.session, movement)
+        cart_utils.remove_from_session(request, movement)
         messages.success(request, _(u'The movement has been validated.'))
     except Exception, e:
         messages.error(request, unicode(e))
