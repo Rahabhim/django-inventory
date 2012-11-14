@@ -119,6 +119,7 @@ class GenericBloatedListView(django_gv.ListView):
     url_attribute = 'get_absolute_url'
     extra_columns = None
     enable_sorting = True
+    title = None
 
     def get_title(self):
         if getattr(self, 'title', None):

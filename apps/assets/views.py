@@ -130,7 +130,6 @@ class AssetListView(GenericBloatedListView):
     
         It is merely a BloatedListView, configured with all settings about assets
     """
-    title = None
     queryset=Item.objects.by_request
     list_filters=[ product_filter, manufacturer_filter, category_filter,
                             location_filter, state_filter]
