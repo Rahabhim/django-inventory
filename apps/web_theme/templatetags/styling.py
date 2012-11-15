@@ -1,6 +1,8 @@
 from django import forms
 from django.template import TemplateSyntaxError, Library, \
                             VariableDoesNotExist, Node, Variable
+from django.template.defaulttags import token_kwargs
+from django.template.loader import get_template
 from django.conf import settings
 from django.utils.html import conditional_escape
 
@@ -39,6 +41,34 @@ class FieldLabel(Node):
             contents += ' *'
         return field.label_tag(contents=contents, attrs=attrs)
 
+
+class Field_For(Node):
+    def __init__(self, field_name, read_only=False, extra_context=None, \
+                template_name='generic_form_field.html',):
+        self.field_name = field_name
+        self.read_only = read_only
+        self.extra_context = extra_context or {}
+        self.template_name = template_name
+
+    def render(self, context):
+        template = get_template(self.template_name)
+        if '.' in self.field_name:
+            fldname = self.field_name
+        else:
+            fldname = 'form.' + self.field_name
+        field = Variable(fldname).resolve(context)
+
+        values = dict([(name, var.resolve(context)) for name, var
+                       in self.extra_context.iteritems()])
+        context.update(values)
+        context['field'] = field
+        if self.read_only:
+            context['read_only'] = True
+        try:
+            return template.render(context)
+        finally:
+            context.pop()
+
 @register.tag
 def add_classes_to_form(parser, token):
     args = token.split_contents()
@@ -48,5 +78,31 @@ def add_classes_to_form(parser, token):
 def field_label_tag(parser, token):
     args = token.split_contents()
     return FieldLabel(*args)
+
+@register.tag
+def field_for(parser, token):
+    args = token.split_contents()
+    if len(args) < 2:
+        raise TemplateSyntaxError("%r tag takes at least one argument: the field name " % args[0])
+    field_name = args[1]
+    args = args[2:]
+    options = {}
+    while args:
+        option = args.pop(0)
+        if option in options:
+            raise TemplateSyntaxError('The %r option was specified more '
+                                      'than once.' % option)
+        if option == 'with':
+            value = token_kwargs(args, parser, support_legacy=False)
+            if not value:
+                raise TemplateSyntaxError('"with" in field_for tag needs at least '
+                                          'one keyword argument.')
+            options['extra_context'] = value
+        elif option == 'read_only':
+            options['read_only'] = True
+        else:
+            raise TemplateSyntaxError('Unknown argument for field_for tag: %r.' % option)
+
+    return Field_For(field_name, **options)
 
 #eof
