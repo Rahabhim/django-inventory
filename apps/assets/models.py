@@ -68,7 +68,7 @@ class Item(models.Model):
     item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u"item template"), related_name="item")
     property_number = models.CharField(verbose_name=_(u"asset number"), max_length=48)
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
-    serial_number = models.CharField(verbose_name=_(u"serial number"), max_length=48, null=True, blank=True)
+    serial_number = models.CharField(verbose_name=_(u"serial number"), max_length=64, null=True, blank=True)
     location = models.ForeignKey(Location, verbose_name=_(u"current location"), null=True, blank=True)
     active = models.BooleanField(default=True, verbose_name=_("active"))
     qty = models.PositiveIntegerField(default=1, verbose_name=_('quantity'),
