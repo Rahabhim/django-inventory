@@ -175,6 +175,7 @@ AJAX_LOOKUP_CHANNELS = {
     'product': ('products.lookups', 'ItemTemplateLookup'),
     'manufacturer': ('products.lookups', 'ManufacturerLookup'),
     'item': ('assets.lookups', 'ItemLookup'),
+    'contracts': ('procurements.lookups', 'ContractLookup'),
     
     # 'supplier':
 }
