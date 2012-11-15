@@ -11,7 +11,7 @@ from generic_views.views import generic_delete, generic_list, generic_detail, \
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
                    PurchaseOrderItemStatus, PurchaseOrder, \
-                   PurchaseOrderItem, Movement
+                   PurchaseOrderItem, Movement, Supplier
 
 from movements import purchase_request_state_filter, \
                       purchase_order_state_filter
@@ -21,6 +21,8 @@ from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm,
         PurchaseOrderItemForm_inline, \
         DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
         MovementForm, MovementForm_view, MovementForm_update_po
+
+from procurements.models import Contract
 
 from company import make_mv_location
 from main import cart_utils
@@ -38,6 +40,18 @@ location_src_filter = {'name': 'location_src', 'title': _('Source location'),
 
 location_dest_filter = {'name': 'location_dest', 'title': _('Destination location'), 
             'destination': make_mv_location('location_dest')}
+
+#def contract_filter_queryset(form, parent, parent_queryset):
+#    return Contract.objects.filter(id__in=parent_queryset.order_by('procurement__id').values('procurement'))
+
+contract_filter = {'name': 'contract', 'title':_(u'Contract'), 'lookup_channel': 'contracts',
+            'destination': 'procurement'}
+
+def supplier_filter_queryset(form, parent, parent_queryset):
+    return Supplier.objects.filter(id__in=parent_queryset.order_by('supplier__id').values('supplier'))
+
+supplier_filter = {'name': 'supplier', 'title':_(u'Supplier'),
+            'queryset': supplier_filter_queryset, 'destination': 'supplier'}
 
 def open_move_as_cart(obj, request):
     cart_utils.add_cart_to_session(obj, request)
@@ -68,7 +82,7 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderStatus}, post_delete_redirect="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), 'purchase_order_state_delete'),
 
     url(r'^purchase/order/list/$', views.PurchaseOrderListView.as_view( \
-                list_filters=[purchase_order_state_filter]),
+                list_filters=[purchase_order_state_filter, contract_filter, supplier_filter]),
             name='purchase_order_list'),
     url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
                 queryset=PurchaseOrder.objects.filter(active=True)), 

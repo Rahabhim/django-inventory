@@ -229,7 +229,7 @@ def purchase_order_view(request, object_id):
                 'object_list': purchase_order.movements.all(),
                 # 'hide_links': False, # we want 'edit' there
                 'extra_columns':[
-                    {'name':_(u'state'), 'attribute': 'state'},
+                    {'name':_(u'state'), 'attribute': 'get_state_display'},
                     {'name':_(u'date'), 'attribute': 'date_act'},
                     # {'name':_(u'destination'), 'attribute': 'location_dest'}
                     ],
@@ -458,8 +458,12 @@ def purchase_order_item_create(request, object_id):
 
 class PurchaseOrderListView(GenericBloatedListView):
     queryset=PurchaseOrder.objects.all()
-    title =_(u'purchase orders')
-    extra_columns = [{'name':_(u'Active'), 'attribute': 'fmt_active'}]
+    title = _(u'list of purchase orders')
+    prefetch_fields = ('procurement', 'supplier')
+    extra_columns = [ {'name': _('Contract'), 'attribute': 'procurement'},
+                    {'name': _('Supplier'), 'attribute': 'supplier', },
+                    # not needed: {'name': _('Issue date'), 'attribute': 'issue_date' },
+                    {'name':_(u'Active'), 'attribute': 'fmt_active'}]
 
 class MovementListView(GenericBloatedListView):
     queryset=Movement.objects.all()
