@@ -235,10 +235,10 @@ def purchase_order_view(request, object_id):
                     ],
             },
         ]
-    return render_to_response('generic_detail.html', {
+    return render_to_response('purchase_order_form.html', {
         'title':_(u'details for purchase order: %s') % purchase_order,
         'object':purchase_order,
-        'form':form,
+        'form':form, 'form_mode': 'details',
         'subtemplates_dict': subtemplates,
     },
     context_instance=RequestContext(request))

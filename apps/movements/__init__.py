@@ -37,7 +37,7 @@ purchase_order_item_state_delete = {'text':_('delete state'), 'view':'purchase_o
 
 purchase_order_list = {'text':_('purchase orders'), 'view':'purchase_order_list', 'famfam':'cart_go'}
 purchase_order_create = {'text':_('create new order'), 'view':'purchase_order_create', 'famfam':'cart_add'}
-purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update', 'args':'object.id', 'famfam':'cart_edit'}
+purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update', 'args':'object.id', 'famfam':'pencil'}
 purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete'}
 purchase_order_close = {'text':_('close order'), 'view':'purchase_order_close', 'args':'object.id', 'famfam':'cross'}
 purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'args':'object.id', 'famfam':'accept'}
@@ -70,10 +70,11 @@ register_links(['purchase_order_state_create', 'purchase_order_state_list', 'pur
 register_links(PurchaseOrderItemStatus, [purchase_order_item_state_update, purchase_order_item_state_delete])
 register_links(['purchase_order_item_state_create', 'purchase_order_item_state_list', 'purchase_order_item_state_update', 'purchase_order_item_state_delete'], [purchase_order_item_state_create], menu_name='sidebar')
 
-register_links(PurchaseOrder, [purchase_order_update, purchase_order_delete, purchase_order_receive])
-register_links(['purchase_order_list', 'purchase_order_create', 'purchase_order_update', 'purchase_order_delete', 'purchase_order_view', 'supplier_purchase_orders'], [purchase_order_create], menu_name='sidebar')
+register_links(PurchaseOrder, [dict(purchase_order_update, hide_text=True),])
+register_links(['purchase_order_view',], [ purchase_order_update, purchase_order_delete, purchase_order_receive], menu_name='sidebar')
+register_links(['purchase_order_list', 'purchase_order_view', 'supplier_purchase_orders'], [purchase_order_create], menu_name='sidebar')
 
-register_links(PurchaseOrderItem, [purchase_order_item_update, purchase_order_item_delete, jump_to_template])
+register_links(['purchase_order_item_update'], [purchase_order_item_update, purchase_order_item_delete, jump_to_template])
 register_links(['purchase_order_item_create'], [purchase_order_create], menu_name='sidebar')
 
 

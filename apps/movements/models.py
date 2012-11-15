@@ -89,7 +89,7 @@ class PurchaseOrderStatus(models.Model):
 class PurchaseOrder(models.Model):
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
     purchase_request = models.ForeignKey(PurchaseRequest, null=True, blank=True, verbose_name=_(u'purchase request'))
-    procurement = models.ForeignKey('procurements.Contract', null=True, blank=True)
+    procurement = models.ForeignKey('procurements.Contract', null=True, blank=True, verbose_name=_("procurement contract"))
     create_user = models.ForeignKey('auth.User', related_name='+')
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
     supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'))
