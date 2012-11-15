@@ -157,7 +157,8 @@ class FilterForm(forms.Form):
             label = list_filter.get('title', list_filter['name']).title()
             if 'lookup_channel' in list_filter:
                 self.fields[list_filter['name']] = AutoCompleteSelectField( \
-                        list_filter['lookup_channel'], label=label, required=False)
+                        list_filter['lookup_channel'], show_help_text=False, \
+                        label=label, required=False)
             elif 'queryset' in list_filter:
                 if callable(list_filter['queryset']):
                     qfn = list_filter['queryset']
