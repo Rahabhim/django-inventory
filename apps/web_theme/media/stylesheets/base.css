@@ -304,6 +304,17 @@ input.checkbox {
   border-style: solid;
 }
 
+.form div.group.inline {
+    float: left;
+    margin-right: 10px;
+}
+
+.form div.group.newline {
+    float: left;
+    clear: left;
+    margin-right: 10px;
+}
+
 /* lists */
 
 ul.list {
