@@ -456,6 +456,7 @@ class _InlineViewMixin(object):
     extra_context = None
     inline_fields = ()
     _inline_formsets = None
+    form_mode = None
 
     def __init__(self, **kwargs):
         super(_InlineViewMixin, self).__init__(**kwargs)
@@ -509,6 +510,8 @@ class _InlineViewMixin(object):
             context['formsets'].append(self._inline_formsets[inlf](*iargs))
         if self.extra_context:
             context.update(self.extra_context)
+        if self.form_mode:
+            context['form_mode'] = self.form_mode
         return context
 
     def get_form(self, form_class):
@@ -524,6 +527,8 @@ class _InlineViewMixin(object):
             return super(_InlineViewMixin, self).get_success_url()
 
 class _PermissionsMixin(object):
+    form_mode = 'create'
+    form_mode = 'update'
     """
         check_object() is a callable that may check the object *before* the form
             is populated and rendered. We may want some views only to be available

@@ -56,7 +56,16 @@ class Field_For(Node):
             fldname = self.field_name
         else:
             fldname = 'form.' + self.field_name
-        field = Variable(fldname).resolve(context)
+
+        try:
+            field = Variable(fldname).resolve(context)
+        except VariableDoesNotExist:
+            field = None
+
+        if not field:
+            # we tolerate missing fields, because we want view templates to be
+            # re-used for several forms.
+            return ''
 
         values = dict([(name, var.resolve(context)) for name, var
                        in self.extra_context.iteritems()])
