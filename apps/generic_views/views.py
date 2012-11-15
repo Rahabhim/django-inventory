@@ -469,6 +469,7 @@ class _InlineViewMixin(object):
     extra_context = None
     inline_fields = ()
     _inline_formsets = None
+    form_mode = None
 
     def __init__(self, **kwargs):
         super(_InlineViewMixin, self).__init__(**kwargs)
@@ -523,6 +524,8 @@ class _InlineViewMixin(object):
             context['formsets'].append(self._inline_formsets[inlf](*iargs, **kwargs))
         if self.extra_context:
             context.update(self.extra_context)
+        if self.form_mode:
+            context['form_mode'] = self.form_mode
         return context
 
     def get_form(self, form_class):
@@ -539,9 +542,11 @@ class _InlineViewMixin(object):
 
 class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
+    form_mode = 'create'
 
 class GenericUpdateView(_InlineViewMixin, django_gv.UpdateView):
     template_name = 'generic_form_fs.html'
+    form_mode = 'update'
 
 class _CartOpenCloseView(django_gv.detail.SingleObjectMixin, django_gv.TemplateView):
     # TODO def get_queryset() w. callable

@@ -16,6 +16,35 @@ $(function() {
 })
 </script>
 {% endif %}
+{% if form_mode == 'details' %}
+<script type="text/javascript">
+    $(function() {
+        $(".inner form.form :input").each(function() {
+            this.disabled = true;
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}
+
+{% block sidebar %}
+{% if form_mode == 'details' %}
+    {% for subtemplate in sidebar_subtemplates %}
+        {% include subtemplate %}
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+{% if form_mode == 'details' %}
+    <style type="text/css">
+        .inner form.form  textarea,
+        .inner form.form  select option,
+        .inner form.form  input,
+        .inner form.form  select,
+        .inner form.form  input { background: none; color: black; border: none; }
+    </style>
+{% endif %}
 {% endblock %}
 
 {% block content %}
