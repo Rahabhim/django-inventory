@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 08:47+0200\n"
+"POT-Creation-Date: 2012-11-16 10:46+0200\n"
 "PO-Revision-Date: 2012-11-08 08:52+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -69,7 +69,7 @@ msgstr "δημιουργία σύνθεσης"
 msgid "state"
 msgstr "κατάσταση"
 
-#: __init__.py:45 models.py:83 models.py:153 views.py:118
+#: __init__.py:45 models.py:83 models.py:154 views.py:125
 msgid "assets"
 msgstr "εξοπλισμός"
 
@@ -77,11 +77,11 @@ msgstr "εξοπλισμός"
 msgid "Contained Item"
 msgstr "Περιεχόμενο αντικείμενο"
 
-#: forms.py:30 urls.py:37 views.py:135
+#: forms.py:30 urls.py:37 views.py:141
 msgid "Manufacturer"
 msgstr "Κατασκευαστής"
 
-#: forms.py:31 urls.py:38 views.py:136
+#: forms.py:31 urls.py:38 views.py:142
 msgid "Category"
 msgstr "Κατηγορία"
 
@@ -93,7 +93,7 @@ msgstr "όνομα"
 msgid "exclusive"
 msgstr "αποκλειστική"
 
-#: models.py:20 models.py:152 urls.py:47 urls.py:50
+#: models.py:20 models.py:153 urls.py:48 urls.py:51
 msgid "states"
 msgstr "καταστάσεις"
 
@@ -101,7 +101,7 @@ msgstr "καταστάσεις"
 msgid "inclusive"
 msgstr "αποκλειστική"
 
-#: models.py:36 models.py:139
+#: models.py:36 models.py:140
 msgid "item"
 msgstr "προϊόν"
 
@@ -166,11 +166,11 @@ msgstr ""
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:144 urls.py:45
+#: models.py:145 urls.py:46
 msgid "item group"
 msgstr "σύνθεση"
 
-#: models.py:145 models.py:154 urls.py:35
+#: models.py:146 models.py:155 urls.py:35
 msgid "item groups"
 msgstr "συνθέσεις"
 
@@ -182,41 +182,41 @@ msgstr "λίστα εξοπλισμού"
 msgid "Assigned to:"
 msgstr "Ανατέθηκε σε:"
 
-#: urls.py:36 views.py:139
+#: urls.py:36 views.py:145
 msgid "Location"
 msgstr "τοποθεσία"
 
-#: views.py:21
+#: views.py:24
 msgid "manufacturer"
 msgstr "κατασκευαστής"
 
-#: views.py:24
+#: views.py:30
 msgid "category"
 msgstr "κατηγορία"
 
-#: views.py:27
+#: views.py:33
 msgid "product"
 msgstr "προϊόν"
 
-#: views.py:31
+#: views.py:37
 msgid "location"
 msgstr "τοποθεσία"
 
-#: views.py:40
+#: views.py:46
 #, python-format
 msgid "This asset has already been marked as '%s'."
 msgstr "Ο εξοπλισμός έχει ήδη σημανθεί ως '%s'."
 
-#: views.py:47
+#: views.py:53
 #, python-format
 msgid "Are you sure you wish to mark this asset as '%s'?"
 msgstr "Θέλετε να σημάνετε τον εξοπλισμό ως '%s' ;"
 
-#: views.py:51
+#: views.py:57
 msgid "Any other states this asset may be marked as, will be cleared."
 msgstr ""
 
-#: views.py:61
+#: views.py:67
 #, python-format
 msgid ""
 "This asset has already been exclusively marked as '%s'.  Clear this state "
@@ -224,62 +224,62 @@ msgid ""
 msgstr ""
 "Ο εξοπλισμός έχει ήδη την αποκλειστική σήμανση '%s'. Αφαιρέστε αυτήν πρώτα."
 
-#: views.py:68
+#: views.py:74
 #, python-format
 msgid "The asset has been marked as '%s'."
 msgstr "Ο εξοπλισμός σημάνθηκε ως '%s'."
 
-#: views.py:83
+#: views.py:89
 #, python-format
 msgid "This asset is not marked as '%s'"
 msgstr "Ο εξοπλισμός δεν σημαίνεται ως '%s'."
 
-#: views.py:89
+#: views.py:95
 #, python-format
 msgid "Are you sure you wish to unmark this asset as '%s'?"
 msgstr "Θέλετε σίγουρα να αφαιρέσετε την σήμανση '%s' από τον εξοπλισμό;"
 
-#: views.py:95
+#: views.py:101
 #, python-format
 msgid "The asset has been unmarked as '%s'."
 msgstr "Ο εξοπλισμός πλέον δεν σημαίνεται ως '%s'."
 
-#: views.py:97
+#: views.py:103
 #, python-format
 msgid "Unable to unmark this asset as '%s'"
 msgstr "Δεν γίνεται να αφαιρεθεί η σήμανση '%s'."
 
-#: views.py:110
+#: views.py:117
 #, python-format
 msgid "Assign assets to the group: <a href=\"%(url)s\">%(obj)s</a>"
 msgstr ""
 
-#: views.py:116
+#: views.py:123
 msgid "Unassigned assets"
 msgstr ""
 
-#: views.py:117
+#: views.py:124
 msgid "Assigned assets"
 msgstr ""
 
-#: views.py:134
+#: views.py:140
 msgid "Item Template"
 msgstr "προϊόν"
 
-#: views.py:137 views.py:143 views.py:153
+#: views.py:143 views.py:149 views.py:159
 msgid "specifications"
 msgstr "προδιαγραφές"
 
-#: views.py:138 views.py:144 views.py:154
+#: views.py:144 views.py:150 views.py:160
 msgid "Serial number"
 msgstr "Σειριακός αριθμός"
 
-#: views.py:148
+#: views.py:154
 #, python-format
 msgid "location assets: %s"
 msgstr "Εξοπλισμός τοποθεσίας: %s"
 
-#: views.py:158
+#: views.py:164
 #, python-format
 msgid "department assets: %s"
 msgstr "εξοπλισμός μονάδας: %s"

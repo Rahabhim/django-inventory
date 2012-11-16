@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-05 23:32+0200\n"
+"POT-Creation-Date: 2012-11-16 10:46+0200\n"
 "PO-Revision-Date: 2012-11-08 08:22+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,76 +17,103 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: forms.py:61
+#: forms.py:62
 msgid "None"
 msgstr "Κανένα"
 
-#: views.py:126
+#: views.py:128
 #, python-format
 msgid "List of %s"
 msgstr "Λίστα %s"
 
-#: views.py:128
+#: views.py:130
 msgid "List"
 msgstr "Λίστα"
 
-#: views.py:346
+#: views.py:351
 #, python-format
 msgid "Empty list and '%(class_name)s.allow_empty' is False."
 msgstr ""
 "Άδεια λίστα και η μεταβλητή '%(class_name)s.allow_empty' είναι Αρνητική"
 
-#: views.py:415
+#: views.py:420
 #, python-format
 msgid "The selected %s were added."
 msgstr "Προστέθηκαν %s"
 
-#: views.py:421
+#: views.py:426
 #, python-format
 msgid "The selected %s were removed."
 msgstr "Αφαιρέθηκαν %s"
+
+#: views.py:578
+msgid "The cart is already open."
+msgstr ""
+
+#: views.py:591
+msgid "The cart is not open."
+msgstr ""
+
+#: views.py:651
+#, python-format
+msgid "Item %s could not be found."
+msgstr ""
+
+#: views.py:662
+msgid "Could not alter item"
+msgstr ""
+
+#: views.py:670
+#, python-format
+msgid "%(item)s added to %(cart)s"
+msgstr ""
+
+#: views.py:676
+#, python-format
+msgid "%(item)s removed from %(cart)s"
+msgstr ""
 
 #: templates/bloated_list.html:3
 #, python-format
 msgid "%(title)s"
 msgstr "%(title)s"
 
-#: templates/bloated_list_subtemplate.html:40
+#: templates/bloated_list_subtemplate.html:41
 msgid "count"
 msgstr "πλήθος"
 
-#: templates/bloated_list_subtemplate.html:80
-#: templates/bloated_list_subtemplate.html:128
+#: templates/bloated_list_subtemplate.html:81
+#: templates/bloated_list_subtemplate.html:129
 #: templates/generic_list_subtemplate.html:69
 #, python-format
 msgid "There are no %(title)s"
 msgstr "Δεν υπάρχουν %(title)s"
 
-#: templates/calculate_form_title.html:11
+#: templates/calculate_form_title.html:12
 #, python-format
 msgid "Details for %(object_name)s: %(object)s"
 msgstr "Λεπτομέρειες για %(object_name)s: %(object)s"
 
-#: templates/calculate_form_title.html:13
+#: templates/calculate_form_title.html:14
 #, python-format
 msgid "Details for: %(object)s"
 msgstr "Λεπτομέρειες για: %(object)s"
 
-#: templates/calculate_form_title.html:18
+#: templates/calculate_form_title.html:19
 #, python-format
 msgid "Edit %(object_name)s:"
 msgstr "Επεξεργασία %(object_name)s"
 
-#: templates/calculate_form_title.html:20
+#: templates/calculate_form_title.html:21
 msgid "Edit"
 msgstr "επεξεργασία"
 
-#: templates/calculate_form_title.html:24
+#: templates/calculate_form_title.html:25
 #, python-format
 msgid "Create new %(object_name)s"
 msgstr "Δημιουργία νέου %(object_name)s"
 
-#: templates/calculate_form_title.html:26
+#: templates/calculate_form_title.html:27
 msgid "Create"
 msgstr "Δημιουργία"
 
@@ -100,21 +127,56 @@ msgstr "Αναζήτηση"
 msgid "Assign %(title)s %(object)s"
 msgstr "Ανάθεση %(title)s %(object)s"
 
-#: templates/generic_cart_open.html:3
-#, python-format
-msgid "Selected %(object_name)s"
-msgstr "Επιλεγμένα %(object_name)s"
+#: templates/generic_cart_close.html:4 templates/generic_cart_open.html:5
+#, fuzzy, python-format
+msgid "Opened cart on %(object_name)s"
+msgstr "Δημιουργία νέου %(object_name)s"
 
-#: templates/generic_cart_open.html:7
+#: templates/generic_cart_close.html:11
+msgid "Closed cart"
+msgstr ""
+
+#: templates/generic_cart_close.html:12
 #, python-format
 msgid ""
+"The cart %(object)s is now closed.\n"
+"        "
+msgstr ""
+
+#: templates/generic_cart_close.html:17
+msgid " The cart could not be closed."
+msgstr ""
+
+#: templates/generic_cart_close.html:22
+#, fuzzy, python-format
+msgid "Back to %(object_name)s"
+msgstr "Επεξεργασία %(object_name)s"
+
+#: templates/generic_cart_open.html:12
+msgid "Opened cart"
+msgstr ""
+
+#: templates/generic_cart_open.html:13
+#, fuzzy, python-format
+msgid ""
 "You have selected %(object)s for further processing.\n"
-"\tNow you can go to any of the pages below and add items to it.\n"
-"    "
+"            Now you can go to any of the pages below and add items to it.\n"
+"        "
 msgstr ""
 "Έχετε επιλέξει την %(object)s για περαιτέρω επεξεργασία.\n"
 "\tΤώρα, από τις παρακάτω σελίδες, μπορείτε να της προσθέσετε αντικείμενα.\n"
 "  "
+
+#: templates/generic_cart_open.html:17
+msgid "Open cart"
+msgstr ""
+
+#: templates/generic_cart_open.html:18
+#, python-format
+msgid ""
+" The cart could not be opened. %(action_failed)s\n"
+"        "
+msgstr ""
 
 #: templates/generic_confirm.html:3 templates/generic_confirm.html.py:15
 msgid "Confirm delete"
@@ -146,21 +208,22 @@ msgstr "Ναι"
 msgid "No"
 msgstr "Όχι"
 
-#: templates/generic_form_instance.html:33
-#: templates/generic_form_subtemplate.html:49
-#: templates/generic_form_subtemplate_fs.html:49
-msgid "required"
-msgstr "Απαιτείται"
-
+#: templates/generic_form_layout.html:90
 #: templates/generic_form_subtemplate.html:71
 #: templates/generic_form_subtemplate_fs.html:83
 msgid "Save"
 msgstr "Αποθήκευση"
 
+#: templates/generic_form_layout.html:90
 #: templates/generic_form_subtemplate.html:71
 #: templates/generic_form_subtemplate_fs.html:83
 msgid "Submit"
 msgstr "Υποβολή"
+
+#: templates/generic_form_subtemplate.html:49
+#: templates/generic_form_subtemplate_fs.html:49
+msgid "required"
+msgstr "Απαιτείται"
 
 #: templates/generic_list.html:3
 #, python-format
@@ -185,4 +248,5 @@ msgstr "Όνομα"
 msgid "Filter"
 msgstr "Φίλτρο"
 
-
+#~ msgid "Selected %(object_name)s"
+#~ msgstr "Επιλεγμένα %(object_name)s"

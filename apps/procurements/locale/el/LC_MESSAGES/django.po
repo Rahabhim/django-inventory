@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-08 08:47+0200\n"
+"POT-Creation-Date: 2012-11-16 10:46+0200\n"
 "PO-Revision-Date: 2012-09-21 16:48+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -33,18 +33,50 @@ msgstr "έργα"
 msgid "contracts"
 msgstr "συμβάσεις"
 
-#: urls.py:17 urls.py:20 urls.py:24 urls.py:28 urls.py:33
+#: urls.py:17
+msgid "Active"
+msgstr ""
+
+#: urls.py:18
+#, fuzzy
+msgid "delegates list"
+msgstr "ανάδοχοι"
+
+#: urls.py:21 urls.py:25 urls.py:29 urls.py:34
 msgid "delegate"
 msgstr "ανάδοχος"
 
-#: urls.py:29
+#: urls.py:30
 msgid "Will delete delegate and all references in contracts"
 msgstr ""
 
-#: urls.py:37 urls.py:40 urls.py:44 urls.py:48 urls.py:54
+#: urls.py:38
+msgid "Department"
+msgstr ""
+
+#: urls.py:39
+msgid "Date"
+msgstr ""
+
+#: urls.py:40
+#, fuzzy
+msgid "Delegate"
+msgstr "ανάδοχος"
+
+#: urls.py:43
+#, fuzzy
+msgid "list of contracts"
+msgstr "συμβάσεις"
+
+#: urls.py:46 urls.py:50 urls.py:54 urls.py:60
 msgid "contract"
 msgstr "σύμβαση"
 
-#: urls.py:58 urls.py:61 urls.py:65 urls.py:69 urls.py:75
+#: urls.py:64
+#, fuzzy
+msgid "list of projects"
+msgstr "έργα"
+
+#: urls.py:67 urls.py:71 urls.py:75 urls.py:81
 msgid "project"
 msgstr "έργο"
