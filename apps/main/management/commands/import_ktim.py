@@ -387,6 +387,7 @@ class POWorker(threading.Thread):
             user_id = 'ct-%d' % bdl['_contract'].id
         po = self.purchase_orders.get(create_user_id=ADMIN_USER,
                     issue_date=self._get_po_date(bdl), user_id=user_id,
+                    procurement_id=bdl['_contract'].id,
                     supplier_id=self._get_supplier(bdl['_contract']).id)
         # note, we wrap agreed_price in str(), because we want to round the
         # float.
