@@ -471,9 +471,10 @@ class Command(BaseCommand):
         except Exception, e:
             self.stderr.write("Exception: %s\n" % unicode(e).encode('utf-8'))
             raise
-        self._po_worker.stop()
-        self._po_worker.join()
-        del self._po_worker
+        finally:
+            self._po_worker.stop()
+            self._po_worker.join()
+            del self._po_worker
         return
 
     def _init_tables(self):
