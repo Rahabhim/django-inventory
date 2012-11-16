@@ -134,8 +134,8 @@ class PurchaseOrder(models.Model):
                 if s:
                     serials.append(s)
             if item.received_qty < len(serials):
-                raise ValueError(_("You have given %d serials, but marked only %d received items. Please fix either of those") % \
-                        (len(serials), item.received_qty))
+                raise ValueError(_("You have given %(slen)d serials, but marked only %(received)d received items. Please fix either of those") % \
+                        dict(slen=len(serials), received=item.received_qty))
             iid = item.item_template_id
             old_serials = po_items.setdefault(iid, set())
             assert not old_serials.intersection(serials), \
@@ -285,7 +285,7 @@ class Movement(models.Model):
             val_date = datetime.date.today()
 
         if self.state != 'draft':
-            raise ValueError(_("Cannot close movement %s (id: %s) because it is not in draft state") % (self.name, self.id))
+            raise ValueError(_("Cannot close movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
         if self.validate_user:
             raise ValueError(_("Cannot close movement because it seems already validated!"))
 
@@ -297,8 +297,8 @@ class Movement(models.Model):
                 # Bundled items can come from None, end up in 'bundles'
                 pass
             else:
-                raise ValueError(_("Item %s is at %s, rather than the move source location!") % \
-                        (unicode(item), item.location))
+                raise ValueError(_("Item %(item)s is at %(location)s, rather than the move source location!") % \
+                        dict(item=unicode(item), location=item.location))
 
         # TODO: validate that all itemgroups of items are active
 
@@ -315,8 +315,8 @@ class Movement(models.Model):
         return ('movement_view', [str(self.id)])
 
     def __unicode__(self):
-        return _(u'%s from %s to %s') % (self.name or self.origin or _('Move'), \
-                    self.location_src, self.location_dest)
+        return _(u'%(name)s from %(src)s to %(dest)s') % {'name': self.name or self.origin or _('Move'), \
+                    'src': self.location_src, 'dest': self.location_dest}
 
     def get_cart_name(self):
         """ Returns the "shopping-cart" name of this model

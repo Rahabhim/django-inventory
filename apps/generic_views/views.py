@@ -667,13 +667,13 @@ class _ModifyCartView(JSON_RPC_ResponseMixin, django_gv.RedirectView):
 class AddToCartView(_ModifyCartView):
     def _add_or_remove(self, cart, obj):
         verb = cart.add_to_cart(obj)
-        message = _("%s added to %s") %(unicode(obj), unicode(cart.get_cart_name()))
+        message = _("%(item)s added to %(cart)s") % {'item': unicode(obj), 'cart': unicode(cart.get_cart_name())}
         return message, verb
 
 class RemoveFromCartView(_ModifyCartView):
     def _add_or_remove(self, cart, obj):
         verb = cart.remove_from_cart(obj)
-        message = _("%s removed from %s") %(unicode(obj), unicode(cart.get_cart_name()))
+        message = _("%(item)s removed from %(cart)s") % {'item': unicode(obj), 'cart': unicode(cart.get_cart_name())}
         return message, verb
 
 #eof
