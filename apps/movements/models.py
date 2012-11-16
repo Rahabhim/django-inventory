@@ -118,16 +118,19 @@ class PurchaseOrder(models.Model):
 
     def calc_unmoved_items(self):
         """Calculate items mentioned in this PO, prepare for a movement
-        
+
             @return a dict of item_template.id: (qty, serials) for those left
         """
         po_items = {} # sets of serial numbers
         po_items_qty = {} # counters of quantities
-        
+
         # 1st step: fill dicts with the things we've ordered
         for item in self.items.all():
             if not item.received_qty:
                 continue
+
+            if not item.item_template_id:
+                raise ValueError(_('Item template for item "%s" has not been assigned. Cannot continue.'), item.item_name)
             serials = []
             for s in item.serial_nos.split(','):
                 s = s.strip()
@@ -215,7 +218,9 @@ class PurchaseOrderItemStatus(models.Model):
 
 class PurchaseOrderItem(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'), related_name='items')
-    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'))
+    item_name = models.CharField(max_length=128, null=True, blank=True,
+                verbose_name=_(u"Item description"), ) # help_text=_("Fill this in before the product can be assigned")
+    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'), null=True, blank=True)
     agreed_price = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name=_(u'agreed price'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     status = models.ForeignKey(PurchaseOrderItemStatus, null=True, blank=True, verbose_name=_(u'status'))

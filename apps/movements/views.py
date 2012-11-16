@@ -315,11 +315,14 @@ def purchase_order_receive(request, object_id):
         messages.error(request, msg, fail_silently=True)
         return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
 
-
     if request.method == 'POST':
         raise NotImplementedError
     else:
-        items_left = purchase_order.calc_unmoved_items()
+        try:
+            items_left = purchase_order.calc_unmoved_items()
+        except ValueError, ve:
+            messages.error(request, unicode(ve), fail_silently=True)
+            return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
 
         form = PurchaseOrderForm_short_view(instance=purchase_order)
         
