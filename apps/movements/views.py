@@ -71,7 +71,7 @@ def purchase_request_item_create(request, object_id):
 
     return render_to_response('generic_form.html', {
         'form':form,
-        'title':_(u'add new purchase request item') ,
+        'title': _(u'add new purchase request item') ,
     },
     context_instance=RequestContext(request))
 
@@ -81,7 +81,7 @@ def purchase_request_close(request, object_id):
 
     data = {
         'object':purchase_request,
-        'title':_(u"Are you sure you wish to close the purchase request: %s?") % purchase_request,
+        'title': _(u"Are you sure you wish to close the purchase request: %s?") % purchase_request,
     }
 
     if purchase_request.active == False:
@@ -203,7 +203,7 @@ def purchase_order_wizard(request, object_id):
     return render_to_response('generic_form.html', {
         'form':formset,
         'form_display_mode_table':True,
-        'title':_(u'purchase order wizard, using purchase request source: <a href="%(url)s">%(name)s</a>') % {'url':purchase_request.get_absolute_url(), 'name':purchase_request},
+        'title': _(u'purchase order wizard, using purchase request source: <a href="%(url)s">%(name)s</a>') % {'url':purchase_request.get_absolute_url(), 'name':purchase_request},
         'object':purchase_request,
     }, context_instance=RequestContext(request))
 
@@ -213,30 +213,30 @@ def purchase_order_view(request, object_id):
 
     subtemplates = [{
             'name':'generic_list_subtemplate.html',
-            'title':_(u'purchase order items'),
+            'title': _(u'purchase order items'),
             'object_list':purchase_order.items.all(),
             'extra_columns':[
-                {'name':_(u'qty'), 'attribute':'qty'},
-                {'name':_(u'qty received'), 'attribute':'received_qty'},
-                {'name':_(u'agreed price'), 'attribute': 'fmt_agreed_price'},
-                {'name':_(u'status'), 'attribute': 'status'},
-                {'name':_(u'active'), 'attribute': 'fmt_active'}
+                {'name': _(u'qty'), 'attribute':'qty'},
+                {'name': _(u'qty received'), 'attribute':'received_qty'},
+                {'name': _(u'agreed price'), 'attribute': 'fmt_agreed_price'},
+                {'name': _(u'status'), 'attribute': 'status'},
+                {'name': _(u'active'), 'attribute': 'fmt_active'}
                 ],
             },
             {
                 'name':'generic_list_subtemplate.html',
-                'title':_(u'movements for this purchase order'),
+                'title': _(u'movements for this purchase order'),
                 'object_list': purchase_order.movements.all(),
                 # 'hide_links': False, # we want 'edit' there
                 'extra_columns':[
-                    {'name':_(u'state'), 'attribute': 'get_state_display'},
-                    {'name':_(u'date'), 'attribute': 'date_act'},
+                    {'name': _(u'state'), 'attribute': 'get_state_display'},
+                    {'name': _(u'date'), 'attribute': 'date_act'},
                     # {'name':_(u'destination'), 'attribute': 'location_dest'}
                     ],
             },
         ]
     return render_to_response('purchase_order_form.html', {
-        'title':_(u'details for purchase order: %s') % purchase_order,
+        'title': _(u'details for purchase order: %s') % purchase_order,
         'object':purchase_order,
         'form':form, 'form_mode': 'details',
         'subtemplates_dict': subtemplates,
@@ -250,7 +250,7 @@ def purchase_order_close(request, object_id):
 
     data = {
         'object':purchase_order,
-        'title':_(u"Are you sure you wish to close the purchase order: %s?") % purchase_order,
+        'title': _(u"Are you sure you wish to close the purchase order: %s?") % purchase_order,
     }
     if items.filter(active=True):
         data['message'] = _(u'There are still open items.')
@@ -279,7 +279,7 @@ def purchase_order_open(request, object_id):
 
     data = {
         'object':purchase_order,
-        'title':_(u"Are you sure you wish to open the purchase order: %s?") % purchase_order,
+        'title': _(u"Are you sure you wish to open the purchase order: %s?") % purchase_order,
     }
 
     if purchase_order.active == True:
@@ -347,7 +347,7 @@ def purchase_order_receive(request, object_id):
 
         # we must ask about the remaining items or confirmation:
         form_attrs = {
-            'title':_(u'details for purchase order: %s') % purchase_order,
+            'title': _(u'details for purchase order: %s') % purchase_order,
             'more_items_count': len(items_left),
             'object':purchase_order,
             'form':form,
@@ -356,13 +356,13 @@ def purchase_order_receive(request, object_id):
         if not items_left:
             form_attrs['subtemplates_dict'].append({
                 'name':'generic_list_subtemplate.html',
-                'title':_(u'order items received'),
+                'title': _(u'order items received'),
                 'object_list':purchase_order.items.all(),
                 'hide_links': True,
                 'extra_columns':[
-                    {'name':_(u'qty received'), 'attribute':'received_qty'},
-                    {'name':_(u'status'), 'attribute': 'status'},
-                    {'name':_(u'active'), 'attribute': 'fmt_active'}
+                    {'name': _(u'qty received'), 'attribute':'received_qty'},
+                    {'name': _(u'status'), 'attribute': 'status'},
+                    {'name': _(u'active'), 'attribute': 'fmt_active'}
                     ],
                 })
         else:
@@ -370,26 +370,26 @@ def purchase_order_receive(request, object_id):
             if items_in_moves.exists():
                 form_attrs['subtemplates_dict'].append({
                     'name':'generic_list_subtemplate.html',
-                    'title':_(u'order items received and accounted'),
+                    'title': _(u'order items received and accounted'),
                     'object_list': items_in_moves,
                     'hide_links': True,
                     'extra_columns':[
-                        {'name':_(u'qty received'), 'attribute':'received_qty'},
-                        {'name':_(u'status'), 'attribute': 'status'},
-                        {'name':_(u'active'), 'attribute': 'fmt_active'}
+                        {'name': _(u'qty received'), 'attribute':'received_qty'},
+                        {'name': _(u'status'), 'attribute': 'status'},
+                        {'name': _(u'active'), 'attribute': 'fmt_active'}
                         ],
                     })
             items_wo_moves = purchase_order.items.filter(item_template__in=items_left.keys())
             if items_wo_moves.exists():
                 form_attrs['subtemplates_dict'].append({
                     'name':'generic_list_subtemplate.html',
-                    'title':_(u'order items received but NOT accounted'),
+                    'title': _(u'order items received but NOT accounted'),
                     'object_list': items_wo_moves,
                     'hide_links': True,
                     'extra_columns':[
-                        {'name':_(u'qty pending'), 'attribute':'received_qty'},
-                        {'name':_(u'status'), 'attribute': 'status'},
-                        {'name':_(u'active'), 'attribute': 'fmt_active'}
+                        {'name': _(u'qty pending'), 'attribute':'received_qty'},
+                        {'name': _(u'status'), 'attribute': 'status'},
+                        {'name': _(u'active'), 'attribute': 'fmt_active'}
                         ],
                     })
             
@@ -398,12 +398,12 @@ def purchase_order_receive(request, object_id):
             # add the pending movements as links
             form_attrs['subtemplates_dict'].append({
                 'name':'generic_list_subtemplate.html',
-                'title':_(u'movements for this purchase order'),
+                'title': _(u'movements for this purchase order'),
                 'object_list': moves_list,
                 # 'hide_links': False, # we want 'edit' there
                 'extra_columns':[
-                    {'name':_(u'state'), 'attribute': 'state'},
-                    {'name':_(u'destination'), 'attribute': 'location_dest'}
+                    {'name': _(u'state'), 'attribute': 'state'},
+                    {'name': _(u'destination'), 'attribute': 'location_dest'}
                     ],
                 })
 
@@ -417,7 +417,7 @@ def purchase_order_item_close(request, object_id):
     purchase_order_item = get_object_or_404(PurchaseOrderItem, pk=object_id)
     data = {
         'object':purchase_order_item,
-        'title':_(u'Are you sure you wish close the purchase order item: %s') % purchase_order_item,
+        'title': _(u'Are you sure you wish close the purchase order item: %s') % purchase_order_item,
     }
 
     if purchase_order_item.active == False:
@@ -452,7 +452,7 @@ def purchase_order_item_create(request, object_id):
 
     return render_to_response('generic_form.html', {
         'form':form,
-        'title':_(u'add new purchase order item') ,
+        'title': _(u'add new purchase order item') ,
     },
     context_instance=RequestContext(request))
 
