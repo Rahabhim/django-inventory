@@ -3,6 +3,7 @@ from django.conf.urls.defaults import patterns, url
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
+from django.db.models import Q
 
 from generic_views.views import generic_delete, generic_list, generic_detail, \
                 GenericCreateView, GenericUpdateView, \
@@ -53,6 +54,9 @@ def supplier_filter_queryset(form, parent, parent_queryset):
 supplier_filter = {'name': 'supplier', 'title':_(u'Supplier'),
             'queryset': supplier_filter_queryset, 'destination': 'supplier'}
 
+po_active_filter = {'name': 'active', 'title': _(u'Active'),
+            'choices': (('', _('(is active?)')), ('1', _('Active')), ('0', _('Closed')) ), 
+            'destination': lambda q: Q(active=bool(q == '1')) }
 def open_move_as_cart(obj, request):
     cart_utils.add_cart_to_session(obj, request)
     return reverse('location_assets', kwargs=dict(loc_id=obj.location_src.id))
@@ -82,7 +86,7 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderStatus}, post_delete_redirect="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), 'purchase_order_state_delete'),
 
     url(r'^purchase/order/list/$', views.PurchaseOrderListView.as_view( \
-                list_filters=[purchase_order_state_filter, contract_filter, supplier_filter]),
+                list_filters=[po_active_filter, purchase_order_state_filter, contract_filter, supplier_filter]),
             name='purchase_order_list'),
     url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
                 queryset=PurchaseOrder.objects.filter(active=True)), 
