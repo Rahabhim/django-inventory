@@ -1,22 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
+# P. Christeas <xrg@linux.gr>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-16 10:46+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"PO-Revision-Date: 2012-11-16 12:48+0200\n"
+"Last-Translator: P. Christeas <xrg@linux.gr>\n"
+"Language-Team: Greek <>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: api.py:25
 #, python-format
@@ -55,11 +54,12 @@ msgstr ""
 
 #: forms.py:67
 msgid "Local document"
-msgstr ""
+msgstr "Τοπικό Έγγραφο"
 
 #: forms.py:68
+#, fuzzy
 msgid "Model"
-msgstr ""
+msgstr "μοντέλο"
 
 #: forms.py:68
 msgid "Model that will receive the data."
@@ -67,7 +67,7 @@ msgstr ""
 
 #: forms.py:74
 msgid "Preview"
-msgstr ""
+msgstr "Προεπισκόπηση"
 
 #: forms.py:75
 msgid "Start row"
@@ -75,7 +75,7 @@ msgstr ""
 
 #: forms.py:76
 msgid "Delimiter"
-msgstr ""
+msgstr "Οριοθέτης"
 
 #: forms.py:76
 msgid "A one-character string used to separate fields. It defaults to \",\"."

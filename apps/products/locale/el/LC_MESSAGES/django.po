@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-16 10:46+0200\n"
-"PO-Revision-Date: 2012-11-08 08:12+0200\n"
+"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"PO-Revision-Date: 2012-11-18 19:44+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -68,6 +68,8 @@ msgstr "προϊόντα"
 #: models.py:14
 msgid "Bundles of this category may contain items of these categories"
 msgstr ""
+"Συνθέσεις αυτής της κατηγορίας μπορούν να περιλαμβάνουν προϊόντα από αυτές "
+"τις κατηγορίες"
 
 #: models.py:32
 msgid "units"
@@ -95,7 +97,7 @@ msgstr "μάρκα"
 
 #: models.py:82
 msgid "Brand name, if different from manufacturer"
-msgstr ""
+msgstr "Όνομα μάρκας, αν διαφέρει από το όνομα του κατασκευαστή"
 
 #: models.py:84
 msgid "model"
@@ -198,3 +200,4 @@ msgstr ""
 #: views.py:67
 msgid "suppliers"
 msgstr "προμηθευτές"
+

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-16 10:46+0200\n"
-"PO-Revision-Date: 2012-09-21 16:52+0300\n"
+"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"PO-Revision-Date: 2012-11-18 19:47+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -47,11 +47,11 @@ msgstr "τοποθεσίες"
 
 #: __init__.py:18
 msgid "create new location"
-msgstr ""
+msgstr "δημιουργία τοποθεσίας"
 
 #: __init__.py:21
 msgid "assets"
-msgstr ""
+msgstr "εξοπλισμός"
 
 #: __init__.py:30 models.py:57
 msgid "location"
@@ -67,11 +67,11 @@ msgstr "ενεργό"
 
 #: models.py:14
 msgid "comment"
-msgstr ""
+msgstr "σχόλιο"
 
 #: models.py:19 models.py:27
 msgid "partner"
-msgstr ""
+msgstr "συνεργάτης"
 
 #: models.py:26
 msgid "contact"
@@ -96,36 +96,35 @@ msgstr "Διεύθυνση"
 
 #: models.py:48 urls.py:15
 msgid "department"
-msgstr ""
+msgstr "μονάδα"
 
 #: models.py:50
 msgid "location type"
-msgstr ""
+msgstr "τύπος τοποθεσίας"
 
 #: models.py:51
 msgid "Customer"
-msgstr ""
+msgstr "Πελάτης"
 
 #: models.py:51
 msgid "Procurement"
-msgstr ""
+msgstr "Προμήθεια"
 
 #: models.py:52
 msgid "Internal"
-msgstr ""
+msgstr "Εσωτερικό"
 
 #: models.py:52
 msgid "Inventory"
-msgstr ""
+msgstr "απογραφή"
 
 #: models.py:53
-#, fuzzy
 msgid "Supplier Location"
-msgstr "τοποθεσία"
+msgstr "τοποθεσία προμηθευτή"
 
 #: models.py:53
 msgid "Bundled"
-msgstr ""
+msgstr "Σε Σύνθεση"
 
 #: models.py:84
 #, fuzzy

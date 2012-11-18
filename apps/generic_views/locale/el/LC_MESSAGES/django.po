@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-16 10:46+0200\n"
+"POT-Creation-Date: 2012-11-18 19:30+0200\n"
 "PO-Revision-Date: 2012-11-08 08:22+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -46,29 +46,29 @@ msgstr "Προστέθηκαν %s"
 msgid "The selected %s were removed."
 msgstr "Αφαιρέθηκαν %s"
 
-#: views.py:578
+#: views.py:580
 msgid "The cart is already open."
 msgstr ""
 
-#: views.py:591
+#: views.py:593
 msgid "The cart is not open."
 msgstr ""
 
-#: views.py:651
+#: views.py:653
 #, python-format
 msgid "Item %s could not be found."
 msgstr ""
 
-#: views.py:662
+#: views.py:664
 msgid "Could not alter item"
 msgstr ""
 
-#: views.py:670
+#: views.py:672
 #, python-format
 msgid "%(item)s added to %(cart)s"
 msgstr ""
 
-#: views.py:676
+#: views.py:678
 #, python-format
 msgid "%(item)s removed from %(cart)s"
 msgstr ""

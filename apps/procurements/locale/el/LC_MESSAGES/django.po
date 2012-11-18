@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-16 10:46+0200\n"
-"PO-Revision-Date: 2012-09-21 16:48+0300\n"
+"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"PO-Revision-Date: 2012-11-18 19:42+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -35,7 +35,7 @@ msgstr "συμβάσεις"
 
 #: urls.py:17
 msgid "Active"
-msgstr ""
+msgstr "Ενεργό"
 
 #: urls.py:18
 #, fuzzy
@@ -52,11 +52,11 @@ msgstr ""
 
 #: urls.py:38
 msgid "Department"
-msgstr ""
+msgstr "Μονάδα"
 
 #: urls.py:39
 msgid "Date"
-msgstr ""
+msgstr "Ημερομηνία"
 
 #: urls.py:40
 #, fuzzy
@@ -80,3 +80,4 @@ msgstr "έργα"
 #: urls.py:67 urls.py:71 urls.py:75 urls.py:81
 msgid "project"
 msgstr "έργο"
+

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-16 10:46+0200\n"
-"PO-Revision-Date: 2012-11-08 08:20+0200\n"
+"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"PO-Revision-Date: 2012-11-18 19:44+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -88,7 +88,7 @@ msgstr "ημερομηνία επικύρωσης"
 
 #: models.py:42
 msgid "created by"
-msgstr ""
+msgstr "δημιουργήθηκε από"
 
 #: models.py:43
 #, fuzzy
@@ -122,7 +122,7 @@ msgstr "Νέα Απογραφή"
 
 #: models.py:118
 msgid "asset"
-msgstr ""
+msgstr "εξοπλισμός"
 
 #: models.py:119 views.py:49
 msgid "quantity"
@@ -134,7 +134,7 @@ msgstr "κατάσταση"
 
 #: models.py:122
 msgid "notes"
-msgstr ""
+msgstr "σημειώσεις"
 
 #: models.py:125 urls.py:45
 #, fuzzy
@@ -165,8 +165,9 @@ msgid "User assets report"
 msgstr ""
 
 #: templates/report-items_per_person.html:21
+#, fuzzy
 msgid "ASSET NUMBER"
-msgstr ""
+msgstr "αριθμός παγίου"
 
 #: templates/report-items_per_person.html:22
 msgid "DESCRIPTION"
