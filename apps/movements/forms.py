@@ -51,16 +51,19 @@ class PurchaseOrderForm_short_view(DetailForm):
         fields = ('user_id', 'create_user', 'supplier', 'issue_date')
 
 class PurchaseOrderItemForm(forms.ModelForm):
-    item_template = AutoCompleteSelectField('product', show_help_text=False)
+    item_template = AutoCompleteSelectField('product', show_help_text=False, required=False)
     class Meta:
         model = PurchaseOrderItem
         exclude = ('active',)
 
 class PurchaseOrderItemForm_inline(InlineModelForm):
-    item_template = AutoCompleteSelectField('product', show_help_text=False)
+    item_template = AutoCompleteSelectField('product', show_help_text=False, required=False)
+    bundled_items = AutoCompleteSelectMultipleField('product',  show_help_text=False, required=False)
     class Meta:
+        verbose_name=_("Order item form")
         model = PurchaseOrderItem
-        exclude = ('active',)
+        fields = ('item_name', 'item_template', 'qty', 'serial_nos', 'bundled_items')
+        # fields left out:  'agreed_price','received_qty', 'status'
 
 
 class PurchaseOrderWizardItemForm(forms.Form):

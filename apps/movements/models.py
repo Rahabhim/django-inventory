@@ -227,6 +227,8 @@ class PurchaseOrderItem(models.Model):
     qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
     received_qty = models.PositiveIntegerField(default=0, null=True, blank=True, verbose_name=_(u'received'))
     serial_nos = models.CharField(max_length=512, verbose_name=_(u"Serial Numbers"), blank=True)
+    bundled_items = models.ManyToManyField(ItemTemplate, verbose_name=_("bundled items"), 
+                null=True, blank=True, related_name='+')
 
     class Meta:
         verbose_name = _(u'purchase order item')
