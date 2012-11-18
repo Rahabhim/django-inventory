@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 #from django.contrib.contenttypes.models import ContentType
 #from django.views.generic.list_detail import object_detail, object_list
 #from django.core.urlresolvers import reverse
@@ -325,11 +326,18 @@ def purchase_order_receive(request, object_id):
             return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
 
         form = PurchaseOrderForm_short_view(instance=purchase_order)
-        
+        try:
+            dept = request.user.get_profile().department
+        except ObjectDoesNotExist:
+            dept = None
+
         if items_left and request.GET.get('do_create', False):
             lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
-            dept = request.user.get_profile().department
-            if dept:
+            lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
+            ldests = None
+            if request.GET.get('location_ask', False):
+                ldests = [Location.objects.get(pk=request.GET['location_ask']),]
+            elif dept:
                 ldests = Location.objects.filter(department=dept)[:1]
             if not lsrcs:
                 msg = _(u'There is no procurement location configured in the system!')
@@ -337,14 +345,24 @@ def purchase_order_receive(request, object_id):
             elif not ldests:
                 msg = _(u'This is not default department and location for this user, please fix!')
                 messages.error(request, msg, fail_silently=True)
+            elif not lbdls:
+                msg = _(u'This is not bundling location configured in the system!')
+                messages.error(request, msg, fail_silently=True)
             else:
                 movement = Movement(create_user=request.user, date_act=datetime.date.today(),
                         stype='in', origin=purchase_order.user_id,
                         location_src=lsrcs[0], location_dest=ldests[0],
                         purchase_order=purchase_order)
                 movement.save()
-                purchase_order.fill_out_movement(items_left, movement)
-            pass
+                bundled = purchase_order.fill_out_movement(items_left, movement)
+                if bundled:
+                    print "must put a few items in bundle, too"
+                    movement = Movement(create_user=request.user, date_act=datetime.date.today(),
+                        stype='in', origin=purchase_order.user_id,
+                        location_src=lsrcs[0], location_dest=lbdls[0],
+                        purchase_order=purchase_order)
+                    movement.save()
+                    purchase_order.fill_out_bundle_move(bundled, movement)
         elif (not items_left) and request.GET.get('confirm', False):
             raise NotImplementedError
 
@@ -369,7 +387,8 @@ def purchase_order_receive(request, object_id):
                     ],
                 })
         else:
-            items_in_moves = purchase_order.items.exclude(item_template__in=items_left.keys())
+            items_left2 = [ isinstance(k, tuple) and k[0] or k for k in items_left]
+            items_in_moves = purchase_order.items.exclude(item_template__in=items_left2)
             if items_in_moves.exists():
                 form_attrs['subtemplates_dict'].append({
                     'name':'generic_list_subtemplate.html',
@@ -382,7 +401,7 @@ def purchase_order_receive(request, object_id):
                         {'name': _(u'active'), 'attribute': 'fmt_active'}
                         ],
                     })
-            items_wo_moves = purchase_order.items.filter(item_template__in=items_left.keys())
+            items_wo_moves = purchase_order.items.filter(item_template__in=items_left2)
             if items_wo_moves.exists():
                 form_attrs['subtemplates_dict'].append({
                     'name':'generic_list_subtemplate.html',
@@ -395,6 +414,9 @@ def purchase_order_receive(request, object_id):
                         {'name': _(u'active'), 'attribute': 'fmt_active'}
                         ],
                     })
+            if not dept: # rough test
+                # will cause the form to ask for a location
+                form_attrs['ask_location'] = True
             
         moves_list = purchase_order.movements.all()
         if moves_list:

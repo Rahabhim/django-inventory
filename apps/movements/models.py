@@ -8,7 +8,7 @@ from assets.models import Item, ItemTemplate
 
 from dynamic_search.api import register
 import datetime
-
+import logging
 
 class PurchaseRequestStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
@@ -123,6 +123,8 @@ class PurchaseOrder(models.Model):
         """
         po_items = {} # sets of serial numbers
         po_items_qty = {} # counters of quantities
+        po_bundled_qty = {} # counters of quantities for bundled items
+        logger = logging.getLogger('movements.PurchaseOrder.calc')
 
         # 1st step: fill dicts with the things we've ordered
         for item in self.items.all():
@@ -146,6 +148,8 @@ class PurchaseOrder(models.Model):
                         ','.join(old_serials.intersection(serials))
             old_serials.update(serials)
             po_items_qty[iid] = po_items_qty.get(iid, 0) + item.received_qty - len(serials)
+            for bid in item.bundled_items.all():
+                po_bundled_qty[bid.id] = po_bundled_qty.get(bid.id, 0) + item.received_qty
 
         # 2st step: remove from dicts those items who are already in movements
         #           linked to this one
@@ -157,17 +161,26 @@ class PurchaseOrder(models.Model):
                     raise ValueError("Zero or negative quantity found for asset #%d" % item.id)
                 iset = po_items.get(item.item_template_id, set())
                 iqty = po_items_qty.get(item.item_template_id, 0)
+                bqty = po_bundled_qty.get(item.item_template_id, 0)
                 
+                logger.debug("item %s start: %d, %d, %s", item, iqty, bqty, iset)
                 if iset and item.serial_number and item.serial_number in iset:
-                    iset.pop(item.serial_number)
+                    iset.remove(item.serial_number)
                 elif iqty:
                     if item.qty > iqty:
                         iqty = 0
                     else:
                         iqty -= item.qty
                     po_items_qty[item.item_template_id] = iqty
+                elif bqty:
+                    if item.qty > bqty:
+                        bqty = 0
+                    else:
+                        bqty -= item.qty
+                    po_bundled_qty[item.item_template_id] = bqty
                 else:
                     # Item of movement is not in PO list, iz normal.
+                    logger.debug("item %s not in po %d, %d, %s", item, iqty, bqty, iset)
                     continue
 
         # 3rd step: prepare output dictionary
@@ -184,22 +197,41 @@ class PurchaseOrder(models.Model):
                 ks = set()
             out[k] = (v, ks)
         
-        print "Have left:", out
+        for k, v in po_bundled_qty.items():
+            if not v: continue
+            out[(k,1)] = (v, set())
+        logger.debug("Have left: %r", out)
         return out
 
     def fill_out_movement(self, cunmoved, new_move):
         """ fill the supplied movement with [new] items for those of calc_unmoved_items()
         """
         assert cunmoved
+        bundled = []
         for iid, two in cunmoved.items():
             qty, serials = two
+            if isinstance(iid, tuple):
+                assert iid[1] == 1, "Strange index: %r" % iid
+                assert not serials, "Serials in bundle? %r" % serials
+                bundled.append((iid[0], qty))
+                continue
             for s in serials:
                 new_item, c = Item.objects.get_or_create(item_template_id=iid, serial_number=s)
                 new_move.items.add(new_item) #FIXME
             for i in range(qty):
                 # create individual items of item.qty=1
                 new_move.items.create(item_template_id=iid)
-        
+        return bundled
+
+    def fill_out_bundle_move(self, bundled, new_move):
+        """ fill the supplied movement with [new] bundled items, from fill_out_movement()
+        """
+        assert bundled
+        for iid, qty in bundled:
+            for i in range(qty):
+                # create individual items of item.qty=1
+                new_move.items.create(item_template_id=iid)
+        return True
 
 class PurchaseOrderItemStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
