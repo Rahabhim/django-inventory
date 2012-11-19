@@ -65,6 +65,12 @@ class PurchaseOrderItemForm_inline(InlineModelForm):
         fields = ('item_name', 'item_template', 'qty', 'serial_nos', 'bundled_items')
         # fields left out:  'agreed_price','received_qty', 'status'
 
+    def _pre_save_by_user(self, user):
+        """ hack: fix received_qty, because we have left out the field
+        """
+        if self.instance.received_qty == 0:
+            self.instance.received_qty = self.instance.qty
+
 
 class PurchaseOrderWizardItemForm(forms.Form):
     def __init__(self, *args, **kwargs):
