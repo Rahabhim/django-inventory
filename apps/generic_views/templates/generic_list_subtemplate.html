@@ -52,7 +52,7 @@
                 {% endif %}
             {% endif %}
                 {% for column in extra_columns %}
-                    <td>{{ object|object_property:column.attribute|safe }}</td>
+                    <td>{{ object|object_property:column.attribute|default_if_none:"-"|safe }}</td>
                 {% endfor %}
                 {% if not hide_links %}
                     <td class='last'>
