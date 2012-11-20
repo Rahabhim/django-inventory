@@ -502,6 +502,9 @@ class _InlineViewMixin(object):
             self.object = form.save()
             for inline_form in context['formsets']:
                 inline_form.instance = self.object
+                for iform in inline_form.forms:
+                    if hasattr(iform, '_pre_save_by_user'):
+                        iform._pre_save_by_user(self.request.user)
                 inline_form.save()
             return HttpResponseRedirect(self.get_success_url())
         else:
