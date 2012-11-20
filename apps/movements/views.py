@@ -452,7 +452,7 @@ def purchase_order_receive(request, object_id):
                 'object_list': moves_list,
                 # 'hide_links': False, # we want 'edit' there
                 'extra_columns':[
-                    {'name': _(u'state'), 'attribute': 'state'},
+                    {'name': _(u'state'), 'attribute': 'get_state_display'},
                     {'name': _(u'destination'), 'attribute': 'location_dest'}
                     ],
                 })
