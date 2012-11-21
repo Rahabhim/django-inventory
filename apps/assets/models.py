@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from dynamic_search.api import register
-from common.models import Location, Partner, Supplier
+from common.models import Location # , Partner, Supplier
 from products.models import ItemTemplate, AbstractAttribute
 import logging
 
@@ -137,7 +137,7 @@ class ItemGroup(Item):
         But the contained items must have their location set to empty.
     """
     objects = ItemManager()
-    items = models.ManyToManyField(Item, blank=True, null=True, verbose_name=_(u"item"), 
+    items = models.ManyToManyField(Item, blank=True, null=True, verbose_name=_(u"bundled items"), 
             related_name='items+')
 
     class Meta:

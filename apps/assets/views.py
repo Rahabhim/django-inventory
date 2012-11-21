@@ -107,24 +107,6 @@ def item_remove_state(request, object_id, state_id):
     return render_to_response('generic_confirm.html', data,
     context_instance=RequestContext(request))
 
-
-def group_assign_remove_item(request, object_id):
-    obj = get_object_or_404(ItemGroup, pk=object_id)
-
-    return generic_assign_remove(
-        request,
-        title=_(u'Assign assets to the group: <a href="%(url)s">%(obj)s</a>' % {'url':obj.get_absolute_url(), 'obj':obj}),
-        obj=obj,
-        left_list_qryset=Item.objects.exclude(itemgroup=obj),
-        right_list_qryset=obj.items.all(),
-        add_method=obj.items.add,
-        remove_method=obj.items.remove,
-        left_list_title=_(u"Unassigned assets"),
-        right_list_title=_(u"Assigned assets"),
-        item_name=_(u"assets"),
-        list_filter=[location_filter])
-
-
 class AssetListView(GenericBloatedListView):
     """ The default Assets view
     

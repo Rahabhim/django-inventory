@@ -4,19 +4,22 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
 from generic_views.views import generic_delete, \
-                                generic_detail, generic_list
+                                generic_detail, generic_list, \
+                                GenericUpdateView
 
 from photos.views import generic_photos
 
 from models import Item, ItemGroup, State
-from forms import ItemForm, ItemForm_view, ItemGroupForm, ItemGroupForm_view
+from forms import ItemForm, ItemForm_view, ItemGroupForm, ItemGroupForm_view, ItemGroupForm_edit
 from conf import settings as asset_settings
 from views import AssetListView, LocationAssetsView, DepartmentAssetsView
 
 urlpatterns = patterns('assets.views',
 
     url(r'^asset/create/$', create_object, {'form_class':ItemForm, 'template_name':'generic_form.html'}, 'item_create'),
-    url(r'^asset/(?P<object_id>\d+)/update/$', update_object, {'form_class':ItemForm, 'template_name':'generic_form.html', 'extra_context':{'object_name':_(u'asset')}}, 'item_update'),
+    url(r'^asset/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(form_class=ItemForm, 
+                template_name='item_group_form.html', 
+                extra_context={'object_name':_(u'asset')}), name='item_update'),
     url(r'^asset/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Item}, post_delete_redirect="item_list", extra_context=dict(object_name=_(u'asset'))), 'item_delete'),
     url(r'^asset/list/$', AssetListView.as_view(title=_(u'list of assets')), name='item_list'),
     url(r'^asset/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemForm_view, 
@@ -41,7 +44,9 @@ urlpatterns = patterns('assets.views',
     url(r'^group/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemGroupForm_view, 
                             template_name="asset_detail.html",
                             queryset=ItemGroup.objects.all()), name='group_view'),
-    url(r'^group/(?P<object_id>\d+)/update/$', 'group_assign_remove_item', (), name='group_update'),
+    url(r'^group/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(form_class=ItemGroupForm_edit,
+            template_name='item_group_form.html',
+            extra_context={'title':_(u'Edit item group')}), name='group_update'),
     url(r'^group/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':ItemGroup}, post_delete_redirect="group_list", extra_context=dict(object_name=_(u'item group'))), 'group_delete'),
 
     url(r'^state/list/$', generic_list, dict({'queryset':State.objects.all()}, extra_context=dict(title =_(u'states'))), 'state_list'),

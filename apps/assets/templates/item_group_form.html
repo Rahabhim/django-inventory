@@ -1,0 +1,35 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block form_layout %}
+
+<div class="content">
+    <div class="group newline">
+        {% field_for property_number %}
+    </div>
+    <div class="group inline">
+        {% field_for serial_number %}
+    </div>
+
+    <div class="group newline">
+        {% field_for item_template %}
+    </div>
+    <div class="group newline">
+        {% field_for items %}
+    </div>
+
+    <div class="group newline" {% if not readonly %}title="{% trans 'The location can only be changed through movements of this asset' %}"{% endif %}>
+        {% field_for location %}
+    </div>
+    <div class="group inline">
+        {% field_for active %}
+    </div>
+
+    <div class="group newline">
+        {% field_for notes %}
+    </div>
+    <div style="clear: both;"> </div>
+
+</div>
+{% endblock %}
