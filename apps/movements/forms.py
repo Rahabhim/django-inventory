@@ -59,18 +59,21 @@ class PurchaseOrderItemForm(forms.ModelForm):
 class PurchaseOrderItemForm_inline(InlineModelForm):
     item_template = AutoCompleteSelectField('product', show_help_text=False, required=False)
     bundled_items = AutoCompleteSelectMultipleField('product',  show_help_text=False, required=False)
+    received_qty = forms.IntegerField(widget=forms.HiddenInput())
+
     class Meta:
         verbose_name=_("Order item form")
         model = PurchaseOrderItem
-        fields = ('item_name', 'item_template', 'qty', 'serial_nos', 'bundled_items')
-        # fields left out:  'agreed_price','received_qty', 'status'
+        fields = ('item_name', 'item_template', 'qty', 'received_qty', 'serial_nos', 'bundled_items')
+        # fields left out:  'agreed_price', 'status'
 
-    def _pre_save_by_user(self, user):
+    def clean(self):
         """ hack: fix received_qty, because we have left out the field
         """
-        if self.instance.received_qty == 0:
-            self.instance.received_qty = self.instance.qty
-
+        cleaned_data = super(PurchaseOrderItemForm_inline, self).clean()
+        if 'qty' in cleaned_data:
+            cleaned_data['received_qty'] = cleaned_data['qty']
+        return cleaned_data
 
 class PurchaseOrderWizardItemForm(forms.Form):
     def __init__(self, *args, **kwargs):
