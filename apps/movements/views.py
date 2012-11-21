@@ -219,9 +219,9 @@ def purchase_order_view(request, object_id):
             'extra_columns':[
                 {'name': _(u'qty'), 'attribute':'qty'},
                 {'name': _(u'qty received'), 'attribute':'received_qty'},
-                {'name': _(u'agreed price'), 'attribute': 'fmt_agreed_price'},
-                {'name': _(u'status'), 'attribute': 'status'},
-                {'name': _(u'active'), 'attribute': 'fmt_active'}
+                #{'name': _(u'agreed price'), 'attribute': 'fmt_agreed_price'},
+                #{'name': _(u'status'), 'attribute': 'status'},
+                #{'name': _(u'active'), 'attribute': 'fmt_active'}
                 ],
             },
             {
