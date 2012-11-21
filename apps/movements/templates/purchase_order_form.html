@@ -20,6 +20,7 @@
         {% field_for supplier %}
     </div>
 
+    {% comment %}
     <div class="group newline">
         {% field_for purchase_request%}
     </div>
@@ -30,6 +31,7 @@
     <div class="group inline">
         {% field_for status read_only %}
     </div>
+    {% endcomment %}
 
     <div style="clear: both; width=100%;"> </div>
     {% for formset in formsets %}
