@@ -83,7 +83,7 @@ $(function() {
 
         {% block form_layout %} Y U no layout? {% endblock %}
 
-        {% if not read_only %}
+        {% if not read_only and form_mode != 'details' %}
             {% block submit_button %}
                 <div class="group navform wat-cf">
                     <button class="button" type="submit">
