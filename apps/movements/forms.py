@@ -30,7 +30,10 @@ class PurchaseRequestItemForm(forms.ModelForm):
 
 
 class PurchaseOrderForm(forms.ModelForm):
-    procurement = AutoCompleteSelectField('contracts', show_help_text=False, required=False)
+    procurement = AutoCompleteSelectField('contracts', label=_("Procurement Contract"),
+                show_help_text=False, required=False)
+    notes = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3}),
+                label=_("Notes"))
     class Meta:
         model = PurchaseOrder
         exclude = ('active', 'validate_user', 'date_val', 'create_user', 
