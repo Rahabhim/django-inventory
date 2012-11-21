@@ -454,6 +454,7 @@ def generic_detail(request, object_id, form_class, queryset, title=None, extra_c
         raise Http404
 
     extra_context['form'] = form
+    extra_context['form_mode'] = 'details'
     extra_context['title'] = title
 
     return object_detail(
