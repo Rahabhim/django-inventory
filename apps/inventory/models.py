@@ -115,7 +115,7 @@ class Inventory(models.Model):
 
 class InventoryItem(models.Model):
     inventory = models.ForeignKey(Inventory, related_name='items')
-    asset = models.ForeignKey(assets.Item, verbose_name=_("asset"))
+    asset = models.ForeignKey(assets.Item, verbose_name=_("asset"), related_name="inventories")
     quantity = models.IntegerField(verbose_name=_("quantity"))
     state = models.ForeignKey(assets.State, verbose_name=_(u"item state"), 
             null=True, blank=True)
