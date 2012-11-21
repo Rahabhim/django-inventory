@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-18 19:30+0200\n"
-"PO-Revision-Date: 2012-11-18 19:52+0200\n"
+"PO-Revision-Date: 2012-11-21 12:00+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -95,7 +95,7 @@ msgstr "Εντολές Αγοράς"
 
 #: __init__.py:39
 msgid "create new order"
-msgstr "Νέα εντολή αγοράς"
+msgstr "Νέα παραλαβή εξοπλισμού"
 
 #: __init__.py:40
 msgid "edit order"
@@ -114,9 +114,8 @@ msgid "open order"
 msgstr "άνοιγμα εντολής"
 
 #: __init__.py:44
-#, fuzzy
 msgid "receive entire order"
-msgstr "Νέα εντολή αγοράς"
+msgstr "Διαδικασία παραλαβής"
 
 #: __init__.py:49
 msgid "close item"
@@ -169,13 +168,12 @@ msgid "validate move"
 msgstr "επικύρωση κίνησης"
 
 #: __init__.py:108
-#, fuzzy
 msgid "pending purchase orders"
-msgstr "Εντολές Αγοράς"
+msgstr "Εκκρεμείς παραλαβές εξοπλισμού"
 
 #: __init__.py:112
 msgid "pending moves"
-msgstr "εκκρεμείς κινήσεις"
+msgstr "Εκκρεμείς κινήσεις εξοπλισμού"
 
 #: __init__.py:119
 msgid "assets at that location"
@@ -232,7 +230,7 @@ msgstr "κατάσταση αίτησης"
 
 #: models.py:29 models.py:90
 msgid "user defined id"
-msgstr "Αριθμός εντολής"
+msgstr "Αρ. Τιμολογίου/εντολής"
 
 #: models.py:30 models.py:96
 msgid "issue date"
@@ -324,9 +322,8 @@ msgid "purchase order item status"
 msgstr "κατάσταση γραμμής"
 
 #: models.py:254
-#, fuzzy
 msgid "Item description"
-msgstr "Περιγραφή"
+msgstr "Πρόχειρη Περιγραφή"
 
 #: models.py:256 views.py:222
 msgid "agreed price"
@@ -371,7 +368,7 @@ msgstr "επικύρωση από"
 
 #: models.py:294
 msgid "reference"
-msgstr "αναφορά"
+msgstr "Αρ. δελτίου"
 
 #: models.py:295
 msgid "Draft"
@@ -404,7 +401,7 @@ msgstr "τύπος"
 
 #: models.py:298
 msgid "origin"
-msgstr "έγγραφο προέλευσης"
+msgstr "Αρ. απόφασης"
 
 #: models.py:299
 msgid "Notes"
