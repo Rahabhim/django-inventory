@@ -1,0 +1,68 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block form_layout %}
+
+<div class="content">
+    <div class="group newline">
+        {% field_for name %}
+    </div>
+    <div class="group inline">
+        {% field_for origin %}
+    </div>
+
+    <div class="group newline">
+        {% field_for location_src %}
+    </div>
+
+    <div class="group inline">
+        {% field_for location_dest %}
+    </div>
+
+    <div class="group newline">
+        {% field_for items %}
+    </div>
+    <div style="clear: both; width=100%;"> </div>
+
+    <div class="group newline">
+        {% field_for create_user %}
+    </div>
+    <div class="group inline">
+        {% field_for date_act %}
+    </div>
+
+    <div class="group newline">
+        {% field_for validate_user %}
+    </div>
+    <div class="group inline">
+        {% field_for date_val %}
+    </div>
+
+    <div class="group newline">
+        {% field_for stype %}
+    </div>
+
+    <div class="group inline">
+        {% field_for state %}
+    </div>
+
+    <div class="group inline">
+        {% field_for purchase_order %}
+    </div>
+
+
+    <div class="group newline">
+        {% field_for note %}
+    </div>
+
+    <div class="group newline">
+        {% field_for checkpoint_src %}
+    </div>
+
+    <div class="group inline">
+        {% field_for checkpoint_dest %}
+    </div>
+
+</div>
+{% endblock %}

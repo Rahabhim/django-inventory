@@ -127,6 +127,7 @@ urlpatterns = patterns('movements.views',
         name='lose_items'),
 
     url(r'^objects/items/move/$', GenericCreateView.as_view(form_class=MoveItemsForm, 
+            template_name="movement_form.html",
             extra_context={'title':_(u'Items movement')},
             success_url=open_move_as_cart),
         name='move_items'),
@@ -142,12 +143,14 @@ urlpatterns = patterns('movements.views',
             name='movements_pending_list'),
     url(r'^objects/moves/(?P<object_id>\d+)/$', generic_detail,
             dict(form_class=MovementForm_view,
+                template_name='movement_form.html',
                 queryset=Movement.objects.all(),
                 extra_context={'object_name':_(u'movement'), },
                 #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
                 ),
             'movement_view'),
     url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
+                template_name="movement_form.html",
                 form_class=MovementForm_update_po,
                 success_url=lambda obj, *a: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
                 extra_context={'object_name':_(u'movement')}

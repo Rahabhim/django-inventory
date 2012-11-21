@@ -106,10 +106,12 @@ class MovementForm_view(DetailForm):
         model = Movement
 
 class _baseMovementForm(forms.ModelForm):
-    items = AutoCompleteSelectMultipleField('item', show_help_text=False, required=False)
+    items = AutoCompleteSelectMultipleField('item', label=_("items"), show_help_text=False, required=False)
+    note = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3}),
+                label=_("Notes"))
 
 class _outboundMovementForm(_baseMovementForm):
-    location_src = AutoCompleteSelectField('location', required=True, show_help_text=False)
+    location_src = AutoCompleteSelectField('location', label=_("Source location"), required=True, show_help_text=False)
 
     def _init_by_user(self, user):
         try:
@@ -165,8 +167,8 @@ class LoseItemsForm(_outboundMovementForm):
 class MoveItemsForm(_baseMovementForm):
     """ Registered whenever equipment moves from one inventory to another
     """
-    location_src = AutoCompleteSelectField('location', required=True, show_help_text=False)
-    location_dest = AutoCompleteSelectField('location', required=True, show_help_text=False)
+    location_src = AutoCompleteSelectField('location', label=_("Source location"), required=True, show_help_text=False)
+    location_dest = AutoCompleteSelectField('location', label=_("Destination location"), required=True, show_help_text=False)
 
     class Meta:
         model = Movement
