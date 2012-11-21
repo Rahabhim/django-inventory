@@ -63,7 +63,7 @@ class PurchaseOrderItemForm(forms.ModelForm):
 class PurchaseOrderItemForm_inline(InlineModelForm):
     item_template = AutoCompleteSelectField('product', show_help_text=False, required=False)
     bundled_items = AutoCompleteSelectMultipleField('product',  show_help_text=False, required=False)
-    received_qty = forms.IntegerField(widget=forms.HiddenInput())
+    received_qty = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         verbose_name=_("Order item form")
