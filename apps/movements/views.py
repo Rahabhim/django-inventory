@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 #from django.contrib.contenttypes.models import ContentType
 #from django.views.generic.list_detail import object_detail, object_list
-#from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse
 #from django.views.generic.create_update import create_object
 from django.forms.formsets import formset_factory
 
@@ -312,9 +312,15 @@ def purchase_order_receive(request, object_id):
     elif purchase_order.active == False:
         msg = _(u'This purchase order has already been closed.')
 
+    if 'HTTP_REFERER' in request.META and request.path.rstrip('?') not in request.META['HTTP_REFERER']:
+        # we go back to previous url, if there was one.
+        url_after_this = request.META['HTTP_REFERER']
+    else:
+        url_after_this = purchase_order.get_absolute_url()
+
     if msg:
         messages.error(request, msg, fail_silently=True)
-        return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
+        return redirect(url_after_this)
 
     if request.method == 'POST':
         raise NotImplementedError
@@ -323,7 +329,7 @@ def purchase_order_receive(request, object_id):
             items_left = purchase_order.calc_unmoved_items()
         except ValueError, ve:
             messages.error(request, unicode(ve), fail_silently=True)
-            return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
+            return redirect(url_after_this)
 
         form = PurchaseOrderForm_short_view(instance=purchase_order)
         try:
@@ -363,6 +369,9 @@ def purchase_order_receive(request, object_id):
                         purchase_order=purchase_order)
                     movement.save()
                     purchase_order.fill_out_bundle_move(bundled, movement)
+
+            # reload the request in the browser, but get rid of any "action" arguments!
+            return redirect(request.path.rstrip('?'), object_id=object_id)
         elif (not items_left) and request.GET.get('do_confirm', False):
             try:
                 moves_pending = False
@@ -385,9 +394,11 @@ def purchase_order_receive(request, object_id):
                     purchase_order.status = None # TODO
                     purchase_order.save()
                     messages.success(request, _("Purchase order has been confirmed"), fail_silently=True)
+                    return redirect(purchase_order.get_absolute_url())
                 else:
                     msg = _(u'Purchase order %s cannot be confirmed, because it contains pending moves! Please inspect and close these first.')
                     messages.error(request, msg, fail_silently=True)
+                return redirect(request.path.rstrip('?'), object_id=object_id)
             except Exception, e:
                 messages.error(request, unicode(e))
 
@@ -460,7 +471,6 @@ def purchase_order_receive(request, object_id):
         return render_to_response('po_transfer_ask.html', form_attrs, context_instance=RequestContext(request))
 
     raise RuntimeError
-    return {}
 
 
 def purchase_order_item_close(request, object_id):
