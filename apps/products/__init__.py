@@ -20,14 +20,16 @@ template_assign_suppliers = {'text':_(u'assign suppliers'), 'view':'template_ass
 categories_list = {'text':_('categories'), 'view':'category_list', 'famfam':'page_go'}
 manufs_list = {'text':_('manufacturers'), 'view':'manufacturers_list', 'famfam':'page_go'}
 
-template_menu_links = [template_list, template_orphan_list, categories_list, manufs_list]
+template_menu_links = [template_list, categories_list, manufs_list]
 
 register_links(['template_list', 'template_create', 'template_view', 
                 'template_orphans_list', 'template_update', 'template_delete', 
                 'template_photos', 'template_assign_supply', 'template_assign_suppliers'],
             [template_create], menu_name='sidebar')
+
+register_links(ItemTemplate, [template_assets])
 register_links(ItemTemplate, [template_update, template_delete, template_photos, 
-            template_assets, template_assign_supplies, template_assign_suppliers])
+            template_assign_supplies], menu_name='sidebar')
 
 register_menu([
     {'text':_('templates'), 'view':'template_list', 
