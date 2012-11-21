@@ -32,7 +32,7 @@ import views
 state_filter = {'name':'state', 'title':_(u'state'), 
             'choices':'movements.Movement.state' , 'destination':'state'}
 
-stype_filter = {'name':'stype', 'title':_(u'stype'), 
+stype_filter = {'name':'stype', 'title':_(u'type'), 
             'choices':'movements.Movement.stype' , 'destination':'stype'}
 
 
