@@ -10,7 +10,8 @@ from photos.views import generic_photos
 
 from generic_views.views import generic_delete, \
                                 generic_detail, generic_list, \
-                                GenericCreateView, GenericUpdateView
+                                GenericCreateView, GenericUpdateView, \
+                                GenericBloatedListView
 
 from models import ItemTemplate, ItemCategory, Manufacturer
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
@@ -30,12 +31,11 @@ product_name_filter = {'name': 'name', 'title': _('name'),
 generic_name_filter = {'name': 'name', 'title': _('name'), 'destination':'name__icontains'}
 
 urlpatterns = patterns('products.views',
-    url(r'^template/list/$', generic_list, dict(queryset=ItemTemplate.objects.all(),
+    url(r'^template/list/$', GenericBloatedListView.as_view(queryset=ItemTemplate.objects.all(),
             list_filters=[ manufacturer_filter, category_filter, product_name_filter],
-            extra_context=dict(title=_(u'item template'),
-                extra_columns=[dict(name=_(u'Manufacturer'), attribute='manufacturer'),
-                            dict(name=_(u'Category'), attribute='category'),]),
-            ),
+            title=_(u'item template'),
+            extra_columns=[dict(name=_(u'Manufacturer'), attribute='manufacturer'),
+                            dict(name=_(u'Category'), attribute='category'),] ),
             name='template_list'),
     url(r'^template/create/$', GenericCreateView.as_view(form_class=ItemTemplateForm,
                     inline_fields=('attributes',),
@@ -66,9 +66,12 @@ urlpatterns = patterns('products.views',
     url(r'^supplier/(?P<object_id>\d+)/assign/itemtemplates/$',
             'supplier_assign_remove_itemtemplates', (), 'supplier_assign_itemtemplates'),
 
-    url(r'^categories/list/$', generic_list, dict(queryset=ItemCategory.objects.all(),
+    url(r'^categories/list/$', GenericBloatedListView.as_view(queryset=ItemCategory.objects.all(),
             list_filters=[generic_name_filter,],
-            extra_context=dict(title=_(u'item category'))), 'category_list'),
+            extra_columns=[{'name':_(u'Parent category'), 'attribute': 'parent'},
+                        {'name':_(u'Approved'), 'attribute': 'approved'},
+                        {'name':_(u'Is bundle'), 'attribute': 'is_bundle'}],
+            title=_(u'list of item categories')), name='category_list'),
     url(r'^categories/create/$', create_object, {'form_class': ItemCategoryForm,
                     'template_name':'generic_form.html',
                     'extra_context':{'object_name':_(u'item category')}},
