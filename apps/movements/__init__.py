@@ -83,6 +83,10 @@ register_menu([
         purchase_order_list, purchase_request_list,
     ],'famfam':'basket','position':4}])
 
+movement_delete = {'text':_('delete pending movement'), 'view':'movement_delete', \
+            'args':'object.id', 'famfam':'basket_delete', \
+            'condition': lambda o,c: o and o.state == 'draft'}
+
 # register_submenu('menu_assets', .. )
 action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete')
 action_lose = dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error')
@@ -103,8 +107,10 @@ movement_cart_close = {'text':_(u'close cart'), 'view':'movement_cart_close', 'a
 
 register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movement_do_close',
             'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.state == 'draft'},
-            movement_cart_open, movement_cart_close,
+            movement_cart_open, movement_cart_close, movement_delete,
             ])
+
+register_links(['movement_update_po',], [movement_delete,])
 
 purchase_pending_orders = {'text':_('pending purchase orders'), \
         'condition': lambda *a: PurchaseOrder.objects.filter(active=False).exists(),
@@ -120,5 +126,6 @@ register_links(['home',], [purchase_pending_orders, action_movements_pending ], 
 location_src_assets = {'text': _('assets at that location'), 'view': 'location_assets', \
             'args': dict(loc_id='object.location_src.id'), 'famfam': 'package_link'}
 register_links(['movement_cart_open',], [location_src_assets,], menu_name='after_cart_open')
+
 
 # eof

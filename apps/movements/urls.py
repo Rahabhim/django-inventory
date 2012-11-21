@@ -174,6 +174,9 @@ urlpatterns = patterns('movements.views',
                 cart_model=Movement, item_model='assets.Item'), \
             name='movement_item_remove'),
 
+    url(r'^objects/moves/(?P<object_id>\d+)/delete/$', generic_delete, 
+            dict(model=Movement, post_delete_redirect="movements_pending_list", 
+                extra_context=dict(object_name=_(u'Movement'))), name='movement_delete'),
 )
 
 
