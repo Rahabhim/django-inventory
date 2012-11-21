@@ -90,6 +90,7 @@ action_move = dict(text=_(u'Move assets'), view='move_items', famfam='computer_g
 
 register_links( ['item_list'], [ action_destroy, action_lose, action_move ], menu_name='sidebar')
 register_links(['home',], [action_destroy, action_lose, action_move ], menu_name='start_actions')
+register_links(['home',], [purchase_order_create ], menu_name='start_actions')
 
 register_links([('purchase_order_receive', Movement),], 
         [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',
