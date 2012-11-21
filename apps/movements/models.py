@@ -354,8 +354,14 @@ class Movement(models.Model):
         return ('movement_view', [str(self.id)])
 
     def __unicode__(self):
+        try:
+            location_src = self.location_src
+            location_dest = self.location_dest
+        except Exception:
+            location_src = '?'
+            location_dest = '?'
         return _(u'%(name)s from %(src)s to %(dest)s') % {'name': self.name or self.origin or _('Move'), \
-                    'src': self.location_src, 'dest': self.location_dest}
+                    'src': location_src, 'dest': location_dest }
 
     def get_cart_name(self):
         """ Returns the "shopping-cart" name of this model
