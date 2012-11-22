@@ -10,7 +10,7 @@ from common.api import LookupChannel
 
 class ItemLookup(LookupChannel):
     model = Item
-    search_field = 'item_template__description' ## FIXME: use serial, too...
+    search_field = 'item_template__description'
     def get_query(self, q, request):
         if not request.user.is_authenticated():
             raise HttpResponseForbidden()
