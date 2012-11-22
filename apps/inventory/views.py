@@ -68,6 +68,7 @@ def supplier_purchase_orders(request, object_id):
 def inventory_items_compare(request, object_id):
     inventory = get_object_or_404(Inventory, pk=object_id)
     form = InventoryForm_view(instance=inventory)
+    subtemplates_dict = []
     
     if request.method == 'POST':
         raise NotImplementedError
@@ -82,8 +83,11 @@ def inventory_items_compare(request, object_id):
 
         items_in_inventory = set(items_in_inventory)
         have_pending = False
-        while len(res) < limit:
+        found = True
+        while found and len(res) < limit:
+            found = False
             for item in items_base[offset:offset+limit]:
+                found = True
                 if item.id not in items_in_inventory:
                     res.append((item, 'new'))
                     have_pending = True
@@ -92,17 +96,32 @@ def inventory_items_compare(request, object_id):
                     have_pending = True
                 elif not pending_only:
                     res.append((item, 'ok'))
-            else:
-                break # the while loop
-        
-    return render_to_response('generic_detail.html', {
+            offset += limit
+        if res:
+            subtemplates_dict.append({ 'name':'inventory_items_compare.html',
+                            'object_list': res, })
+
+        if not (have_pending or pending_only):
+            # We must search the full set about wrong items
+            print "compute again"
+            items_mismatch = Item.objects.filter( \
+                    (Q(pk__in=items_in_inventory) & ~Q(location=inventory.location)) | \
+                    (Q(location=inventory.location) & ~Q(pk__in=items_in_inventory)) ).exists()
+
+            print "items mismatch", items_mismatch
+            if items_mismatch:
+                have_pending = True
+
+        if have_pending:
+            subtemplates_dict.append({'name': 'inventory_compare_have_more.html'})
+        else:
+            subtemplates_dict.append({'name': 'inventory_compare_success.html'})
+
+    return render_to_response('inventory_compare_details.html', {
             'object_name':_(u'inventory'),
             'object':inventory,
-            'form':form,
-            'subtemplates_dict':[
-                { 'name':'inventory_items_compare.html',
-                    'object_list': res,
-                },],
+            'form':form, 'form_mode': 'details',
+            'subtemplates_dict': subtemplates_dict,
             },
         context_instance=RequestContext(request))
 '''

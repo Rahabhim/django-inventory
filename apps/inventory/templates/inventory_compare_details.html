@@ -1,0 +1,37 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block form_layout %}
+
+    <div class="group inline">
+        {% field_for name %}
+    </div>
+
+    <div class="group inline">
+        {% field_for date_act %}
+    </div>
+
+    <div class="group inline">
+        {% field_for create_user %}
+    </div>
+
+    <div class="group newline">
+        {% field_for location %}
+    </div>
+
+    <div style="clear: both; width=100%;"> </div>
+    
+    {% for subtemplate in subtemplates_dict %}
+    {% with title=subtemplate.title extra_columns=subtemplate.extra_columns object_list=subtemplate.object_list main_object=subtemplate.main_object hide_object=subtemplate.hide_object  %}
+        {% include subtemplate.name %}
+    {% endwith %}
+    {% endfor %}
+
+    {% comment %}
+    <div class="group">
+        {% field_for notes %}
+    </div>
+    {% endcomment %}
+
+{% endblock %}

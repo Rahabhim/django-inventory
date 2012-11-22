@@ -42,4 +42,9 @@ class InventoryItemForm_inline(InlineModelForm):
         model = InventoryItem
         exclude = ('notes',)
 
+    def clean(self):
+        cleaned_data = super(InventoryItemForm_inline, self).clean()
+        cleaned_data['quantity'] = 1
+        return cleaned_data
+
 #eof
