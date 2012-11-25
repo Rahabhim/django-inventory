@@ -75,6 +75,9 @@ class Item(models.Model):
             help_text=_("Allows a batch of identical items to be referenced as one entity") )
     is_bundled = models.BooleanField(default=False,
             help_text=_("If true, this item is bundled in a group, and therefore has no location"))
+    src_contract = models.ForeignKey('procurements.Contract', verbose_name=_('Source Contract'),
+            null=True, blank=True,
+            help_text=_("The procurement at which this item was initially obtained"))
 
     # δυναμικό πεδίο: attributes και τύπος
     class Meta:

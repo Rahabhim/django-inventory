@@ -17,6 +17,7 @@ from company.models import Department
 from assets import state_filter
 from company import make_mv_location
 from products.models import Manufacturer, ItemCategory
+from procurements.models import Contract
 
 def manufacturer_filter_queryset(form, parent, parent_queryset):
     return Manufacturer.objects.filter(id__in=parent_queryset.order_by('item_template__id').values('item_template__manufacturer'))
@@ -37,6 +38,8 @@ product_filter = {'name': 'product_name', 'title': _('product'),
 location_filter = {'name': 'location', 'title': _('location'),
             'destination': make_mv_location('location')}
 
+contract_filter = { 'name': 'contract', 'lookup_channel': 'contracts', 'title': _('procurement contract'),
+            'destination': 'src_contract'}
 
 def item_setstate(request, object_id, state_id):
     item = get_object_or_404(Item, pk=object_id)
@@ -114,9 +117,9 @@ class AssetListView(GenericBloatedListView):
     """
     queryset=Item.objects.by_request
     list_filters=[ product_filter, manufacturer_filter, category_filter,
-                            location_filter, state_filter]
+                            location_filter, state_filter, contract_filter]
     url_attribute='get_details_url'
-    prefetch_fields=('item_template', 'item_template.category', 'item_template.manufacturer')
+    prefetch_fields=('item_template', 'item_template.category', 'item_template.manufacturer', 'src_contract.name')
     group_by='item_template'
     group_fields=[ dict(name=_(u'Item Template'), colspan=2),
                     dict(name=_(u'Manufacturer'), attribute='manufacturer', order_attribute='manufacturer.name'),
@@ -124,11 +127,13 @@ class AssetListView(GenericBloatedListView):
     extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
                             dict(name=_('Serial number'), attribute='serial_number'),
                             dict(name=_('Location'), attribute='location'),
+                            dict(name=_('Source Contract'), attribute='src_contract'),
                             ]
 
 class LocationAssetsView(AssetListView):
     extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
                             dict(name=_('Serial number'), attribute='serial_number'),
+                            dict(name=_('Source Contract'), attribute='src_contract'),
                   ]
     def get(self, request, loc_id, **kwargs):
         location = get_object_or_404(Location, pk=loc_id)
@@ -139,6 +144,7 @@ class LocationAssetsView(AssetListView):
 class DepartmentAssetsView(AssetListView):
     extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
                             dict(name=_('Serial number'), attribute='serial_number'),
+                            dict(name=_('Source Contract'), attribute='src_contract'),
                   ]
     def get(self, request, dept_id, **kwargs):
         department = get_object_or_404(Department, pk=dept_id)
