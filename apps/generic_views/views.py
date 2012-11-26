@@ -17,7 +17,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.forms.models import inlineformset_factory, ModelForm
 
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
-                  DetailForm, InlineModelForm
+                  InlineModelForm, DetailForm
 
 def add_filter(request, list_filters):
     """ Add list filters to form and eventually filter the queryset
@@ -280,5 +280,46 @@ class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
 
 class GenericUpdateView(_InlineViewMixin, django_gv.UpdateView):
     template_name = 'generic_form_fs.html'
+
+class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
+    """ Form-based, read-only view of an object
+    """
+    template_name = 'generic_detail.html'
+    form_mode = 'details'
+    form_class = DetailForm
+    extra_fields = None
+
+    def get_queryset(self):
+        if self.queryset is not None and not isinstance(self.queryset, QuerySet) \
+                    and callable(self.queryset):
+            return self.queryset(self.request)
+        else:
+            return super(GenericDetailView, self).get_queryset()
+
+    def get_context_data(self, **kwargs):
+        ret = super(GenericDetailView, self).get_context_data(**kwargs)
+        # a little weird that we're making the form after the formsets. But we
+        # must call get_form() after get_context_data() initializes self.object
+        assert 'form' not in ret, ret.get('form', False )
+        form_class = self.get_form_class()
+        ret['form'] = self.get_form(form_class)
+        return ret
+
+    def get_form_class(self):
+        return self.form_class
+
+    def get_form(self, form_class):
+        """
+        Returns an instance of the form to be used in this view.
+        """
+        assert self.object
+        try:
+            if self.extra_fields:
+                form = form_class(instance=self.object, extra_fields=self.extra_fields)
+            else:
+                form = form_class(instance=self.object)
+        except ObjectDoesNotExist:
+            raise Http404
+        return form
 
 #eof
