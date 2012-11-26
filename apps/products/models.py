@@ -6,19 +6,30 @@ from dynamic_search.api import register
 from common.models import Partner, Supplier
 
 class ItemCategory(models.Model):
-    name = models.CharField(max_length=64)
-    parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True)
-    approved = models.BooleanField(default=False)
-    is_bundle = models.BooleanField(default=False)
-    may_contain = models.ManyToManyField('self', related_name='+', blank=True, null=True,
-            help_text=_(u'Bundles of this category may contain items of these categories'))
+    name = models.CharField(max_length=64, verbose_name=_("Name"))
+    parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True,
+                verbose_name=_("parent category"))
+    approved = models.BooleanField(default=False, verbose_name=_("approved"))
+    is_bundle = models.BooleanField(default=False, verbose_name=_("Is bundle"))
 
     @models.permalink
     def get_absolute_url(self):
         return ('category_view', [str(self.id)])
-    
+
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        verbose_name=_("item category")
+
+class ItemCategoryContain(models.Model):
+    parent_category = models.ForeignKey(ItemCategory, related_name="may_contain", verbose_name=_("May contain"))
+    category = models.ForeignKey(ItemCategory, related_name='+', verbose_name=_("contained category"))
+    min_count = models.IntegerField(verbose_name=_("minimum count"), default=0)
+    max_count = models.IntegerField(verbose_name=_("maximum count"), default=1)
+
+    def __unicode__(self):
+        return self.category.name
 
 class ItemAttrType(models.Model):
     """
