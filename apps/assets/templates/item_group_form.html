@@ -6,24 +6,24 @@
 
 <div class="content">
     <div class="group newline">
-        {% field_for property_number %}
+        {% field_for property_number read_only %}
     </div>
     <div class="group inline">
         {% field_for serial_number %}
     </div>
 
     <div class="group newline">
-        {% field_for item_template %}
+        {% field_for item_template read_only %}
     </div>
     <div class="group newline">
-        {% field_for items %}
+        {% field_for items read_only %}
     </div>
 
-    <div class="group newline" {% if not readonly %}title="{% trans 'The location can only be changed through movements of this asset' %}"{% endif %}>
-        {% field_for location %}
+    <div class="group newline" {% if not read_only %}title="{% trans 'The location can only be changed through movements of this asset' %}"{% endif %}>
+        {% field_for location read_only%}
     </div>
     <div class="group inline">
-        {% field_for active %}
+        {% field_for active read_only %}
     </div>
 
     <div class="group newline">
