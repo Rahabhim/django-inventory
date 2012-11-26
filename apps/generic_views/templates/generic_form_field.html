@@ -9,7 +9,7 @@
     {% field_label_tag field %}
     {% if field.errors %}<span class="error">{% for error in field.errors %}{{ error }}{% if not forloop.last %} | {% endif %}{% endfor %}</span></div>{% endif %}
     {{ field }}
-    {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
+    {% if field.help_text and not read_only %}<span class="description">{{ field.help_text }}</span>{% endif %}
 {% else %}
     Form mode: {{ form_mode }}
 {% endif %}
