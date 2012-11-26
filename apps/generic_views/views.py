@@ -491,7 +491,7 @@ class _InlineViewMixin(object):
                 raise ImproperlyConfigured("Field %s.%s is not a related object for inlined field of %s" % \
                     (self.model._meta.object_name, inlf, self.__class__.__name__))
             self._inline_formsets[inlf] = inlineformset_factory(self.model, \
-                            relo[0].model, form=iform_class, extra=1)
+                            relo[0].model, fk_name=relo[0].field.name, form=iform_class, extra=1)
             # explicitly set this (new) attribute, because jinja2 is not allowed to see '_meta'
             self._inline_formsets[inlf].title = relo[0].model._meta.verbose_name_plural
 
