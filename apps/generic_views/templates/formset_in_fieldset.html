@@ -1,7 +1,9 @@
 {% load styling %}
-<fieldset class="formset" id="{{ formset.prefix }}-group">
+<fieldset class="{%if form_mode == 'details'%}formset_ro{% else %}formset{% endif %}" id="{{ formset.prefix }}-group">
     <legend>{{formset.title|capfirst }}</legend>
+    {% if form_mode != 'details' %}
         {{ formset.management_form }}
+    {% endif %}
     <table class="table">
     <thead> {% spaceless %}
         {% block formset_form_head %}

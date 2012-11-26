@@ -4,7 +4,7 @@
 {% block title %} :: {% with "true" as striptags %}{% include "calculate_form_title.html" %}{% endwith %}{% endblock %}
 
 {% block javascript %}
-{% if formsets %}
+{% if formsets and form_mode != 'details' %}
 <script src="{{ MEDIA_URL }}packages/jquery.formset.min.js"></script>
 <script type="text/javascript">
 $(function() {

@@ -485,13 +485,19 @@ class _InlineViewMixin(object):
         infields = self.inline_fields
         if isinstance(infields, (tuple, list)):
             infields = dict.fromkeys(infields, InlineModelForm)
+        extra_count = 1
+        can_delete = True
+        if self.form_mode == 'details':
+            extra_count = 0
+            can_delete = False
         for inlf, iform_class in infields.items():
             relo = self.model._meta.get_field_by_name(inlf)
             if not isinstance(relo[0], RelatedObject):
                 raise ImproperlyConfigured("Field %s.%s is not a related object for inlined field of %s" % \
                     (self.model._meta.object_name, inlf, self.__class__.__name__))
             self._inline_formsets[inlf] = inlineformset_factory(self.model, \
-                            relo[0].model, fk_name=relo[0].field.name, form=iform_class, extra=1)
+                            relo[0].model, fk_name=relo[0].field.name, form=iform_class, \
+                            extra=extra_count, can_delete=can_delete)
             # explicitly set this (new) attribute, because jinja2 is not allowed to see '_meta'
             self._inline_formsets[inlf].title = relo[0].model._meta.verbose_name_plural
 
