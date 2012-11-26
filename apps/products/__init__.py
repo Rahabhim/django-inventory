@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from common.api import register_links, register_menu
 
-from models import ItemTemplate
+from models import ItemTemplate, ItemCategory, Manufacturer
 import models
 
 
@@ -18,7 +18,14 @@ template_assign_supplies = {'text':_(u'assign supplies'), 'view':'template_assig
 template_assign_suppliers = {'text':_(u'assign suppliers'), 'view':'template_assign_suppliers', 'args':'object.id', 'famfam':'lorry_go'}
 
 categories_list = {'text':_('categories'), 'view':'category_list', 'famfam':'page_go'}
+category_create = {'text':_('create new category'), 'view':'category_create', 'famfam':'page_add'}
+category_update = {'text':_(u'edit category'), 'view':'category_update', 'args':'object.id', 'famfam':'page_edit'}
+category_delete = {'text':_(u'delete category'), 'view':'category_delete', 'args':'object.id', 'famfam':'page_delete'}
+
 manufs_list = {'text':_('manufacturers'), 'view':'manufacturers_list', 'famfam':'page_go'}
+manufacturer_create = {'text':_('create new manufacturer'), 'view':'manufacturer_create', 'famfam':'page_add'}
+manufacturer_update = {'text':_(u'edit manufacturer'), 'view':'manufacturer_update', 'args':'object.id', 'famfam':'page_edit'}
+manufacturer_delete = {'text':_(u'delete manufacturer'), 'view':'manufacturer_delete', 'args':'object.id', 'famfam':'page_delete'}
 
 template_menu_links = [template_list, categories_list, manufs_list]
 
@@ -30,6 +37,10 @@ register_links(['template_list', 'template_create', 'template_view',
 register_links(ItemTemplate, [template_assets])
 register_links(ItemTemplate, [template_update, template_delete, template_photos, 
             template_assign_supplies], menu_name='sidebar')
+
+
+register_links(ItemCategory, [category_create, category_update, category_delete], menu_name='sidebar')
+register_links(Manufacturer, [manufacturer_create, manufacturer_update, manufacturer_delete], menu_name='sidebar')
 
 register_menu([
     {'text':_('templates'), 'view':'template_list', 

@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 from django import forms
-from generic_views.forms import DetailForm
-from models import ItemTemplate, Manufacturer, ItemCategory
+from generic_views.forms import DetailForm, InlineModelForm, ColumnsDetailWidget
+from models import ItemTemplate, Manufacturer, ItemCategory, ItemCategoryContain
+from django.utils.translation import ugettext_lazy as _
 
 
 class ItemTemplateForm(forms.ModelForm):
@@ -21,6 +22,14 @@ class ItemCategoryForm(forms.ModelForm):
 class ItemCategoryForm_view(DetailForm):
     class Meta:
         model = ItemCategory
+
+class ItemCategoryContainForm(InlineModelForm):
+    class Meta:
+        model = ItemCategoryContain
+
+class ItemCategoryContainForm_view(DetailForm):
+    class Meta:
+        model = ItemCategoryContain
 
 class ManufacturerForm(forms.ModelForm):
     class Meta:

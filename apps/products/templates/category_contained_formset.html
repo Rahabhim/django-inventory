@@ -1,0 +1,22 @@
+{% extends 'formset_in_fieldset.html' %}
+{% load styling %}
+
+{% block formset_form_layout %}
+<tr class="form-row inline {{ formset.prefix }}">
+    {% spaceless %}
+    {% for field in form.visible_fields %}
+    <td>
+        {% if form_mode != 'details' and field.errors %}<span class="error">{% for error in field.errors %}{{ error }}{% if not forloop.last %} | {% endif %}{% endfor %}</span></div>{% endif %}
+        {{ field }}
+    </td>
+    {% endfor %}
+    {% if form_mode != 'details' %}
+    <td>{% for field in form.hidden_fields %}
+        {{ field }}
+        {% endfor %}
+    </td>
+    {% endif %}
+    {% endspaceless %}
+</tr>
+
+{% endblock %}

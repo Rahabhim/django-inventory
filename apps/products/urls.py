@@ -11,11 +11,13 @@ from photos.views import generic_photos
 from generic_views.views import generic_delete, \
                                 generic_detail, generic_list, \
                                 GenericCreateView, GenericUpdateView, \
-                                GenericBloatedListView
+                                GenericBloatedListView, GenericDetailView
 
 from models import ItemTemplate, ItemCategory, Manufacturer
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
-        ItemCategoryForm, ItemCategoryForm_view, ManufacturerForm, ManufacturerForm_view
+        ItemCategoryForm, ItemCategoryForm_view, ItemCategoryContainForm, \
+        ItemCategoryContainForm_view, \
+        ManufacturerForm, ManufacturerForm_view
 
 
 manufacturer_filter = {'name':'manufacturer', 'title':_(u'manufacturer'), 
@@ -76,20 +78,23 @@ urlpatterns = patterns('products.views',
                     'template_name':'generic_form.html',
                     'extra_context':{'object_name':_(u'item category')}},
             'category_create'), # TODO: permissions?
-    url(r'^categories/(?P<object_id>\d+)/update/$', update_object,
-            {'form_class':ItemCategoryForm, 'template_name':'generic_form.html',
-                    'extra_context':{'object_name':_(u'item category')}},
-            'category_update' ),
+    url(r'^categories/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
+            form_class=ItemCategoryForm, template_name= 'category_form.html',
+            inline_fields={'may_contain': ItemCategoryContainForm},
+            extra_context={'object_name':_(u'item category')}),
+            name='category_update' ),
     url(r'^categories/(?P<object_id>\d+)/delete/$', generic_delete,
             dict(model=ItemCategory, post_delete_redirect="category_list",
                     extra_context=dict(object_name=_(u'item category'),
                     # FIXME _message=_(u"Will be deleted from any user that may have it assigned and from any item group.")
                     )),
             'category_delete' ),
-    url(r'^categories/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemCategoryForm_view,
+    url(r'^categories/(?P<pk>\d+)/$', GenericDetailView.as_view(form_class=ItemCategoryForm_view,
+                    template_name='category_form.html',
                     queryset=ItemCategory.objects.all(),
+                    inline_fields={'may_contain': ItemCategoryContainForm_view},
                     extra_context={'object_name':_(u'item category'),}),
-            'category_view'),
+            name='category_view'),
 
     url(r'^manufacturers/list/$', generic_list, dict(queryset=Manufacturer.objects.all(),
             list_filters=[generic_name_filter,],
