@@ -128,6 +128,20 @@ class DetailForm(forms.ModelForm):
             elif isinstance(field.widget, ColumnsDetailWidget):
                 self.fields[field_name].help_text=''
 
+class RModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(RModelForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if getattr(field.widget, 'read_only', False):
+                field.required = False
+
+    def _post_clean(self):
+        if self.cleaned_data is not None:
+            for name, field in self.fields.items():
+                if name in self.cleaned_data and getattr(field.widget, 'read_only', False):
+                    del self.cleaned_data[name]
+
+        super(RModelForm, self)._post_clean()
 
 class GenericConfirmForm(forms.Form):
     pass
