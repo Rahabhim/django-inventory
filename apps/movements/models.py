@@ -338,9 +338,12 @@ class Movement(models.Model):
             else:
                 raise ValueError(_("Item %(item)s is at %(location)s, rather than the move source location!") % \
                         dict(item=unicode(item), location=item.location))
+            
 
         # TODO: validate that all itemgroups of items are active
 
+        if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
+            all_items.update(src_contract=self.purchase_order.procurement)
         # everything seems OK by now...
         all_items.update(location=self.location_dest)
         self.validate_user = val_user
