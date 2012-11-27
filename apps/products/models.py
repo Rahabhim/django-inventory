@@ -110,6 +110,49 @@ class ItemTemplate(models.Model):
     def __unicode__(self):
         return self.description
 
+    def validate_bundle(self, bundled_items):
+        """Validates that this bundle is assembled according to category rules
+
+            @param bundled_items a list of (ItemCategory.id, qty) tuples
+            @return [] if valid, or a list of error messages
+        """
+        errors = []
+        self_cat = self.category
+        if self_cat.is_bundle:
+            if not bundled_items:
+                bundled_items = [] # just in case it was None or False
+
+            haz_it = {}
+            for catid, qty in bundled_items:
+                if catid in haz_it:
+                    haz_it[catid] += qty
+                else:
+                    haz_it[catid] = qty
+
+            for subcat in self_cat.may_contain.all():
+                err_msg = False
+                haz = haz_it.pop(subcat.category_id, 0)
+                if haz < subcat.min_count:
+                    if haz:
+                        err_msg = _("An item of %(self_cat)s must contain at least %(min_count)d of %(sub_cat)s, but only has %(count)d now.")
+                    else:
+                        err_msg = _("An item of %(self_cat)s must contain at least %(min_count)d of %(sub_cat)s.")
+                elif haz > subcat.max_count:
+                    err_msg = _("An item of %(self_cat)s cannot have more than %(max_count)d of %(sub_cat)s. You have entered %(count)d.")
+
+                if err_msg:
+                    errors.append(err_msg % {'self_cat': self_cat.name, 'sub_cat': subcat.category.name, \
+                            'min_count': subcat.min_count, 'max_count': subcat.max_count})
+            if haz_it:
+                err_msg = _("An item of %(self_cat)s cannot contain any items of %(sub_cat)s.")
+                for subcat in ItemCategory.objects.filter(pk__in=haz_it.keys()):
+                    errors.append(err_msg % {'self_cat': self_cat.name, 'sub_cat': subcat.name})
+        elif bundled_items:
+            # it is not a bundle, don't allow bundled items
+            errors.append(_("An item of %s is not a bundle, cannot contain anything") % \
+                    self_cat.name)
+        return errors
+
 class ItemTemplateAttribute(AbstractAttribute):
     template = models.ForeignKey(ItemTemplate, related_name="attributes")
 

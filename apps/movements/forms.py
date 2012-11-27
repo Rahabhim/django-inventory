@@ -7,7 +7,7 @@ from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultip
 from inventory.models import Inventory
 
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
-                   PurchaseOrderItem, Movement
+                   PurchaseOrderItem, Movement, ItemTemplate
 from common.models import Location
 
 #TODO: Remove auto_add_now from models and implement custom save method to include date
@@ -77,6 +77,15 @@ class PurchaseOrderItemForm_inline(InlineModelForm):
         cleaned_data = super(PurchaseOrderItemForm_inline, self).clean()
         if 'qty' in cleaned_data:
             cleaned_data['received_qty'] = cleaned_data['qty']
+        item_template = cleaned_data.get('item_template', None)
+        if item_template:
+            if 'bundled_items' in cleaned_data:
+                bundled_items = ItemTemplate.objects.filter(pk__in=cleaned_data['bundled_items']).all()
+            else:
+                bundled_items = self.instance.bundled_items.all()
+            errors = item_template.validate_bundle([(b.category_id, 1) for b in bundled_items])
+            if errors:
+                self._errors["bundled_items"] = self.error_class(errors)
         return cleaned_data
 
 class PurchaseOrderWizardItemForm(forms.Form):
