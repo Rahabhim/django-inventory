@@ -67,10 +67,15 @@ class DetailForeignWidget(forms.widgets.Widget):
 
         Unlike Select* widgets, it won't query the db for choices
     """
+    read_only = True
+
     def __init__(self, queryset=None, choices=(), *args, **kwargs):
         super(DetailForeignWidget, self).__init__(*args, **kwargs)
         self.queryset = queryset
         self.choices = choices # but don't render them to list
+
+    def _has_changed(self, initial, data):
+        return False
 
     def render(self, name, value, attrs=None, choices=()):
         final_attrs = self.build_attrs(attrs, name=name)
@@ -145,7 +150,6 @@ class RModelForm(forms.ModelForm):
 
 class GenericConfirmForm(forms.Form):
     pass
-
 
 class GenericAssignRemoveForm(forms.Form):
     left_list = forms.ModelMultipleChoiceField(required=False, queryset=None)
@@ -237,6 +241,7 @@ class ColumnsDetailWidget(forms.widgets.Widget):
     columns = []
     order_by = False
     show_header = True
+    read_only = True
 
     def __init__(self, queryset=None, choices=(), *args, **kwargs):
         super(ColumnsDetailWidget, self).__init__(*args, **kwargs)
@@ -298,6 +303,7 @@ class ColumnsDetailWidget(forms.widgets.Widget):
         return mark_safe(''.join(ret))
 
 class ReadOnlyInput(forms.widgets.Input):
+    read_only = True
     def _has_changed(self, initial, data):
         return False
 
