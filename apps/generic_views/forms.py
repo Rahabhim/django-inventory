@@ -69,7 +69,7 @@ class DetailForeignWidget(forms.widgets.Widget):
     """
     read_only = True
 
-    def __init__(self, queryset=None, choices=(), *args, **kwargs):
+    def __init__(self, queryset=None, choices=None, *args, **kwargs):
         super(DetailForeignWidget, self).__init__(*args, **kwargs)
         self.queryset = queryset
         self.choices = choices # but don't render them to list
@@ -84,6 +84,12 @@ class DetailForeignWidget(forms.widgets.Widget):
             objs = self.queryset.filter(pk__in=value)
         elif value and self.queryset is not None:
             objs = [self.queryset.get(pk=value),]
+        elif value and isinstance(self.choices, forms.models.ModelChoiceIterator):
+            queryset = self.choices.queryset
+            if hasattr(value, '__iter__'):
+                objs = queryset.filter(pk__in=value)
+            else:
+                objs = [queryset.get(pk=value),]
         elif value and self.choices:
             # only works with choices, so far
             objs = []
