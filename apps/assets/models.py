@@ -2,7 +2,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 # from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from dynamic_search.api import register
 from common.models import Location # , Partner, Supplier
@@ -111,6 +111,16 @@ class Item(models.Model):
         if self.is_bundled and self.location and self.location.usage != 'production':
             raise ValidationError("A bundled item cannot be assigned to any location itself")
         return super(Item, self).clean()
+
+    def save(self):
+        if self.location and self.location.department and not self.property_number:
+            try:
+                seq = self.location.department.get_sequence()
+                if seq:
+                    self.property_number = seq.get_next()
+            except ObjectDoesNotExist:
+                pass
+        return super(Item, self).save()
 
     def get_specs(self):
         return ""
