@@ -5,7 +5,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from dynamic_search.api import register
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 class Partner(models.Model):
     name = models.CharField(max_length=128, db_index=True, unique=True, verbose_name=_("name"))
@@ -73,6 +73,12 @@ class Location(models.Model):
             raise ValidationError("Department can only be specified for \"internal\" locations")
         return super(Location, self).clean()
 
+    def get_sequence(self):
+        if self.department:
+            return self.department.get_sequence()
+        else:
+            raise ObjectDoesNotExist("No department for location %s" % self.name)
+
 class LocationTemplate(models.Model):
     """ A location template is just names of locations to create for each dpt. type
 
@@ -104,6 +110,30 @@ class Supplier(Partner):
     @models.permalink
     def get_absolute_url(self):
         return ('supplier_view', [str(self.id)])
+
+class Sequence(models.Model):
+    name = models.CharField(max_length=64, verbose_name=_("name"))
+    prefix = models.CharField(verbose_name=_('prefix'), max_length=64, blank=True)
+    suffix = models.CharField(verbose_name=_('suffix'), max_length=64, blank=True)
+    number_next = models.IntegerField(verbose_name=_('next number'), default=1)
+    number_increment = models.IntegerField(verbose_name=_('increment'), default=1)
+    padding = models.IntegerField(verbose_name=_('Number padding'), default=3)
+
+    class Meta:
+        verbose_name = _("sequence")
+        verbose_name = _("sequences")
+    
+    def get_next(self):
+        # doing it *without* any lock!
+        try:
+            nnext = self.number_next
+            self.number_next = self.number_next + 1
+            num = ('%%s%%0%dd%%s' % self.padding) % (self.prefix or '', nnext, self.suffix or '')
+            self.save()
+            return num
+        except Exception:
+            # can we do anything here?
+            raise
 
 register(Location, _(u'locations'), ['name', 'address_line1', 'address_line2', 'address_line3', 'address_line4', 'phone_number1', 'phone_number2'])
 register(Supplier, _(u'supplier'), ['name', 'address_line1', 'address_line2', 'address_line3', 'address_line4', 'phone_number1', 'phone_number2', 'notes'])
