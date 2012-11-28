@@ -2,16 +2,15 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from generic_views.forms import DetailForm, ColumnsDetailWidget, DetailForeignWidget, ReadOnlyInput
+from generic_views.forms import DetailForm, ColumnsDetailWidget, \
+        DetailForeignWidget, ReadOnlyInput, RModelForm
 
 from models import Item, ItemGroup
 from common.models import Location
 from products.models import ItemTemplate
 from ajax_select.fields import AutoCompleteSelectField
 
-class ItemForm(forms.ModelForm):
-    #item_template = AutoCompleteSelectField('product', label=_("product"), show_help_text=False)
-    # location = AutoCompleteSelectField('location', label=_("current location"), required=False, show_help_text=False)
+class ItemForm(RModelForm):
     class Meta:
         model = Item
         exclude = ('photos', 'active', 'is_bundled', 'qty')
