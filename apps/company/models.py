@@ -37,8 +37,9 @@ class Department(models.Model):
     ota_name = models.CharField(max_length=128, verbose_name=_('OTA Name'), blank=True, null=True)
     parent = models.ForeignKey('self', verbose_name=_('Parent Department'), related_name='dept_parent_id', blank=True, null=True)
     section_name = models.CharField(max_length=128, verbose_name=_('Section'), blank=True, null=True)
-    serviced_by = models.ForeignKey('self', verbose_name=_("Serviced By"), 
+    serviced_by = models.ForeignKey('self', verbose_name=_("Serviced By"),
            related_name='dept_service_id', blank=True, null=True)
+    sequence = models.ForeignKey('common.Sequence', verbose_name=_("Sequence for items"), blank=True, null=True)
 
     class Meta:
         # admin = True
@@ -53,6 +54,16 @@ class Department(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('company_department_view', [str(self.id)])
+
+    def get_sequence(self):
+        if self.deprecate or self.merge:
+            return ValueError("A deprecated or merged department cannot issue sequence IDs")
+        if self.sequence:
+            return self.sequence
+        elif self.parent:
+            return self.parent.get_sequence()
+        else:
+            raise ObjectDoesNotExist(_("No sequence for department %s") % self.name)
 
 @receiver(post_save, sender=Department, dispatch_uid='139i436')
 def post_save(sender, **kwargs):
