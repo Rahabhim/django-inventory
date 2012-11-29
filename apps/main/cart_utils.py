@@ -81,6 +81,28 @@ class CartsContainer(object):
         self._carts.pop(ref, None)
         return modified
 
+    def close_carts_by_model(self, model):
+        """Closes all carts whose object is that model
+
+            eg. carts.close_carts_by_model(PurchaseOrder) will close any carts that
+                are PurchaseOrder instances
+
+            Note: since `model` is only used in `isinstance()`, it can also be a tuple
+            of multiple models.
+        """
+        to_del = []
+        for ref, ctup in self._carts.items():
+            if isinstance(ctup, model):
+                to_del.append(ref)
+
+        modified = False
+        for td in to_del:
+            if self._remove_from_session(td, self._session_carts):
+                modified = True
+            self._carts.pop(td, None)
+
+        return modified
+
     @classmethod
     def _remove_from_session(cls, ref, session_carts):
         to_del = []
