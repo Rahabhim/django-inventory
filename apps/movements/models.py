@@ -162,7 +162,7 @@ class PurchaseOrder(models.Model):
                 iset = po_items.get(item.item_template_id, set())
                 iqty = po_items_qty.get(item.item_template_id, 0)
                 bqty = po_bundled_qty.get(item.item_template_id, 0)
-                
+
                 logger.debug("item %s start: %d, %d, %s", item, iqty, bqty, iset)
                 if iset and item.serial_number and item.serial_number in iset:
                     iset.remove(item.serial_number)
@@ -196,7 +196,7 @@ class PurchaseOrder(models.Model):
             else:
                 ks = set()
             out[k] = (v, ks)
-        
+
         for k, v in po_bundled_qty.items():
             if not v: continue
             out[(k,1)] = (v, set())
@@ -259,7 +259,7 @@ class PurchaseOrderItem(models.Model):
     qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
     received_qty = models.PositiveIntegerField(default=0, null=True, blank=True, verbose_name=_(u'received'))
     serial_nos = models.CharField(max_length=512, verbose_name=_(u"Serial Numbers"), blank=True)
-    bundled_items = models.ManyToManyField(ItemTemplate, verbose_name=_("bundled items"), 
+    bundled_items = models.ManyToManyField(ItemTemplate, verbose_name=_("bundled items"),
                 null=True, blank=True, related_name='+')
 
     class Meta:
@@ -290,10 +290,10 @@ class Movement(models.Model):
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_('created by'))
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('validated by'))
-    
+
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
     state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('done', _('Done'))])
-    stype = models.CharField(max_length=16, choices=[('in', _('Incoming')),('out', _('Outgoing')), 
+    stype = models.CharField(max_length=16, choices=[('in', _('Incoming')),('out', _('Outgoing')),
                 ('internal', _('Internal')), ('other', _('Other'))], verbose_name=_('type'))
     origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
     note = models.TextField(verbose_name=_('Notes'), blank=True)
@@ -301,7 +301,7 @@ class Movement(models.Model):
     location_dest = models.ForeignKey(Location, related_name='location_dest', verbose_name=_("destination location"))
     items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='movements', blank=True)
     # limit_choices_to these at location_src
-    
+
     checkpoint_src = models.ForeignKey('inventory.Inventory', verbose_name=_('Source checkpoint'),
                 null=True, blank=True, related_name='+')
     checkpoint_dest = models.ForeignKey('inventory.Inventory', verbose_name=_('Destination checkpoint'),
@@ -338,7 +338,7 @@ class Movement(models.Model):
             else:
                 raise ValueError(_("Item %(item)s is at %(location)s, rather than the move source location!") % \
                         dict(item=unicode(item), location=item.location))
-            
+
 
         # TODO: validate that all itemgroups of items are active
 
