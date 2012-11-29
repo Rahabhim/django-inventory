@@ -15,7 +15,7 @@ from django.forms.formsets import formset_factory
 
 from common.models import Supplier, Location
 from assets.models import ItemTemplate
-from generic_views.views import GenericBloatedListView
+from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
 from main import cart_utils
 
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, Movement
@@ -546,4 +546,43 @@ def movement_do_close(request, object_id):
 def repair_itemgroup(request):
     raise NotImplementedError
 
+class POCartOpenView(CartOpenView):
+    model=PurchaseOrder
+
+    def _action_fn(self, context):
+        if context['carts'].close_carts_by_model((PurchaseOrder, PurchaseOrderItem)):
+            self.request.session.modified = True
+        return super(POCartOpenView, self)._action_fn(context)
+
+class POItemCartOpenView(CartOpenView):
+    model=PurchaseOrderItem
+
+    def _action_fn(self, context):
+        if context['carts'].close_carts_by_model((PurchaseOrder, PurchaseOrderItem)):
+            self.request.session.modified = True
+        return super(POItemCartOpenView, self)._action_fn(context)
+
+class POIAddMainView(_ModifyCartView):
+    cart_model=PurchaseOrderItem
+
+    def _add_or_remove(self, cart, obj):
+        verb = cart.set_main_product(obj)
+        message = _("%(item)s set in %(description)s") % {'item': unicode(obj), 'description': unicode(cart.item_name)}
+        return message, verb
+
+    def get_redirect_url(self, **kwargs):
+        # always return to the PO view, no need to select a second product
+        return self.cart_object.get_cart_url()
+
+class POIAddBundledView(_ModifyCartView):
+    cart_model=PurchaseOrderItem
+
+    def _add_or_remove(self, cart, obj):
+        verb = cart.add_to_cart(obj)
+        if cart.item_template:
+            main = unicode(cart.item_template)
+        else:
+            main = cart.item_name
+        message = _("%(item)s added to bundle for %(main)s") % {'item': unicode(obj), 'main': main}
+        return message, verb
 #eof

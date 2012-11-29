@@ -107,6 +107,20 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/(?P<object_id>\d+)/add_item/$', 'purchase_order_item_create', (), 'purchase_order_item_create'),
     url(r'^purchase/order/(?P<object_id>\d+)/receive/$', 'purchase_order_receive', (), 'purchase_order_receive'),
 
+    url(r'^purchase/order/(?P<pk>\d+)/cart_open/$', views.POCartOpenView.as_view(
+                dest_model='products.ItemTemplate',
+                extra_context={'object_name':_(u'purchase order')}), 
+            name='purchaseorder_cart_open'),
+    url(r'^purchase/order/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=PurchaseOrder), 
+            name='purchaseorder_cart_close'),
+
+    url(r'^purchase/order/(?P<pk>\d+)/add_product/$', AddToCartView.as_view( \
+                cart_model=PurchaseOrder, item_model='products.ItemTemplate'), \
+            name='purchaseorder_item_add'),
+    url(r'^purchase/order/(?P<pk>\d+)/remove_product/$', RemoveFromCartView.as_view(\
+                cart_model=PurchaseOrder, item_model='products.ItemTemplate'), \
+            name='purchaseorder_item_remove'),
+
     url(r'^purchase/order/item/state/list/$', generic_list, dict({'queryset':PurchaseOrderItemStatus.objects.all()}, extra_context=dict(title =_(u'purchase order item states'))), 'purchase_order_item_state_list'),
     url(r'^purchase/order/item/state/create/$', create_object,{'model':PurchaseOrderItemStatus, 'template_name':'generic_form.html', 'extra_context':{'title':_(u'create new purchase order item state')}}, 'purchase_order_item_state_create'),
     url(r'^purchase/order/item/state/(?P<object_id>\d+)/update/$', update_object, {'model':PurchaseOrderItemStatus, 'template_name':'generic_form.html'}, 'purchase_order_item_state_update'),
@@ -115,6 +129,20 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/item/(?P<object_id>\d+)/update/$', update_object, {'form_class':PurchaseOrderItemForm, 'template_name':'generic_form.html'}, 'purchase_order_item_update'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderItem}, post_delete_redirect="purchase_order_list", extra_context=dict(object_name=_(u'purchase order item'))), 'purchase_order_item_delete'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/close/$', 'purchase_order_item_close', (), 'purchase_order_item_close'),
+
+    url(r'^purchase/order/item/(?P<pk>\d+)/cart_open/$', views.POItemCartOpenView.as_view(
+                dest_model='products.ItemTemplate',
+                extra_context={'object_name':_(u'purchase order item')}), 
+            name='purchaseorder_item_cart_open'),
+    url(r'^purchase/order/item/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=PurchaseOrderItem), 
+            name='purchaseorder_item_cart_close'),
+
+    url(r'^purchase/order/item/(?P<pk>\d+)/add_product/$', views.POIAddMainView.as_view( \
+                item_model='products.ItemTemplate'), \
+            name='purchaseorder_item_product_add'),
+    url(r'^purchase/order/item/(?P<pk>\d+)/add_bundled/$', views.POIAddBundledView.as_view( \
+                item_model='products.ItemTemplate'), \
+            name='purchaseorder_item_bundled_add'),
 
     url(r'^objects/items/destroy/$', GenericCreateView.as_view(form_class=DestroyItemsForm, 
             extra_context={'title':_(u'Items destruction')},

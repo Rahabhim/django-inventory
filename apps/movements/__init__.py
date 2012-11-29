@@ -8,6 +8,8 @@ from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseOrderItemStatus, PurchaseOrder, \
                    PurchaseOrderItem, Movement
 
+from products import template_list
+
 purchase_request_state_list = {'text':_('purchase request states'), 'view':'purchase_request_state_list', 'famfam':'pencil_go'}
 purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add'}
 purchase_request_state_update = {'text':_('edit state'), 'view':'purchase_request_state_update', 'args':'object.id', 'famfam':'pencil'}
@@ -129,5 +131,6 @@ location_src_assets = {'text': _('assets at that location'), 'view': 'location_a
             'args': dict(loc_id='object.location_src.id'), 'famfam': 'package_link'}
 register_links(['movement_cart_open',], [location_src_assets,], menu_name='after_cart_open')
 
+register_links(['purchaseorder_item_cart_open','purchaseorder_cart_open'], [template_list,], menu_name='after_cart_open')
 
 # eof

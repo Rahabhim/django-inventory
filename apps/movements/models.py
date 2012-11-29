@@ -233,6 +233,63 @@ class PurchaseOrder(models.Model):
                 new_move.items.create(item_template_id=iid)
         return True
 
+    def get_cart_name(self):
+        """ Returns the "shopping-cart" name of this model
+        """
+        return _("Purchase Order: %s") % self.name
+
+    def get_cart_itemcount(self):
+        """ Returns the number of items currently at the cart
+        """
+        return self.items.count()
+
+    @models.permalink
+    def get_cart_url(self):
+        # TODO
+        return ('purchase_order_view', [str(self.id)])
+
+    def get_cart_objcap(self, obj):
+        """ Return the state of `obj` in our cart, + the action url
+        """
+        if obj is None or not isinstance(obj, ItemTemplate):
+            # "incorrect object passed:", repr(obj)
+            return None, None
+
+        # We treat all products as not-added and allow duplicates
+        #if self.items.filter(id=obj.id).exists():
+            #state = 'added'
+            #view_name = 'purchaseorder_item_remove'
+        #else:
+        if True:
+            state = 'removed'
+            view_name = 'purchaseorder_item_add'
+
+        # prepare the url (TODO cache)
+        href = reverse(view_name, args=(str(self.id),))
+        return state, href
+
+    def add_to_cart(self, obj):
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        self.items.create(item_template=obj, received_qty=1)
+        return 'added'
+
+    def remove_from_cart(self, obj):
+        # FIXME: we may want to disable this function entirely
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        done = False
+        for item in self.items.filter(item_template=obj.id):
+            item.delete()
+            done = True
+            break
+        if not done:
+            raise ValueError(_("Product %s not in movement!") % unicode(obj))
+        self.save()
+        return 'removed'
+
 class PurchaseOrderItemStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
 
@@ -284,6 +341,89 @@ class PurchaseOrderItem(models.Model):
             return _(u'Open')
         else:
             return _(u'Closed')
+
+    def get_cart_name(self):
+        """ Returns the "shopping-cart" name of this model
+        """
+        if self.item_template:
+            main = unicode(self.item_template)
+        else:
+            main = self.item_name
+        return _("PO Item: %s") % main
+
+    def get_cart_itemcount(self):
+        """ Returns the number of items currently at the cart
+        """
+        return self.bundled_items.count()
+
+    @models.permalink
+    def get_cart_url(self):
+        # TODO
+        return ('purchase_order_update', [str(self.purchase_order.id)])
+
+    def get_cart_objcap(self, obj):
+        """ Return the state of `obj` in our cart, + the action url
+        """
+        if obj is None or not isinstance(obj, ItemTemplate):
+            # "incorrect object passed:", repr(obj)
+            return None, None
+
+        #if self.item_template and self.item_template == obj:
+        #    state = 'added'
+        #    view_name = 'purchaseorder_item_remove'
+        #if self.items.filter(id=obj.id).exists():
+            #state = 'added'
+            #view_name = 'purchaseorder_item_remove'
+        #else:
+        if not self.item_template:
+            state = 'removed'
+            view_name = 'purchaseorder_item_product_add'
+        elif self.item_template.category.is_bundle:
+            state = 'removed'
+            view_name = 'purchaseorder_item_bundled_add'
+        else:
+            return None, None
+
+        href = reverse(view_name, args=(str(self.id),))
+        return state, href
+
+    def add_to_cart(self, obj):
+        """ This will add the product to the *bundled* items
+        """
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        self.bundled_items.add(obj)
+        return 'added'
+
+    def remove_from_cart(self, obj):
+        # FIXME: we may want to disable this function entirely
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        done = False
+        if self.item_template and obj == self.item_template:
+            self.item_template = None
+            done = True
+        else:
+            for item in self.bundled_items.filter(pk=obj.id):
+                item.delete()
+                done = True
+                break
+        if not done:
+            raise ValueError(_("Product %s not in line!") % unicode(obj))
+        self.save()
+        return 'removed'
+
+    def set_main_product(self, obj):
+        """ This will set the product as the item_template
+        """
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        self.item_template = obj
+        self.save()
+        return 'added'
 
 class Movement(models.Model):
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))
