@@ -425,7 +425,7 @@ class PurchaseOrderItem(models.Model):
 
         self.item_template = obj
         self.save()
-        return 'added'
+        return 'return'
 
 class Movement(models.Model):
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))
