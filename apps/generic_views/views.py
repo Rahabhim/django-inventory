@@ -698,6 +698,9 @@ class _ModifyCartView(JSON_RPC_ResponseMixin, django_gv.RedirectView):
             item_object = self.item_model.objects.get(pk=item_pk)
             msg, verb = self._add_or_remove(self.cart_object, item_object)
             messages.success(request, msg)
+            if verb == 'return':
+                # we shall close the cart and return to previous view
+                cart_utils.remove_from_session(request, self.cart_object)
         except ObjectDoesNotExist:
             error_msg = _('Item %s could not be found.') % (kwargs.get('item', '?'),)
             messages.error(request, error_msg)
