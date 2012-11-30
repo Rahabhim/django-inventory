@@ -33,7 +33,11 @@ LOGGING = {
         'django.db.backends': {
             'handlers': ['console',],
             'level': 'INFO',
-            }
+            },
+        'permissions': {
+            'handlers': ['console',],
+            'level': 'INFO',
+            },
         }
     }
 

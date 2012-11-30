@@ -22,6 +22,7 @@ from main import cart_utils
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   InlineModelForm, DetailForm
 import settings
+import logging
 
 def add_filter(request, list_filters, **kwargs):
     """ Add list filters to form and eventually filter the queryset
@@ -552,6 +553,8 @@ class _InlineViewMixin(object):
 
 class _PermissionsMixin(object):
     need_permission = False
+    _logger = logging.getLogger('permissions')
+
     def dispatch(self, request, *args, **kwargs):
         if self.need_permission:
             npd = {}
@@ -567,6 +570,8 @@ class _PermissionsMixin(object):
             np = self.need_permission
             np = np % npd
             if not request.user.has_perm(np):
+                self._logger.warning("%s view denied %s permission to user %s",
+                        self.__class__.__name__, np, request.user.name)
                 raise PermissionDenied
         return super(_PermissionsMixin, self).dispatch(request, *args, **kwargs)
 
