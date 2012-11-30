@@ -15,7 +15,7 @@ from django.utils import simplejson
 from django.views.generic.list_detail import object_detail, object_list
 from django.views.generic.create_update import delete_object # create_object, update_object, 
 import django.views.generic as django_gv
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.forms.models import inlineformset_factory #, ModelForm
 from main import cart_utils
 
@@ -549,6 +549,26 @@ class _InlineViewMixin(object):
             return self.success_url(self.object, self.request)
         else:
             return super(_InlineViewMixin, self).get_success_url()
+
+class _PermissionsMixin(object):
+    need_permission = False
+    def dispatch(self, request, *args, **kwargs):
+        if self.need_permission:
+            npd = {}
+            model = False
+            if hasattr(self, 'model'):
+                 model= self.model
+            elif hasattr(self, 'form_class'):
+                model = self.form_class._meta.model
+            if model:
+                npd['app'] = model._meta.app_label
+                npd['Model'] = model._meta.object_name
+                npd['model'] = model._meta.module_name
+            np = self.need_permission
+            np = np % npd
+            if not request.user.has_perm(np):
+                raise PermissionDenied
+        return super(_PermissionsMixin, self).dispatch(request, *args, **kwargs)
 
 class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
