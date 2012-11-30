@@ -575,13 +575,15 @@ class _PermissionsMixin(object):
                 raise PermissionDenied
         return super(_PermissionsMixin, self).dispatch(request, *args, **kwargs)
 
-class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
+class GenericCreateView(_PermissionsMixin, _InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
     form_mode = 'create'
+    need_permission = '%(app)s.add_%(model)s'
 
-class GenericUpdateView(_InlineViewMixin, django_gv.UpdateView):
+class GenericUpdateView(_PermissionsMixin, _InlineViewMixin, django_gv.UpdateView):
     template_name = 'generic_form_fs.html'
     form_mode = 'update'
+    need_permission = '%(app)s.change_%(model)s'
 
 class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
     """ Form-based, read-only view of an object
@@ -624,8 +626,9 @@ class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
             raise Http404
         return form
 
-class _CartOpenCloseView(django_gv.detail.SingleObjectMixin, django_gv.TemplateView):
+class _CartOpenCloseView(_PermissionsMixin, django_gv.detail.SingleObjectMixin, django_gv.TemplateView):
     # TODO def get_queryset() w. callable
+    need_permission = '%(app)s.change_%(model)s'
 
     def get_context_data(self, **kwargs):
         context = super(_CartOpenCloseView, self).get_context_data(**kwargs)

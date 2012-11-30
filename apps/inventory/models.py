@@ -46,6 +46,7 @@ class Inventory(models.Model):
     class Meta:
         verbose_name = _(u'inventory')
         verbose_name_plural = _(u'inventories')
+        permissions = ( ('validate_inventory', 'Can validate an inventory'), )
 
     @models.permalink
     def get_absolute_url(self):

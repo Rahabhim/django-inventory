@@ -102,6 +102,8 @@ class PurchaseOrder(models.Model):
     class Meta:
         verbose_name = _(u'purchase order')
         verbose_name_plural = _(u'purchase orders')
+        permissions = ( ('receive_purchaseorder', 'Can receive a purchase order'),
+                ('validate_purchaseorder', 'Can validate a purchase order'), )
 
     def __unicode__(self):
         return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date)
@@ -452,6 +454,7 @@ class Movement(models.Model):
     class Meta:
         verbose_name = _("movement")
         verbose_name_plural = _("movements")
+        permissions = (('validate_movement', 'Can validate a movement'), )
 
     def do_close(self, val_user, val_date=None):
         """Check the items and set the movement as 'done'

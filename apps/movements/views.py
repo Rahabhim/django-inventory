@@ -6,7 +6,7 @@ from django.utils.translation import ugettext as _
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 #from django.contrib.contenttypes.models import ContentType
 #from django.views.generic.list_detail import object_detail, object_list
 from django.core.urlresolvers import reverse
@@ -338,6 +338,8 @@ def purchase_order_receive(request, object_id):
             dept = None
 
         if items_left and request.GET.get('do_create', False):
+            if not request.user.has_perm('movements.receive_purchaseorder'):
+                raise PermissionDenied
             lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
             lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
             ldests = None
@@ -373,6 +375,8 @@ def purchase_order_receive(request, object_id):
             # reload the request in the browser, but get rid of any "action" arguments!
             return redirect(request.path.rstrip('?'), object_id=object_id)
         elif (not items_left) and request.GET.get('do_confirm', False):
+            if not request.user.has_perm('movements.validate_purchaseorder'):
+                raise PermissionDenied
             try:
                 moves_pending = False
                 for move in purchase_order.movements.all():
@@ -534,6 +538,8 @@ class MovementListView(GenericBloatedListView):
 
 def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
+    if not request.user.has_perm('movements.validate_movement'):
+        raise PermissionDenied
     try:
         movement.do_close(request.user)
         cart_utils.remove_from_session(request, movement)
