@@ -92,7 +92,7 @@ class CartsContainer(object):
         """
         to_del = []
         for ref, ctup in self._carts.items():
-            if isinstance(ctup, model):
+            if isinstance(ctup[0], model):
                 to_del.append(ref)
 
         modified = False
