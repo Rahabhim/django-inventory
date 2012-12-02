@@ -9,6 +9,7 @@ from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseOrderItem, Movement
 
 from products import template_list
+import procurements # just to ensure their menu is loaded before this
 
 purchase_request_state_list = {'text':_('purchase request states'), 'view':'purchase_request_state_list', 'famfam':'pencil_go'}
 purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add'}
@@ -82,10 +83,7 @@ register_links(['purchase_order_item_update'], [purchase_order_item_update, purc
 register_links(['purchase_order_item_create'], [purchase_order_create], menu_name='sidebar')
 
 
-register_menu([
-    {'text':_('purchases'), 'view':'purchase_order_list', 'links':[
-        purchase_order_list, purchase_request_list,
-    ],'famfam':'basket','position':4}])
+register_submenu( 'menu_procurements', [ purchase_order_list,])
 
 movement_delete = {'text':_('delete pending movement'), 'view':'movement_delete', \
             'args':'object.id', 'famfam':'basket_delete', \

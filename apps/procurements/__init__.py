@@ -6,7 +6,7 @@ from common.api import register_links, register_menu
 from common import supplier_list
 
 register_menu([
-    {'text':_('procurements'), 'view':'contract_list', 
+    {'text':_('procurements'), 'view':'contract_list', 'id': 'menu_procurements',
             'links':[ {'text':_('delegates'), 'view':'delegate_list', 'famfam':'page_go'},
                 {'text':_('projects'), 'view':'projects_list', 'famfam':'page_go'},
                 {'text':_('contracts'), 'view':'contract_list', 'famfam':'page_go'},
