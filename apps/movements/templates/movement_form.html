@@ -39,11 +39,13 @@
         {% field_for date_val %}
     </div>
 
+    {% comment %}
     <div class="group newline">
         {% field_for stype %}
     </div>
+    {% endcomment %}
 
-    <div class="group inline">
+    <div class="group newline">
         {% field_for state %}
     </div>
 
@@ -56,6 +58,7 @@
         {% field_for note %}
     </div>
 
+    {% comment %}
     <div class="group newline">
         {% field_for checkpoint_src %}
     </div>
@@ -63,6 +66,7 @@
     <div class="group inline">
         {% field_for checkpoint_dest %}
     </div>
+    {% endcomment %}
 
     <div style="clear: both; width=100%;"> </div>
 </div>
