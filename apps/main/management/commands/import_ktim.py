@@ -408,6 +408,9 @@ class POWorker(threading.Thread):
                         name=user_id, date_act=bdl['_date_received'] or po.issue_date,
                         create_user_id=ADMIN_USER, origin=user_id)
         move.items.add(item)
+        if bdl['_contract']:
+            item.src_contract = bdl['_contract']
+            item.save()
         return po
 
 class Ref_Column_dafuq(M.Ref_Column):
