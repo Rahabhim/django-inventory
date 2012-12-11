@@ -11,6 +11,17 @@
     <a href="http://www.github.com/rosarior/django-inventory/">http://www.github.com/rosarior/django-inventory/</a><br /><br />
     </h3>
 </div>
+<div class="content">
+        <form action="{% url set_language %}" method="post">{% csrf_token %}
+            Language:
+            <select name="language">
+                {% for lang in LANGUAGES %}
+                    <option value="{{ lang.0 }}">{{ lang.1 }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="{% trans 'Go' %}" />
+        </form>
+    </div>
 {% endblock %}
 {% block footer %}
     <div id="footer">

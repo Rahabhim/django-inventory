@@ -15,6 +15,7 @@ class DepartmentType(models.Model):
 
     class Meta:
         permissions = [('admin_company', 'Can manage companies'),]
+        verbose_name = _("department type")
 
     def __unicode__(self):
         return self.name
@@ -24,10 +25,10 @@ class DepartmentType(models.Model):
         return ('company_department_type_view', [str(self.id)])
 
 class Department(models.Model):
-    name = models.CharField(max_length=128)
-    code = models.CharField(max_length=32)
-    code2 = models.CharField(max_length=32, blank=True, null=True)
-    deprecate = models.BooleanField()
+    name = models.CharField(max_length=128,verbose_name=_("name"))
+    code = models.CharField(max_length=32, verbose_name=_("code"))
+    code2 = models.CharField(max_length=32, blank=True, null=True, verbose_name=_("code 2"))
+    deprecate = models.BooleanField(verbose_name=_("deprecated"))
     dept_type = models.ForeignKey(DepartmentType, verbose_name=_('Department Type'))
     merge = models.ForeignKey('Department', verbose_name=_('Merged in'), 
             related_name='dept_merge_id', blank=True, null=True)
@@ -36,12 +37,16 @@ class Department(models.Model):
     ota_name = models.CharField(max_length=128, verbose_name=_('OTA Name'), blank=True, null=True)
     parent = models.ForeignKey('self', verbose_name=_('Parent Department'), related_name='dept_parent_id', blank=True, null=True)
     section_name = models.CharField(max_length=128, verbose_name=_('Section'), blank=True, null=True)
-    serviced_by = models.ForeignKey('self', verbose_name=_("Serviced By"), 
+    serviced_by = models.ForeignKey('self', verbose_name=_("Serviced By"),
            related_name='dept_service_id', blank=True, null=True)
+    sequence = models.ForeignKey('common.Sequence', verbose_name=_("Sequence for items"), blank=True, null=True)
 
     class Meta:
         # admin = True
+        ordering = ['name']
         permissions = [('admin_company', 'Can manage companies'),]
+        verbose_name = _("department")
+        verbose_name_plural = _("departments")
 
     def __unicode__(self):
         return self.name
@@ -49,6 +54,16 @@ class Department(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('company_department_view', [str(self.id)])
+
+    def get_sequence(self):
+        if self.deprecate or self.merge:
+            return ValueError("A deprecated or merged department cannot issue sequence IDs")
+        if self.sequence:
+            return self.sequence
+        elif self.parent:
+            return self.parent.get_sequence()
+        else:
+            raise ObjectDoesNotExist(_("No sequence for department %s") % self.name)
 
 @receiver(post_save, sender=Department, dispatch_uid='139i436')
 def post_save(sender, **kwargs):

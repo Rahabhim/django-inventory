@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 11:18+0300\n"
-"PO-Revision-Date: 2012-09-30 22:43+0300\n"
+"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"PO-Revision-Date: 2012-11-18 19:44+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: __init__.py:12
 msgid "view all inventories"
-msgstr ""
+msgstr "όλες οι απογραφές"
 
 #: __init__.py:13
 msgid "create new inventory"
@@ -37,21 +37,34 @@ msgstr "διαγραφή"
 msgid "details"
 msgstr "Λεπτομέρειες"
 
-#: __init__.py:25
+#: __init__.py:18
+msgid "open"
+msgstr "άνοιγμα"
+
+#: __init__.py:19
+msgid "close"
+msgstr "κλείσιμο"
+
+#: __init__.py:27
 msgid "template"
 msgstr "προϊόν"
 
-#: __init__.py:26
+#: __init__.py:28
 msgid "return to inventory"
-msgstr ""
+msgstr "επιστροφή στην απογραφή"
 
-#: __init__.py:43 models.py:48 urls.py:19
+#: __init__.py:45 models.py:48 urls.py:20
 msgid "inventories"
 msgstr "Απογραφές"
 
 #: models.py:17
 msgid "timedate"
-msgstr ""
+msgstr "ημερομηνία"
+
+#: models.py:18
+#, fuzzy
+msgid "action"
+msgstr "τοποθεσία"
 
 #: models.py:19
 msgid "description"
@@ -61,37 +74,79 @@ msgstr "περιγραφή"
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:39 urls.py:20
+#: models.py:39 urls.py:21
 msgid "location"
 msgstr "τοποθεσία"
 
 #: models.py:40
 msgid "date performed"
-msgstr ""
+msgstr "ημερομηνία εκτέλεσης"
 
 #: models.py:41
 msgid "date validated"
-msgstr ""
+msgstr "ημερομηνία επικύρωσης"
 
-#: models.py:47 models.py:79 urls.py:24 urls.py:29 urls.py:32 views.py:40
+#: models.py:42
+msgid "created by"
+msgstr "δημιουργήθηκε από"
+
+#: models.py:43
+#, fuzzy
+msgid "validated by"
+msgstr "ημερομηνία επικύρωσης"
+
+#: models.py:47 models.py:137 urls.py:25 urls.py:30 urls.py:33 urls.py:36
+#: views.py:40
 msgid "inventory"
-msgstr ""
+msgstr "απογραφή"
 
-#: models.py:62
+#: models.py:60
+#, fuzzy, python-format
+msgid "Inventory: %s"
+msgstr "Απογραφές"
+
+#: models.py:95 models.py:105
+#, python-format
+msgid "Incorrect object passed: %s"
+msgstr "Λάθος αντικείμενο: %s"
+
+#: models.py:98
+#, fuzzy
+msgid "Item already in inventory"
+msgstr "Νέα Απογραφή"
+
+#: models.py:112
+#, fuzzy, python-format
+msgid "Item %s not in inventory!"
+msgstr "Νέα Απογραφή"
+
+#: models.py:118
+msgid "asset"
+msgstr "εξοπλισμός"
+
+#: models.py:119 views.py:49
+msgid "quantity"
+msgstr "Ποσότητα"
+
+#: models.py:120
 msgid "item state"
-msgstr ""
+msgstr "κατάσταση"
 
-#: models.py:67 urls.py:40
+#: models.py:122
+msgid "notes"
+msgstr "σημειώσεις"
+
+#: models.py:125 urls.py:45
 #, fuzzy
 msgid "inventory item"
 msgstr "Απογραφές"
 
-#: models.py:68
+#: models.py:126
 #, fuzzy
 msgid "inventory items"
 msgstr "Απογραφές"
 
-#: urls.py:36
+#: urls.py:41
 #, fuzzy
 msgid "items"
 msgstr "προϊόν"
@@ -101,21 +156,18 @@ msgstr "προϊόν"
 msgid "current balances for inventory"
 msgstr "Νέα Απογραφή"
 
-#: views.py:49
-msgid "quantity"
-msgstr "Ποσότητα"
-
 #: views.py:64
 msgid "purchase orders from supplier"
-msgstr ""
+msgstr "εντολές προμήθειας από προμηθευτή"
 
 #: templates/report-items_per_person.html:14
 msgid "User assets report"
 msgstr ""
 
 #: templates/report-items_per_person.html:21
+#, fuzzy
 msgid "ASSET NUMBER"
-msgstr ""
+msgstr "αριθμός παγίου"
 
 #: templates/report-items_per_person.html:22
 msgid "DESCRIPTION"

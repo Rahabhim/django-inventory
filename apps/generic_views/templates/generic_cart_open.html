@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load carts %}
+{% load navigation %}
+{% block title %} :: {% blocktrans %}Opened cart on {{ object_name }}{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="content">
+    {% do_action %}
+    <div class="block">
+    {% if action_done and not action_failed %}
+        <div class="tc"><h1>{% blocktrans %}Opened cart{% endblocktrans %}</h1></div>
+        {% blocktrans %}You have selected {{ object }} for further processing.
+            Now you can go to any of the pages below and add items to it.
+        {% endblocktrans %}
+    {% else %}
+        <div class="tc"><h1>{% blocktrans %}Open cart{% endblocktrans %}</h1></div>
+        {% blocktrans %} The cart could not be opened. {{ action_failed }}
+        {% endblocktrans %}
+    {% endif %}
+
+        {% get_object_navigation_links "after_cart_open" %}
+        {% if object_navigation_links %}
+            <ul class="subtasks navigation">
+                {% with 'true' as as_li %}
+                    {% include 'generic_navigation.html' %}
+                {% endwith %}
+            </ul>
+        {% endif %}
+ 
+    </div>
+</div>
+{% endblock %}

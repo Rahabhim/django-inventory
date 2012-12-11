@@ -258,7 +258,7 @@ input.checkbox {
   float: right;
 }
 
-.form label.label, .form input.text_field, .form textarea.text_area {
+.form label.label, .form div.group label, .form input.text_field, .form textarea.text_area {
   font-size: 1.2em;
   padding: 1px 0;
   margin: 0;
@@ -276,13 +276,21 @@ input.checkbox {
   line-height: 1.5em;
 }
 
-.form label.label {
+.form label.label, .form div.group label {
   display: block;
   padding-bottom: 2px;  
   font-weight: bold;
 }
 
-.form div.fieldWithErrors label.label {
+.form div.group label {
+  font-style: italic;
+}
+
+.form div.group label.required {
+  font-style: normal;
+}
+
+.form div.fieldWithErrors label.label, .form div.group div.fieldWithErrors label {
   display: inline;
 }
 
@@ -294,6 +302,17 @@ input.checkbox {
   width: 100%;
   border-width: 1px;
   border-style: solid;
+}
+
+.form div.group.inline {
+    float: left;
+    margin-right: 10px;
+}
+
+.form div.group.newline {
+    float: left;
+    clear: left;
+    margin-right: 10px;
 }
 
 /* lists */

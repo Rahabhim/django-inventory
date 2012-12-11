@@ -59,20 +59,52 @@
 
     <div class="content">
    {% if more_items_count %}
-	<div id="confirm_form">
+	<div id="create_moves_form">
 	<form method="GET" >
 	  <p>{% trans 'There are still items received that have not been acknowledged in a movement.' %}</p>
-          <p>{% trans 'Do you want a new movement for these received items?' %}
+          <p>{% trans 'Do you want a new movement for these received items?' %}</p>
+            {% if ask_location %}
+            <div class="group">
+                <span id="id_location_ask_wrapper">
+                <input type="text" name="location_ask_text" id="id_location_ask_text" value=""
+                        class="text_field ui-autocomplete-input" maxlength="255" 
+                        autocomplete="off" role="textbox" aria-autocomplete="list" 
+                        aria-haspopup="true">
+                <input type="hidden" name="location_ask" id="id_location_ask" value="">
+                <div id="id_location_ask_on_deck" class="results_on_deck"><div></div></div>
+<script type="text/javascript">//<![CDATA[
+jQuery(document).ready(function($){
+        addAutoComplete("id_location_ask", function(html_id) {
+                $("#"+html_id).autocompleteselect({"min_length": 1, "source": "/ajax_select/ajax_lookup/location"});
+        });
+});//]]>
+</script>
+                </span>
+            {% endif %}
 	  <div class="group navform wat-cf">
             <input type="hidden" name="do_create" value="1" />
             <button class="button" type="submit">
                 <img src="{{ MEDIA_URL }}web_theme_media/images/icons/tick.png" 
 			alt="{% trans 'Create Movement' %}" />{% trans 'Create' %}
             </button>
-	  </p>
 	  </div>
 	</form>
 	</div>
+    {% else %} {# no pending items, we may confirm #}
+        {% if object.active %}
+        <div id="confirm_form">
+        <form method="GET" >
+          <p>{% blocktrans %}Do you want to mark all movements as done and close this Purchase Order? {% endblocktrans %}</p>
+          <div class="group navform wat-cf">
+            <input type="hidden" name="do_confirm" value="1" />
+            <button class="button" type="submit">
+                <img src="{{ MEDIA_URL }}web_theme_media/images/icons/tick.png" 
+                        alt="{% trans 'Confirm Order' %}" />{% trans 'Confirm' %}
+            </button>
+          </div>
+        </form>
+        </div>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block form_layout %}
+
+    <div class="group inline">
+        {% field_for user_id %}
+    </div>
+
+    <div class="group inline">
+        {% field_for issue_date %}
+    </div>
+
+    <div class="group newline">
+        {% field_for procurement %}
+    </div>
+
+    <div class="group inline">
+        {% field_for supplier %}
+    </div>
+
+    {% comment %}
+    <div class="group newline">
+        {% field_for purchase_request%}
+    </div>
+
+    <div class="group newline">
+        {% field_for required_date %}
+    </div>
+    <div class="group inline">
+        {% field_for status read_only %}
+    </div>
+    {% endcomment %}
+
+    <div style="clear: both; width=100%;"> </div>
+    {% for formset in formsets %}
+        {% if formset.prefix == 'items' %}
+            {% include 'po_items_formset.html' %}
+        {% else %} {# generic #}
+            {% include 'formset_in_fieldset.html' %}
+        {% endif %}
+    {% endfor %}
+
+    {% for subtemplate in subtemplates_dict %}
+    {% with title=subtemplate.title extra_columns=subtemplate.extra_columns object_list=subtemplate.object_list main_object=subtemplate.main_object hide_object=subtemplate.hide_object  %}
+        {% include subtemplate.name %}
+    {% endwith %}
+    {% endfor %}
+
+    <div class="group">
+        {% field_for notes %}
+    </div>
+
+{% endblock %}

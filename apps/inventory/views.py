@@ -7,7 +7,7 @@ from django.contrib import messages
 # from django.contrib.contenttypes.models import ContentType
 from django.views.generic.list_detail import object_detail, object_list
 # from django.core.urlresolvers import reverse
-
+from django.db.models import Q, Count
 #from generic_views.views import generic_assign_remove, generic_list
 
 #from photos.views import generic_photos
@@ -65,7 +65,65 @@ def supplier_purchase_orders(request, object_id):
         ),
     )
 
+def inventory_items_compare(request, object_id):
+    inventory = get_object_or_404(Inventory, pk=object_id)
+    form = InventoryForm_view(instance=inventory)
+    subtemplates_dict = []
+    
+    if request.method == 'POST':
+        raise NotImplementedError
+    else:
+        offset = request.GET.get('offset', 0)
+        limit = request.GET.get('limit', 10)
+        pending_only = request.GET.get('pending_only', False)
+        
+        items_in_inventory = [ ii.asset_id for ii in inventory.items.all()]
+        res = []
+        items_base = Item.objects.filter(Q(pk__in=items_in_inventory)|Q(location=inventory.location)).order_by('id')
 
+        items_in_inventory = set(items_in_inventory)
+        have_pending = False
+        found = True
+        while found and len(res) < limit:
+            found = False
+            for item in items_base[offset:offset+limit]:
+                found = True
+                if item.id not in items_in_inventory:
+                    res.append((item, 'new'))
+                    have_pending = True
+                elif item.location_id != inventory.location_id:
+                    res.append((item, 'missing'))
+                    have_pending = True
+                elif not pending_only:
+                    res.append((item, 'ok'))
+            offset += limit
+        if res:
+            subtemplates_dict.append({ 'name':'inventory_items_compare.html',
+                            'object_list': res, })
+
+        if not (have_pending or pending_only):
+            # We must search the full set about wrong items
+            print "compute again"
+            items_mismatch = Item.objects.filter( \
+                    (Q(pk__in=items_in_inventory) & ~Q(location=inventory.location)) | \
+                    (Q(location=inventory.location) & ~Q(pk__in=items_in_inventory)) ).exists()
+
+            print "items mismatch", items_mismatch
+            if items_mismatch:
+                have_pending = True
+
+        if have_pending:
+            subtemplates_dict.append({'name': 'inventory_compare_have_more.html'})
+        else:
+            subtemplates_dict.append({'name': 'inventory_compare_success.html'})
+
+    return render_to_response('inventory_compare_details.html', {
+            'object_name':_(u'inventory'),
+            'object':inventory,
+            'form':form, 'form_mode': 'details',
+            'subtemplates_dict': subtemplates_dict,
+            },
+        context_instance=RequestContext(request))
 '''
 def item_log_list(request, object_id):
     item = Item.objects_passthru.get(pk=object_id)

@@ -6,12 +6,13 @@ from django.views.generic.create_update import create_object, update_object
 from django.db.models import Q
 
 from generic_views.views import generic_delete, generic_list, generic_detail, \
-                GenericCreateView, GenericUpdateView
+                GenericCreateView, GenericUpdateView, \
+                CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
                    PurchaseOrderItemStatus, PurchaseOrder, \
-                   PurchaseOrderItem, Movement
+                   PurchaseOrderItem, Movement, Supplier
 
 from movements import purchase_request_state_filter, \
                       purchase_order_state_filter
@@ -22,25 +23,18 @@ from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm,
         DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
         MovementForm, MovementForm_view, MovementForm_update_po
 
-from company.models import Department
-from company.lookups import _department_filter_q
+from procurements.models import Contract
 
+from company import make_mv_location
+from main import cart_utils
 import views
 
 state_filter = {'name':'state', 'title':_(u'state'), 
             'choices':'movements.Movement.state' , 'destination':'state'}
 
-stype_filter = {'name':'stype', 'title':_(u'stype'), 
+stype_filter = {'name':'stype', 'title':_(u'type'), 
             'choices':'movements.Movement.stype' , 'destination':'stype'}
 
-def make_mv_location(destination):
-    """ Constructs the filter clojure for a destination column
-    """
-    dept_col = destination + '__department__in'
-    dept_col2 = destination + '__department__isnull'
-    lname_col = destination + '__name__icontains'
-    return lambda q: Q(**{dept_col: Department.objects.filter(_department_filter_q(q))}) | \
-                    Q(**{dept_col2:True, lname_col: q})
 
 location_src_filter = {'name': 'location_src', 'title': _('Source location'), 
             'destination': make_mv_location('location_src')}
@@ -48,6 +42,24 @@ location_src_filter = {'name': 'location_src', 'title': _('Source location'),
 location_dest_filter = {'name': 'location_dest', 'title': _('Destination location'), 
             'destination': make_mv_location('location_dest')}
 
+#def contract_filter_queryset(form, parent, parent_queryset):
+#    return Contract.objects.filter(id__in=parent_queryset.order_by('procurement__id').values('procurement'))
+
+contract_filter = {'name': 'contract', 'title':_(u'Contract'), 'lookup_channel': 'contracts',
+            'destination': 'procurement'}
+
+def supplier_filter_queryset(form, parent, parent_queryset):
+    return Supplier.objects.filter(id__in=parent_queryset.order_by('supplier__id').values('supplier'))
+
+supplier_filter = {'name': 'supplier', 'title':_(u'Supplier'),
+            'queryset': supplier_filter_queryset, 'destination': 'supplier'}
+
+po_active_filter = {'name': 'active', 'title': _(u'Active'),
+            'choices': (('', _('(is active?)')), ('1', _('Active')), ('0', _('Closed')) ), 
+            'destination': lambda q: Q(active=bool(q == '1')) }
+def open_move_as_cart(obj, request):
+    cart_utils.add_cart_to_session(obj, request)
+    return reverse('location_assets', kwargs=dict(loc_id=obj.location_src.id))
 
 urlpatterns = patterns('movements.views',
     url(r'^purchase/request/state/list/$', generic_list, dict({'queryset':PurchaseRequestStatus.objects.all()}, extra_context=dict(title =_(u'purchase request states'))), 'purchase_request_state_list'),
@@ -73,12 +85,20 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/state/(?P<object_id>\d+)/update/$', update_object, {'model':PurchaseOrderStatus, 'template_name':'generic_form.html'}, 'purchase_order_state_update'),
     url(r'^purchase/order/state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderStatus}, post_delete_redirect="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), 'purchase_order_state_delete'),
 
-    url(r'^purchase/order/list/$', generic_list, dict({'queryset':PurchaseOrder.objects.all(), 'list_filters':[purchase_order_state_filter]}, extra_context=dict(title =_(u'purchase orders'), extra_columns = [{'name':_(u'Active'), 'attribute': 'fmt_active'}])), 'purchase_order_list'),
+    url(r'^purchase/order/list/$', views.PurchaseOrderListView.as_view( \
+                list_filters=[po_active_filter, purchase_order_state_filter, contract_filter, supplier_filter]),
+            name='purchase_order_list'),
+    url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
+                queryset=PurchaseOrder.objects.filter(active=True)), 
+            name='purchase_order_pending_list'),
+
     url(r'^purchase/order/(?P<object_id>\d+)/$', 'purchase_order_view', (), 'purchase_order_view'),
     url(r'^purchase/order/create/$', GenericCreateView.as_view(form_class=PurchaseOrderForm, 
+            template_name='purchase_order_form.html',
             inline_fields={'items': PurchaseOrderItemForm_inline},
             extra_context={'title':_(u'create new purchase order')}), name='purchase_order_create'),
-    url(r'^purchase/order/(?P<pk>\d+)/update/$',GenericUpdateView.as_view(form_class=PurchaseOrderForm, 
+    url(r'^purchase/order/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(form_class=PurchaseOrderForm, 
+            template_name='purchase_order_form.html',
             inline_fields={'items': PurchaseOrderItemForm_inline},
             extra_context={'title':_(u'update purchase order')}) , name='purchase_order_update'),
     url(r'^purchase/order/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrder}, post_delete_redirect="purchase_order_list", extra_context=dict(object_name=_(u'purchase order'))), 'purchase_order_delete'),
@@ -86,6 +106,20 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/(?P<object_id>\d+)/open/$', 'purchase_order_open', (), 'purchase_order_open'),
     url(r'^purchase/order/(?P<object_id>\d+)/add_item/$', 'purchase_order_item_create', (), 'purchase_order_item_create'),
     url(r'^purchase/order/(?P<object_id>\d+)/receive/$', 'purchase_order_receive', (), 'purchase_order_receive'),
+
+    url(r'^purchase/order/(?P<pk>\d+)/cart_open/$', views.POCartOpenView.as_view(
+                dest_model='products.ItemTemplate',
+                extra_context={'object_name':_(u'purchase order')}), 
+            name='purchaseorder_cart_open'),
+    url(r'^purchase/order/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=PurchaseOrder), 
+            name='purchaseorder_cart_close'),
+
+    url(r'^purchase/order/(?P<pk>\d+)/add_product/$', AddToCartView.as_view( \
+                cart_model=PurchaseOrder, item_model='products.ItemTemplate'), \
+            name='purchaseorder_item_add'),
+    url(r'^purchase/order/(?P<pk>\d+)/remove_product/$', RemoveFromCartView.as_view(\
+                cart_model=PurchaseOrder, item_model='products.ItemTemplate'), \
+            name='purchaseorder_item_remove'),
 
     url(r'^purchase/order/item/state/list/$', generic_list, dict({'queryset':PurchaseOrderItemStatus.objects.all()}, extra_context=dict(title =_(u'purchase order item states'))), 'purchase_order_item_state_list'),
     url(r'^purchase/order/item/state/create/$', create_object,{'model':PurchaseOrderItemStatus, 'template_name':'generic_form.html', 'extra_context':{'title':_(u'create new purchase order item state')}}, 'purchase_order_item_state_create'),
@@ -96,33 +130,57 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/item/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderItem}, post_delete_redirect="purchase_order_list", extra_context=dict(object_name=_(u'purchase order item'))), 'purchase_order_item_delete'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/close/$', 'purchase_order_item_close', (), 'purchase_order_item_close'),
 
+    url(r'^purchase/order/item/(?P<pk>\d+)/cart_open/$', views.POItemCartOpenView.as_view(
+                dest_model='products.ItemTemplate',
+                extra_context={'object_name':_(u'purchase order item')}), 
+            name='purchaseorder_item_cart_open'),
+    url(r'^purchase/order/item/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=PurchaseOrderItem), 
+            name='purchaseorder_item_cart_close'),
+
+    url(r'^purchase/order/item/(?P<pk>\d+)/add_product/$', views.POIAddMainView.as_view( \
+                item_model='products.ItemTemplate'), \
+            name='purchaseorder_item_product_add'),
+    url(r'^purchase/order/item/(?P<pk>\d+)/add_bundled/$', views.POIAddBundledView.as_view( \
+                item_model='products.ItemTemplate'), \
+            name='purchaseorder_item_bundled_add'),
+
     url(r'^objects/items/destroy/$', GenericCreateView.as_view(form_class=DestroyItemsForm, 
-            extra_context={'title':_(u'Items destruction')}), name='destroy_items'),
+            extra_context={'title':_(u'Items destruction')},
+            success_url=open_move_as_cart),
+        name='destroy_items'),
 
     url(r'^objects/items/lose/$', GenericCreateView.as_view(form_class=LoseItemsForm, 
-            extra_context={'title':_(u'Lost Items')}), name='lose_items'),
+            extra_context={'title':_(u'Lost Items')},
+            success_url=open_move_as_cart),
+        name='lose_items'),
 
     url(r'^objects/items/move/$', GenericCreateView.as_view(form_class=MoveItemsForm, 
-            extra_context={'title':_(u'Items movement')}), name='move_items'),
+            template_name="movement_form.html",
+            extra_context={'title':_(u'Items movement')},
+            success_url=open_move_as_cart),
+        name='move_items'),
 
-    url(r'^objects/moves/list/$', generic_list,
-            dict(queryset=Movement.objects.all(),
-                list_filters=[state_filter, stype_filter, location_src_filter, location_dest_filter],
-                extra_context=dict(title =_(u'movements'),
-                    extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
-                            {'name':_(u'state'), 'attribute': 'get_state_display'},
-                            {'name':_(u'type'), 'attribute': 'get_stype_display'}])),
-            'movements_list'),
+    url(r'^objects/moves/list/$', views.MovementListView.as_view( \
+                    list_filters=[state_filter, stype_filter, \
+                                location_src_filter, location_dest_filter],),
+            name='movements_list'),
+    url(r'^objects/moves/pending_list/$', views.MovementListView.as_view( \
+                    queryset=Movement.objects.filter(state='draft'),
+                    list_filters=[ stype_filter, \
+                                location_src_filter, location_dest_filter],),
+            name='movements_pending_list'),
     url(r'^objects/moves/(?P<object_id>\d+)/$', generic_detail,
             dict(form_class=MovementForm_view,
+                template_name='movement_form.html',
                 queryset=Movement.objects.all(),
                 extra_context={'object_name':_(u'movement'), },
                 #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
                 ),
             'movement_view'),
     url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
+                template_name="movement_form.html",
                 form_class=MovementForm_update_po,
-                success_url=lambda obj: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
+                success_url=lambda obj, *a: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
                 extra_context={'object_name':_(u'movement')}
             ),
             name='movement_update_po'),
@@ -130,6 +188,23 @@ urlpatterns = patterns('movements.views',
     url(r'^objects/moves/(?P<object_id>\d+)/close/$', 'movement_do_close',
             name='movement_do_close'),
 
+    url(r'^objects/moves/(?P<pk>\d+)/cart_open/$', CartOpenView.as_view(
+                model=Movement, dest_model='assets.Item',
+                extra_context={'object_name':_(u'movement')}), 
+            name='movement_cart_open'),
+    url(r'^objects/moves/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=Movement), 
+            name='movement_cart_close'),
+
+    url(r'^objects/moves/(?P<pk>\d+)/add_item/$', AddToCartView.as_view( \
+                cart_model=Movement, item_model='assets.Item'), \
+            name='movement_item_add'),
+    url(r'^objects/moves/(?P<pk>\d+)/remove_item/$', RemoveFromCartView.as_view(\
+                cart_model=Movement, item_model='assets.Item'), \
+            name='movement_item_remove'),
+
+    url(r'^objects/moves/(?P<object_id>\d+)/delete/$', generic_delete, 
+            dict(model=Movement, post_delete_redirect="movements_pending_list", 
+                extra_context=dict(object_name=_(u'Movement'))), name='movement_delete'),
 )
 
 

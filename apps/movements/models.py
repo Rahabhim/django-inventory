@@ -1,13 +1,14 @@
 # -*- encoding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 
 from common.models import Supplier, Location
 from assets.models import Item, ItemTemplate
 
 from dynamic_search.api import register
 import datetime
-
+import logging
 
 class PurchaseRequestStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
@@ -88,7 +89,7 @@ class PurchaseOrderStatus(models.Model):
 class PurchaseOrder(models.Model):
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
     purchase_request = models.ForeignKey(PurchaseRequest, null=True, blank=True, verbose_name=_(u'purchase request'))
-    procurement = models.ForeignKey('procurements.Contract', null=True, blank=True)
+    procurement = models.ForeignKey('procurements.Contract', null=True, blank=True, verbose_name=_("procurement contract"))
     create_user = models.ForeignKey('auth.User', related_name='+')
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
     supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'))
@@ -101,6 +102,8 @@ class PurchaseOrder(models.Model):
     class Meta:
         verbose_name = _(u'purchase order')
         verbose_name_plural = _(u'purchase orders')
+        permissions = ( ('receive_purchaseorder', 'Can receive a purchase order'),
+                ('validate_purchaseorder', 'Can validate a purchase order'), )
 
     def __unicode__(self):
         return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date)
@@ -117,24 +120,29 @@ class PurchaseOrder(models.Model):
 
     def calc_unmoved_items(self):
         """Calculate items mentioned in this PO, prepare for a movement
-        
+
             @return a dict of item_template.id: (qty, serials) for those left
         """
         po_items = {} # sets of serial numbers
         po_items_qty = {} # counters of quantities
-        
+        po_bundled_qty = {} # counters of quantities for bundled items
+        logger = logging.getLogger('movements.PurchaseOrder.calc')
+
         # 1st step: fill dicts with the things we've ordered
         for item in self.items.all():
             if not item.received_qty:
                 continue
+
+            if not item.item_template_id:
+                raise ValueError(_('Item template for item "%s" has not been assigned. Cannot continue.'), item.item_name)
             serials = []
             for s in item.serial_nos.split(','):
                 s = s.strip()
                 if s:
                     serials.append(s)
             if item.received_qty < len(serials):
-                raise ValueError(_("You have given %d serials, but marked only %d received items. Please fix either of those") % \
-                        (len(serials), item.received_qty))
+                raise ValueError(_("You have given %(slen)d serials, but marked only %(received)d received items. Please fix either of those") % \
+                        dict(slen=len(serials), received=item.received_qty))
             iid = item.item_template_id
             old_serials = po_items.setdefault(iid, set())
             assert not old_serials.intersection(serials), \
@@ -142,6 +150,8 @@ class PurchaseOrder(models.Model):
                         ','.join(old_serials.intersection(serials))
             old_serials.update(serials)
             po_items_qty[iid] = po_items_qty.get(iid, 0) + item.received_qty - len(serials)
+            for bid in item.bundled_items.all():
+                po_bundled_qty[bid.id] = po_bundled_qty.get(bid.id, 0) + item.received_qty
 
         # 2st step: remove from dicts those items who are already in movements
         #           linked to this one
@@ -153,17 +163,26 @@ class PurchaseOrder(models.Model):
                     raise ValueError("Zero or negative quantity found for asset #%d" % item.id)
                 iset = po_items.get(item.item_template_id, set())
                 iqty = po_items_qty.get(item.item_template_id, 0)
-                
+                bqty = po_bundled_qty.get(item.item_template_id, 0)
+
+                logger.debug("item %s start: %d, %d, %s", item, iqty, bqty, iset)
                 if iset and item.serial_number and item.serial_number in iset:
-                    iset.pop(item.serial_number)
+                    iset.remove(item.serial_number)
                 elif iqty:
                     if item.qty > iqty:
                         iqty = 0
                     else:
                         iqty -= item.qty
                     po_items_qty[item.item_template_id] = iqty
+                elif bqty:
+                    if item.qty > bqty:
+                        bqty = 0
+                    else:
+                        bqty -= item.qty
+                    po_bundled_qty[item.item_template_id] = bqty
                 else:
                     # Item of movement is not in PO list, iz normal.
+                    logger.debug("item %s not in po %d, %d, %s", item, iqty, bqty, iset)
                     continue
 
         # 3rd step: prepare output dictionary
@@ -179,23 +198,99 @@ class PurchaseOrder(models.Model):
             else:
                 ks = set()
             out[k] = (v, ks)
-        
-        print "Have left:", out
+
+        for k, v in po_bundled_qty.items():
+            if not v: continue
+            out[(k,1)] = (v, set())
+        logger.debug("Have left: %r", out)
         return out
 
     def fill_out_movement(self, cunmoved, new_move):
         """ fill the supplied movement with [new] items for those of calc_unmoved_items()
         """
         assert cunmoved
+        bundled = []
         for iid, two in cunmoved.items():
             qty, serials = two
+            if isinstance(iid, tuple):
+                assert iid[1] == 1, "Strange index: %r" % iid
+                assert not serials, "Serials in bundle? %r" % serials
+                bundled.append((iid[0], qty))
+                continue
             for s in serials:
                 new_item, c = Item.objects.get_or_create(item_template_id=iid, serial_number=s)
                 new_move.items.add(new_item) #FIXME
             for i in range(qty):
                 # create individual items of item.qty=1
                 new_move.items.create(item_template_id=iid)
-        
+        return bundled
+
+    def fill_out_bundle_move(self, bundled, new_move):
+        """ fill the supplied movement with [new] bundled items, from fill_out_movement()
+        """
+        assert bundled
+        for iid, qty in bundled:
+            for i in range(qty):
+                # create individual items of item.qty=1
+                new_move.items.create(item_template_id=iid)
+        return True
+
+    def get_cart_name(self):
+        """ Returns the "shopping-cart" name of this model
+        """
+        return _("Purchase Order: %s") % self.name
+
+    def get_cart_itemcount(self):
+        """ Returns the number of items currently at the cart
+        """
+        return self.items.count()
+
+    @models.permalink
+    def get_cart_url(self):
+        # TODO
+        return ('purchase_order_view', [str(self.id)])
+
+    def get_cart_objcap(self, obj):
+        """ Return the state of `obj` in our cart, + the action url
+        """
+        if obj is None or not isinstance(obj, ItemTemplate):
+            # "incorrect object passed:", repr(obj)
+            return None, None
+
+        # We treat all products as not-added and allow duplicates
+        #if self.items.filter(id=obj.id).exists():
+            #state = 'added'
+            #view_name = 'purchaseorder_item_remove'
+        #else:
+        if True:
+            state = 'removed'
+            view_name = 'purchaseorder_item_add'
+
+        # prepare the url (TODO cache)
+        href = reverse(view_name, args=(str(self.id),))
+        return state, href
+
+    def add_to_cart(self, obj):
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        self.items.create(item_template=obj, received_qty=1)
+        return 'added'
+
+    def remove_from_cart(self, obj):
+        # FIXME: we may want to disable this function entirely
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        done = False
+        for item in self.items.filter(item_template=obj.id):
+            item.delete()
+            done = True
+            break
+        if not done:
+            raise ValueError(_("Product %s not in movement!") % unicode(obj))
+        self.save()
+        return 'removed'
 
 class PurchaseOrderItemStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
@@ -214,14 +309,17 @@ class PurchaseOrderItemStatus(models.Model):
 
 class PurchaseOrderItem(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'), related_name='items')
-    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'))
-    status = models.ForeignKey(PurchaseRequestStatus, null=True, blank=True, verbose_name=_(u'status'))
+    item_name = models.CharField(max_length=128, null=True, blank=True,
+                verbose_name=_(u"Item description"), ) # help_text=_("Fill this in before the product can be assigned")
+    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'), null=True, blank=True)
     agreed_price = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name=_(u'agreed price'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     status = models.ForeignKey(PurchaseOrderItemStatus, null=True, blank=True, verbose_name=_(u'status'))
     qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
     received_qty = models.PositiveIntegerField(default=0, null=True, blank=True, verbose_name=_(u'received'))
     serial_nos = models.CharField(max_length=512, verbose_name=_(u"Serial Numbers"), blank=True)
+    bundled_items = models.ManyToManyField(ItemTemplate, verbose_name=_("bundled items"),
+                null=True, blank=True, related_name='+')
 
     class Meta:
         verbose_name = _(u'purchase order item')
@@ -246,29 +344,117 @@ class PurchaseOrderItem(models.Model):
         else:
             return _(u'Closed')
 
+    def get_cart_name(self):
+        """ Returns the "shopping-cart" name of this model
+        """
+        if self.item_template:
+            main = unicode(self.item_template)
+        else:
+            main = self.item_name
+        return _("PO Item: %s") % main
+
+    def get_cart_itemcount(self):
+        """ Returns the number of items currently at the cart
+        """
+        return self.bundled_items.count()
+
+    @models.permalink
+    def get_cart_url(self):
+        # TODO
+        return ('purchase_order_update', [str(self.purchase_order.id)])
+
+    def get_cart_objcap(self, obj):
+        """ Return the state of `obj` in our cart, + the action url
+        """
+        if obj is None or not isinstance(obj, ItemTemplate):
+            # "incorrect object passed:", repr(obj)
+            return None, None
+
+        #if self.item_template and self.item_template == obj:
+        #    state = 'added'
+        #    view_name = 'purchaseorder_item_remove'
+        #if self.items.filter(id=obj.id).exists():
+            #state = 'added'
+            #view_name = 'purchaseorder_item_remove'
+        #else:
+        if not self.item_template:
+            state = 'removed'
+            view_name = 'purchaseorder_item_product_add'
+        elif self.item_template.category.is_bundle:
+            state = 'removed'
+            view_name = 'purchaseorder_item_bundled_add'
+        else:
+            return None, None
+
+        href = reverse(view_name, args=(str(self.id),))
+        return state, href
+
+    def add_to_cart(self, obj):
+        """ This will add the product to the *bundled* items
+        """
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        self.bundled_items.add(obj)
+        return 'added'
+
+    def remove_from_cart(self, obj):
+        # FIXME: we may want to disable this function entirely
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        done = False
+        if self.item_template and obj == self.item_template:
+            self.item_template = None
+            done = True
+        else:
+            for item in self.bundled_items.filter(pk=obj.id):
+                item.delete()
+                done = True
+                break
+        if not done:
+            raise ValueError(_("Product %s not in line!") % unicode(obj))
+        self.save()
+        return 'removed'
+
+    def set_main_product(self, obj):
+        """ This will set the product as the item_template
+        """
+        if obj is None or not isinstance(obj, ItemTemplate):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        self.item_template = obj
+        self.save()
+        return 'return'
+
 class Movement(models.Model):
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
-    create_user = models.ForeignKey('auth.User', related_name='+')
-    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+')
-    
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_('created by'))
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('validated by'))
+
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
-    state = models.CharField(max_length=16, default='draft', choices=[('draft', 'Draft'), ('done', 'Done')])
-    stype = models.CharField(max_length=16, choices=[('in', 'Incoming'),('out',' Outgoing'), 
-                ('internal', 'Internal'), ('other', 'Other')], verbose_name=_('type'))
+    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('done', _('Done'))])
+    stype = models.CharField(max_length=16, choices=[('in', _('Incoming')),('out', _('Outgoing')),
+                ('internal', _('Internal')), ('other', _('Other'))], verbose_name=_('type'))
     origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
     note = models.TextField(verbose_name=_('Notes'), blank=True)
-    location_src = models.ForeignKey(Location, related_name='location_src')
-    location_dest = models.ForeignKey(Location, related_name='location_dest')
+    location_src = models.ForeignKey(Location, related_name='location_src', verbose_name=_("source location"))
+    location_dest = models.ForeignKey(Location, related_name='location_dest', verbose_name=_("destination location"))
     items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='movements', blank=True)
     # limit_choices_to these at location_src
-    
+
     checkpoint_src = models.ForeignKey('inventory.Inventory', verbose_name=_('Source checkpoint'),
                 null=True, blank=True, related_name='+')
     checkpoint_dest = models.ForeignKey('inventory.Inventory', verbose_name=_('Destination checkpoint'),
                 null=True, blank=True, related_name='+')
 
     purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements')
+
+    class Meta:
+        verbose_name = _("movement")
+        verbose_name_plural = _("movements")
+        permissions = (('validate_movement', 'Can validate a movement'), )
 
     def do_close(self, val_user, val_date=None):
         """Check the items and set the movement as 'done'
@@ -281,7 +467,7 @@ class Movement(models.Model):
             val_date = datetime.date.today()
 
         if self.state != 'draft':
-            raise ValueError(_("Cannot close movement %s (id: %s) because it is not in draft state") % (self.name, self.id))
+            raise ValueError(_("Cannot close movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
         if self.validate_user:
             raise ValueError(_("Cannot close movement because it seems already validated!"))
 
@@ -293,11 +479,14 @@ class Movement(models.Model):
                 # Bundled items can come from None, end up in 'bundles'
                 pass
             else:
-                raise ValueError(_("Item %s is at %s, rather than the move source location!") % \
-                        (unicode(item), item.location))
+                raise ValueError(_("Item %(item)s is at %(location)s, rather than the move source location!") % \
+                        dict(item=unicode(item), location=item.location))
+
 
         # TODO: validate that all itemgroups of items are active
 
+        if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
+            all_items.update(src_contract=self.purchase_order.procurement)
         # everything seems OK by now...
         all_items.update(location=self.location_dest)
         self.validate_user = val_user
@@ -311,8 +500,75 @@ class Movement(models.Model):
         return ('movement_view', [str(self.id)])
 
     def __unicode__(self):
-        return _(u'%s from %s to %s') % (self.name or self.origin or _('Move'), \
-                    self.location_src, self.location_dest)
+        try:
+            location_src = self.location_src
+            location_dest = self.location_dest
+        except Exception:
+            location_src = '?'
+            location_dest = '?'
+        return _(u'%(name)s from %(src)s to %(dest)s') % {'name': self.name or self.origin or _('Move'), \
+                    'src': location_src, 'dest': location_dest }
+
+    def get_cart_name(self):
+        """ Returns the "shopping-cart" name of this model
+        """
+        # TODO by type
+        return _("Movement: %s") % self.name
+
+    def get_cart_itemcount(self):
+        """ Returns the number of items currently at the cart
+        """
+        return self.items.count()
+
+    @models.permalink
+    def get_cart_url(self):
+        # TODO
+        return ('movement_view', [str(self.id)])
+
+    def get_cart_objcap(self, obj):
+        """ Return the state of `obj` in our cart, + the action url
+        """
+        if obj is None or not isinstance(obj, Item):
+            # "incorrect object passed:", repr(obj)
+            return None, None
+
+        if self.items.filter(id=obj.id).exists():
+            state = 'added'
+            view_name = 'movement_item_remove'
+        else:
+            if obj.location == self.location_src:
+                state = 'removed'
+                view_name = 'movement_item_add'
+            else:
+                # "wrong location"
+                return False, None
+
+        # prepare the url (TODO cache)
+        href = reverse(view_name, args=(str(self.id),))
+        return state, href
+
+    def add_to_cart(self, obj):
+        if obj is None or not isinstance(obj, Item):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        if self.items.filter(id=obj.id).exists():
+            raise ValueError(_("Item already in movement"))
+
+        self.items.add(obj)
+        return 'added'
+
+    def remove_from_cart(self, obj):
+        if obj is None or not isinstance(obj, Item):
+            raise TypeError(_("Incorrect object passed: %s") % repr(obj))
+
+        done = False
+        for item in self.items.filter(id=obj.id):
+            item.delete()
+            done = True
+        if not done:
+            raise ValueError(_("Item %s not in movement!") % unicode(obj))
+        self.save()
+        return 'removed'
 
 #class MovementLine(models.Model):
     #movement = models.ForeignKey(Movement)

@@ -10,6 +10,7 @@ from ajax_select.fields import AutoCompleteSelectField
 import types
 
 import settings
+from tree_field import ModelTreeChoiceField
 
 def return_attrib(obj, attrib, arguments=None):
     try:
@@ -63,13 +64,18 @@ class DetailSelectMultiple(forms.widgets.SelectMultiple):
 
 class DetailForeignWidget(forms.widgets.Widget):
     """A widget displaying read-only values of ForeignKey and ManyToMany fields
-    
+
         Unlike Select* widgets, it won't query the db for choices
     """
-    def __init__(self, queryset=None, choices=(), *args, **kwargs):
+    read_only = True
+
+    def __init__(self, queryset=None, choices=None, *args, **kwargs):
         super(DetailForeignWidget, self).__init__(*args, **kwargs)
         self.queryset = queryset
         self.choices = choices # but don't render them to list
+
+    def _has_changed(self, initial, data):
+        return False
 
     def render(self, name, value, attrs=None, choices=()):
         final_attrs = self.build_attrs(attrs, name=name)
@@ -78,6 +84,12 @@ class DetailForeignWidget(forms.widgets.Widget):
             objs = self.queryset.filter(pk__in=value)
         elif value and self.queryset is not None:
             objs = [self.queryset.get(pk=value),]
+        elif value and isinstance(self.choices, forms.models.ModelChoiceIterator):
+            queryset = self.choices.queryset
+            if hasattr(value, '__iter__'):
+                objs = queryset.filter(pk__in=value)
+            else:
+                objs = [queryset.get(pk=value),]
         elif value and self.choices:
             # only works with choices, so far
             objs = []
@@ -87,7 +99,7 @@ class DetailForeignWidget(forms.widgets.Widget):
                     break
         else:
             objs = []
-        
+
         ret = ''
         for obj in objs:
             href = None
@@ -98,7 +110,7 @@ class DetailForeignWidget(forms.widgets.Widget):
                 ret += '<a href="%s">' % href
             except AttributeError:
                 href = None
-    
+
             ret += conditional_escape(unicode(obj))
             if href is not None:
                 ret += '</a>'
@@ -124,11 +136,26 @@ class DetailForm(forms.ModelForm):
                     queryset=getattr(field, 'queryset', None),
                 )
                 self.fields[field_name].help_text=''
+            elif isinstance(field.widget, ColumnsDetailWidget):
+                self.fields[field_name].help_text=''
 
+class RModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(RModelForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if getattr(field.widget, 'read_only', False):
+                field.required = False
+
+    def _post_clean(self):
+        if self.cleaned_data is not None:
+            for name, field in self.fields.items():
+                if name in self.cleaned_data and getattr(field.widget, 'read_only', False):
+                    del self.cleaned_data[name]
+
+        super(RModelForm, self)._post_clean()
 
 class GenericConfirmForm(forms.Form):
     pass
-
 
 class GenericAssignRemoveForm(forms.Form):
     left_list = forms.ModelMultipleChoiceField(required=False, queryset=None)
@@ -145,15 +172,34 @@ class GenericAssignRemoveForm(forms.Form):
 
 class FilterForm(forms.Form):
     def __init__(self, list_filters, *args, **kwargs):
+        """
+            @param qargs optionally, a dict to be passed to callable querysets
+        """
+        qargs = kwargs.pop('qargs', {})
         super(FilterForm, self).__init__(*args, **kwargs)
         for list_filter in list_filters:
             label = list_filter.get('title', list_filter['name']).title()
             if 'lookup_channel' in list_filter:
                 self.fields[list_filter['name']] = AutoCompleteSelectField( \
-                        list_filter['lookup_channel'], label=label, required=False)
+                        list_filter['lookup_channel'], show_help_text=False, \
+                        label=label, required=False)
             elif 'queryset' in list_filter:
-                self.fields[list_filter['name']] = forms.ModelChoiceField( \
-                        queryset=list_filter['queryset'], label=label, \
+                if callable(list_filter['queryset']):
+                    qfn = list_filter['queryset']
+                    queryset = qfn(form=self, **qargs)
+                else:
+                    queryset = list_filter['queryset']
+
+                if 'tree_by_parent' in list_filter:
+                    self.fields[list_filter['name']] = ModelTreeChoiceField( \
+                        parent_name= list_filter['tree_by_parent'], \
+                        queryset=queryset, label=label, \
+                        empty_label= "(%s)" % unicode(queryset.model._meta.verbose_name),
+                        required=False)
+                else:
+                    self.fields[list_filter['name']] = forms.ModelChoiceField( \
+                        queryset=queryset, label=label, \
+                        empty_label= "(%s)" % unicode(queryset.model._meta.verbose_name),
                         required=False)
             elif 'choices' in list_filter:
                 if isinstance(list_filter['choices'], tuple):
@@ -164,10 +210,11 @@ class FilterForm(forms.Form):
                     aapp, amodel, afield = list_filter['choices'].rsplit('.', 2)
                     mmodel = models.get_model(aapp, amodel)
                     assert mmodel, "Model not found: %s.%s" %(aapp, amodel)
-                    choices = mmodel._meta.get_field(afield).choices
+                    mfield = mmodel._meta.get_field(afield)
+                    choices = mfield.choices
                     assert choices, "Model %s.%s does not have choices" %(amodel.afield)
                     # don't do insert, but copy the list!
-                    choices = [('','---')] + choices
+                    choices = [('','(%s)' % unicode(mfield.verbose_name))] + choices
                 else:
                     raise TypeError("Invalid type for list_filters.choices: %s" % type(list_filter['choices']))
                 self.fields[list_filter['name']] = forms.ChoiceField(choices=choices, label=label, required=False)
@@ -175,6 +222,14 @@ class FilterForm(forms.Form):
                 self.fields[list_filter['name']] = forms.CharField(label=label, required=False)
 
 class InlineModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(InlineModelForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            if isinstance(field, forms.IntegerField):
+                field.widget.attrs['class'] = 'integer'
+            elif isinstance(field, forms.DecimalField):
+                field.widget.attrs['class'] = 'decimal'
+
     def as_table(self):
         "Returns this form rendered as HTML <td>s"
         return self._html_output(
@@ -183,5 +238,82 @@ class InlineModelForm(forms.ModelForm):
             row_ender = u'</td>',
             help_text_html = u'<br /><span class="helptext">%s</span>',
             errors_on_separate_row = False)
+
+class ColumnsDetailWidget(forms.widgets.Widget):
+    """Read-only values of ForeignKey or ManyToMany fields, with columns
+
+        Unlike Select* widgets, it won't query the db for choices
+    """
+    columns = []
+    order_by = False
+    show_header = True
+    read_only = True
+
+    def __init__(self, queryset=None, choices=(), *args, **kwargs):
+        super(ColumnsDetailWidget, self).__init__(*args, **kwargs)
+        self.queryset = queryset
+        self.choices = choices # but don't render them to list
+
+    def render(self, name, value, attrs=None, choices=()):
+        final_attrs = self.build_attrs(attrs, name=name)
+        objs = None
+        if isinstance(self.choices, forms.models.ModelChoiceIterator):
+            # The ModelChoiceIterator is a *very* slow object, we must extract
+            # its queryset and use it directly
+            self.queryset = self.choices.queryset
+            self.choices = ()
+
+        if value and hasattr(value, '__iter__') and self.queryset is not None:
+            objs = self.queryset.filter(pk__in=value)
+            if self.order_by:
+                objs = objs.order_by(self.order_by)
+        elif value and self.queryset is not None:
+            objs = [self.queryset.get(pk=value),]
+        elif value and self.choices:
+            # only works with choices, so far
+            objs = []
+            for k, v in self.choices:
+                if k == value:
+                    objs.append(v)
+                    break
+        else:
+            objs = []
+
+        ret = ['<table%s>' % flatatt(final_attrs),]
+        if self.show_header:
+            ret.append('<thead><tr>')
+            for c in self.columns:
+                ret.append('\t<th>%s</th>\n' % unicode(c['name']))
+            ret.append('</tr></thead>\n')
+        ret.append('<tbody>\n')
+
+        for obj in objs:
+            ret.append('\t<tr>')
+            for c in self.columns:
+                cell = '<td>%s</td>'
+                if c.get('attribute', False):
+                    val = return_attrib(obj, c['attribute'])
+                else:
+                    # no attribute, this must be the unicode(obj)
+                    val = obj
+                    try:
+                        cell = '<td><a href="%s">%%s</a></td>' % obj.get_absolute_url()
+                    except AttributeError:
+                        pass
+
+                val = conditional_escape(unicode(val))
+                ret.append(cell % val)
+            ret.append('</tr>\n')
+        ret.append('</table>\n\n')
+
+        return mark_safe(''.join(ret))
+
+class ReadOnlyInput(forms.widgets.Input):
+    read_only = True
+    def _has_changed(self, initial, data):
+        return False
+
+    def build_attrs(self, extra_attrs=None, **kwargs):
+        return super(ReadOnlyInput, self).build_attrs(extra_attrs=extra_attrs, disabled=True, **kwargs)
 
 #eof

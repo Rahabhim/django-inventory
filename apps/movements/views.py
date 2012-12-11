@@ -6,14 +6,17 @@ from django.utils.translation import ugettext as _
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 #from django.contrib.contenttypes.models import ContentType
 #from django.views.generic.list_detail import object_detail, object_list
-#from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse
 #from django.views.generic.create_update import create_object
 from django.forms.formsets import formset_factory
 
 from common.models import Supplier, Location
 from assets.models import ItemTemplate
+from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
+from main import cart_utils
 
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, Movement
 from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
@@ -69,7 +72,7 @@ def purchase_request_item_create(request, object_id):
 
     return render_to_response('generic_form.html', {
         'form':form,
-        'title':_(u'add new purchase request item') ,
+        'title': _(u'add new purchase request item') ,
     },
     context_instance=RequestContext(request))
 
@@ -79,7 +82,7 @@ def purchase_request_close(request, object_id):
 
     data = {
         'object':purchase_request,
-        'title':_(u"Are you sure you wish to close the purchase request: %s?") % purchase_request,
+        'title': _(u"Are you sure you wish to close the purchase request: %s?") % purchase_request,
     }
 
     if purchase_request.active == False:
@@ -201,7 +204,7 @@ def purchase_order_wizard(request, object_id):
     return render_to_response('generic_form.html', {
         'form':formset,
         'form_display_mode_table':True,
-        'title':_(u'purchase order wizard, using purchase request source: <a href="%(url)s">%(name)s</a>') % {'url':purchase_request.get_absolute_url(), 'name':purchase_request},
+        'title': _(u'purchase order wizard, using purchase request source: <a href="%(url)s">%(name)s</a>') % {'url':purchase_request.get_absolute_url(), 'name':purchase_request},
         'object':purchase_request,
     }, context_instance=RequestContext(request))
 
@@ -211,32 +214,32 @@ def purchase_order_view(request, object_id):
 
     subtemplates = [{
             'name':'generic_list_subtemplate.html',
-            'title':_(u'purchase order items'),
+            'title': _(u'purchase order items'),
             'object_list':purchase_order.items.all(),
             'extra_columns':[
-                {'name':_(u'qty'), 'attribute':'qty'},
-                {'name':_(u'qty received'), 'attribute':'received_qty'},
-                {'name':_(u'agreed price'), 'attribute': 'fmt_agreed_price'},
-                {'name':_(u'status'), 'attribute': 'status'},
-                {'name':_(u'active'), 'attribute': 'fmt_active'}
+                {'name': _(u'qty'), 'attribute':'qty'},
+                {'name': _(u'qty received'), 'attribute':'received_qty'},
+                #{'name': _(u'agreed price'), 'attribute': 'fmt_agreed_price'},
+                #{'name': _(u'status'), 'attribute': 'status'},
+                #{'name': _(u'active'), 'attribute': 'fmt_active'}
                 ],
             },
             {
                 'name':'generic_list_subtemplate.html',
-                'title':_(u'movements for this purchase order'),
+                'title': _(u'movements for this purchase order'),
                 'object_list': purchase_order.movements.all(),
                 # 'hide_links': False, # we want 'edit' there
                 'extra_columns':[
-                    {'name':_(u'state'), 'attribute': 'state'},
-                    {'name':_(u'date'), 'attribute': 'date_act'},
+                    {'name': _(u'state'), 'attribute': 'get_state_display'},
+                    {'name': _(u'date'), 'attribute': 'date_act'},
                     # {'name':_(u'destination'), 'attribute': 'location_dest'}
                     ],
             },
         ]
-    return render_to_response('generic_detail.html', {
-        'title':_(u'details for purchase order: %s') % purchase_order,
+    return render_to_response('purchase_order_form.html', {
+        'title': _(u'details for purchase order: %s') % purchase_order,
         'object':purchase_order,
-        'form':form,
+        'form':form, 'form_mode': 'details',
         'subtemplates_dict': subtemplates,
     },
     context_instance=RequestContext(request))
@@ -248,7 +251,7 @@ def purchase_order_close(request, object_id):
 
     data = {
         'object':purchase_order,
-        'title':_(u"Are you sure you wish to close the purchase order: %s?") % purchase_order,
+        'title': _(u"Are you sure you wish to close the purchase order: %s?") % purchase_order,
     }
     if items.filter(active=True):
         data['message'] = _(u'There are still open items.')
@@ -277,7 +280,7 @@ def purchase_order_open(request, object_id):
 
     data = {
         'object':purchase_order,
-        'title':_(u"Are you sure you wish to open the purchase order: %s?") % purchase_order,
+        'title': _(u"Are you sure you wish to open the purchase order: %s?") % purchase_order,
     }
 
     if purchase_order.active == True:
@@ -309,22 +312,40 @@ def purchase_order_receive(request, object_id):
     elif purchase_order.active == False:
         msg = _(u'This purchase order has already been closed.')
 
+    if 'HTTP_REFERER' in request.META and request.path.rstrip('?') not in request.META['HTTP_REFERER']:
+        # we go back to previous url, if there was one.
+        url_after_this = request.META['HTTP_REFERER']
+    else:
+        url_after_this = purchase_order.get_absolute_url()
+
     if msg:
         messages.error(request, msg, fail_silently=True)
-        return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
-
+        return redirect(url_after_this)
 
     if request.method == 'POST':
         raise NotImplementedError
     else:
-        items_left = purchase_order.calc_unmoved_items()
+        try:
+            items_left = purchase_order.calc_unmoved_items()
+        except ValueError, ve:
+            messages.error(request, unicode(ve), fail_silently=True)
+            return redirect(url_after_this)
 
         form = PurchaseOrderForm_short_view(instance=purchase_order)
-        
-        if items_left and request.GET.get('do_create', False):
-            lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
+        try:
             dept = request.user.get_profile().department
-            if dept:
+        except ObjectDoesNotExist:
+            dept = None
+
+        if items_left and request.GET.get('do_create', False):
+            if not request.user.has_perm('movements.receive_purchaseorder'):
+                raise PermissionDenied
+            lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
+            lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
+            ldests = None
+            if request.GET.get('location_ask', False):
+                ldests = [Location.objects.get(pk=request.GET['location_ask']),]
+            elif dept:
                 ldests = Location.objects.filter(department=dept)[:1]
             if not lsrcs:
                 msg = _(u'There is no procurement location configured in the system!')
@@ -332,20 +353,62 @@ def purchase_order_receive(request, object_id):
             elif not ldests:
                 msg = _(u'This is not default department and location for this user, please fix!')
                 messages.error(request, msg, fail_silently=True)
+            elif not lbdls:
+                msg = _(u'This is not bundling location configured in the system!')
+                messages.error(request, msg, fail_silently=True)
             else:
                 movement = Movement(create_user=request.user, date_act=datetime.date.today(),
                         stype='in', origin=purchase_order.user_id,
                         location_src=lsrcs[0], location_dest=ldests[0],
                         purchase_order=purchase_order)
                 movement.save()
-                purchase_order.fill_out_movement(items_left, movement)
-            pass
-        elif (not items_left) and request.GET.get('confirm', False):
-            raise NotImplementedError
+                bundled = purchase_order.fill_out_movement(items_left, movement)
+                if bundled:
+                    print "must put a few items in bundle, too"
+                    movement = Movement(create_user=request.user, date_act=datetime.date.today(),
+                        stype='in', origin=purchase_order.user_id,
+                        location_src=lsrcs[0], location_dest=lbdls[0],
+                        purchase_order=purchase_order)
+                    movement.save()
+                    purchase_order.fill_out_bundle_move(bundled, movement)
+
+            # reload the request in the browser, but get rid of any "action" arguments!
+            return redirect(request.path.rstrip('?'), object_id=object_id)
+        elif (not items_left) and request.GET.get('do_confirm', False):
+            if not request.user.has_perm('movements.validate_purchaseorder'):
+                raise PermissionDenied
+            try:
+                moves_pending = False
+                for move in purchase_order.movements.all():
+                    if move.state == 'done':
+                        continue
+                    if move.state != 'draft':
+                        moves_pending = True
+                        continue
+                    move.do_close(val_user=request.user)
+                    if move.state != 'done':
+                        moves_pending = True
+                if not moves_pending:
+                    for po_item in purchase_order.items.all():
+                        po_item.active = False
+                        po_item.status = None # TODO
+                        po_item.save()
+                    purchase_order.validate_user = request.user
+                    purchase_order.active = False
+                    purchase_order.status = None # TODO
+                    purchase_order.save()
+                    messages.success(request, _("Purchase order has been confirmed"), fail_silently=True)
+                    return redirect(purchase_order.get_absolute_url())
+                else:
+                    msg = _(u'Purchase order %s cannot be confirmed, because it contains pending moves! Please inspect and close these first.')
+                    messages.error(request, msg, fail_silently=True)
+                return redirect(request.path.rstrip('?'), object_id=object_id)
+            except Exception, e:
+                messages.error(request, unicode(e))
 
         # we must ask about the remaining items or confirmation:
         form_attrs = {
-            'title':_(u'details for purchase order: %s') % purchase_order,
+            'title': _(u'details for purchase order: %s') % purchase_order,
             'more_items_count': len(items_left),
             'object':purchase_order,
             'form':form,
@@ -354,68 +417,71 @@ def purchase_order_receive(request, object_id):
         if not items_left:
             form_attrs['subtemplates_dict'].append({
                 'name':'generic_list_subtemplate.html',
-                'title':_(u'order items received'),
+                'title': _(u'order items received'),
                 'object_list':purchase_order.items.all(),
                 'hide_links': True,
                 'extra_columns':[
-                    {'name':_(u'qty received'), 'attribute':'received_qty'},
-                    {'name':_(u'status'), 'attribute': 'status'},
-                    {'name':_(u'active'), 'attribute': 'fmt_active'}
+                    {'name': _(u'qty received'), 'attribute':'received_qty'},
+                    {'name': _(u'status'), 'attribute': 'status'},
+                    {'name': _(u'active'), 'attribute': 'fmt_active'}
                     ],
                 })
         else:
-            items_in_moves = purchase_order.items.exclude(item_template__in=items_left.keys())
+            items_left2 = [ isinstance(k, tuple) and k[0] or k for k in items_left]
+            items_in_moves = purchase_order.items.exclude(item_template__in=items_left2)
             if items_in_moves.exists():
                 form_attrs['subtemplates_dict'].append({
                     'name':'generic_list_subtemplate.html',
-                    'title':_(u'order items received and accounted'),
+                    'title': _(u'order items received and accounted'),
                     'object_list': items_in_moves,
                     'hide_links': True,
                     'extra_columns':[
-                        {'name':_(u'qty received'), 'attribute':'received_qty'},
-                        {'name':_(u'status'), 'attribute': 'status'},
-                        {'name':_(u'active'), 'attribute': 'fmt_active'}
+                        {'name': _(u'qty received'), 'attribute':'received_qty'},
+                        {'name': _(u'status'), 'attribute': 'status'},
+                        {'name': _(u'active'), 'attribute': 'fmt_active'}
                         ],
                     })
-            items_wo_moves = purchase_order.items.filter(item_template__in=items_left.keys())
+            items_wo_moves = purchase_order.items.filter(item_template__in=items_left2)
             if items_wo_moves.exists():
                 form_attrs['subtemplates_dict'].append({
                     'name':'generic_list_subtemplate.html',
-                    'title':_(u'order items received but NOT accounted'),
+                    'title': _(u'order items received but NOT accounted'),
                     'object_list': items_wo_moves,
                     'hide_links': True,
                     'extra_columns':[
-                        {'name':_(u'qty pending'), 'attribute':'received_qty'},
-                        {'name':_(u'status'), 'attribute': 'status'},
-                        {'name':_(u'active'), 'attribute': 'fmt_active'}
+                        {'name': _(u'qty pending'), 'attribute':'received_qty'},
+                        {'name': _(u'status'), 'attribute': 'status'},
+                        {'name': _(u'active'), 'attribute': 'fmt_active'}
                         ],
                     })
+            if not dept: # rough test
+                # will cause the form to ask for a location
+                form_attrs['ask_location'] = True
             
         moves_list = purchase_order.movements.all()
         if moves_list:
             # add the pending movements as links
             form_attrs['subtemplates_dict'].append({
                 'name':'generic_list_subtemplate.html',
-                'title':_(u'movements for this purchase order'),
+                'title': _(u'movements for this purchase order'),
                 'object_list': moves_list,
                 # 'hide_links': False, # we want 'edit' there
                 'extra_columns':[
-                    {'name':_(u'state'), 'attribute': 'state'},
-                    {'name':_(u'destination'), 'attribute': 'location_dest'}
+                    {'name': _(u'state'), 'attribute': 'get_state_display'},
+                    {'name': _(u'destination'), 'attribute': 'location_dest'}
                     ],
                 })
 
         return render_to_response('po_transfer_ask.html', form_attrs, context_instance=RequestContext(request))
 
     raise RuntimeError
-    return {}
 
 
 def purchase_order_item_close(request, object_id):
     purchase_order_item = get_object_or_404(PurchaseOrderItem, pk=object_id)
     data = {
         'object':purchase_order_item,
-        'title':_(u'Are you sure you wish close the purchase order item: %s') % purchase_order_item,
+        'title': _(u'Are you sure you wish close the purchase order item: %s') % purchase_order_item,
     }
 
     if purchase_order_item.active == False:
@@ -450,14 +516,33 @@ def purchase_order_item_create(request, object_id):
 
     return render_to_response('generic_form.html', {
         'form':form,
-        'title':_(u'add new purchase order item') ,
+        'title': _(u'add new purchase order item') ,
     },
     context_instance=RequestContext(request))
 
+class PurchaseOrderListView(GenericBloatedListView):
+    queryset=PurchaseOrder.objects.all()
+    title = _(u'list of purchase orders')
+    prefetch_fields = ('procurement', 'supplier')
+    extra_columns = [ {'name': _('Contract'), 'attribute': 'procurement'},
+                    {'name': _('Supplier'), 'attribute': 'supplier', },
+                    # not needed: {'name': _('Issue date'), 'attribute': 'issue_date' },
+                    {'name':_(u'Active'), 'attribute': 'fmt_active'}]
+
+class MovementListView(GenericBloatedListView):
+    queryset=Movement.objects.all()
+    title =_(u'movements')
+    extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
+                    {'name':_(u'state'), 'attribute': 'get_state_display'},
+                    {'name':_(u'type'), 'attribute': 'get_stype_display'}]
+
 def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
+    if not request.user.has_perm('movements.validate_movement'):
+        raise PermissionDenied
     try:
         movement.do_close(request.user)
+        cart_utils.remove_from_session(request, movement)
         messages.success(request, _(u'The movement has been validated.'))
     except Exception, e:
         messages.error(request, unicode(e))
@@ -467,4 +552,43 @@ def movement_do_close(request, object_id):
 def repair_itemgroup(request):
     raise NotImplementedError
 
+class POCartOpenView(CartOpenView):
+    model=PurchaseOrder
+
+    def _action_fn(self, context):
+        if context['carts'].close_carts_by_model((PurchaseOrder, PurchaseOrderItem)):
+            self.request.session.modified = True
+        return super(POCartOpenView, self)._action_fn(context)
+
+class POItemCartOpenView(CartOpenView):
+    model=PurchaseOrderItem
+
+    def _action_fn(self, context):
+        if context['carts'].close_carts_by_model((PurchaseOrder, PurchaseOrderItem)):
+            self.request.session.modified = True
+        return super(POItemCartOpenView, self)._action_fn(context)
+
+class POIAddMainView(_ModifyCartView):
+    cart_model=PurchaseOrderItem
+
+    def _add_or_remove(self, cart, obj):
+        verb = cart.set_main_product(obj)
+        message = _("%(item)s set in %(description)s") % {'item': unicode(obj), 'description': unicode(cart.item_name)}
+        return message, verb
+
+    def get_redirect_url(self, **kwargs):
+        # always return to the PO view, no need to select a second product
+        return self.cart_object.get_cart_url()
+
+class POIAddBundledView(_ModifyCartView):
+    cart_model=PurchaseOrderItem
+
+    def _add_or_remove(self, cart, obj):
+        verb = cart.add_to_cart(obj)
+        if cart.item_template:
+            main = unicode(cart.item_template)
+        else:
+            main = cart.item_name
+        message = _("%(item)s added to bundle for %(main)s") % {'item': unicode(obj), 'main': main}
+        return message, verb
 #eof

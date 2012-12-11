@@ -1,13 +1,13 @@
 {% load i18n %}
-                
+
 {% if side_bar %}
     <div class="block">
     <h3>
 {% else %}
-    <div class="content">    
+    <div class="content">
     <h2 class="title">
 {% endif %}
-        
+
 {% include "calculate_form_title.html" %}
 
 {% if side_bar %}
@@ -18,7 +18,7 @@
     </h2>
     <div class="inner">
 {% endif %}
-    
+
     {% if form.is_multipart %}
         <form enctype="multipart/form-data" method="{{ submit_method|default:'post' }}" action="" class="form">
     {% else %}
@@ -27,7 +27,7 @@
         {% if step_field %}
             <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
         {% endif %}
-        
+
         {% if submit_method != 'GET' and submit_method != 'get' %}
             {% csrf_token %}
         {% endif %}
@@ -35,7 +35,7 @@
         {% for hidden_field in hidden_fields %}
            {{ hidden_field.as_hidden }}
         {% endfor %}
-                   
+
         {% if form.management_form %}
             {% with form as formset %}
                 {{ formset.management_form }}
@@ -49,10 +49,10 @@
                                     {{ field.label_tag }}{% if field.field.required and not read_only %} ({% trans 'required' %}){% endif %}
                                 </th>
                             {#{% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}#}
-                            {% endfor %} 
+                            {% endfor %}
                         </tr>
                 {% endif %}
-                
+
                 {% for form in formset.forms %}
                     {% include "generic_form_instance.html" %}
                 {% endfor %}
@@ -64,8 +64,9 @@
         {% else %}
             {% include "generic_form_instance.html" %}
         {% endif %}
-    
+
         {% for formset in formsets %}
+        
         <fieldset class="formset" id="{{ formset.prefix }}-group">
         <legend>{{formset.title }}</legend>
                 {{ formset.management_form }}
@@ -94,5 +95,3 @@
     {% else %}
         </div></div>
     {% endif %}
-
-    

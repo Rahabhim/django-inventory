@@ -22,7 +22,7 @@ ADMINS = (
 
 LOGGING = {
     'version': 1,
-    
+
     'handlers': {
         'console':{
             'level':'DEBUG',
@@ -33,7 +33,11 @@ LOGGING = {
         'django.db.backends': {
             'handlers': ['console',],
             'level': 'INFO',
-            }
+            },
+        'permissions': {
+            'handlers': ['console',],
+            'level': 'INFO',
+            },
         }
     }
 
@@ -55,6 +59,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'postgresql_psycopg2',
         'NAME': 'django_inventory',
+        'USER': 'USERNAME',       # Not used with sqlite3.
+        'PASSWORD': 'USERPASSWORD',   # Not used with sqlite3.
+        'HOST': 'localhost',      # Set to empty string for localhost.
+        'PORT': '',               # Set to empty string for default.
     }
 }
 
@@ -80,6 +88,7 @@ LANGUAGES = (
 
 SITE_ID = 1
 
+DATE_INPUT_FORMATS = ('%d/%m/%Y', '%d/%m/%y', '%Y-%m-%d')
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
@@ -164,6 +173,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.media",
     'django.core.context_processors.request',
     'django.core.context_processors.static',
+    'main.cart_utils.in_context',
     "grappelli.context_processors.admin_template_path",
     'django.contrib.messages.context_processors.messages',
 ]
@@ -174,6 +184,7 @@ AJAX_LOOKUP_CHANNELS = {
     'product': ('products.lookups', 'ItemTemplateLookup'),
     'manufacturer': ('products.lookups', 'ManufacturerLookup'),
     'item': ('assets.lookups', 'ItemLookup'),
+    'contracts': ('procurements.lookups', 'ContractLookup'),
     
     # 'supplier':
 }

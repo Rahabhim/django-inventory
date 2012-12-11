@@ -1,0 +1,26 @@
+{% extends 'formset_in_fieldset.html' %}
+{% load styling %}
+
+{% block formset_form_layout %}
+<tr class="form-row inline {{ formset.prefix }}">
+    {% spaceless %}
+    {% for field in form.visible_fields %}
+    <td>
+        {% if field.errors %}<span class="error">{% for error in field.errors %}{{ error }}{% if not forloop.last %} | {% endif %}{% endfor %}</span></div>{% endif %}
+        {{ field }}
+        {% if field.name == 'item_template' and form.instance.id and field.to_python %}
+            <a class="" href="{% url purchaseorder_item_cart_open pk=form.instance.id %}">Select product</a>
+        {% endif %}
+        {% if field.name == 'bundled_items' and form.instance.id %}
+            <a class="" href="{% url purchaseorder_item_cart_open pk=form.instance.id %}">Add products</a>
+        {% endif %}
+    </td>
+    {% endfor %}
+    <td>{% for field in form.hidden_fields %}
+        {{ field }}
+        {% endfor %}
+    </td>
+    {% endspaceless %}
+</tr>
+
+{% endblock %}

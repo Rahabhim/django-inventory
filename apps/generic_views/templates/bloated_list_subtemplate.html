@@ -1,0 +1,150 @@
+{% load i18n %}
+{% load generic_views_helpers %}
+{% load pagination_tags %}
+{% load navigation %}
+{% load carts %}
+
+{% if side_bar %}
+    <div class="block">
+    <h3>
+        {{ title }}
+    </h3>
+    <div class="content">
+        <p>
+{% else %}
+    {% if not group_results %}
+        {% autopaginate object_list %} 
+    {% endif %}
+    <div class="content">
+    <h2 class="title">
+        {% ifnotequal page_obj.paginator.num_pages 1 %}
+            {% with page_obj.start_index as start and page_obj.end_index as end and page_obj.paginator.count as total %}{{ title }} ({{ start }} - {{ end }} out of {{ total }}){% endwith %}
+        {% else %}
+            {% with page_obj.paginator.count as total %}{{ title }} ({{ total }}){% endwith %}
+        {% endifnotequal %}
+    </h2>
+
+<div class="inner">
+{% endif %}
+
+  <form action="#" class="form" id="bl_list_form" method="POST">
+    {% csrf_token %}
+    <table class="table">
+      {% if not hide_header %}
+        <thead>
+        {%if group_fields %}
+          <tr class="bl_group">{% for gf in group_fields %}
+                <th {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>
+                    {% if gf.url %}<a href="{{ gf.url }}" class="{{gf.url_class}}">{% endif %}
+                        {{ gf.name }}{% if gf.url_spanclass %}<span class="{{ gf.url_spanclass }}"></span>{% endif %}
+                    {% if gf.url %}</a> {% endif %}
+                    {% if forloop.first %}({% trans "count" %}){% endif %}
+                </th>
+              {% endfor %}
+          </tr>
+        {% else %}
+            {% include "bloated_list_header_row.html" %}
+        {% endif %}
+          
+        </thead>
+      {% endif %}
+
+    <tbody>
+    {% if not group_results %}
+        {% for object in object_list %}
+            <tr class="{% cycle 'odd' 'even2' %}">
+            {% for col in columns %}
+                {% if not col.attribute %}
+                    {% if main_object %}
+                    {% with object|object_property:main_object as object %}
+                        <td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                    {% endwith %}
+                    {% else %}
+                        <td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                    {% endif %}
+                {% else %}
+                    <td>{{ object|object_property:col.attribute|default_if_none:'' }}
+                {% endif %}
+                {% if col.subrows %}{% for row in col.subrows %}<br/>
+                        {{ object|object_property:row.attribute }}
+                {% endfor %}{%endif %}
+                </td>
+            {% endfor %}
+            {% if not hide_links %}
+                <td class='last'>
+                {% object_navigation_template %}
+                </td>
+            {% endif %}
+            {% object_carts object %}
+            </tr>
+        {% empty %}
+            <tr><td colspan=99 class="tc">{% blocktrans %}There are no {{ title }}{% endblocktrans %}</td></tr>
+        {% endfor %}
+    {% else %} {# We have groupped results #}
+        {% for group in group_results %}
+            <tr class="bl_group {% cycle 'odd' 'even2' %}">
+            {% if group_fields %}{% for gf in group_fields %}
+                <td {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}{% if forloop.first %}class="first_col"{% endif %}>
+                    {% if forloop.first %}
+                        <a href="{{ group.url }}">
+                        <span class="famfam active famfam-{% if not group.items %}add{% else %}database_go{% endif %}"></span>
+                    {% endif %}
+                    {% if gf.attribute %}{{ group.group|object_property:gf.attribute }}{% else %}{{ group.group }}{% endif %}
+                    {% if forloop.first %}({{group.items_count}}) </a>{% endif %}
+            {% endfor %}{% else %}
+                <td colspan="{{ columns|length}}"><a href="{{ group.url }}"> {{ group.group }} ({{group.items_count }}) </a>
+                </td>
+            {% endif %}
+            </tr>
+            {% if group.items %}
+            {% include "bloated_list_header_row.html" %}
+                {% for object in group.items %}
+                <tr class="bl_inrow {% cycle 'odd' 'even2' %}">
+            {% for col in columns %}
+                {% if not col.attribute %}
+                    {% if main_object %}
+                    {% with object|object_property:main_object as object %}
+                        <td {% if forloop.first %}class="first_col"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                    {% endwith %}
+                    {% else %}
+                        <td {% if forloop.first %}class="first_col"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                    {% endif %}
+                {% else %}
+                    <td {% if forloop.first %}class="first_col"{% endif %}>{{ object|object_property:col.attribute|default_if_none:'' }}
+                {% endif %}
+                {% if col.subrows %}{% for row in col.subrows %}<br/>
+                        {{ object|object_property:row.attribute }}
+                {% endfor %}{%endif %}
+                </td>
+            {% endfor %}
+            {% if not hide_links %}
+                <td class='last'>
+                {% object_navigation_template %}
+                </td>
+            {% endif %}
+            {% object_carts object %}
+            </tr>
+            {% endfor %}{% endif %}
+        {% empty %}
+            <tr><td colspan=99 class="tc">{% blocktrans %}There are no {{ title }}{% endblocktrans %}</td></tr>
+        {% endfor %}
+
+    {% endif %}
+        </tbody>
+    </table>
+         {% object_list_carts object_list %}
+  </form>
+    {% paginate %}
+</div>
+</div>
+
+    {% for subform in subforms_dict %}
+    {% with subform.title as title %}
+    {% with subform.extra_columns as extra_columns %}
+    {% with subform.form as form %}
+        {% include subform.name %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endfor %}
+

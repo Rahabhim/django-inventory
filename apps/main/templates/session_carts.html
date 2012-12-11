@@ -1,0 +1,4 @@
+
+{% for cart in carts %}
+	<li><a href="{{ cart.href}}">{{ cart.title }}</a>{% if cart.qty %}({{ cart.qty }}){% endif %}</li>
+{% endfor %}

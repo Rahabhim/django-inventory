@@ -4,7 +4,7 @@ from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 from generic_views.views import generic_delete, \
-                                generic_detail, generic_list
+                                generic_detail, generic_list, GenericBloatedListView
 
 from models import Location, Supplier
 from forms import LocationForm, LocationForm_view, SupplierForm
@@ -22,9 +22,10 @@ urlpatterns = patterns('common.views',
 urlpatterns += patterns('',
     url(r'^set_language/$', 'django.views.i18n.set_language', name='set_language'),
 
-    url(r'^location/list/$', generic_list, dict(queryset=Location.objects.all(), 
+    url(r'^location/list/$', GenericBloatedListView.as_view(queryset=Location.objects.all(), 
                 list_filters=[location_dept_filter],
-                extra_context=dict(title =_(u'locations'))), 'location_list'),
+                prefetch_fields=('department',),
+                extra_context=dict(title =_(u'locations'))), name='location_list'),
     url(r'^location/create/$', create_object, {'model':Location, 'form_class': LocationForm, 'template_name':'generic_form.html'}, 'location_create'),
     url(r'^location/(?P<object_id>\d+)/update/$', update_object, {'model':Location, 'template_name':'generic_form.html'}, 'location_update'),
     url(r'^location/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Location}, post_delete_redirect="location_list", extra_context=dict(object_name=_(u'locations'))), 'location_delete'),

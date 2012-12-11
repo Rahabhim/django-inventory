@@ -1,0 +1,33 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load carts %}
+
+<div class="content">
+
+    <table class="inventory_compare" width="100%" >
+    <thead><tr><th width="50%">{% trans 'At location' %}</th><th width="50%">{% trans 'In inventory' %}</th></tr>
+    </thead>
+
+    <tbody>
+    {% for item, status in object_list %}
+        <tr>
+        {% if status == 'ok' %}
+            <td class="compare_ok">{{ item }}</td><td class="compare_ok">{{ item }}</td>
+        {% else %}
+        {% if status == 'new' %}
+            <td class="compare_wrong">{{ item }}</td><td class="compare_new">{%trans 'not accounted' %}</td>
+        {% else %}
+        {% if status == 'missing' %}
+            <td class="compare_missing">{% trans 'missing!' %}</td><td class="compare_wrong">{{ item }}</td>
+        {% else %}
+            <td colspan="2"> {{status}} ?? </td>
+        {% endif %}
+        {% endif %}
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+</div>
+<div style="margin-bottom: 2em"> </div>
+

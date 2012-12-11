@@ -1,0 +1,26 @@
+{% load styling %}
+<fieldset class="{%if form_mode == 'details'%}formset_ro{% else %}formset{% endif %}" id="{{ formset.prefix }}-group">
+    <legend>{{formset.title|capfirst }}</legend>
+    {% if form_mode != 'details' %}
+        {{ formset.management_form }}
+    {% endif %}
+    <table class="table">
+    <thead> {% spaceless %}
+        {% block formset_form_head %}
+            {% with form=formset|first %}
+                <tr>{% for field in form.visible_fields %}
+                    <th>{{ field.label_tag }}</th>
+                    {% endfor %}
+                </tr>
+        {% endwith %}
+        {% endblock %}
+        {% endspaceless %}
+    </thead>
+
+    {% for form in formset %}
+        {% block formset_form_layout %}
+            <tr class="form-row inline {{ formset.prefix }}">{{ form }}</tr>
+        {% endblock %}
+    {% endfor %}
+    </table>
+</fieldset>

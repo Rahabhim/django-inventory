@@ -1,0 +1,8 @@
+{% load i18n %}
+{% if has_cart %}
+<div class="content">
+ {% for cart in carts %}
+    <span><a href="{{ cart.href }}">{% blocktrans %}Return to {% endblocktrans %} {{ cart.title }}</a></span>
+ {% endfor %}
+</div>
+{% endif %}

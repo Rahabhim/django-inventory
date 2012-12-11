@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-23 11:18+0300\n"
-"PO-Revision-Date: 2012-09-21 16:52+0300\n"
+"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"PO-Revision-Date: 2012-11-18 19:47+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10 models.py:96 urls.py:25
+#: __init__.py:10 models.py:101 urls.py:35
 msgid "suppliers"
 msgstr "προμηθευτές"
 
@@ -41,66 +41,108 @@ msgstr ""
 msgid "related purchase orders"
 msgstr ""
 
-#: __init__.py:17 models.py:53 models.py:103 urls.py:18 urls.py:21
+#: __init__.py:17 models.py:58 models.py:108 urls.py:28 urls.py:31
 msgid "locations"
 msgstr "τοποθεσίες"
 
 #: __init__.py:18
 msgid "create new location"
-msgstr ""
+msgstr "δημιουργία τοποθεσίας"
 
 #: __init__.py:21
 msgid "assets"
-msgstr ""
+msgstr "εξοπλισμός"
 
-#: __init__.py:30 models.py:52
+#: __init__.py:30 models.py:57
 msgid "location"
 msgstr "τοποθεσία"
 
-#: models.py:12 models.py:28
-msgid "active"
-msgstr "ενεργό"
-
-#: models.py:25
-msgid "contact"
-msgstr "Επαφή"
-
-#: models.py:29
-msgid "phone"
-msgstr "τηλέφωνο"
-
-#: models.py:30
-msgid "phone 2"
-msgstr "τηλέφωνο 2"
-
-#: models.py:42 models.py:75
+#: models.py:11 models.py:47 models.py:80
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:45
-msgid "location type"
-msgstr ""
+#: models.py:12 models.py:29
+msgid "active"
+msgstr "ενεργό"
 
-#: models.py:79
+#: models.py:14
+msgid "comment"
+msgstr "σχόλιο"
+
+#: models.py:19 models.py:27
+msgid "partner"
+msgstr "συνεργάτης"
+
+#: models.py:26
+msgid "contact"
+msgstr "Επαφή"
+
+#: models.py:28 models.py:38
+msgid "address"
+msgstr "Διεύθυνση"
+
+#: models.py:30
+msgid "phone"
+msgstr "τηλέφωνο"
+
+#: models.py:31
+msgid "phone 2"
+msgstr "τηλέφωνο 2"
+
+#: models.py:39
+#, fuzzy
+msgid "addresses"
+msgstr "Διεύθυνση"
+
+#: models.py:48 urls.py:15
+msgid "department"
+msgstr "μονάδα"
+
+#: models.py:50
+msgid "location type"
+msgstr "τύπος τοποθεσίας"
+
+#: models.py:51
+msgid "Customer"
+msgstr "Πελάτης"
+
+#: models.py:51
+msgid "Procurement"
+msgstr "Προμήθεια"
+
+#: models.py:52
+msgid "Internal"
+msgstr "Εσωτερικό"
+
+#: models.py:52
+msgid "Inventory"
+msgstr "απογραφή"
+
+#: models.py:53
+msgid "Supplier Location"
+msgstr "τοποθεσία προμηθευτή"
+
+#: models.py:53
+msgid "Bundled"
+msgstr "Σε Σύνθεση"
+
+#: models.py:84
 #, fuzzy
 msgid "location template"
 msgstr "τοποθεσία"
 
-#: models.py:80
+#: models.py:85
 #, fuzzy
 msgid "location templates"
 msgstr "τοποθεσίες"
 
-#: models.py:91
+#: models.py:96
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:95 models.py:104 urls.py:28
+#: models.py:100 models.py:109 urls.py:38
 msgid "supplier"
 msgstr "προμηθευτής"
-
-#~ msgid "address"
-#~ msgstr "Διεύθυνση"
 
 #~ msgid "phone number"
 #~ msgstr "αριθμός τηλεφώνου"

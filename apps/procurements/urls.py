@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
 from generic_views.views import generic_delete, \
-                                generic_detail, generic_list
+                                generic_detail, generic_list, GenericBloatedListView
 
 
 from models import Delegate, Project, Contract
@@ -13,8 +13,9 @@ from forms import DelegateForm, DelegateForm_view, \
         ProjectForm, ProjectForm_view, ContractForm, ContractForm_view
 
 urlpatterns = patterns('procurements.views',
-    url(r'^delegate/list/$', generic_list, dict({'queryset':Delegate.objects.all()},
-            extra_context=dict(title=_(u'delegate'))), 'delegate_list'),
+    url(r'^delegate/list/$', GenericBloatedListView.as_view(queryset=Delegate.objects.all(),
+            extra_columns=[{'name': _("Active"), 'attribute': 'active'},],
+            title=_(u'delegates list')), name='delegate_list'),
     url(r'^delegate/create/$', create_object, {'form_class': DelegateForm,
                     'template_name':'generic_form.html',
                     'extra_context':{'object_name':_(u'delegate')}},
@@ -33,8 +34,13 @@ urlpatterns = patterns('procurements.views',
                     extra_context={'object_name':_(u'delegate'),}),
             'delegate_view'),
 
-    url(r'^contracts/list/$', generic_list, dict(queryset=Contract.objects.all(),
-            extra_context=dict(title=_(u'contract'))), 'contract_list'),
+    url(r'^contracts/list/$', GenericBloatedListView.as_view(queryset=Contract.objects.all(),
+            extra_columns=[{'name': _("Department"), 'attribute': 'department'},
+                        {'name': _("Date"), 'attribute': 'date_start'},
+                        {'name': _("Delegate"), 'attribute': 'delegate'},
+                            ],
+            prefetch_fields=('department', 'delegate'),
+            title=_(u'list of contracts')), name='contract_list'),
     url(r'^contracts/create/$', create_object, {'form_class': ContractForm,
                     'template_name':'generic_form.html',
                     'extra_context':{'object_name':_(u'contract')}},
@@ -54,8 +60,8 @@ urlpatterns = patterns('procurements.views',
                     extra_context={'object_name':_(u'contract'),}),
             'contract_view'),
 
-    url(r'^projects/list/$', generic_list, dict(queryset=Project.objects.all(),
-            extra_context=dict(title=_(u'project'))), 'projects_list'),
+    url(r'^projects/list/$', GenericBloatedListView.as_view(queryset=Project.objects.all(),
+            title=_(u'list of projects')), name='projects_list'),
     url(r'^projects/create/$', create_object, {'form_class':ProjectForm,
                     'template_name':'generic_form.html',
                     'extra_context':{'object_name':_(u'project')}},

@@ -1,0 +1,13 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load carts %}
+
+    <div class="content">
+    {% blocktrans %}Apparently, the inventory does not match the recorded situation in
+    this location, as computed from previous moves. You will have to issue corrective
+    movements to amend the sums.<br/>
+    
+    You can revise the sums by visiting 
+    <a href="{{url_for('inventory_items_compare')}}?pending_only=1">this page again</a> .
+    {% endblocktrans %}
+    </div>

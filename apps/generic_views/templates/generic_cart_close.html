@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load carts %}
+{% block title %} :: {% blocktrans %}Opened cart on {{ object_name }}{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="content">
+    {% do_action %}
+    {% if action_done and not action_failed %}
+    <div class="block">
+        <div class="tc"><h1>{% blocktrans %}Closed cart{% endblocktrans %}</h1></div>
+        {% blocktrans %}The cart {{ object }} is now closed.
+        {% endblocktrans %}
+    </div>
+    {% else %}
+    <div class="block">
+        {% blocktrans %} The cart could not be closed.{% endblocktrans %}
+        {{ action_failed }}
+    </div>
+    {% endif %}
+    <div>
+    <a href="{{object.get_absolute_url }}">{% blocktrans %}Back to {{object_name}}{% endblocktrans %}</a>
+    </div>
+</div>
+{% endblock %}
