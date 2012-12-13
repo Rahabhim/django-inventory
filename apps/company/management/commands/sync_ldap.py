@@ -83,6 +83,9 @@ class Command(SyncCommand):
 
         except Exception:
             self._logger.exception("Exception:")
+        except KeyboardInterrupt:
+            print
+            pass
         finally:
             if self._lconn:
                 try:
