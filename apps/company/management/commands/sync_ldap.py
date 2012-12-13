@@ -69,8 +69,7 @@ class Command(SyncCommand):
             elif args:
                 self.cmd_verify_depts(args)
             else:
-                raise NotImplementedError
-                pass
+                self.cmd_verify_incr()
         except ldap.CONNECT_ERROR:
             self._logger.exception("LDAP connect error:")
         except ldap.ADMINLIMIT_EXCEEDED:
@@ -124,6 +123,11 @@ class Command(SyncCommand):
                 continue
 
             log.debug("Found dept #%d %s [%s] : %s", dept.id, dept.code, dept.code2, dept.name)
+            self._verify_dept(dept)
+
+    def cmd_verify_incr(self):
+        for dept in Department.objects.filter(ldap_dn__isnull=True)[:self._limit]:
+            self._logger.debug("At dept #%d %s [%s] : %s", dept.id, dept.code, dept.code2, dept.name)
             self._verify_dept(dept)
 
     def _verify_dept(self, dept):
