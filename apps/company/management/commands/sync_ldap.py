@@ -8,7 +8,7 @@ import datetime
 from company.models import Department
 ADMIN_USER = 1
 
-from misc import SyncCommand, CommandError, ustr
+from misc import SyncCommand, CommandError, ustr, utf8
 
 """
     Available commands:
@@ -144,7 +144,7 @@ class Command(SyncCommand):
 
             if True:
                 log.debug("Search under \"%s\" for: %s", self._ou_base, ou_filter % dept.code)
-                result = self._lconn.search_s(self._ou_base, filterstr=ou_filter % dept.code, \
+                result = self._lconn.search_s(self._ou_base, filterstr=ou_filter % utf8(dept.code), \
                             scope=ldap.SCOPE_SUBTREE, attrlist=attrlist)
                 if self._verbose >= 3:
                     _print_ldap_result(result)
