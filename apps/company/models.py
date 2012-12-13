@@ -40,6 +40,8 @@ class Department(models.Model):
     serviced_by = models.ForeignKey('self', verbose_name=_("Serviced By"),
            related_name='dept_service_id', blank=True, null=True)
     sequence = models.ForeignKey('common.Sequence', verbose_name=_("Sequence for items"), blank=True, null=True)
+    ldap_dn = models.CharField(max_length=256, verbose_name="LDAP DN", blank=True, null=True)
+    ldap_mtime = models.DateTimeField(verbose_name=_("Last LDAP sync"), blank=True, null=True)
 
     class Meta:
         # admin = True
