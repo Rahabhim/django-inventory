@@ -12,6 +12,12 @@ def ustr(ss):
     else:
         return ss.decode('utf-8')
 
+def utf8(ss):
+    if isinstance(ss, unicode):
+        return ss.encode('utf-8')
+    else:
+        return ss
+
 class SyncCommand(BaseCommand):
     def create_parser(self, prog_name, subcommand):
         parser = super(SyncCommand, self).create_parser(prog_name, subcommand)
