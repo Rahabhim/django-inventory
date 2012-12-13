@@ -111,10 +111,7 @@ class Command(SyncCommand):
         self._ou_base = defs.get('ou_base', '')
 
     def cmd_verify_depts(self, args):
-        import ldap
         log = self._logger
-        attrlist = ['cn', 'title', 'description']
-        ou_filter = '(&(gsnUnitCode=%s)(objectClass=gsnUnit))'
         for gluc in args:
             log.debug("operating on: %s", gluc)
             try:
@@ -124,6 +121,14 @@ class Command(SyncCommand):
                 continue
 
             log.debug("Found dept #%d %s [%s] : %s", dept.id, dept.code, dept.code2, dept.name)
+            self._verify_dept(dept)
+
+    def _verify_dept(self, dept):
+        import ldap
+        log = self._logger
+        attrlist = ['cn', 'title', 'description']
+        ou_filter = '(&(gsnUnitCode=%s)(objectClass=gsnUnit))'
+        if True:
             if dept.ldap_dn and not dept.ldap_dn.startswith('!'):
                 log.debug("    this was \"%s\" in LDAP at %s", dept.ldap_dn, dept.ldap_mtime)
                 # try to read the entry
@@ -133,7 +138,7 @@ class Command(SyncCommand):
                     _print_ldap_result(result)
 
                 self._verify_name(dept, result[0])
-                continue
+                return
             else:
                 log.debug("    not associated with LDAP, searching by code...")
 
