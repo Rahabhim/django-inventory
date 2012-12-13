@@ -136,7 +136,7 @@ class Command(SyncCommand):
         attrlist = ['cn', 'title', 'description']
         ou_filter = '(&(gsnUnitCode=%s)(objectClass=gsnUnit))'
         if True:
-            if dept.ldap_dn and not dept.ldap_dn.startswith('!'):
+            if dept.ldap_dn and not dept.ldap_dn.startswith(('!','?')):
                 log.debug("    this was \"%s\" in LDAP at %s", dept.ldap_dn, dept.ldap_mtime)
                 # try to read the entry
                 result = self._lconn.search_s(_add_ldap(dept.ldap_dn, self._ou_base), \
@@ -157,6 +157,9 @@ class Command(SyncCommand):
                     _print_ldap_result(result)
                 if not result:
                     log.info("Department #%s %s [%s] not found in LDAP. %s", dept.id, dept.code, dept.code2, dept.name)
+                    if self._active is True and not dept.ldap_dn:
+                        dept.ldap_dn = '?'
+                        dept.save()
                 elif len(result) > 1:
                     log.warning("Multiple DNs (%d) found for unit #%s. Cannot associate",
                             len(result), dept.code)
