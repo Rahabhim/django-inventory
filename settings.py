@@ -38,6 +38,10 @@ LOGGING = {
             'handlers': ['console',],
             'level': 'INFO',
             },
+        'command': {
+            'handlers': ['console',],
+            'level': 'DEBUG',
+            },
         }
     }
 
@@ -59,9 +63,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'postgresql_psycopg2',
         'NAME': 'django_inventory',
-        'USER': 'USERNAME',       # Not used with sqlite3.
-        'PASSWORD': 'USERPASSWORD',   # Not used with sqlite3.
-        'HOST': 'localhost',      # Set to empty string for localhost.
+        #'USER': 'USERNAME',       # Not used with sqlite3.
+        #'PASSWORD': 'USERPASSWORD',   # Not used with sqlite3.
+        #'HOST': 'localhost',      # Set to empty string for localhost.
         'PORT': '',               # Set to empty string for default.
     }
 }
