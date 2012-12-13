@@ -49,6 +49,8 @@ class SyncCommand(BaseCommand):
             self._logger.info("No --active or --interactive options given, defaulting to dry-run")
             self._active = False
 
+        self._limit = int(options['limit'] or 10)
+
     def ask(self, question, *args):
         if self._active is True:
             return True
