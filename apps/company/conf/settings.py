@@ -1,9 +1,10 @@
 # LDAP connection settings
 ldap = {
-    'host': False,
-    'port': 389,
-    'user_dn': '',
-    'passwd': '',
+    'uri': 'ldap://example.com',
+    'user_dn': 'uid=me,ou=people,dc=example,dc=com',
+    'passwd': 'mypass',
+    'ou_base': 'ou=units,dc=example,dc=com',
+    'tls': False,
 }
 
 csv_defaults = {
