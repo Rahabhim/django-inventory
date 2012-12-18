@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 # LDAP connection settings
 ldap = {
     'uri': 'ldap://example.com',
@@ -18,7 +19,10 @@ dbmaps = {
     # Βγαίνει αυτόματα από το ./manage.py import_depts_csv --limit 30 --fy-mode foreis\ ylopoihsh.csv
     # ΠΡΕΠΕΙ να ρυθμίζεται σε κάθε νέα βάση!
     'fy_id2dept': {
-    }
+    },
+    'excluded_types': [
+        ]
+
 }
 
 #eof

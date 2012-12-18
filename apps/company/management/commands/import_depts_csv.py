@@ -99,6 +99,19 @@ class Command(SyncCommand):
 
     def _import_departments(self, reader, cols):
         logger = self._logger
+        self._typos_map = dict.fromkeys(settings.dbmaps.get('excluded_types', []), False)
+
+        def get_dept_type(typos_onoma):
+            res = self._typos_map.get(typos_onoma, None)
+            if res is None:
+                try:
+                    res = DepartmentType.objects.get(name=typos_onoma)
+                    logger.debug(u"Βρέθηκε τύπος %d=%s", res.id, typos_onoma)
+                except ObjectDoesNotExist:
+                    logger.warning(u"Δεν υπάρχει τύπος μονάδας: %s", typos_onoma)
+                    res = False
+            return res
+
         if True:
             num_done = 0
             known_depts = []
@@ -108,6 +121,14 @@ class Command(SyncCommand):
                 res = dict(zip(cols, line))
                 logger.debug("Doing #%s (fy: %s) : %s", res.get('YPEPTH_ID', '--'), res.get('FY_ID',''), res.get('ONOMA_MON', '?'))
                 num_done += 1
+
+                if not res.get('TYPOS_ONOMA', False):
+                    logger.warning(u"Η μονάδα: %s δεν έχει typos_onoma (γραμμή %d), την περνάμε", \
+                            res.get('ONOMA_MON', '?'), reader.line_num)
+                dept_type = get_dept_type(res['TYPOS_ONOMA'])
+                if not dept_type:
+                    continue
+
                 if not res.get('YPEPTH_ID',False):
                     logger.warning(u"Η μονάδα: %s δεν έχει ypepth_id (γραμμή %d), την περνάμε", \
                             res.get('ONOMA_MON', '?'), reader.line_num)
