@@ -571,7 +571,7 @@ class _PermissionsMixin(object):
             np = np % npd
             if not request.user.has_perm(np):
                 self._logger.warning("%s view denied %s permission to user %s",
-                        self.__class__.__name__, np, request.user.name)
+                        self.__class__.__name__, np, request.user.username)
                 raise PermissionDenied
         return super(_PermissionsMixin, self).dispatch(request, *args, **kwargs)
 
