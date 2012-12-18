@@ -85,7 +85,12 @@ class Command(SyncCommand):
                     offset -= 1
                     if offset <= 0:
                         break
+        except Exception:
+            logger.exception("Could not parse file: ")
 
+    def _import_departments(self, reader, cols):
+        logger = self._logger
+        if True:
             num_done = 0
             known_depts = []
             for line in reader:
@@ -147,8 +152,5 @@ class Command(SyncCommand):
             else:
                 logger.debug("limit not reached!")
                 logger.debug("Known depts: %d", len(known_depts))
-
-        except Exception:
-            logger.exception("Could not parse file: ")
 
 #eof
