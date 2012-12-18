@@ -8,7 +8,8 @@ import datetime
 from company.models import Department
 ADMIN_USER = 1
 
-from misc import SyncCommand, CommandError, ustr, utf8
+from misc import SyncCommand, CommandError, ustr, utf8, \
+        bind_ldap, _print_ldap_result, _add_ldap, _subtract_dn
 
 """
     Available commands:
@@ -19,28 +20,6 @@ from misc import SyncCommand, CommandError, ustr, utf8
 
 
 """
-
-def _print_ldap_result(result):
-    for dn, attrs in result:
-        print "DN: %s" % dn
-        for key, val in attrs.items():
-            print "    %s: %s" %( key, ','.join(map(ustr, val)))
-
-def _add_ldap(ext_dn, base_dn):
-    """Append base_dn to ext_dn
-    """
-    if ext_dn.endswith(','):
-        return ext_dn + base_dn
-    else:
-        return ext_dn
-
-def _subtract_dn(full_dn, base_dn):
-    """Remove `base_dn` from `full_dn`
-    """
-    if full_dn.endswith(base_dn):
-        return full_dn[:-len(base_dn)]
-    else:
-        return full_dn
 
 class Command(SyncCommand):
     args = '<code> ...'
@@ -102,14 +81,7 @@ class Command(SyncCommand):
 
     def _open(self):
         defs = settings.ldap
-        import ldap
-
-        l = ldap.ldapobject.ReconnectLDAPObject(defs['uri'], trace_stack_limit=10)
-        l.protocol_version = ldap.VERSION3
-        if defs.get('tls', False):
-            l.start_tls_s()
-        l.simple_bind_s(defs['user_dn'], defs.get('passwd', ''))
-        self._lconn = l
+        self._lconn = bind_ldap()
         self._ou_base = defs.get('ou_base', '')
 
     def cmd_verify_depts(self, args):

@@ -1,7 +1,8 @@
-
+# -*- encoding: utf-8 -*-
 import logging
 import optparse
 from django.core.management.base import BaseCommand, CommandError
+from company.conf import settings
 
 verbosity_levels = { 0: logging.ERROR, 1: logging.WARNING, 2: logging.INFO, 3: logging.DEBUG}
 
@@ -71,4 +72,43 @@ class SyncCommand(BaseCommand):
         else:
             self._logger.debug(question+ ' No', *args)
         return False
+
+# --------------- LDAP part --------------
+
+def _print_ldap_result(result):
+    """ For debugging
+    """
+    for dn, attrs in result:
+        print "DN: %s" % dn
+        for key, val in attrs.items():
+            print "    %s: %s" %( key, ','.join(map(ustr, val)))
+
+def _add_ldap(ext_dn, base_dn):
+    """Append base_dn to ext_dn
+    """
+    if ext_dn.endswith(','):
+        return ext_dn + base_dn
+    else:
+        return ext_dn
+
+def _subtract_dn(full_dn, base_dn):
+    """Remove `base_dn` from `full_dn`
+    """
+    if full_dn.endswith(base_dn):
+        return full_dn[:-len(base_dn)]
+    else:
+        return full_dn
+
+def bind_ldap():
+    """ Bind to LDAP, using settings from "company" app
+    """
+    defs = settings.ldap
+    import ldap
+
+    l = ldap.ldapobject.ReconnectLDAPObject(defs['uri'], trace_stack_limit=10)
+    l.protocol_version = ldap.VERSION3
+    if defs.get('tls', False):
+        l.start_tls_s()
+    l.simple_bind_s(defs['user_dn'], defs.get('passwd', ''))
+    return l
 #eof
