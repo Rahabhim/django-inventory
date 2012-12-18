@@ -104,6 +104,7 @@ class Command(SyncCommand):
 
     def _verify_dept(self, dept):
         import ldap
+        import ldap.filter
         log = self._logger
         attrlist = ['cn', 'title', 'description']
         ou_filter = '(&(gsnUnitCode=%s)(objectClass=gsnUnit))'
@@ -125,8 +126,9 @@ class Command(SyncCommand):
                 log.debug("    not associated with LDAP, searching by code...")
 
             if True:
-                log.debug("Search under \"%s\" for: %s", self._ou_base, ou_filter % dept.code)
-                result = self._lconn.search_s(self._ou_base, filterstr=ou_filter % utf8(dept.code), \
+                filterstr = ldap.filter.filter_format(ou_filter, (utf8(dept.code),))
+                log.debug("Search under \"%s\" for: %s", self._ou_base, filterstr )
+                result = self._lconn.search_s(self._ou_base, filterstr=filterstr, \
                             scope=ldap.SCOPE_SUBTREE, attrlist=attrlist)
                 if self._verbose >= 3:
                     _print_ldap_result(result)
