@@ -97,6 +97,7 @@ class Command(SyncCommand):
     def _import_departments(self, reader, cols):
         logger = self._logger
         self._typos_map = dict.fromkeys(settings.dbmaps.get('excluded_types', []), False)
+        self._d1_map = {}
 
         def get_dept_type(typos_onoma):
             res = self._typos_map.get(typos_onoma, None)
@@ -109,6 +110,33 @@ class Command(SyncCommand):
                     res = False
             return res
 
+        def get_edu_d1(dcode, dname):
+            if not dcode:
+                return None
+            if dcode not in self._d1_map:
+                logger.debug(u"Αναζήτηση της διεύθυνσης κωδ: %s", dname)
+                try:
+                    res = Department.objects.get(Q(code=dcode)|Q(code2=dcode))
+                    self._d1_map[dcode] = res.id
+                except ObjectDoesNotExist:
+                    logger.warning(u"Δεν βρέθηκε διεύθυνση εκπαίδευσης με κωδ: %s όνομα: %s",
+                                dcode, dname)
+                    return None
+            return self._d1_map[dcode]
+
+        def update_fields(d, dept_fields):
+            flds_changed = []
+            if not self._active:
+                return
+            for field, value in dept_fields.items():
+                if getattr(d, field) != value:
+                    setattr(d, field, value)
+                    flds_changed.append('%s=%r' % (field, unicode(value)))
+                    if flds_changed and self.ask(u"Να ενημερωθούν τα πεδία: %s ;", \
+                                u', '.join(flds_changed)):
+                        d.save()
+
+        fy_map = settings.dbmaps['fy_id2dept']
         if True:
             num_done = 0
             known_depts = []
@@ -131,6 +159,23 @@ class Command(SyncCommand):
                             res.get('ONOMA_MON', '?'), reader.line_num)
                     continue
 
+                fy_id = fy_map.get(int(res.get('FY_ID', '0')), None)
+                if not fy_id:
+                    logger.warning(u"Η μονάδα: [%s] %s δεν έχει fy_id: %r (γραμμή %d)",
+                            res['YPEPTH_ID'], res['ONOMA_MON'], res.get('FY_ID', ''),
+                            reader.line_num)
+                # build the fields we want to use:
+                dept_fields = {
+                    'name': res['ONOMA_MON'],
+                    'serviced_by_id': fy_id,
+                    'code': res['YPEPTH_ID'],
+                    'dept_type': dept_type,
+                    'nom_name': res.get('ONOMA_NOM', None), # nom nom nom
+                    'ota_name': res.get('ONOMA_OTA', None),
+                    'section_name': res.get('ONOMA_DNSH', None),
+                    'parent_id': get_edu_d1(res.get('EDU_D1', False), res.get('ONOMA_DNSH','')),
+                    }
+
                 dres = Department.objects.filter(Q(code=res['YPEPTH_ID'])|Q(code2=res['YPEPTH_ID']))
                 if not dres:
                     logger.info(u"Η μονάδα %s δεν υπάρχει στη βάση: %s", res['YPEPTH_ID'], res['ONOMA_MON'])
@@ -151,6 +196,14 @@ class Command(SyncCommand):
                             d.code = res['YPEPTH_ID']
                             d.save()
                             known_depts.append(d.id)
+                        update_fields(d, dept_fields)
+                    else:
+                        if self.ask(u"Να δημιουγηθεί νέα μονάδα [%s] %s ;", \
+                                res['YPEPTH_ID'], res['ONOMA_MON']):
+                            d = Department(**dept_fields)
+                            d.save()
+                            logger.info(u"Δημιουργήθηκε η μονάδα #%d", d.id)
+
                 elif len(dres) == 1:
                     d = dres[0]
                     logger.debug("Βρέθηκε το id=%d στη βάση με ίδιο κωδ.", d.id)
@@ -169,6 +222,9 @@ class Command(SyncCommand):
                             known_depts.append(d.id)
                     else:
                         known_depts.append(d.id)
+
+                    dept_fields.pop('name')
+                    update_fields(d, dept_fields)
                 else:
                     logger.warning(u"Η μονάδα με κωδ.: %s υπάρχει %d φορές στη βάση:", \
                             res['YPEPTH_ID'], len(dres))
