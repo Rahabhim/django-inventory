@@ -4,9 +4,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 import csv, codecs
 
-import optparse
-import logging
-
 from misc import SyncCommand, CommandError
 
 from company.models import Department, DepartmentType
