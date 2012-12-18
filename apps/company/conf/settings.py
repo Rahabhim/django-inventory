@@ -13,5 +13,13 @@ csv_defaults = {
     'dry_run': True,
 }
 
+dbmaps = {
+    # Αντιστοιχία Φορέων Υλοποίησης με company.departments
+    # Βγαίνει αυτόματα από το ./manage.py import_depts_csv --limit 30 --fy-mode foreis\ ylopoihsh.csv
+    # ΠΡΕΠΕΙ να ρυθμίζεται σε κάθε νέα βάση!
+    'fy_id2dept': {
+    }
+}
+
 #eof
 

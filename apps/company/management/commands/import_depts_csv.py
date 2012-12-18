@@ -9,7 +9,7 @@ import logging
 
 from misc import SyncCommand, CommandError
 
-from company.models import Department
+from company.models import Department, DepartmentType
 
 class UTF8Recoder:
     """
@@ -54,6 +54,9 @@ class Command(SyncCommand):
         parser = super(Command, self).create_parser(prog_name, subcommand)
         parser.add_option('--encoding', help="Encoding to use")
         parser.add_option('--offset', type=int, help="Skip that many lines from the CSV")
+
+        parser.add_option('--fy-mode', action="store_true", default=False,
+                    help="Import the FY map")
         return parser
 
     def handle(self, *args, **options):
@@ -85,6 +88,12 @@ class Command(SyncCommand):
                     offset -= 1
                     if offset <= 0:
                         break
+
+            if options['fy_mode']:
+                self._import_foreis(reader, cols)
+            else:
+                self._import_departments(reader, cols)
+
         except Exception:
             logger.exception("Could not parse file: ")
 
@@ -152,5 +161,35 @@ class Command(SyncCommand):
             else:
                 logger.debug("limit not reached!")
                 logger.debug("Known depts: %d", len(known_depts))
+
+    def _import_foreis(self, reader, cols):
+        logger = self._logger
+        num_done = 0
+        known_fys = {}
+        dept_type_fy, c = DepartmentType.objects.get_or_create(name=u"ΦΟΡΕΑΣ ΥΛΟΠΟΙΗΣΗΣ")
+        for line in reader:
+            if num_done >= self._limit:
+                break
+            res = dict(zip(cols, line))
+            logger.debug("Doing #%s: %s", res.get('id_idry',''), res.get('Idryma', '?'))
+            num_done += 1
+
+            if not self._active:
+                try:
+                    dept = Department.objects.get(name=res['Idryma'], code2=res['Initials'])
+                    known_fys[res['id_idry']] = (dept.id, dept.name)
+                except ObjectDoesNotExist:
+                    logger.info(u"Ο φορέας \"%s\" δεν υπάρχει στη βάση", res['Idryma'])
+            else:
+                dept, c = Department.objects.get_or_create(name=res['Idryma'], code2=res['Initials'],
+                        defaults={'dept_type': dept_type_fy, 'code': 'fy-%s' % res['id_idry']})
+                if c:
+                    logger.info(u"Δημιουργήθηκε το #%d: %s", dept.id, dept.name)
+                known_fys[res['id_idry']] = (dept.id, dept.name)
+        logger.info(u"Επεξεργάστηκαν %d γραμμές, υπάρχουν %d αντιστοιχίες", num_done, len(known_fys))
+        print "'fy_id2dept': {"
+        for k, v in known_fys.items():
+            print "    %s: %d,  # %s" % (k, v[0], v[1])
+        print "    }"
 
 #eof
