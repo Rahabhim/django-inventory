@@ -118,6 +118,9 @@ class Command(SyncCommand):
 
                 self._verify_name(dept, result[0])
                 return
+            elif not dept.code:
+                log.debug("    no code, skipping...")
+                return
             else:
                 log.debug("    not associated with LDAP, searching by code...")
 
