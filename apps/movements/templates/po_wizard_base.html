@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+{% block title %}{%trans " Purchase order wizard" %}{% endblock %}
+
+{% block javascript %}
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ wizard.form.media }}
+    <!--<link href="{{ MEDIA_URL }}/css/po_wizard.css" type="text/css" rel="stylesheet">-->
+    <style type="text/css">
+    /*-*/
+    {% include "po_wizard.css" %}
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div id="u0" class="u0_container"   >
+<form action="." method="post">{% csrf_token %}
+{{ wizard.management_form }}
+
+<!-- wizard steps -->
+    <table id="wizard_steps_indicator">
+    <tr>{% for wkey, wform in wiz_steps %}
+        <td width="{{ wiz_width }}%">
+        <table class="{% if wkey == wizard.steps.current %}wiz_step_cell_active{% else %}wiz_step_cell{% endif %}">
+            <tr><td class="wiz_number">{{ wkey }}</td>
+                <td><span style="">{{ wform.title }}</span></td>
+            </tr>
+        </table>
+        </td>
+        {% endfor %}
+    </tr></table>
+<!-- end wizard steps -->
+
+<div class="u2_title"><p>{{ wizard.form.title }}</p></div>
+
+{% block pow_content %}
+{% endblock %}
+
+</form>
+
+
+</div>
+<div class="preload">
+    <img src="{{ MEDIA_URL }}/images/u0_normal.png" width="1" height="1"/>
+    <img src="{{ MEDIA_URL }}/images/u3_normal.png" width="1" height="1"/>
+    <img src="{{ MEDIA_URL }}/images/u6_normal.png" width="1" height="1"/>
+    <img src="{{ MEDIA_URL }}/images/u15_normal.png" width="1" height="1"/>
+    <img src="{{ MEDIA_URL }}/images/u21_normal.png" width="1" height="1"/>
+    <img src="{{ MEDIA_URL }}/images/u28_normal.png" width="1" height="1"/>
+    <img src="{{ MEDIA_URL }}/images/u44_normal.png" width="1" height="1"/>
+</div>
+
+{% endblock %}
