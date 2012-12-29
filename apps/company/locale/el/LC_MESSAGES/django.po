@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"POT-Creation-Date: 2012-12-28 12:51+0200\n"
 "PO-Revision-Date: 2012-09-21 16:53+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -29,11 +29,11 @@ msgstr ""
 msgid "company"
 msgstr "Διοικητική δομή"
 
-#: __init__.py:28 models.py:48
+#: __init__.py:28 models.py:49
 msgid "departments"
 msgstr "Μονάδες"
 
-#: __init__.py:29 urls.py:23
+#: __init__.py:29 urls.py:29
 msgid "department types"
 msgstr "Τύποι Μονάδων"
 
@@ -52,11 +52,11 @@ msgstr "Τύποι Μονάδων"
 msgid "name"
 msgstr ""
 
-#: models.py:29
+#: models.py:29 urls.py:16 urls.py:23
 msgid "code"
 msgstr ""
 
-#: models.py:30
+#: models.py:30 urls.py:24
 msgid "code 2"
 msgstr ""
 
@@ -96,10 +96,23 @@ msgstr "Τμήμα"
 msgid "Serviced By"
 msgstr ""
 
-#: models.py:47
+#: models.py:42
+msgid "Sequence for items"
+msgstr ""
+
+#: models.py:48
 #, fuzzy
 msgid "department"
 msgstr "Μονάδες"
+
+#: models.py:66
+#, python-format
+msgid "No sequence for department %s"
+msgstr ""
+
+#: urls.py:25
+msgid "Parent dept."
+msgstr ""
 
 #: templates/department_list.html:6
 #, python-format
