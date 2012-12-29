@@ -1,0 +1,52 @@
+{% extends "po_wizard_base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+{% block javascript %}
+<script type="text/javascript">
+    $(function() {
+        $( "#{{ wizard.form.categories.auto_id }}" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+        $( "#{{ wizard.form.categories.auto_id }} li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+    });
+</script>
+{% endblock %}
+
+{% block pow_content %}
+<div class="u2_form">
+{{ wizard.form.management_form }}
+
+{% with wizard.form as form %}
+    {{ form.categories.errors }}
+    <div id="{{ form.categories.auto_id }}">
+        <ul>
+        {% for cat in form.categories %} {# The tabs #}
+            <li><a href="#{{ cat.did }}">{{ cat }}</a></li>
+        {% endfor %}
+        </ul>
+        {% for cat in form.categories %} {# content for each tab #}
+        <div id="{{ cat.did }}">
+                <h2>{{ cat }}</h2>
+            {% for cat2 in cat.standalones %}
+                <div id="{{ cat2.did }}"><input type="checkbox" name="{{cat2.name}}" value="{{ cat2.id }}" {% if cat2.is_checked %}checked{% endif %} /><img src="{{ MEDIA_URL }}/images/empty_img.png" />{{ cat2 }}</div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+    </div>
+{% endwith %}
+</div>
+
+{% if wizard.steps.prev %}
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+{% endif %}
+
+<div width="100%">
+<p align="right">
+    <input id="submit0" type="submit">
+</p>
+</div>
+
+{% endblock %}
+

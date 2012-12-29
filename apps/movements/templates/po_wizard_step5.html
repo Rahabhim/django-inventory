@@ -1,0 +1,27 @@
+{% extends "po_wizard_base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+{% block pow_content %}
+<div class="u2_form">
+{{ wizard.form.management_form }}
+
+{% with wizard.form as form %}
+    <p> Foo! </p>
+{% endwith %}
+</div>
+
+{% if wizard.steps.prev %}
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+{% endif %}
+
+<div width="100%">
+<p align="right">
+    <input id="submit0" type="submit">
+</p>
+</div>
+
+{% endblock %}
+
