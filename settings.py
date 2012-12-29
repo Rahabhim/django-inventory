@@ -57,7 +57,7 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     },
     'default': {
-        'ENGINE': 'postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django_inventory',
         'USER': 'USERNAME',       # Not used with sqlite3.
         'PASSWORD': 'USERPASSWORD',   # Not used with sqlite3.
