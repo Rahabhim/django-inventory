@@ -18,6 +18,10 @@
         {% field_for parent %}
     </div>
 
+    <div class="group newline">
+        {% field_for picture %}
+    </div>
+
     <div style="clear:both;"> </div>
     {% for formset in formsets %}
         {% include 'category_contained_formset.html' %}

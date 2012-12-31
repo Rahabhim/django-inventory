@@ -11,6 +11,8 @@ class ItemCategory(models.Model):
                 verbose_name=_("parent category"))
     approved = models.BooleanField(default=False, verbose_name=_("approved"))
     is_bundle = models.BooleanField(default=False, verbose_name=_("Is bundle"))
+    picture = models.ImageField(verbose_name=_("Picture"), upload_to='categories', 
+                blank=True, null=True)
 
     @models.permalink
     def get_absolute_url(self):
