@@ -24,7 +24,7 @@ class ItemCategory(models.Model):
 
 class ItemCategoryContain(models.Model):
     parent_category = models.ForeignKey(ItemCategory, related_name="may_contain", verbose_name=_("May contain"))
-    category = models.ForeignKey(ItemCategory, related_name='+', verbose_name=_("contained category"))
+    category = models.ForeignKey(ItemCategory, related_name='contained_in', verbose_name=_("contained category"))
     min_count = models.IntegerField(verbose_name=_("minimum count"), default=0)
     max_count = models.IntegerField(verbose_name=_("maximum count"), default=1)
 
