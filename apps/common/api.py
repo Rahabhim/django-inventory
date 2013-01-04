@@ -45,4 +45,34 @@ def register_submenu(menu_id, links):
     else:
         raise KeyError("No menu with id: %s" % menu_id)
 
+# Condition functions for the views
+
+def _user_has_perm(user, obj, pattern):
+    """Assert that user has permission as in `pattern` on object
+    """
+    try:
+        npd = {'app': obj._meta.app_label, 'Model': obj._meta.object_name,
+                'model': obj._meta.module_name}
+        return user.has_perm(pattern % npd)
+    except Exception, e:
+        return False
+
+def can_add(model):
+    """ Return a function to test user's permission to create model
+    
+        Since the "create" link will exist in the "list" view, no object
+        will be available.
+    """
+    return lambda obj, context: _user_has_perm(context['user'], model, '%(app)s.add_%(model)s')
+
+def can_edit(obj, context):
+    """ Assert if current user can edit the model of `obj`
+    """
+    return _user_has_perm(context['user'], obj, '%(app)s.change_%(model)s')
+
+def can_delete(obj, context):
+    """ Assert if current user can edit the model of `obj`
+    """
+    return _user_has_perm(context['user'], obj, '%(app)s.delete_%(model)s')
+
 #eof
