@@ -8,10 +8,10 @@ from conf import settings as inventory_settings
 
 from photos.views import generic_photos
 
-from generic_views.views import generic_delete, \
-                                generic_detail, generic_list, \
+from generic_views.views import generic_detail, generic_list, \
                                 GenericCreateView, GenericUpdateView, \
-                                GenericBloatedListView, GenericDetailView
+                                GenericBloatedListView, GenericDetailView, \
+                                GenericDeleteView
 
 from models import ItemTemplate, ItemCategory, Manufacturer
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
@@ -47,11 +47,11 @@ urlpatterns = patterns('products.views',
             form_class=ItemTemplateForm, inline_fields=('attributes',),
             extra_context={'object_name':_(u'item template')}),
             name='template_update' ),
-    url(r'^template/(?P<object_id>\d+)/delete/$', generic_delete,
-            dict(model=ItemTemplate, post_delete_redirect="template_list",
+    url(r'^template/(?P<pk>\d+)/delete/$', GenericDeleteView.\
+                as_view(model=ItemTemplate, success_url="template_list",
                     extra_context=dict(object_name=_(u'item template'),
                     _message=_(u"Will be deleted from any user that may have it assigned and from any item group."))),
-            'template_delete' ),
+            name='template_delete' ),
     url(r'^template/orphans/$', generic_list, dict(queryset=ItemTemplate.objects.filter(item=None),
                     extra_context=dict(title=_('orphan templates'))),
             'template_orphans_list'),
@@ -83,12 +83,12 @@ urlpatterns = patterns('products.views',
             inline_fields={'may_contain': ItemCategoryContainForm},
             extra_context={'object_name':_(u'item category')}),
             name='category_update' ),
-    url(r'^categories/(?P<object_id>\d+)/delete/$', generic_delete,
-            dict(model=ItemCategory, post_delete_redirect="category_list",
+    url(r'^categories/(?P<pk>\d+)/delete/$', GenericDeleteView.\
+            as_view(model=ItemCategory, success_url="category_list",
                     extra_context=dict(object_name=_(u'item category'),
                     # FIXME _message=_(u"Will be deleted from any user that may have it assigned and from any item group.")
                     )),
-            'category_delete' ),
+            name='category_delete' ),
     url(r'^categories/(?P<pk>\d+)/$', GenericDetailView.as_view(form_class=ItemCategoryForm_view,
                     template_name='category_form.html',
                     queryset=ItemCategory.objects.all(),
@@ -107,12 +107,10 @@ urlpatterns = patterns('products.views',
             {'form_class': ManufacturerForm, 'template_name':'generic_form.html',
                     'extra_context':{'object_name':_(u'manufacturer')}},
             'manufacturer_update' ),
-    url(r'^manufacturers/(?P<object_id>\d+)/delete/$', generic_delete,
-            dict(model=Manufacturer, post_delete_redirect="manufacturers_list",
-                    extra_context=dict(object_name=_(u'manufacturer'),
-                    # FIXME _message=_(u"Will be deleted from any user that may have it assigned and from any item group.")
-                    )),
-            'manufacturer_delete' ),
+    url(r'^manufacturers/(?P<pk>\d+)/delete/$', GenericDeleteView.\
+            as_view(model=Manufacturer, success_url="manufacturers_list",
+                    extra_context=dict(object_name=_(u'manufacturer'))),
+            name='manufacturer_delete' ),
     url(r'^manufacturers/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ManufacturerForm_view,
                     queryset=Manufacturer.objects.all(),
                     extra_context={'object_name':_(u'manufacturer'),}),
