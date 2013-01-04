@@ -95,17 +95,7 @@ def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs
     return object_list(request,  template_name='generic_list.html', *args, **kwargs)
 
 def generic_delete(*args, **kwargs):
-    try:
-        kwargs['post_delete_redirect'] = reverse(kwargs['post_delete_redirect'])
-    except NoReverseMatch:
-        pass
-
-    if 'extra_context' in kwargs:
-        kwargs['extra_context']['delete_view'] = True
-    else:
-        kwargs['extra_context'] = {'delete_view':True}
-  
-    return delete_object(template_name='generic_confirm.html', *args, **kwargs)
+    raise RuntimeError("obsolete")
 
 def generic_confirm(request, _view, _title=None, _model=None, _object_id=None, _message='', *args, **kwargs):
     if request.method == 'POST':
@@ -307,6 +297,21 @@ class GenericCreateView(_PermissionsMixin, _InlineViewMixin, django_gv.CreateVie
 class GenericUpdateView(_PermissionsMixin, _InlineViewMixin, django_gv.UpdateView):
     template_name = 'generic_form_fs.html'
     need_permission = '%(app)s.change_%(model)s'
+
+class GenericDeleteView(_PermissionsMixin, django_gv.DeleteView):
+    template_name = 'generic_confirm.html'
+    extra_context = None
+    form_mode = 'delete'
+    need_permission = '%(app)s.delete_%(model)s'
+
+    def get_context_data(self, **kwargs):
+        context = super(GenericDeleteView, self).get_context_data(**kwargs)
+
+        if self.extra_context:
+            context.update(self.extra_context)
+        context['form_mode'] = self.form_mode
+        context['delete_view'] = True
+        return context
 
 class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
     """ Form-based, read-only view of an object
