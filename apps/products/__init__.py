@@ -1,14 +1,15 @@
 # -*- encoding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 
-from common.api import register_links, register_menu
+from common.api import register_links, register_menu, can_add, can_edit, can_delete
 
 from models import ItemTemplate, ItemCategory, Manufacturer
 import models
 
 
 template_list = {'text':_('view all'), 'view':'template_list', 'famfam':'page_go'}
-template_create = {'text':_('create new template'), 'view':'template_create', 'famfam':'page_add'}
+template_create = {'text':_('create new template'), 'view':'template_create', 
+        'famfam':'page_add', 'condition': can_add(ItemTemplate)}
 template_orphan_list = {'text':_('orphans templates'), 'view':'template_orphans_list'}
 template_update = {'text':_(u'edit'), 'view':'template_update', 'args':'object.id', 'famfam':'page_edit'}
 template_delete = {'text':_(u'delete'), 'view':'template_delete', 'args':'object.id', 'famfam':'page_delete'}
@@ -18,14 +19,20 @@ template_assign_supplies = {'text':_(u'assign supplies'), 'view':'template_assig
 template_assign_suppliers = {'text':_(u'assign suppliers'), 'view':'template_assign_suppliers', 'args':'object.id', 'famfam':'lorry_go'}
 
 categories_list = {'text':_('categories'), 'view':'category_list', 'famfam':'page_go'}
-category_create = {'text':_('create new category'), 'view':'category_create', 'famfam':'page_add'}
-category_update = {'text':_(u'edit category'), 'view':'category_update', 'args':'object.id', 'famfam':'page_edit'}
-category_delete = {'text':_(u'delete category'), 'view':'category_delete', 'args':'object.id', 'famfam':'page_delete'}
+category_create = {'text':_('create new category'), 'view':'category_create', 
+        'famfam':'page_add', 'condition': can_add(ItemCategory) }
+category_update = {'text':_(u'edit category'), 'view':'category_update',
+        'args':'object.id', 'famfam':'page_edit', 'condition': can_edit}
+category_delete = {'text':_(u'delete category'), 'view':'category_delete',
+        'args':'object.id', 'famfam':'page_delete', 'condition': can_delete }
 
 manufs_list = {'text':_('manufacturers'), 'view':'manufacturers_list', 'famfam':'page_go'}
-manufacturer_create = {'text':_('create new manufacturer'), 'view':'manufacturer_create', 'famfam':'page_add'}
-manufacturer_update = {'text':_(u'edit manufacturer'), 'view':'manufacturer_update', 'args':'object.id', 'famfam':'page_edit'}
-manufacturer_delete = {'text':_(u'delete manufacturer'), 'view':'manufacturer_delete', 'args':'object.id', 'famfam':'page_delete'}
+manufacturer_create = {'text':_('create new manufacturer'), 'view':'manufacturer_create', 
+        'famfam':'page_add', 'condition': can_add(Manufacturer) }
+manufacturer_update = {'text':_(u'edit manufacturer'), 'view':'manufacturer_update', 
+        'args':'object.id', 'famfam':'page_edit', 'condition': can_edit}
+manufacturer_delete = {'text':_(u'delete manufacturer'), 'view':'manufacturer_delete', 
+        'args':'object.id', 'famfam':'page_delete', 'condition': can_delete}
 
 template_menu_links = [template_list, categories_list, manufs_list]
 
@@ -38,9 +45,10 @@ register_links(ItemTemplate, [template_assets])
 register_links(ItemTemplate, [template_update, template_delete, template_photos, 
             template_assign_supplies], menu_name='sidebar')
 
-
+register_links(['category_list'], [category_create], menu_name='sidebar')
 register_links(ItemCategory, [category_create, category_update, category_delete], menu_name='sidebar')
 register_links(Manufacturer, [manufacturer_create, manufacturer_update, manufacturer_delete], menu_name='sidebar')
+register_links(['manufacturers_list'], [manufacturer_create], menu_name='sidebar')
 
 register_menu([
     {'text':_('templates'), 'view':'template_list', 
