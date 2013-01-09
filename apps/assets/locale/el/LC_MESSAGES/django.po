@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-18 19:30+0200\n"
-"PO-Revision-Date: 2012-11-08 08:52+0200\n"
+"PO-Revision-Date: 2013-01-09 20:54+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -35,7 +35,7 @@ msgstr "διαγραφή κατάστασης εξοπλισμού"
 
 #: __init__.py:15
 msgid "list all assets"
-msgstr "λίστα εξοπλισμού"
+msgstr "λίστα εξοπλισμού μονάδας"
 
 #: __init__.py:16
 msgid "create new asset"
@@ -83,7 +83,7 @@ msgstr "Κατασκευαστής"
 
 #: forms.py:31 urls.py:38 views.py:142
 msgid "Category"
-msgstr "Κατηγορία"
+msgstr "Είδος"
 
 #: models.py:15
 msgid "name"
@@ -192,7 +192,7 @@ msgstr "κατασκευαστής"
 
 #: views.py:30
 msgid "category"
-msgstr "κατηγορία"
+msgstr "είδος"
 
 #: views.py:33
 msgid "product"

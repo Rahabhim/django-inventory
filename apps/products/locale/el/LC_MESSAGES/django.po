@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-11-18 19:30+0200\n"
-"PO-Revision-Date: 2012-11-18 19:44+0200\n"
+"PO-Revision-Date: 2013-01-09 20:55+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -55,7 +55,7 @@ msgstr "σύνδεση προμηθευτών"
 
 #: __init__.py:20
 msgid "categories"
-msgstr "κατηγορίες"
+msgstr "είδη"
 
 #: __init__.py:21
 msgid "manufacturers"
@@ -68,8 +68,7 @@ msgstr "προϊόντα"
 #: models.py:14
 msgid "Bundles of this category may contain items of these categories"
 msgstr ""
-"Συνθέσεις αυτής της κατηγορίας μπορούν να περιλαμβάνουν προϊόντα από αυτές "
-"τις κατηγορίες"
+"Συνθέσεις αυτού του είδους μπορούν να περιλαμβάνουν προϊόντα από αυτά τα είδη"
 
 #: models.py:32
 msgid "units"
@@ -130,7 +129,7 @@ msgstr "κατασκευαστής"
 
 #: urls.py:23
 msgid "category"
-msgstr "κατηγορία"
+msgstr "είδος"
 
 #: urls.py:36
 msgid "Manufacturer"
@@ -138,7 +137,7 @@ msgstr "Κατασκευαστής"
 
 #: urls.py:37
 msgid "Category"
-msgstr "Κατηγορία"
+msgstr "Είδος"
 
 #: urls.py:51
 msgid ""
@@ -152,7 +151,7 @@ msgstr ""
 
 #: urls.py:71 urls.py:74 urls.py:78 urls.py:82 urls.py:88
 msgid "item category"
-msgstr "κατηγορία προϊόντων"
+msgstr "είδος προϊόντων"
 
 #: views.py:17
 msgid "assets that use the template"
@@ -200,4 +199,5 @@ msgstr ""
 #: views.py:67
 msgid "suppliers"
 msgstr "προμηθευτές"
+
 
