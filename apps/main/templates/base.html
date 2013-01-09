@@ -110,30 +110,3 @@
 
 {% block web_theme_footer %}{% block footer %}{% endblock %}{% endblock %}
 
-{% comment %}
-        <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}skins/pilu-web-app/javascripts/jquery.scrollTo.js"></script>
-        <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}skins/pilu-web-app/javascripts/jquery.localscroll.js"></script>
-        {% block stylesheets %}{% endblock %}
-
-        <script type="text/javascript" src="{{ MEDIA_URL }}packages/jquery-1.4.2.min.js"></script>
-
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $("form").submit(function() {
-                    $('input:submit', this).attr("value", "{% trans 'Please wait...' %}");
-                    $('input:submit', this).attr("disabled", "disabled");
-                    return true;
-                });
-
-                $().ajaxSend(function(r,s){
-                    $("#loading").show();
-                });
-
-                $().ajaxStop(function(r,s){
-                    $("#loading").fadeOut("fast");
-                });
-            });
-        </script>
-
-    </head>
-{% endcomment %}
