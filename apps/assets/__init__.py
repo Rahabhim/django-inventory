@@ -45,7 +45,7 @@ register_links(['home'], [asset_list,], menu_name='start_actions')
 
 register_menu([
     {'text':_('assets'), 'view':'item_list', 'id': 'menu_assets',
-        'links':[ asset_list, group_list,
+        'links':[ asset_list,
                 ],
         'famfam':'computer', 'position':2},
     ])
