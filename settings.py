@@ -148,6 +148,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.staticfiles',
+    'django.contrib.formtools',
     'pagination',
     'photologue',
     'photos',
