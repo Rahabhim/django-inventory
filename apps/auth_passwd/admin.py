@@ -12,6 +12,9 @@ class UserProfileInline(admin.StackedInline):
     can_delete = False
     verbose_name_plural = 'profile'
     raw_id_fields = ('department',)
+    
+    class Media:
+        js = ( 'js/ajax_select.js',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'department':
@@ -21,6 +24,8 @@ class UserProfileInline(admin.StackedInline):
 # Define a new User admin
 class UserAdmin(UserAdmin):
     inlines = (UserProfileInline, )
+    class Media:
+        js = ('js/inlines.min.js', )
 
 # Re-register UserAdmin
 admin.site.unregister(User)

@@ -11,7 +11,7 @@
         <script type="text/javascript" src="{{ jsi18nurl|default:'../../jsi18n/' }}"></script>
     {% endif %}
     {{ media }}
-    <script type="text/javascript" src="{% admin_media_prefix %}js/grappelli.change_list.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/grappelli.change_list.js"></script>
     <script type="text/javascript" charset="utf-8">
         {% if is_popup %}
             var IS_POPUP = true;
@@ -47,11 +47,11 @@
     </script>
 {% endblock %}
 
-<!-- COLTYPE/BODYCLASS-- >
+<!-- COLTYPE/BODYCLASS -->
 {% block bodyclass %}change-list{% endblock %}
 {% block content-class %}content-flexible{% endblock %}
 
-<!-- BREADCRUMBS -- >
+<!-- BREADCRUMBS -->
 {% block breadcrumbs %}
     {% if not is_popup %}
         <div id="breadcrumbs">

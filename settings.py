@@ -229,6 +229,7 @@ PAGINATION_DEFAULT_PAGINATION = 50
 WEB_THEME = 'warehouse'
 
 STATIC_URL= '/static/'
+# Place to copy static files into: Do not commit this, it is generated!
 STATIC_ROOT = './staticfiles/'
 # USE_ETAGS = False
 USE_THOUSAND_SEPARATOR = True
