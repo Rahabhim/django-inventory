@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"POT-Creation-Date: 2013-01-14 13:23+0200\n"
 "PO-Revision-Date: 2012-11-18 19:47+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10 models.py:101 urls.py:35
+#: __init__.py:10 models.py:107 urls.py:35
 msgid "suppliers"
 msgstr "προμηθευτές"
 
@@ -41,7 +41,7 @@ msgstr ""
 msgid "related purchase orders"
 msgstr ""
 
-#: __init__.py:17 models.py:58 models.py:108 urls.py:28 urls.py:31
+#: __init__.py:17 models.py:58 models.py:138 urls.py:28 urls.py:31
 msgid "locations"
 msgstr "τοποθεσίες"
 
@@ -57,7 +57,7 @@ msgstr "εξοπλισμός"
 msgid "location"
 msgstr "τοποθεσία"
 
-#: models.py:11 models.py:47 models.py:80
+#: models.py:11 models.py:47 models.py:86 models.py:115
 msgid "name"
 msgstr "όνομα"
 
@@ -126,23 +126,50 @@ msgstr "τοποθεσία προμηθευτή"
 msgid "Bundled"
 msgstr "Σε Σύνθεση"
 
-#: models.py:84
+#: models.py:90
 #, fuzzy
 msgid "location template"
 msgstr "τοποθεσία"
 
-#: models.py:85
+#: models.py:91
 #, fuzzy
 msgid "location templates"
 msgstr "τοποθεσίες"
 
-#: models.py:96
+#: models.py:102
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:100 models.py:109 urls.py:38
+#: models.py:106 models.py:139 urls.py:38
 msgid "supplier"
 msgstr "προμηθευτής"
 
-#~ msgid "phone number"
-#~ msgstr "αριθμός τηλεφώνου"
+#: models.py:116
+msgid "prefix"
+msgstr ""
+
+#: models.py:117
+msgid "suffix"
+msgstr ""
+
+#: models.py:118
+#, fuzzy
+msgid "next number"
+msgstr "αριθμός τηλεφώνου"
+
+#: models.py:119
+#, fuzzy
+msgid "increment"
+msgstr "Προμήθεια"
+
+#: models.py:120
+msgid "Number padding"
+msgstr ""
+
+#: models.py:123
+msgid "sequence"
+msgstr ""
+
+#: models.py:124
+msgid "sequences"
+msgstr ""

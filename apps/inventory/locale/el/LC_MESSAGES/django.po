@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-18 19:30+0200\n"
+"POT-Creation-Date: 2013-01-14 13:23+0200\n"
 "PO-Revision-Date: 2012-11-18 19:44+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -45,15 +45,19 @@ msgstr "άνοιγμα"
 msgid "close"
 msgstr "κλείσιμο"
 
-#: __init__.py:27
+#: __init__.py:20
+msgid "compare"
+msgstr ""
+
+#: __init__.py:28
 msgid "template"
 msgstr "προϊόν"
 
-#: __init__.py:28
+#: __init__.py:29
 msgid "return to inventory"
 msgstr "επιστροφή στην απογραφή"
 
-#: __init__.py:45 models.py:48 urls.py:20
+#: __init__.py:48 models.py:48 urls.py:20
 msgid "inventories"
 msgstr "Απογραφές"
 
@@ -95,58 +99,58 @@ msgstr "δημιουργήθηκε από"
 msgid "validated by"
 msgstr "ημερομηνία επικύρωσης"
 
-#: models.py:47 models.py:137 urls.py:25 urls.py:30 urls.py:33 urls.py:36
-#: views.py:40
+#: models.py:47 models.py:138 urls.py:25 urls.py:30 urls.py:33 urls.py:36
+#: views.py:40 views.py:121
 msgid "inventory"
 msgstr "απογραφή"
 
-#: models.py:60
+#: models.py:61
 #, fuzzy, python-format
 msgid "Inventory: %s"
 msgstr "Απογραφές"
 
-#: models.py:95 models.py:105
+#: models.py:96 models.py:106
 #, python-format
 msgid "Incorrect object passed: %s"
 msgstr "Λάθος αντικείμενο: %s"
 
-#: models.py:98
+#: models.py:99
 #, fuzzy
 msgid "Item already in inventory"
 msgstr "Νέα Απογραφή"
 
-#: models.py:112
+#: models.py:113
 #, fuzzy, python-format
 msgid "Item %s not in inventory!"
 msgstr "Νέα Απογραφή"
 
-#: models.py:118
+#: models.py:119
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:119 views.py:49
+#: models.py:120 views.py:49
 msgid "quantity"
 msgstr "Ποσότητα"
 
-#: models.py:120
+#: models.py:121
 msgid "item state"
 msgstr "κατάσταση"
 
-#: models.py:122
+#: models.py:123
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:125 urls.py:45
+#: models.py:126 urls.py:47
 #, fuzzy
 msgid "inventory item"
 msgstr "Απογραφές"
 
-#: models.py:126
+#: models.py:127
 #, fuzzy
 msgid "inventory items"
 msgstr "Απογραφές"
 
-#: urls.py:41
+#: urls.py:43
 #, fuzzy
 msgid "items"
 msgstr "προϊόν"
@@ -159,6 +163,46 @@ msgstr "Νέα Απογραφή"
 #: views.py:64
 msgid "purchase orders from supplier"
 msgstr "εντολές προμήθειας από προμηθευτή"
+
+#: templates/inventory_compare_have_more.html:6
+#, python-format
+msgid ""
+"Apparently, the inventory does not match the recorded situation in\n"
+"    this location, as computed from previous moves. You will have to issue "
+"corrective\n"
+"    movements to amend the sums.<br/>\n"
+"    \n"
+"    You can revise the sums by visiting \n"
+"    <a href=\"%(url_for('inventory_items_compare'))s?pending_only=1\">this "
+"page again</a> .\n"
+"    "
+msgstr ""
+
+#: templates/inventory_compare_success.html:6
+msgid ""
+"The sums of this inventory and the movements recorded in the systems\n"
+"    agree.<br/>\n"
+"    You can now proceed to <a href=\"#\">Validate the inventory</a>\n"
+"    "
+msgstr ""
+
+#: templates/inventory_items_compare.html:8
+#, fuzzy
+msgid "At location"
+msgstr "τοποθεσία"
+
+#: templates/inventory_items_compare.html:8
+#, fuzzy
+msgid "In inventory"
+msgstr "απογραφή"
+
+#: templates/inventory_items_compare.html:18
+msgid "not accounted"
+msgstr ""
+
+#: templates/inventory_items_compare.html:21
+msgid "missing!"
+msgstr ""
 
 #: templates/report-items_per_person.html:14
 msgid "User assets report"
