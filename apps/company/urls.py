@@ -4,7 +4,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.views.generic import ListView
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
-from generic_views.views import generic_delete, \
+from generic_views.views import GenericDeleteView, \
                                 generic_detail, generic_list, \
                                 GenericBloatedListView, GenericDetailView
 

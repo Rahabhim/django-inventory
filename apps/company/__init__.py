@@ -22,13 +22,12 @@ def make_mv_location(destination):
     return lambda q: Q(**{dept_col: models.Department.objects.filter(_department_filter_q(q))}) | \
                     Q(**{dept_col2:True, lname_col: q})
 
+company_department_list = {'text':_('departments'), 'view':'company_department_list', 'famfam':'page_go'}
+company_department_type_list = {'text':_('department types'), 'view':'company_department_type_list', 'famfam':'page_go'}
 
 register_menu([
     {'text':_('company'), 'view':'company_department_list', 
-            'links':[ {'text':_('departments'), 'view':'company_department_list', 'famfam':'page_go'},
-                {'text':_('department types'), 'view':'company_department_type_list', 'famfam':'page_go'},
-                location_list,
-                ],
+            'links':[ company_department_list, company_department_type_list, location_list, ],
         'famfam':'building','position':4}])
 
 register_links(models.Department, [department_assets,])

@@ -3,7 +3,7 @@ from django.conf.urls.defaults import patterns, url
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
-from generic_views.views import generic_delete, \
+from generic_views.views import GenericDeleteView, \
                                 generic_detail, generic_list, \
                                 GenericUpdateView
 
@@ -20,7 +20,7 @@ urlpatterns = patterns('assets.views',
     url(r'^asset/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(form_class=ItemForm, 
                 template_name='item_group_form.html', 
                 extra_context={'object_name':_(u'asset')}), name='item_update'),
-    #url(r'^asset/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Item}, post_delete_redirect="item_list", extra_context=dict(object_name=_(u'asset'))), 'item_delete'),
+    #url(r'^asset/(?P<object_id>\d+)/delete/$', GenericDeleteView.as_view({'model':Item}, success_url="item_list", extra_context=dict(object_name=_(u'asset'))), name='item_delete'),
     url(r'^asset/list/$', AssetListView.as_view(title=_(u'list of assets')), name='item_list'),
     url(r'^asset/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemForm_view, 
                 template_name="asset_detail.html",
@@ -47,12 +47,11 @@ urlpatterns = patterns('assets.views',
     url(r'^group/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(form_class=ItemGroupForm_edit,
             template_name='item_group_form.html',
             extra_context={'title':_(u'Edit item group')}), name='group_update'),
-    #url(r'^group/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':ItemGroup}, post_delete_redirect="group_list", extra_context=dict(object_name=_(u'item group'))), 'group_delete'),
-
+    
     url(r'^state/list/$', generic_list, dict({'queryset':State.objects.all()}, extra_context=dict(title =_(u'states'))), 'state_list'),
     url(r'^state/create/$', create_object, {'model':State, 'template_name':'generic_form.html', 'extra_context':{'title':'create asset state'}}, 'state_create'),
     url(r'^state/(?P<object_id>\d+)/update/$', update_object, {'model':State, 'template_name':'generic_form.html'}, 'state_update'),
-    url(r'^state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':State}, post_delete_redirect="state_list", extra_context=dict(object_name=_(u'states'))), 'state_delete'),
+    url(r'^state/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=State, success_url="state_list", extra_context=dict(object_name=_(u'states'))), name='state_delete'),
     
     url(r'^location/(?P<loc_id>\d+)/assets/$', LocationAssetsView.as_view(), name='location_assets'),
     url(r'^department/(?P<dept_id>\d+)/assets/$', DepartmentAssetsView.as_view(), name='department_assets'),

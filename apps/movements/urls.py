@@ -2,10 +2,9 @@
 from django.conf.urls.defaults import patterns, url
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic.create_update import create_object, update_object
 from django.db.models import Q
 
-from generic_views.views import generic_delete, generic_list, generic_detail, \
+from generic_views.views import GenericDeleteView, generic_list, generic_detail, \
                 GenericCreateView, GenericUpdateView, \
                 CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
 
@@ -65,27 +64,34 @@ def open_move_as_cart(obj, request):
 
 urlpatterns = patterns('movements.views',
     url(r'^purchase/request/state/list/$', generic_list, dict({'queryset':PurchaseRequestStatus.objects.all()}, extra_context=dict(title =_(u'purchase request states'))), 'purchase_request_state_list'),
-    url(r'^purchase/request/state/create/$', create_object,{'model':PurchaseRequestStatus, 'template_name':'generic_form.html', 'extra_context':{'title':_(u'create new purchase request state')}}, 'purchase_request_state_create'),
-    url(r'^purchase/request/state/(?P<object_id>\d+)/update/$', update_object, {'model':PurchaseRequestStatus, 'template_name':'generic_form.html'}, 'purchase_request_state_update'),
-    url(r'^purchase/request/state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseRequestStatus}, post_delete_redirect="purchase_request_state_list", extra_context=dict(object_name=_(u'purchase request state'))), 'purchase_request_state_delete'),
+    url(r'^purchase/request/state/create/$', GenericCreateView.as_view(model=PurchaseRequestStatus, extra_context={'title':_(u'create new purchase request state')}), name='purchase_request_state_create'),
+    url(r'^purchase/request/state/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(model=PurchaseRequestStatus), name='purchase_request_state_update'),
+    url(r'^purchase/request/state/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=PurchaseRequestStatus, success_url="purchase_request_state_list", extra_context=dict(object_name=_(u'purchase request state'))), name='purchase_request_state_delete'),
 
     url(r'^purchase/request/list/$', generic_list, dict({'queryset':PurchaseRequest.objects.all(), 'list_filters':[purchase_request_state_filter]}, extra_context=dict(title =_(u'purchase requests'), extra_columns = [{'name':_(u'Active'), 'attribute': 'fmt_active'}])), 'purchase_request_list'),
     url(r'^purchase/request/(?P<object_id>\d+)/$', 'purchase_request_view', (), 'purchase_request_view'),
-    url(r'^purchase/request/create/$', create_object,{'form_class':PurchaseRequestForm, 'template_name':'generic_form.html', 'extra_context':{'title':_(u'create new purchase request')}}, 'purchase_request_create'),
-    url(r'^purchase/request/(?P<object_id>\d+)/update/$', update_object, {'form_class':PurchaseRequestForm, 'template_name':'generic_form.html'}, 'purchase_request_update'),
-    url(r'^purchase/request/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseRequest}, post_delete_redirect="purchase_request_list", extra_context=dict(object_name=_(u'purchase request'))), 'purchase_request_delete'),
+    url(r'^purchase/request/create/$', 
+            GenericCreateView.as_view(form_class=PurchaseRequestForm,
+                    extra_context={'title':_(u'create new purchase request')}),
+            name='purchase_request_create'),
+    url(r'^purchase/request/(?P<pk>\d+)/update/$', 
+            GenericUpdateView.as_view( form_class=PurchaseRequestForm,),
+            name='purchase_request_update'),
+    url(r'^purchase/request/(?P<pk>\d+)/delete/$',
+            GenericDeleteView.as_view(model=PurchaseRequest, success_url="purchase_request_list", extra_context=dict(object_name=_(u'purchase request'))), 
+            name='purchase_request_delete'),
     url(r'^purchase/request/(?P<object_id>\d+)/close/$', 'purchase_request_close', (), 'purchase_request_close'),
     url(r'^purchase/request/(?P<object_id>\d+)/open/$', 'purchase_request_open', (), 'purchase_request_open'),
     url(r'^purchase/request/(?P<object_id>\d+)/purchase_order_wizard/$', 'purchase_order_wizard', (), 'purchase_order_wizard'),
 
     url(r'^purchase/request/(?P<object_id>\d+)/add_item/$', 'purchase_request_item_create', (), 'purchase_request_item_create'),
-    url(r'^purchase/request/item/(?P<object_id>\d+)/update/$', update_object, {'model':PurchaseRequestItem, 'template_name':'generic_form.html'}, 'purchase_request_item_update'),
-    url(r'^purchase/request/item/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseRequestItem}, post_delete_redirect="purchase_request_list", extra_context=dict(object_name=_(u'purchase request item'))), 'purchase_request_item_delete'),
+    url(r'^purchase/request/item/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(model=PurchaseRequestItem), name='purchase_request_item_update'),
+    url(r'^purchase/request/item/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=PurchaseRequestItem, success_url="purchase_request_list", extra_context=dict(object_name=_(u'purchase request item'))), name='purchase_request_item_delete'),
 
     url(r'^purchase/order/state/list/$', generic_list, dict({'queryset':PurchaseOrderStatus.objects.all()}, extra_context=dict(title =_(u'purchase order states'))), 'purchase_order_state_list'),
-    url(r'^purchase/order/state/create/$', create_object,{'model':PurchaseOrderStatus, 'template_name':'generic_form.html', 'extra_context':{'title':_(u'create new purchase order state')}}, 'purchase_order_state_create'),
-    url(r'^purchase/order/state/(?P<object_id>\d+)/update/$', update_object, {'model':PurchaseOrderStatus, 'template_name':'generic_form.html'}, 'purchase_order_state_update'),
-    url(r'^purchase/order/state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderStatus}, post_delete_redirect="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), 'purchase_order_state_delete'),
+    url(r'^purchase/order/state/create/$', GenericCreateView.as_view(model=PurchaseOrderStatus, extra_context={'title':_(u'create new purchase order state')}), name='purchase_order_state_create'),
+    url(r'^purchase/order/state/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(model=PurchaseOrderStatus), name='purchase_order_state_update'),
+    url(r'^purchase/order/state/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=PurchaseOrderStatus, success_url="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), name='purchase_order_state_delete'),
 
     url(r'^purchase/order/list/$', views.PurchaseOrderListView.as_view( \
                 list_filters=[po_active_filter, purchase_order_state_filter, contract_filter, supplier_filter]),
@@ -103,7 +109,7 @@ urlpatterns = patterns('movements.views',
             template_name='purchase_order_form.html',
             inline_fields={'items': PurchaseOrderItemForm_inline},
             extra_context={'title':_(u'update purchase order')}) , name='purchase_order_update'),
-    url(r'^purchase/order/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrder}, post_delete_redirect="purchase_order_list", extra_context=dict(object_name=_(u'purchase order'))), 'purchase_order_delete'),
+    url(r'^purchase/order/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=PurchaseOrder, success_url="purchase_order_list", extra_context=dict(object_name=_(u'purchase order'))), name='purchase_order_delete'),
     url(r'^purchase/order/(?P<object_id>\d+)/close/$', 'purchase_order_close', (), 'purchase_order_close'),
     url(r'^purchase/order/(?P<object_id>\d+)/open/$', 'purchase_order_open', (), 'purchase_order_open'),
     url(r'^purchase/order/(?P<object_id>\d+)/add_item/$', 'purchase_order_item_create', (), 'purchase_order_item_create'),
@@ -124,12 +130,22 @@ urlpatterns = patterns('movements.views',
             name='purchaseorder_item_remove'),
 
     url(r'^purchase/order/item/state/list/$', generic_list, dict({'queryset':PurchaseOrderItemStatus.objects.all()}, extra_context=dict(title =_(u'purchase order item states'))), 'purchase_order_item_state_list'),
-    url(r'^purchase/order/item/state/create/$', create_object,{'model':PurchaseOrderItemStatus, 'template_name':'generic_form.html', 'extra_context':{'title':_(u'create new purchase order item state')}}, 'purchase_order_item_state_create'),
-    url(r'^purchase/order/item/state/(?P<object_id>\d+)/update/$', update_object, {'model':PurchaseOrderItemStatus, 'template_name':'generic_form.html'}, 'purchase_order_item_state_update'),
-    url(r'^purchase/order/item/state/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderItemStatus}, post_delete_redirect="purchase_order_item_state_list", extra_context=dict(object_name=_(u'purchase order item status'))), 'purchase_order_item_state_delete'),
+    url(r'^purchase/order/item/state/create/$',
+            GenericCreateView.as_view(model=PurchaseOrderItemStatus, extra_context={'title':_(u'create new purchase order item state')}), 
+            name='purchase_order_item_state_create'),
+    url(r'^purchase/order/item/state/(?P<pk>\d+)/update/$',
+            GenericUpdateView.as_view(model=PurchaseOrderItemStatus),
+            name='purchase_order_item_state_update'),
+    url(r'^purchase/order/item/state/(?P<pk>\d+)/delete/$',
+            GenericDeleteView.as_view(model=PurchaseOrderItemStatus, success_url="purchase_order_item_state_list", extra_context=dict(object_name=_(u'purchase order item status'))), 
+            name='purchase_order_item_state_delete'),
 
-    url(r'^purchase/order/item/(?P<object_id>\d+)/update/$', update_object, {'form_class':PurchaseOrderItemForm, 'template_name':'generic_form.html'}, 'purchase_order_item_update'),
-    url(r'^purchase/order/item/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':PurchaseOrderItem}, post_delete_redirect="purchase_order_list", extra_context=dict(object_name=_(u'purchase order item'))), 'purchase_order_item_delete'),
+    url(r'^purchase/order/item/(?P<pk>\d+)/update/$',
+            GenericUpdateView.as_view(form_class=PurchaseOrderItemForm),
+            name='purchase_order_item_update'),
+    url(r'^purchase/order/item/(?P<pk>\d+)/delete/$',
+            GenericDeleteView.as_view(model=PurchaseOrderItem, success_url="purchase_order_list", extra_context=dict(object_name=_(u'purchase order item'))),
+            name='purchase_order_item_delete'),
     url(r'^purchase/order/item/(?P<object_id>\d+)/close/$', 'purchase_order_item_close', (), 'purchase_order_item_close'),
 
     url(r'^purchase/order/item/(?P<pk>\d+)/cart_open/$', views.POItemCartOpenView.as_view(
@@ -206,11 +222,10 @@ urlpatterns = patterns('movements.views',
                 cart_model=Movement, item_model='assets.Item'), \
             name='movement_item_remove'),
 
-    url(r'^objects/moves/(?P<object_id>\d+)/delete/$', generic_delete, 
-            dict(model=Movement, post_delete_redirect="movements_pending_list", 
+    url(r'^objects/moves/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Movement, success_url="movements_pending_list", 
                 extra_context=dict(object_name=_(u'Movement'))), name='movement_delete'),
 
     url(r'^po/wizard/$', get_po_wizview(), name="purchaseorder_wizard" ),
 )
 
-
+#eof
