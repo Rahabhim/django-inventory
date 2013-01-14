@@ -115,7 +115,10 @@ class MovementForm_view(DetailForm):
         model = Movement
 
 class _baseMovementForm(forms.ModelForm):
-    items = AutoCompleteSelectMultipleField('item', label=_("items"), show_help_text=False, required=False)
+    items = AutoCompleteSelectMultipleField('item', label=_("items"),
+                show_help_text=False, required=False,
+                help_text=_("You can better select the items by saving this form (using the button below), "
+                    "and then picking the items at the next list that will appear."))
     note = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3}),
                 label=_("Notes"))
 

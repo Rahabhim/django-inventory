@@ -104,8 +104,8 @@ register_links([('purchase_order_receive', Movement),],
           {'text':_(u'edit'), 'view':'movement_update_po', 'args':'object.id', 'famfam':'page_go',
            'condition': lambda o,c: o.state == 'draft'}])
 
-movement_cart_open = {'text':_(u'open as cart'), 'view':'movement_cart_open', 'args':'object.id', 'famfam':'package_green', 'condition': lambda o,c: o.state == 'draft'}
-movement_cart_close = {'text':_(u'close cart'), 'view':'movement_cart_close', 'args':'object.id', 'famfam':'package_red', 'condition': lambda o,c: o.state == 'draft'}
+movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open', 'args':'object.id', 'famfam':'package_green', 'condition': lambda o,c: o.state == 'draft'}
+movement_cart_close = {'text':_(u'End selection'), 'view':'movement_cart_close', 'args':'object.id', 'famfam':'package_red', 'condition': lambda o,c: o.state == 'draft'}
 
 register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movement_do_close',
             'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.state == 'draft'},
