@@ -204,8 +204,10 @@ LOGIN_EXEMPT_URLS = (
     r'^favicon\.ico$',
     r'^about\.html$',
     r'^legal/', # allow the entire /legal/* subsection
-    r'^django-inventory-site_media/',
+    )
 
+if AUTH_BACKEND == 'auth_passwd':
+    LOGIN_EXEMPT_URLS = LOGIN_EXEMPT_URLS + ( \
     r'^accounts/register/$',
     r'^accounts/register/complete/$',
     r'^accounts/register/closed/$',
@@ -217,7 +219,8 @@ LOGIN_EXEMPT_URLS = (
     r'^password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
     r'^password/reset/complete/$',
     r'^password/reset/done/$',
-)
+    )
+
 #--------- Generic photos --------------
 #PHOTOS_MAX_PHOTO_SIZE = 1000000
 #INVENTORY_MAX_TEMPLATE_PHOTOS = 5
@@ -248,6 +251,8 @@ if DEVELOPMENT:
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
     )
+    LOGIN_EXEMPT_URLS = LOGIN_EXEMPT_URLS + ( r'^django-inventory-site_media/',)
+
     try:
         import rosetta
         INSTALLED_APPS.append('rosetta')
