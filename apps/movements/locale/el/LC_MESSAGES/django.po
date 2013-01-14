@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-14 13:23+0200\n"
-"PO-Revision-Date: 2013-01-14 13:20+0200\n"
+"PO-Revision-Date: 2013-01-14 14:02+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -131,9 +131,8 @@ msgid "status"
 msgstr "Κατάσταση"
 
 #: __init__.py:88
-#, fuzzy
 msgid "delete pending movement"
-msgstr "Μετακίνηση εξοπλισμού"
+msgstr "Διαγραφή της εκκρεμούς μετακίνησης"
 
 #: __init__.py:93
 msgid "Destroy assets"
@@ -157,11 +156,11 @@ msgstr "επεξεργασία"
 
 #: __init__.py:107
 msgid "Select more Items"
-msgstr ""
+msgstr "Επιλογή επιπλέον εξοπλισμού (από τη λίστα)"
 
 #: __init__.py:108
 msgid "End selection"
-msgstr ""
+msgstr "Έξοδος από την επιλογή εξοπλισμού"
 
 #: __init__.py:110
 msgid "validate move"
@@ -226,6 +225,7 @@ msgid ""
 "You can better select the items by saving this form (using the button "
 "below), and then picking the items at the next list that will appear."
 msgstr ""
+"Παρακαλούμε μεταβείτε στη λίστα εξοπλισμού για να επιλέξετε τον εξοπλισμό."
 
 #: forms.py:126 forms.py:182 urls.py:41
 msgid "Source location"
@@ -409,7 +409,7 @@ msgstr "ημερομηνία εκτέλεσης"
 
 #: models.py:432
 msgid "Format: 23/04/2010"
-msgstr ""
+msgstr "Μορφή: 23/04/2010"
 
 #: models.py:433
 msgid "date validated"
@@ -425,7 +425,7 @@ msgstr "επικύρωση από"
 
 #: models.py:437
 msgid "reference"
-msgstr "Αρ. δελτίου"
+msgstr "Αρ. πρωτοκόλλου"
 
 #: models.py:438
 msgid "Draft"
@@ -806,9 +806,8 @@ msgstr "επεξεργασία κατάστασης"
 
 #: templates/destroy_form.html:78 templates/lose_form.html:78
 #: templates/movement_form.html:85
-#, fuzzy
 msgid "Select Items"
-msgstr "Κλοπές Εξοπλισμού"
+msgstr "Επιλογή Εξοπλισμού"
 
 #: templates/po_transfer_ask.html:64
 msgid ""
