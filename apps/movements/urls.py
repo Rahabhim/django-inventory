@@ -147,11 +147,13 @@ urlpatterns = patterns('movements.views',
             name='purchaseorder_item_bundled_add'),
 
     url(r'^objects/items/destroy/$', GenericCreateView.as_view(form_class=DestroyItemsForm, 
+            template_name="destroy_form.html",
             extra_context={'title':_(u'Items destruction')},
             success_url=open_move_as_cart),
         name='destroy_items'),
 
     url(r'^objects/items/lose/$', GenericCreateView.as_view(form_class=LoseItemsForm, 
+            template_name="lose_form.html",
             extra_context={'title':_(u'Lost Items')},
             success_url=open_move_as_cart),
         name='lose_items'),
