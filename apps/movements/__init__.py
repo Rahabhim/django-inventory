@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 
-from common.api import register_links, register_menu, register_submenu
+from common.api import register_links, register_menu, register_submenu, user_is_staff
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
@@ -12,9 +12,9 @@ from products import template_list
 import procurements # just to ensure their menu is loaded before this
 
 purchase_request_state_list = {'text':_('purchase request states'), 'view':'purchase_request_state_list', 'famfam':'pencil_go'}
-purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add'}
-purchase_request_state_update = {'text':_('edit state'), 'view':'purchase_request_state_update', 'args':'object.id', 'famfam':'pencil'}
-purchase_request_state_delete = {'text':_('delete state'), 'view':'purchase_request_state_delete', 'args':'object.id', 'famfam':'pencil_delete'}
+purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add', 'condition': user_is_staff}
+purchase_request_state_update = {'text':_('edit state'), 'view':'purchase_request_state_update', 'args':'object.id', 'famfam':'pencil', 'condition': user_is_staff}
+purchase_request_state_delete = {'text':_('delete state'), 'view':'purchase_request_state_delete', 'args':'object.id', 'famfam':'pencil_delete', 'condition': user_is_staff}
 
 purchase_request_list = {'text':_('purchase requests'), 'view':'purchase_request_list', 'famfam':'basket_go'}
 purchase_request_create = {'text':_('create new request'), 'view':'purchase_request_create', 'famfam':'basket_add'}
@@ -29,14 +29,14 @@ purchase_request_item_update = {'text':_('edit item'), 'view':'purchase_request_
 purchase_request_item_delete = {'text':_('delete item'), 'view':'purchase_request_item_delete', 'args':'object.id', 'famfam':'basket_remove'}
 
 purchase_order_state_list = {'text':_('purchase order states'), 'view':'purchase_order_state_list', 'famfam':'pencil_go'}
-purchase_order_state_create = {'text':_('create new purchase order state'), 'view':'purchase_order_state_create', 'famfam':'pencil_add'}
-purchase_order_state_update = {'text':_('edit state'), 'view':'purchase_order_state_update', 'args':'object.id', 'famfam':'pencil'}
-purchase_order_state_delete = {'text':_('delete state'), 'view':'purchase_order_state_delete', 'args':'object.id', 'famfam':'pencil_delete'}
+purchase_order_state_create = {'text':_('create new purchase order state'), 'view':'purchase_order_state_create', 'famfam':'pencil_add', 'condition': user_is_staff}
+purchase_order_state_update = {'text':_('edit state'), 'view':'purchase_order_state_update', 'args':'object.id', 'famfam':'pencil', 'condition': user_is_staff}
+purchase_order_state_delete = {'text':_('delete state'), 'view':'purchase_order_state_delete', 'args':'object.id', 'famfam':'pencil_delete', 'condition': user_is_staff}
 
 purchase_order_item_state_list = {'text':_('purchase order item states'), 'view':'purchase_order_item_state_list', 'famfam':'pencil_go'}
-purchase_order_item_state_create = {'text':_('create new item state'), 'view':'purchase_order_item_state_create', 'famfam':'pencil_add'}
-purchase_order_item_state_update = {'text':_('edit state'), 'view':'purchase_order_item_state_update', 'args':'object.id', 'famfam':'pencil'}
-purchase_order_item_state_delete = {'text':_('delete state'), 'view':'purchase_order_item_state_delete', 'args':'object.id', 'famfam':'pencil_delete'}
+purchase_order_item_state_create = {'text':_('create new item state'), 'view':'purchase_order_item_state_create', 'famfam':'pencil_add', 'condition': user_is_staff}
+purchase_order_item_state_update = {'text':_('edit state'), 'view':'purchase_order_item_state_update', 'args':'object.id', 'famfam':'pencil', 'condition': user_is_staff}
+purchase_order_item_state_delete = {'text':_('delete state'), 'view':'purchase_order_item_state_delete', 'args':'object.id', 'famfam':'pencil_delete', 'condition': user_is_staff}
 
 purchase_order_list = {'text':_('purchase orders'), 'view':'purchase_order_list', 'famfam':'cart_go'}
 purchase_order_create = {'text':_('create new order'), 'view':'purchase_order_create', 'famfam':'cart_add'}

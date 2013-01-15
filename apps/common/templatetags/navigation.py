@@ -12,10 +12,17 @@ from common.api import object_navigation, menu_links as menu_navigation
 register = Library()
 
 
-def process_links(links, view_name, url):
+def process_links(links, view_name, url, context=None):
     items = []
     active_item = None
-    for item, count in zip(links, range(len(links))):
+    is_first = True
+    for item in links:
+        if 'condition' in item:
+            try:
+                if not item['condition'](None, context):
+                    continue
+            except Exception, e:
+                continue
         item_view = 'view' in item and item['view']
         item_url = 'url' in item and item['url']
         if view_name == item_view or url == item_url:
@@ -33,13 +40,14 @@ def process_links(links, view_name, url):
 
         items.append(
             {
-                'first':count==0,
+                'first': is_first,
                 'active':active,
                 'url':item_view and reverse(item_view) or item_url or '#',
                 'text':unicode(item['text']),
                 'famfam':'famfam' in item and item['famfam'],
             }
         )
+        is_first = False
     return items, active_item
 
 
@@ -51,10 +59,10 @@ class NavigationNode(Node):
         request = Variable('request').resolve(context)
         view_name = resolve_to_name(request.META['PATH_INFO'])
 
-        main_items, active_item = process_links(links=self.navigation, view_name=view_name, url=request.META['PATH_INFO'])
+        main_items, active_item = process_links(links=self.navigation, view_name=view_name, url=request.META['PATH_INFO'], context=context)
         context['navigation_main_links'] = main_items
         if active_item and 'links' in active_item:
-            secondary_links, active_item = process_links(links=active_item['links'], view_name=view_name, url=request.META['PATH_INFO'])
+            secondary_links, active_item = process_links(links=active_item['links'], view_name=view_name, url=request.META['PATH_INFO'], context=context)
             context['navigation_secondary_links'] = secondary_links
         return ''
 
