@@ -75,4 +75,7 @@ def can_delete(obj, context):
     """
     return _user_has_perm(context['user'], obj, '%(app)s.delete_%(model)s')
 
+def user_is_staff(obj, context):
+    return context['user'].is_staff
+
 #eof
