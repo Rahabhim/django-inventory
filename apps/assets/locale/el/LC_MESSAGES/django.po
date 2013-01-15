@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-14 13:23+0200\n"
-"PO-Revision-Date: 2013-01-09 20:54+0200\n"
+"PO-Revision-Date: 2013-01-16 00:10+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -39,7 +39,7 @@ msgstr "λίστα εξοπλισμού μονάδας"
 
 #: __init__.py:17 __init__.py:24
 msgid "edit serials"
-msgstr ""
+msgstr "Αλλαγή Σειριακών αριθμών"
 
 #: __init__.py:19
 msgid "add / remove photos"
@@ -152,11 +152,11 @@ msgstr ""
 
 #: models.py:78 views.py:131 views.py:137 views.py:148
 msgid "Source Contract"
-msgstr ""
+msgstr "Σύμβαση Παραλαβής"
 
 #: models.py:80
 msgid "The procurement at which this item was initially obtained"
-msgstr ""
+msgstr "Η σύμβαση προμήθειας με την οποία παρελήφθη αρχικά ο εξοπλισμός."
 
 #: models.py:85 urls.py:22 urls.py:28 urls.py:33
 msgid "asset"
@@ -187,9 +187,8 @@ msgid "Location"
 msgstr "τοποθεσία"
 
 #: urls.py:49
-#, fuzzy
 msgid "Edit item group"
-msgstr "σύνθεση"
+msgstr "Επεξεργασία σύνθεσης"
 
 #: views.py:25
 msgid "manufacturer"
@@ -209,7 +208,7 @@ msgstr "τοποθεσία"
 
 #: views.py:41
 msgid "procurement contract"
-msgstr ""
+msgstr "σύμβαση προμήθειας"
 
 #: views.py:49
 #, python-format
@@ -298,7 +297,7 @@ msgstr "απαιτείται"
 
 #: templates/item_group_form.html:22
 msgid "The location can only be changed through movements of this asset"
-msgstr ""
+msgstr "Η τοποθεσία μπορεί να αλλάξει μόνο από μετακινήσεις εξοπλισμού."
 
 #: templates/state_subtemplate.html:7
 msgid "Item states"

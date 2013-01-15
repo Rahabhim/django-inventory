@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-14 13:23+0200\n"
-"PO-Revision-Date: 2013-01-09 20:55+0200\n"
+"PO-Revision-Date: 2013-01-16 00:10+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -58,38 +58,32 @@ msgid "categories"
 msgstr "είδη"
 
 #: __init__.py:21
-#, fuzzy
 msgid "create new category"
-msgstr "Νέο προϊόν"
+msgstr "Νέο είδος εξοπλισμού"
 
 #: __init__.py:22
-#, fuzzy
 msgid "edit category"
-msgstr "είδος προϊόντων"
+msgstr "επεξεργασία είδους"
 
 #: __init__.py:23
-#, fuzzy
 msgid "delete category"
-msgstr "είδος προϊόντων"
+msgstr "διαγραφή είδους"
 
 #: __init__.py:25
 msgid "manufacturers"
 msgstr "κατασκευαστές"
 
 #: __init__.py:26
-#, fuzzy
 msgid "create new manufacturer"
-msgstr "Νέο προϊόν"
+msgstr "νέος κατασκευαστής"
 
 #: __init__.py:27
-#, fuzzy
 msgid "edit manufacturer"
-msgstr "κατασκευαστής"
+msgstr "επεξεργασία κατασκευαστή"
 
 #: __init__.py:28
-#, fuzzy
 msgid "delete manufacturer"
-msgstr "κατασκευαστής"
+msgstr "διαγραφή κατασκευαστή"
 
 #: __init__.py:46 models.py:161 views.py:35
 msgid "templates"
@@ -97,24 +91,23 @@ msgstr "προϊόντα"
 
 #: models.py:9
 msgid "Name"
-msgstr ""
+msgstr "Όνομα"
 
 #: models.py:11
-#, fuzzy
 msgid "parent category"
-msgstr "είδος προϊόντων"
+msgstr "γονικό είδος"
 
 #: models.py:12
 msgid "approved"
-msgstr ""
+msgstr "Εγκεκριμένο"
 
 #: models.py:13 urls.py:75
 msgid "Is bundle"
-msgstr ""
+msgstr "Είναι σύνθεση"
 
 #: models.py:14
 msgid "Picture"
-msgstr ""
+msgstr "Εικόνα"
 
 #: models.py:25 urls.py:79 urls.py:84 urls.py:88 urls.py:96
 msgid "item category"
@@ -122,7 +115,7 @@ msgstr "είδος προϊόντων"
 
 #: models.py:28
 msgid "May contain"
-msgstr ""
+msgstr "Μπορεί να περιέχει"
 
 #: models.py:29
 #, fuzzy
@@ -131,11 +124,11 @@ msgstr "είδος προϊόντων"
 
 #: models.py:30
 msgid "minimum count"
-msgstr ""
+msgstr "ελάχιστο πλήθος"
 
 #: models.py:31
 msgid "maximum count"
-msgstr ""
+msgstr "μέγιστο πλήθος"
 
 #: models.py:45
 msgid "units"
@@ -171,7 +164,7 @@ msgstr "μοντέλο"
 
 #: models.py:98
 msgid "part number"
-msgstr ""
+msgstr "κωδικός εξαρτήματος"
 
 #: models.py:99
 msgid "notes"
@@ -196,6 +189,9 @@ msgid ""
 "An item of %(self_cat)s must contain at least %(min_count)d of %(sub_cat)s, "
 "but only has %(count)d now."
 msgstr ""
+"Ένα αντικείμενο κατηγορίας: %(self_cat)s πρέπει να περιέχει τουλάχιστον %"
+"(min_count)d από %(sub_cat)s, "
+"αλλά τώρα έχετε βάλει μόνο %(count)d."
 
 #: models.py:141
 #, python-format
@@ -219,6 +215,8 @@ msgstr ""
 #, python-format
 msgid "An item of %s is not a bundle, cannot contain anything"
 msgstr ""
+"Το αντικείμενο κατηγορίας: %s δεν είναι σύνθεση, δεν επιτρέπεται να περιέχει "
+"εξαρτήματα."
 
 #: urls.py:23 urls.py:101 urls.py:104 urls.py:108 urls.py:112 urls.py:118
 msgid "manufacturer"
@@ -247,18 +245,16 @@ msgid "orphan templates"
 msgstr ""
 
 #: urls.py:73
-#, fuzzy
 msgid "Parent category"
-msgstr "είδος προϊόντων"
+msgstr "γονικό είδος"
 
 #: urls.py:74
 msgid "Approved"
-msgstr ""
+msgstr "Εγκεκριμένο"
 
 #: urls.py:76
-#, fuzzy
 msgid "list of item categories"
-msgstr "είδος προϊόντων"
+msgstr "λίστα ειδών εξοπλισμού"
 
 #: views.py:17
 msgid "assets that use the template"

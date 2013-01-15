@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-14 13:23+0200\n"
-"PO-Revision-Date: 2013-01-14 14:02+0200\n"
+"PO-Revision-Date: 2013-01-16 00:01+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -59,7 +59,7 @@ msgstr "άνοιγμα αίτησης"
 
 #: __init__.py:25
 msgid "purchase order wizard"
-msgstr ""
+msgstr "Εισαγωγή στοιχείων παραλαβής Εξοπλισμού"
 
 #: __init__.py:27 __init__.py:51
 msgid "add new item"
@@ -179,9 +179,8 @@ msgid "assets at that location"
 msgstr "εξοπλισμός στην τοποθεσία"
 
 #: forms.py:33
-#, fuzzy
 msgid "Procurement Contract"
-msgstr "σύμβαση προμήθειας"
+msgstr "Σύμβαση Προμήθειας"
 
 #: forms.py:36 forms.py:123 models.py:442
 msgid "Notes"
@@ -192,9 +191,8 @@ msgid "Order item form"
 msgstr ""
 
 #: forms.py:101
-#, fuzzy
 msgid "Name"
-msgstr "όνομα"
+msgstr "Όνομα"
 
 #: forms.py:102
 msgid "Suppliers"
@@ -237,7 +235,7 @@ msgstr "Καταστροφή"
 
 #: forms.py:176
 msgid "Lost"
-msgstr ""
+msgstr "Κλοπή"
 
 #: forms.py:183 urls.py:44
 msgid "Destination location"
@@ -356,9 +354,9 @@ msgid "Incorrect object passed: %s"
 msgstr "Λάθος αντικείμενο: %s"
 
 #: models.py:291
-#, fuzzy, python-format
+#, python-format
 msgid "Product %s not in movement!"
-msgstr "Μετακίνηση εξοπλισμού"
+msgstr "Το προϊόν %s δεν ανήκει στη μετακίνηση!"
 
 #: models.py:299 models.py:300 models.py:582 urls.py:129
 msgid "purchase order item status"
@@ -440,9 +438,8 @@ msgid "Incoming"
 msgstr "Εισερχόμενο"
 
 #: models.py:439
-#, fuzzy
 msgid "Outgoing"
-msgstr " Εξερχόμενο"
+msgstr "Εξερχόμενο"
 
 #: models.py:440
 msgid "Internal"
@@ -542,9 +539,8 @@ msgid "Active"
 msgstr "Ενεργό"
 
 #: urls.py:60
-#, fuzzy
 msgid "(is active?)"
-msgstr "ενεργό"
+msgstr "(ενεργό; )"
 
 #: urls.py:70
 msgid "purchase request state"
@@ -580,7 +576,6 @@ msgid "Items movement"
 msgstr "Μετακίνηση εξοπλισμού"
 
 #: urls.py:211
-#, fuzzy
 msgid "Movement"
 msgstr "Μετακίνηση"
 
@@ -656,9 +651,8 @@ msgid "qty received"
 msgstr "Παραληφθείσα Ποσ."
 
 #: views.py:229 views.py:466
-#, fuzzy
 msgid "movements for this purchase order"
-msgstr "λεπτομέρειες της εντολής: %s"
+msgstr "μετακινήσεις για αυτή την παραλαβή"
 
 #: views.py:234 views.py:535
 msgid "date"
@@ -792,17 +786,16 @@ msgstr "γραμμή εντολής προμήθειας"
 
 #: views_po_wizard.py:13
 msgid "VAT number"
-msgstr ""
+msgstr "ΑΦΜ"
 
 #: templates/destroy_form.html:72 templates/lose_form.html:72
 #: templates/movement_form.html:82
 msgid "Save changes"
-msgstr ""
+msgstr "Αποθήκευση αλλαγών"
 
 #: templates/destroy_form.html:75 templates/lose_form.html:75
-#, fuzzy
 msgid "Next step:"
-msgstr "επεξεργασία κατάστασης"
+msgstr "Επόμενο βήμα:"
 
 #: templates/destroy_form.html:78 templates/lose_form.html:78
 #: templates/movement_form.html:85
