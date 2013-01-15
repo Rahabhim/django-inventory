@@ -12,6 +12,9 @@ from dynamic_search.api import register
 from common import models as common
 from assets import models as assets
 from products import models as products
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Log(models.Model):
     timedate = models.DateTimeField(auto_now_add=True, verbose_name=_(u"timedate"))
@@ -31,10 +34,27 @@ class Log(models.Model):
     def get_absolute_url(self):
         return ('log_view', [str(self.id)])
 
+class InventoryManager(models.Manager):
+    def by_request(self, request):
+        Q = models.Q
+        try:
+            if request.user.is_superuser:
+                return self.all()
+            else:
+                q = Q(create_user=request.user) | Q(validate_user=request.user)
+                if request.session.get('current_user_role', False):
+                    role_id = request.session['current_user_role']
+                    role = request.user.dept_roles.get(pk=role_id)
+                    q = q | Q(location__department=role.department)
+                return self.filter(q)
+        except Exception:
+            logger.exception("cannot filter:")
+        return self.none()
 
 class Inventory(models.Model):
     """ An inventory is a periodical check of all items at some locations
     """
+    objects = InventoryManager()
     name = models.CharField(max_length=32, verbose_name=_(u'name'))
     location = models.ForeignKey(common.Location, verbose_name=_(u'location'))
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))

@@ -16,7 +16,7 @@ from forms import InventoryForm, InventoryItemForm, \
                  LogForm, InventoryItemForm_inline
 
 urlpatterns = patterns('inventory.views',
-    url(r'^inventory/list/$', generic_list, dict({'queryset':Inventory.objects.all()}, 
+    url(r'^inventory/list/$', generic_list, dict({'queryset':Inventory.objects.by_request}, 
                 extra_context=dict(title=_(u'inventories'), 
                 extra_columns=[{'name':_(u'location'), 'attribute':'location'}])),
                 'inventory_list'),
