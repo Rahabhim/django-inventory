@@ -5,7 +5,6 @@ if (typeof django != "object" || typeof django.jQuery != "function") {
     var django = {
         "jQuery": jQuery
     };
-    console.log("Aliased 1st instance of jQuery");
-    
+    /* console.log("Aliased 1st instance of jQuery"); */
 }
 
