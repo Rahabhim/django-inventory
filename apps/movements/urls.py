@@ -97,7 +97,7 @@ urlpatterns = patterns('movements.views',
                 list_filters=[po_active_filter, purchase_order_state_filter, contract_filter, supplier_filter]),
             name='purchase_order_list'),
     url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
-                queryset=PurchaseOrder.objects.filter(active=True)), 
+                queryset=lambda r: PurchaseOrder.objects.by_request(r).filter(active=True)), 
             name='purchase_order_pending_list'),
 
     url(r'^purchase/order/(?P<object_id>\d+)/$', 'purchase_order_view', (), 'purchase_order_view'),
@@ -185,7 +185,7 @@ urlpatterns = patterns('movements.views',
                                 location_src_filter, location_dest_filter],),
             name='movements_list'),
     url(r'^objects/moves/pending_list/$', views.MovementListView.as_view( \
-                    queryset=Movement.objects.filter(state='draft'),
+                    queryset=lambda r: Movement.objects.by_request(r).filter(state='draft'),
                     list_filters=[ stype_filter, \
                                 location_src_filter, location_dest_filter],),
             name='movements_pending_list'),

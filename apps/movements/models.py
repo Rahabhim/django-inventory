@@ -10,6 +10,8 @@ from dynamic_search.api import register
 import datetime
 import logging
 
+logger = logging.getLogger(__name__)
+
 class PurchaseRequestStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
 
@@ -86,7 +88,26 @@ class PurchaseOrderStatus(models.Model):
     def get_absolute_url(self):
         return ('purchase_order_state_list', [])
 
+class PurchaseOrderManager(models.Manager):
+    def by_request(self, request):
+        Q = models.Q
+        try:
+            if request.user.is_superuser:
+                return self.all()
+            else:
+                q = Q(create_user=request.user) | Q(validate_user=request.user)
+                if request.session.get('current_user_role', False):
+                    role_id = request.session['current_user_role']
+                    role = request.user.dept_roles.get(pk=role_id)
+                    # remember: location_src is always the supplier!
+                    q = q | Q(movements__location_dest__department=role.department)
+                return self.filter(q)
+        except Exception:
+            logger.exception("cannot filter:")
+        return self.none()
+
 class PurchaseOrder(models.Model):
+    objects = PurchaseOrderManager()
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
     purchase_request = models.ForeignKey(PurchaseRequest, null=True, blank=True, verbose_name=_(u'purchase request'))
     procurement = models.ForeignKey('procurements.Contract', null=True, blank=True, verbose_name=_("procurement contract"))
@@ -427,7 +448,26 @@ class PurchaseOrderItem(models.Model):
         self.save()
         return 'return'
 
+class MovementManager(models.Manager):
+    def by_request(self, request):
+        Q = models.Q
+        try:
+            if request.user.is_superuser:
+                return self.all()
+            else:
+                q = Q(create_user=request.user) | Q(validate_user=request.user)
+                if request.session.get('current_user_role', False):
+                    role_id = request.session['current_user_role']
+                    role = request.user.dept_roles.get(pk=role_id)
+                    q = q | Q(location_src__department=role.department) \
+                          | Q(location_dest__department=role.department)
+                return self.filter(q)
+        except Exception:
+            logger.exception("cannot filter:")
+        return self.none()
+
 class Movement(models.Model):
+    objects = MovementManager()
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'), 
             help_text=_("Format: 23/04/2010"))
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)

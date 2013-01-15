@@ -521,7 +521,7 @@ def purchase_order_item_create(request, object_id):
     context_instance=RequestContext(request))
 
 class PurchaseOrderListView(GenericBloatedListView):
-    queryset=PurchaseOrder.objects.all()
+    queryset=PurchaseOrder.objects.by_request
     title = _(u'list of purchase orders')
     prefetch_fields = ('procurement', 'supplier')
     extra_columns = [ {'name': _('Contract'), 'attribute': 'procurement'},
@@ -530,7 +530,7 @@ class PurchaseOrderListView(GenericBloatedListView):
                     {'name':_(u'Active'), 'attribute': 'fmt_active'}]
 
 class MovementListView(GenericBloatedListView):
-    queryset=Movement.objects.all()
+    queryset=Movement.objects.by_request
     title =_(u'movements')
     extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
                     {'name':_(u'state'), 'attribute': 'get_state_display'},

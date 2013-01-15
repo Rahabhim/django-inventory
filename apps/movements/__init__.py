@@ -114,12 +114,21 @@ register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movem
 
 register_links(['movement_update_po',], [movement_delete,])
 
+def has_pending_po(obj, context):
+    all_pos = PurchaseOrder.objects.by_request(context['request']).filter(active=False)
+    # We should preferrably filter 'all_pos' for those with all movements belonging
+    # to our department.
+    return all_pos.exists()
+
 purchase_pending_orders = {'text':_('pending purchase orders'), \
-        'condition': lambda *a: PurchaseOrder.objects.filter(active=False).exists(),
+        'condition': has_pending_po,
         'view':'purchase_order_pending_list', 'famfam':'cart_go'}
 
+def has_pending_moves(obj, context):
+    return Movement.objects.by_request(context['request']).filter(state='draft').exists()
+
 action_movements_pending = {'text':_('pending moves'), \
-        'condition': lambda *a: Movement.objects.filter(state='draft').exists(),
+        'condition': has_pending_moves,
         'view':'movements_pending_list', 'famfam':'page_go'}
 
 
