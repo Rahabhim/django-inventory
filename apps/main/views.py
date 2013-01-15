@@ -8,5 +8,17 @@ def home(request):
     except Exception, e:
         #print "exc:", e
         pass
-    return render_to_response('home.html', {'user_profile': user_profile},
+    current_user_role = None
+    try:
+        if not request.user.is_superuser:
+            user_roles = request.user.dept_roles.all()
+            current_user_role = request.session.get('current_user_role', None)
+        else:
+            user_roles = []
+    except Exception, e:
+        # print "roles exc:", e
+        user_roles = []
+
+    return render_to_response('home.html', {'user_profile': user_profile, 
+                    'user_roles': user_roles, 'current_user_role': current_user_role},
             context_instance=RequestContext(request))
