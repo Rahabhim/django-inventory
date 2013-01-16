@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-14 13:23+0200\n"
-"PO-Revision-Date: 2013-01-16 00:10+0200\n"
+"PO-Revision-Date: 2013-01-16 09:56+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -164,7 +164,7 @@ msgstr "εξοπλισμός"
 
 #: models.py:153
 msgid "bundled items"
-msgstr ""
+msgstr "περιεχόμενα εξαρτήματα"
 
 #: models.py:158
 msgid "item group"
