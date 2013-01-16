@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-14 13:23+0200\n"
+"POT-Creation-Date: 2013-01-16 16:12+0200\n"
 "PO-Revision-Date: 2012-11-05 17:21+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -82,6 +82,10 @@ msgstr "Ενέργειες σε εκκρεμότητα"
 #: templates/home.html:22
 msgid "Available actions"
 msgstr "Διαθέσιμες ενέργειες"
+
+#: templates/home.html:34
+msgid "Select department and role:"
+msgstr ""
 
 #: templates/object_list_carts.html:5
 msgid "Return to "

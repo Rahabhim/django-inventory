@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-14 13:23+0200\n"
+"POT-Creation-Date: 2013-01-16 16:12+0200\n"
 "PO-Revision-Date: 2013-01-16 09:56+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10 models.py:107 urls.py:35
+#: __init__.py:10 models.py:107 urls.py:34
 msgid "suppliers"
 msgstr "προμηθευτές"
 
@@ -25,35 +25,35 @@ msgstr "προμηθευτές"
 msgid "create new supplier"
 msgstr "νέος προμηθευτής"
 
-#: __init__.py:12 __init__.py:19
+#: __init__.py:13 __init__.py:24
 msgid "edit"
 msgstr "επεξεργασία"
 
-#: __init__.py:13 __init__.py:20
+#: __init__.py:15 __init__.py:26
 msgid "delete"
 msgstr "διαγραφή"
 
-#: __init__.py:14
+#: __init__.py:17
 msgid "assign templates"
 msgstr "σύνδεση με προϊόντα"
 
-#: __init__.py:15
+#: __init__.py:19
 msgid "related purchase orders"
 msgstr "Σχετικές παραλαβές εξοπλισμού"
 
-#: __init__.py:17 models.py:58 models.py:138 urls.py:28 urls.py:31
+#: __init__.py:21 models.py:58 models.py:138 urls.py:27 urls.py:30
 msgid "locations"
 msgstr "τοποθεσίες"
 
-#: __init__.py:18
+#: __init__.py:22
 msgid "create new location"
 msgstr "δημιουργία τοποθεσίας"
 
-#: __init__.py:21
+#: __init__.py:28
 msgid "assets"
 msgstr "εξοπλισμός"
 
-#: __init__.py:30 models.py:57
+#: __init__.py:37 models.py:57
 msgid "location"
 msgstr "τοποθεσία"
 
@@ -93,7 +93,7 @@ msgstr "τηλέφωνο 2"
 msgid "addresses"
 msgstr "Διευθύνσεις"
 
-#: models.py:48 urls.py:15
+#: models.py:48 urls.py:14
 msgid "department"
 msgstr "μονάδα"
 
@@ -137,7 +137,7 @@ msgstr "πρότυπα τοποθεσιών"
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:106 models.py:139 urls.py:38
+#: models.py:106 models.py:139 urls.py:37
 msgid "supplier"
 msgstr "προμηθευτής"
 
@@ -168,5 +168,3 @@ msgstr "Ακολουθία"
 #: models.py:124
 msgid "sequences"
 msgstr "Ακολουθίες"
-
-

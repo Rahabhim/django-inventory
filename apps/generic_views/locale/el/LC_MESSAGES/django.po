@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-14 13:23+0200\n"
-"PO-Revision-Date: 2012-11-08 08:22+0200\n"
+"POT-Creation-Date: 2013-01-16 16:12+0200\n"
+"PO-Revision-Date: 2013-01-16 16:18+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -30,45 +30,45 @@ msgstr "Λίστα %s"
 msgid "List"
 msgstr "Λίστα"
 
-#: views.py:352
+#: views.py:353
 #, python-format
 msgid "Empty list and '%(class_name)s.allow_empty' is False."
 msgstr ""
 "Άδεια λίστα και η μεταβλητή '%(class_name)s.allow_empty' είναι Αρνητική"
 
-#: views.py:421
+#: views.py:412
 #, python-format
 msgid "The selected %s were added."
 msgstr "Προστέθηκαν %s"
 
-#: views.py:427
+#: views.py:418
 #, python-format
 msgid "The selected %s were removed."
 msgstr "Αφαιρέθηκαν %s"
 
-#: views.py:657
+#: views.py:663
 msgid "The cart is already open."
 msgstr ""
 
-#: views.py:670
+#: views.py:676
 msgid "The cart is not open."
 msgstr ""
 
-#: views.py:733
+#: views.py:739
 #, python-format
 msgid "Item %s could not be found."
 msgstr ""
 
-#: views.py:744
+#: views.py:750
 msgid "Could not alter item"
 msgstr ""
 
-#: views.py:752
+#: views.py:758
 #, python-format
 msgid "%(item)s added to %(cart)s"
 msgstr ""
 
-#: views.py:758
+#: views.py:764
 #, python-format
 msgid "%(item)s removed from %(cart)s"
 msgstr ""
@@ -233,12 +233,12 @@ msgstr "Λίστα %(title)s"
 #: templates/generic_list_subtemplate.html:19
 #, python-format
 msgid "List of %(title)s (%(start)s - %(end)s out of %(total)s)"
-msgstr "Λίστα από %(title)s (%(start)s - %(end)s out of %(total)s)"
+msgstr "%(title)s (%(start)s - %(end)s από %(total)s)"
 
 #: templates/generic_list_subtemplate.html:21
 #, python-format
 msgid "List of %(title)s (%(total)s)"
-msgstr "Λίστα από %(title)s (%(total)s)"
+msgstr "%(title)s (%(total)s)"
 
 #: templates/generic_list_subtemplate.html:34
 msgid "Identifier"

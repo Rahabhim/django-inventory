@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-14 13:23+0200\n"
+"POT-Creation-Date: 2013-01-16 16:12+0200\n"
 "PO-Revision-Date: 2013-01-16 00:10+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -25,67 +25,67 @@ msgstr "Προβολή όλων"
 msgid "create new template"
 msgstr "Νέο προϊόν"
 
-#: __init__.py:12
+#: __init__.py:13
 msgid "orphans templates"
 msgstr ""
 
-#: __init__.py:13
+#: __init__.py:14
 msgid "edit"
 msgstr "επεξεργασία"
 
-#: __init__.py:14
+#: __init__.py:15
 msgid "delete"
 msgstr "διαγραφή"
 
-#: __init__.py:15
+#: __init__.py:16
 msgid "add / remove photos"
 msgstr "προσθήκη / αφαίρεση φωτογραφιών"
 
-#: __init__.py:16
+#: __init__.py:17
 msgid "related assets"
 msgstr "σχετικός εξοπλισμός"
 
-#: __init__.py:17
+#: __init__.py:18
 msgid "assign supplies"
 msgstr "υπαγωγή εξαρτημάτων"
 
-#: __init__.py:18
+#: __init__.py:19
 msgid "assign suppliers"
 msgstr "σύνδεση προμηθευτών"
 
-#: __init__.py:20
+#: __init__.py:21
 msgid "categories"
 msgstr "είδη"
 
-#: __init__.py:21
+#: __init__.py:22
 msgid "create new category"
 msgstr "Νέο είδος εξοπλισμού"
 
-#: __init__.py:22
+#: __init__.py:24
 msgid "edit category"
 msgstr "επεξεργασία είδους"
 
-#: __init__.py:23
+#: __init__.py:26
 msgid "delete category"
 msgstr "διαγραφή είδους"
 
-#: __init__.py:25
+#: __init__.py:29
 msgid "manufacturers"
 msgstr "κατασκευαστές"
 
-#: __init__.py:26
+#: __init__.py:30
 msgid "create new manufacturer"
 msgstr "νέος κατασκευαστής"
 
-#: __init__.py:27
+#: __init__.py:32
 msgid "edit manufacturer"
 msgstr "επεξεργασία κατασκευαστή"
 
-#: __init__.py:28
+#: __init__.py:34
 msgid "delete manufacturer"
 msgstr "διαγραφή κατασκευαστή"
 
-#: __init__.py:46 models.py:161 views.py:35
+#: __init__.py:54 models.py:161 views.py:35
 msgid "templates"
 msgstr "προϊόντα"
 
@@ -189,9 +189,8 @@ msgid ""
 "An item of %(self_cat)s must contain at least %(min_count)d of %(sub_cat)s, "
 "but only has %(count)d now."
 msgstr ""
-"Ένα αντικείμενο κατηγορίας: %(self_cat)s πρέπει να περιέχει τουλάχιστον %"
-"(min_count)d από %(sub_cat)s, "
-"αλλά τώρα έχετε βάλει μόνο %(count)d."
+"Ένα αντικείμενο κατηγορίας: %(self_cat)s πρέπει να περιέχει τουλάχιστον "
+"%(min_count)d από %(sub_cat)s, αλλά τώρα έχετε βάλει μόνο %(count)d."
 
 #: models.py:141
 #, python-format
@@ -218,7 +217,7 @@ msgstr ""
 "Το αντικείμενο κατηγορίας: %s δεν είναι σύνθεση, δεν επιτρέπεται να περιέχει "
 "εξαρτήματα."
 
-#: urls.py:23 urls.py:101 urls.py:104 urls.py:108 urls.py:112 urls.py:118
+#: urls.py:23 urls.py:101 urls.py:104 urls.py:108 urls.py:112 urls.py:116
 msgid "manufacturer"
 msgstr "κατασκευαστής"
 

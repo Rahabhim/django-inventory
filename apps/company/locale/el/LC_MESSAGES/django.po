@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-14 13:23+0200\n"
+"POT-Creation-Date: 2013-01-16 16:12+0200\n"
 "PO-Revision-Date: 2013-01-16 09:53+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -25,25 +25,25 @@ msgstr "τύπος"
 msgid "assets"
 msgstr "εξοπλισμός"
 
-#: __init__.py:27
-msgid "company"
-msgstr "Διοικητική δομή"
-
-#: __init__.py:28 models.py:49
+#: __init__.py:25 models.py:49
 msgid "departments"
 msgstr "Μονάδες"
 
-#: __init__.py:29 urls.py:29
+#: __init__.py:26 urls.py:29
 msgid "department types"
 msgstr "Τύποι Μονάδων"
+
+#: __init__.py:29
+msgid "company"
+msgstr "Διοικητική δομή"
 
 #: models.py:14
 msgid ""
 "These will automatically be setup as locations, for each new department of "
 "this type"
 msgstr ""
-"Αυτές οι τοποθεσίες θα δημιουργηθούν αυτόματα, για κάθε νέα Μονάδα "
-"αυτού του τύπου"
+"Αυτές οι τοποθεσίες θα δημιουργηθούν αυτόματα, για κάθε νέα Μονάδα αυτού του "
+"τύπου"
 
 #: models.py:18
 msgid "department type"
@@ -137,4 +137,3 @@ msgstr "Όνομα"
 #, python-format
 msgid "There are no %(title)s"
 msgstr "Δεν υπάρχουν %(title)s"
-
