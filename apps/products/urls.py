@@ -20,7 +20,7 @@ from forms import ItemTemplateForm, ItemTemplateForm_view, \
         ManufacturerForm, ManufacturerForm_view
 
 
-manufacturer_filter = {'name':'manufacturer', 'title':_(u'manufacturer'), 
+manufacturer_filter = {'name':'manufacturer', 'title': _(u'manufacturer'),
             'queryset':Manufacturer.objects.all(), 'destination':'manufacturer'}
 
 category_filter = { 'name': 'category', 'title': _(u'category'),

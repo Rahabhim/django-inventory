@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
 from django.views.generic.list_detail import object_detail, object_list
 from django.views.generic.create_update import delete_object # create_object, update_object, 
@@ -177,6 +177,7 @@ class GenericBloatedListView(django_gv.ListView):
                         raise KeyError("Column %s not found to place %s under it" % \
                                 (cunder, column.get('attribute', column['name'])))
                     continue
+                print "column:", column
                 ctx_columns.append(column.copy())
 
         if self.enable_sorting:
