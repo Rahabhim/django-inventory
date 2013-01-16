@@ -14,6 +14,7 @@ from django.core.urlresolvers import reverse
 from django.forms.formsets import formset_factory
 
 from common.models import Supplier, Location
+from common.api import role_from_request
 from assets.models import ItemTemplate
 from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
 from main import cart_utils
@@ -332,13 +333,16 @@ def purchase_order_receive(request, object_id):
             return redirect(url_after_this)
 
         form = PurchaseOrderForm_short_view(instance=purchase_order)
+        dept = None
         try:
-            dept = request.user.get_profile().department
+            active_role = role_from_request(request)
+            if active_role:
+                dept = active_role.department
         except ObjectDoesNotExist:
-            dept = None
+            pass
 
         if items_left and request.GET.get('do_create', False):
-            if not request.user.has_perm('movements.receive_purchaseorder'):
+            if not active_role.has_perm('movements.receive_purchaseorder'):
                 raise PermissionDenied
             lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
             lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
@@ -364,7 +368,7 @@ def purchase_order_receive(request, object_id):
                 movement.save()
                 bundled = purchase_order.fill_out_movement(items_left, movement)
                 if bundled:
-                    print "must put a few items in bundle, too"
+                    # print "must put a few items in bundle, too"
                     movement = Movement(create_user=request.user, date_act=datetime.date.today(),
                         stype='in', origin=purchase_order.user_id,
                         location_src=lsrcs[0], location_dest=lbdls[0],
@@ -375,7 +379,7 @@ def purchase_order_receive(request, object_id):
             # reload the request in the browser, but get rid of any "action" arguments!
             return redirect(request.path.rstrip('?'), object_id=object_id)
         elif (not items_left) and request.GET.get('do_confirm', False):
-            if not request.user.has_perm('movements.validate_purchaseorder'):
+            if not (active_role and active_role.has_perm('movements.validate_purchaseorder')):
                 raise PermissionDenied
             try:
                 moves_pending = False
@@ -383,6 +387,12 @@ def purchase_order_receive(request, object_id):
                     if move.state == 'done':
                         continue
                     if move.state != 'draft':
+                        moves_pending = True
+                        continue
+                    if active_role.department is not None \
+                            and active_role.department != move.location_dest.department:
+                        # User is not allowed to validate the movement for that
+                        # department, so carry on, avoid confirming the PO.
                         moves_pending = True
                         continue
                     move.do_close(val_user=request.user)
@@ -538,9 +548,20 @@ class MovementListView(GenericBloatedListView):
 
 def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
-    if not request.user.has_perm('movements.validate_movement'):
+    active_role = role_from_request(request)
+    if not (active_role and active_role.has_perm('movements.validate_movement')):
         raise PermissionDenied
     try:
+        if active_role.department is not None:
+            if movement.stype in ('in', 'internal', 'other'):
+                if active_role.department != movement.location_dest.department:
+                    raise Exception(_("You do not have the permission to validate an incoming movement to %s") % movement.location_dest.department.name)
+            elif movement.stype == 'out':
+                if active_role.department != movement.location_src.department:
+                    raise Exception(_("You do not have the permission to validate an outgoing movement from %s") % movement.location_src.department.name)
+            else:
+                raise Exception(_("Unexpected movement type, you do not have permission to validate"))
+
         movement.do_close(request.user)
         cart_utils.remove_from_session(request, movement)
         messages.success(request, _(u'The movement has been validated.'))
