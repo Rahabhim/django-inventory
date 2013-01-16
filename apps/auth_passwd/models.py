@@ -23,6 +23,14 @@ class DepartmentRole(models.Model):
     class Meta:
         unique_together = ('user', 'department') # Cannot have multiple roles for the same dept.
 
+    def has_perm(self, perm):
+        """Like User.has_perm(), see if role has that permission
+        """
+        # assume that the perm is like 'module.codename'
+        app_label, codename = perm.split('.',1)
+        return self.role.permissions.filter(content_type__app_label=app_label, \
+                                            codename=codename).exists()
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created or not instance.get_profile():
         UserProfile.objects.create(user=instance)

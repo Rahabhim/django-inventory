@@ -19,6 +19,8 @@ from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.forms.models import inlineformset_factory #, ModelForm
 from main import cart_utils
 
+from common.api import role_from_request
+
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   InlineModelForm, DetailForm
 import settings
@@ -177,7 +179,6 @@ class GenericBloatedListView(django_gv.ListView):
                         raise KeyError("Column %s not found to place %s under it" % \
                                 (cunder, column.get('attribute', column['name'])))
                     continue
-                print "column:", column
                 ctx_columns.append(column.copy())
 
         if self.enable_sorting:
@@ -532,6 +533,8 @@ class _InlineViewMixin(object):
 
     def get_form(self, form_class):
         form = super(_InlineViewMixin, self).get_form(form_class)
+        if hasattr(form, '_init_by_request'):
+            form._init_by_request(self.request)
         if hasattr(form, '_init_by_user'):
             form._init_by_user(self.request.user)
         return form
@@ -560,7 +563,10 @@ class _PermissionsMixin(object):
                 npd['model'] = model._meta.module_name
             np = self.need_permission
             np = np % npd
-            if not request.user.has_perm(np):
+            active_role = role_from_request(request)
+            if active_role and active_role.has_perm(np):
+                pass # literally
+            elif not request.user.has_perm(np):
                 self._logger.warning("%s view denied %s permission to user %s",
                         self.__class__.__name__, np, request.user.username)
                 raise PermissionDenied

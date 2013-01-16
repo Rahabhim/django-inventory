@@ -101,5 +101,29 @@ def can_delete(obj, context):
 def user_is_staff(obj, context):
     return context['user'].is_staff
 
+class _fake_role(object):
+    """A fake role, for the superuser
+    """
+    def __init__(self, user):
+        self.user = user
+        self.department = None
+        self.role = None
+
+    def has_perm(self, perm):
+        return True
+
+def role_from_request(request):
+    """Obtain the active DepartmentRole object from the http request
+
+        @return True for superuser, DepartmentRole or False if no role selected
+    """
+    if request.user.is_superuser:
+        return _fake_role(request.user)
+    elif request.session.get('current_user_role', False):
+        role_id = request.session['current_user_role']
+        return request.user.dept_roles.get(pk=role_id)
+    else:
+        return False
+
 #eof
 
