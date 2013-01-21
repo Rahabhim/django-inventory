@@ -115,7 +115,7 @@ register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movem
 register_links(['movement_update_po',], [movement_delete,])
 
 def has_pending_po(obj, context):
-    all_pos = PurchaseOrder.objects.by_request(context['request']).filter(active=False)
+    all_pos = PurchaseOrder.objects.by_request(context['request']).filter(active=True)
     # We should preferrably filter 'all_pos' for those with all movements belonging
     # to our department.
     return all_pos.exists()
