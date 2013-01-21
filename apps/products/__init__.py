@@ -4,19 +4,17 @@ from django.utils.translation import ugettext_lazy as _
 from common.api import register_links, register_menu, can_add, can_edit, can_delete
 
 from models import ItemTemplate, ItemCategory, Manufacturer
-import models
-
 
 template_list = {'text':_('view all'), 'view':'template_list', 'famfam':'page_go'}
 template_create = {'text':_('create new template'), 'view':'template_create', 
         'famfam':'page_add', 'condition': can_add(ItemTemplate)}
 template_orphan_list = {'text':_('orphans templates'), 'view':'template_orphans_list'}
-template_update = {'text':_(u'edit'), 'view':'template_update', 'args':'object.id', 'famfam':'page_edit'}
-template_delete = {'text':_(u'delete'), 'view':'template_delete', 'args':'object.id', 'famfam':'page_delete'}
-template_photos = {'text':_(u'add / remove photos'), 'view':'template_photos', 'args':'object.id', 'famfam':'picture_go'}
+template_update = {'text':_(u'edit'), 'view':'template_update', 'args':'object.id', 'famfam':'page_edit', 'condition': can_edit}
+template_delete = {'text':_(u'delete'), 'view':'template_delete', 'args':'object.id', 'famfam':'page_delete', 'condition': can_delete}
+template_photos = {'text':_(u'add / remove photos'), 'view':'template_photos', 'args':'object.id', 'famfam':'picture_go', 'condition': can_edit}
 template_assets = {'text':_(u'related assets'), 'view':'template_items_list', 'args':'object.id', 'famfam':'computer_go'}
-template_assign_supplies = {'text':_(u'assign supplies'), 'view':'template_assign_supply', 'args':'object.id', 'famfam':'monitor'}
-template_assign_suppliers = {'text':_(u'assign suppliers'), 'view':'template_assign_suppliers', 'args':'object.id', 'famfam':'lorry_go'}
+template_assign_supplies = {'text':_(u'assign supplies'), 'view':'template_assign_supply', 'args':'object.id', 'famfam':'monitor', 'condition': can_edit}
+template_assign_suppliers = {'text':_(u'assign suppliers'), 'view':'template_assign_suppliers', 'args':'object.id', 'famfam':'lorry_go', 'condition': can_edit}
 
 categories_list = {'text':_('categories'), 'view':'category_list', 'famfam':'page_go'}
 category_create = {'text':_('create new category'), 'view':'category_create', 
