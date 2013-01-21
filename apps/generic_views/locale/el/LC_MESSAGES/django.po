@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-16 16:12+0200\n"
+"POT-Creation-Date: 2013-01-21 18:42+0200\n"
 "PO-Revision-Date: 2013-01-16 16:18+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -21,54 +21,54 @@ msgstr ""
 msgid "None"
 msgstr "Κανένα"
 
-#: views.py:129
+#: views.py:131
 #, python-format
 msgid "List of %s"
 msgstr "Λίστα %s"
 
-#: views.py:131
+#: views.py:133
 msgid "List"
 msgstr "Λίστα"
 
-#: views.py:353
+#: views.py:356
 #, python-format
 msgid "Empty list and '%(class_name)s.allow_empty' is False."
 msgstr ""
 "Άδεια λίστα και η μεταβλητή '%(class_name)s.allow_empty' είναι Αρνητική"
 
-#: views.py:412
+#: views.py:415
 #, python-format
 msgid "The selected %s were added."
 msgstr "Προστέθηκαν %s"
 
-#: views.py:418
+#: views.py:421
 #, python-format
 msgid "The selected %s were removed."
 msgstr "Αφαιρέθηκαν %s"
 
-#: views.py:663
+#: views.py:671
 msgid "The cart is already open."
 msgstr ""
 
-#: views.py:676
+#: views.py:684
 msgid "The cart is not open."
 msgstr ""
 
-#: views.py:739
+#: views.py:747
 #, python-format
 msgid "Item %s could not be found."
 msgstr ""
 
-#: views.py:750
+#: views.py:758
 msgid "Could not alter item"
 msgstr ""
 
-#: views.py:758
+#: views.py:766
 #, python-format
 msgid "%(item)s added to %(cart)s"
 msgstr ""
 
-#: views.py:764
+#: views.py:772
 #, python-format
 msgid "%(item)s removed from %(cart)s"
 msgstr ""

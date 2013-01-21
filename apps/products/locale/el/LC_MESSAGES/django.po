@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-16 16:12+0200\n"
+"POT-Creation-Date: 2013-01-21 18:42+0200\n"
 "PO-Revision-Date: 2013-01-21 14:05+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,75 +17,75 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10
+#: __init__.py:8
 msgid "view all"
 msgstr "Προβολή όλων"
 
-#: __init__.py:11
+#: __init__.py:9
 msgid "create new template"
 msgstr "Νέο προϊόν"
 
-#: __init__.py:13
+#: __init__.py:11
 msgid "orphans templates"
 msgstr "προϊόντα χωρίς εξοπλισμό"
 
-#: __init__.py:14
+#: __init__.py:12
 msgid "edit"
 msgstr "επεξεργασία"
 
-#: __init__.py:15
+#: __init__.py:13
 msgid "delete"
 msgstr "διαγραφή"
 
-#: __init__.py:16
+#: __init__.py:14
 msgid "add / remove photos"
 msgstr "προσθήκη / αφαίρεση φωτογραφιών"
 
-#: __init__.py:17
+#: __init__.py:15
 msgid "related assets"
 msgstr "σχετικός εξοπλισμός"
 
-#: __init__.py:18
+#: __init__.py:16
 msgid "assign supplies"
 msgstr "υπαγωγή εξαρτημάτων"
 
-#: __init__.py:19
+#: __init__.py:17
 msgid "assign suppliers"
 msgstr "σύνδεση προμηθευτών"
 
-#: __init__.py:21
+#: __init__.py:19
 msgid "categories"
 msgstr "είδη"
 
-#: __init__.py:22
+#: __init__.py:20
 msgid "create new category"
 msgstr "Νέο είδος εξοπλισμού"
 
-#: __init__.py:24
+#: __init__.py:22
 msgid "edit category"
 msgstr "επεξεργασία είδους"
 
-#: __init__.py:26
+#: __init__.py:24
 msgid "delete category"
 msgstr "διαγραφή είδους"
 
-#: __init__.py:29
+#: __init__.py:27
 msgid "manufacturers"
 msgstr "κατασκευαστές"
 
-#: __init__.py:30
+#: __init__.py:28
 msgid "create new manufacturer"
 msgstr "νέος κατασκευαστής"
 
-#: __init__.py:32
+#: __init__.py:30
 msgid "edit manufacturer"
 msgstr "επεξεργασία κατασκευαστή"
 
-#: __init__.py:34
+#: __init__.py:32
 msgid "delete manufacturer"
 msgstr "διαγραφή κατασκευαστή"
 
-#: __init__.py:54 models.py:161 views.py:35
+#: __init__.py:52 models.py:161 views.py:24
 msgid "templates"
 msgstr "προϊόντα"
 
@@ -101,7 +101,7 @@ msgstr "γονικό είδος"
 msgid "approved"
 msgstr "Εγκεκριμένο"
 
-#: models.py:13 urls.py:75
+#: models.py:13 urls.py:76
 msgid "Is bundle"
 msgstr "Είναι σύνθεση"
 
@@ -109,7 +109,7 @@ msgstr "Είναι σύνθεση"
 msgid "Picture"
 msgstr "Εικόνα"
 
-#: models.py:25 urls.py:79 urls.py:84 urls.py:88 urls.py:96
+#: models.py:25 urls.py:80 urls.py:85 urls.py:89 urls.py:97
 msgid "item category"
 msgstr "είδος προϊόντων"
 
@@ -134,7 +134,7 @@ msgstr "μέγιστο πλήθος"
 msgid "units"
 msgstr "μονάδες"
 
-#: models.py:48 urls.py:29 urls.py:33
+#: models.py:48 urls.py:30 urls.py:34
 msgid "name"
 msgstr "όνομα"
 
@@ -170,12 +170,12 @@ msgstr "κωδικός εξαρτήματος"
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:100 views.py:51
+#: models.py:100 views.py:40
 msgid "supplies"
 msgstr "εξαρτήματα"
 
-#: models.py:105 urls.py:38 urls.py:44 urls.py:48 urls.py:52 urls.py:58
-#: urls.py:61
+#: models.py:105 urls.py:39 urls.py:45 urls.py:49 urls.py:53 urls.py:59
+#: urls.py:62
 msgid "item template"
 msgstr "προϊόν"
 
@@ -220,90 +220,89 @@ msgstr ""
 "Το αντικείμενο κατηγορίας: %s δεν είναι σύνθεση, δεν επιτρέπεται να περιέχει "
 "εξαρτήματα."
 
-#: urls.py:23 urls.py:101 urls.py:104 urls.py:108 urls.py:112 urls.py:116
+#: urls.py:24 urls.py:102 urls.py:105 urls.py:109 urls.py:113 urls.py:117
 msgid "manufacturer"
 msgstr "κατασκευαστής"
 
-#: urls.py:26
+#: urls.py:27
 msgid "category"
 msgstr "είδος"
 
-#: urls.py:39
+#: urls.py:40
 msgid "Manufacturer"
 msgstr "Κατασκευαστής"
 
-#: urls.py:40
+#: urls.py:41
 msgid "Category"
 msgstr "Είδος"
 
-#: urls.py:53
+#: urls.py:54
 msgid ""
 "Will be deleted from any user that may have it assigned and from any item "
 "group."
 msgstr ""
 
-#: urls.py:56
+#: urls.py:57
 msgid "orphan templates"
 msgstr ""
 
-#: urls.py:73
+#: urls.py:74
 msgid "Parent category"
 msgstr "γονικό είδος"
 
-#: urls.py:74
+#: urls.py:75
 msgid "Approved"
 msgstr "Εγκεκριμένο"
 
-#: urls.py:76
+#: urls.py:77
 msgid "list of item categories"
 msgstr "λίστα ειδών εξοπλισμού"
 
-#: views.py:17
-msgid "assets that use the template"
-msgstr "Εξοπλισμός από αυτό το προϊόν"
-
-#: views.py:27
+#: views.py:16
 #, python-format
 msgid "Assign templates to the supplier: <a href=\"%(url)s\">%(obj)s</a>"
 msgstr "Σύνδεση προϊόντων με προμηθευτή: <a href=\"%(url)s\">%(obj)s</a>"
 
-#: views.py:33
+#: views.py:22
 msgid "Unassigned templates"
 msgstr "Ασύνδετα προϊόντα"
 
-#: views.py:34
+#: views.py:23
 msgid "Assigned templates"
 msgstr "Συνδεδεμένα προϊόντα"
 
-#: views.py:43
+#: views.py:32
 #, python-format
 msgid "Assign supplies to the template: <a href=\"%(url)s\">%(obj)s</a>"
 msgstr "Υπαγωγή εξαρτήματος σε προϊόν:  <a href=\"%(url)s\">%(obj)s</a>"
 
-#: views.py:49
+#: views.py:38
 msgid "Unassigned supplies"
 msgstr ""
 
-#: views.py:50
+#: views.py:39
 msgid "Assigned supplies"
 msgstr ""
 
-#: views.py:59
+#: views.py:48
 #, python-format
 msgid "Assign suppliers to the template: <a href=\"%(url)s\">%(obj)s</a>"
 msgstr ""
 
-#: views.py:65
+#: views.py:54
 msgid "Unassigned suppliers"
 msgstr ""
 
-#: views.py:66
+#: views.py:55
 msgid "Assigned suppliers"
 msgstr ""
 
-#: views.py:67
+#: views.py:56
 msgid "suppliers"
 msgstr "προμηθευτές"
+
+#~ msgid "assets that use the template"
+#~ msgstr "Εξοπλισμός από αυτό το προϊόν"
 
 #~ msgid "Bundles of this category may contain items of these categories"
 #~ msgstr ""

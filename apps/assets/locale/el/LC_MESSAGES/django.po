@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-16 16:12+0200\n"
-"PO-Revision-Date: 2013-01-16 09:56+0200\n"
+"POT-Creation-Date: 2013-01-21 18:42+0200\n"
+"PO-Revision-Date: 2013-01-21 18:44+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -150,7 +150,7 @@ msgstr ""
 "Δηλώνει ότι ο εξοπλισμός είναι μέρος Σύνθεσης, και γι' αυτό δεν έχει "
 "τοποθεσία."
 
-#: models.py:78 views.py:131 views.py:137 views.py:148
+#: models.py:78 views.py:131 views.py:137 views.py:148 views.py:161
 msgid "Source Contract"
 msgstr "Σύμβαση Παραλαβής"
 
@@ -182,7 +182,7 @@ msgstr "λίστα εξοπλισμού"
 msgid "Assigned to:"
 msgstr "Ανατέθηκε σε:"
 
-#: urls.py:39 views.py:130
+#: urls.py:39 views.py:130 views.py:164
 msgid "Location"
 msgstr "τοποθεσία"
 
@@ -222,7 +222,7 @@ msgstr "Θέλετε να σημάνετε τον εξοπλισμό ως '%s' ;
 
 #: views.py:60
 msgid "Any other states this asset may be marked as, will be cleared."
-msgstr ""
+msgstr "Θα μηδενιστούν όλες οι άλλες καταστάσεις που έχει ο εξοπλισμός."
 
 #: views.py:70
 #, python-format
@@ -261,11 +261,11 @@ msgstr "Δεν γίνεται να αφαιρεθεί η σήμανση '%s'."
 msgid "Item Template"
 msgstr "προϊόν"
 
-#: views.py:128 views.py:135 views.py:146
+#: views.py:128 views.py:135 views.py:146 views.py:162
 msgid "specifications"
 msgstr "προδιαγραφές"
 
-#: views.py:129 views.py:136 views.py:147
+#: views.py:129 views.py:136 views.py:147 views.py:163
 msgid "Serial number"
 msgstr "Σειριακός αριθμός"
 
@@ -278,6 +278,11 @@ msgstr "Εξοπλισμός τοποθεσίας: %s"
 #, python-format
 msgid "department assets: %s"
 msgstr "εξοπλισμός μονάδας: %s"
+
+#: views.py:169
+#, python-format
+msgid "Items of template: %s"
+msgstr "Εξοπλισμός από προϊόν: %s"
 
 #: templates/asset_detail.html:5
 msgid "Asset Details"
