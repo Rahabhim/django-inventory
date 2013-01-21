@@ -250,6 +250,8 @@ class GenericBloatedListView(django_gv.ListView):
             # or the foreign models is avoided (too expensive)
             #    A strange thing, here: if base_queryset == none(), it will still yield
             #    all groups available!
+            # Problem: (FIXME) if field is allowed to be null, these entries will be
+            # excluded from the results!
             grp_results = base_queryset.order_by(group + '__id').values(group).annotate(items_count=Count('pk'))
 
             assert rel_field.rel, rel_field # assume it's a Foreign key
