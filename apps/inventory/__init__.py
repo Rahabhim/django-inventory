@@ -44,6 +44,16 @@ register_links(Inventory, [inventory_view], menu_name='sidebar')
 #register_links(InventoryTransaction, [jump_to_inventory], menu_name='sidebar')
 
 
+def has_pending_inventories(obj, context):
+    return Inventory.objects.by_request(context['request']).filter(date_val__isnull=True).exists()
+
+action_inventories_pending = {'text':_('pending inventories'), \
+        'condition': has_pending_inventories,
+        'view':'inventories_pending_list', 'famfam':'page_go'}
+
+
+register_links(['home',], [action_inventories_pending ], menu_name='my_pending')
+
 register_menu([
     {'text':_('inventories'), 'view':'inventory_list', 
         'links':inventory_menu_links,
