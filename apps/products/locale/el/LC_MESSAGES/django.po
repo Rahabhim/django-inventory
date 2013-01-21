@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-01-16 16:12+0200\n"
-"PO-Revision-Date: 2013-01-16 00:10+0200\n"
+"PO-Revision-Date: 2013-01-21 14:05+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -27,7 +27,7 @@ msgstr "Νέο προϊόν"
 
 #: __init__.py:13
 msgid "orphans templates"
-msgstr ""
+msgstr "προϊόντα χωρίς εξοπλισμό"
 
 #: __init__.py:14
 msgid "edit"
@@ -204,11 +204,14 @@ msgid ""
 "An item of %(self_cat)s cannot have more than %(max_count)d of %(sub_cat)s. "
 "You have entered %(count)d."
 msgstr ""
+"Εξοπλισμός %(self_cat)s δεν μπορεί να περιέχει περισσότερα από %(max_count)d "
+"από το είδος: %(sub_cat)s. Έχετε δώσει %(count)d ."
 
 #: models.py:149
 #, python-format
 msgid "An item of %(self_cat)s cannot contain any items of %(sub_cat)s."
 msgstr ""
+"Εξοπλισμός %(self_cat)s δεν μπορεί να περιέχει εξαρτήματα: %(sub_cat)s ."
 
 #: models.py:154
 #, python-format
