@@ -40,7 +40,7 @@ purchase_order_item_state_update = {'text':_('edit state'), 'view':'purchase_ord
 purchase_order_item_state_delete = {'text':_('delete state'), 'view':'purchase_order_item_state_delete', 'args':'object.id', 'famfam':'pencil_delete', 'condition': user_is_staff}
 
 purchase_order_list = {'text':_('purchase orders'), 'view':'purchase_order_list', 'famfam':'cart_go'}
-purchase_order_create = {'text':_('create new order'), 'view':'purchase_order_create', 'famfam':'cart_add'}
+purchase_order_create = {'text':_('create new order'), 'view':'purchase_order_create', 'famfam':'cart_add', 'condition': can_add(PurchaseOrder)}
 purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.active }
 purchase_order_updwiz = {'text':_('edit order items'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.change_%(model)s') }
 purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.delete_%(model)s')  }
@@ -93,9 +93,9 @@ movement_delete = {'text':_('delete pending movement'), 'view':'movement_delete'
             'condition': lambda o,c: o and o.state == 'draft'}
 
 # register_submenu('menu_assets', .. )
-action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete')
-action_lose = dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error')
-action_move = dict(text=_(u'Move assets'), view='move_items', famfam='computer_go')
+action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete', condition= can_add(Movement))
+action_lose = dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error', condition= can_add(Movement))
+action_move = dict(text=_(u'Move assets'), view='move_items', famfam='computer_go', condition= can_add(Movement))
 
 register_links( ['item_list'], [ action_destroy, action_lose, action_move ], menu_name='sidebar')
 register_links(['home',], [action_destroy, action_lose, action_move ], menu_name='start_actions')
