@@ -7,17 +7,6 @@ from generic_views.views import generic_assign_remove, generic_list
 from common.models import Supplier
 from models import ItemTemplate
 
-def template_items(request, object_id):
-    template = get_object_or_404(ItemTemplate, pk=object_id)
-    return object_list(
-        request,
-        queryset = template.item_set.all(),
-        template_name = "generic_list.html",
-        extra_context=dict(
-            title = '%s: %s' % (_(u"assets that use the template"), template),
-        ),
-    )
-
 
 def supplier_assign_remove_itemtemplates(request, object_id):
     obj = get_object_or_404(Supplier, pk=object_id)

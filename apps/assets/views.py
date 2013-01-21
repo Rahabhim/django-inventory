@@ -16,7 +16,7 @@ from common.models import Location
 from company.models import Department
 from assets import state_filter
 from company import make_mv_location
-from products.models import Manufacturer, ItemCategory
+from products.models import Manufacturer, ItemCategory, ItemTemplate
 from procurements.models import Contract
 
 def manufacturer_filter_queryset(form, parent, parent_queryset):
@@ -153,4 +153,20 @@ class DepartmentAssetsView(AssetListView):
         self.queryset = Item.objects.filter(location__department=department)
         return super(DepartmentAssetsView, self).get(request, **kwargs)
 
+class TemplateAssetsView(AssetListView):
+    list_filters=[ location_filter, state_filter, contract_filter]
+    prefetch_fields=( 'src_contract.name', )
+    group_by='src_contract'
+    # problem: if there is no source contract, entries will be hidden :(
+    group_fields=[ dict(name=_(u'Source Contract'), colspan=2), ]
+    extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
+                            dict(name=_('Serial number'), attribute='serial_number'),
+                            dict(name=_('Location'), attribute='location'),
+                            ]
+
+    def get(self, request, product_id, **kwargs):
+        template = get_object_or_404(ItemTemplate, pk=product_id)
+        self.title = _(u"Items of template: %s") % template
+        self.queryset = self.queryset(request).filter(item_template=template)
+        return super(TemplateAssetsView, self).get(request, **kwargs)
 #eof

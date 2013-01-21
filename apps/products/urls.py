@@ -19,6 +19,7 @@ from forms import ItemTemplateForm, ItemTemplateForm_view, \
         ItemCategoryContainForm_view, \
         ManufacturerForm, ManufacturerForm_view
 
+from assets.views import TemplateAssetsView
 
 manufacturer_filter = {'name':'manufacturer', 'title': _(u'manufacturer'),
             'queryset':Manufacturer.objects.all(), 'destination':'manufacturer'}
@@ -61,7 +62,7 @@ urlpatterns = patterns('products.views',
                     extra_context={'object_name':_(u'item template'), \
                         'sidebar_subtemplates':['generic_photos_subtemplate.html']}),
             'template_view'),
-    url(r'^template/(?P<object_id>\d+)/items/$', 'template_items', (), 'template_items_list'),
+    url(r'^template/(?P<product_id>\d+)/items/$', TemplateAssetsView.as_view(), name='template_items_list'),
     url(r'^template/(?P<object_id>\d+)/assign/supplies$', 'template_assign_remove_supply', (), name='template_assign_supply'),
     url(r'^template/(?P<object_id>\d+)/assign/suppliers/$', 'template_assign_remove_suppliers', (), name='template_assign_suppliers'),
 
