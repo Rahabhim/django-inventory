@@ -13,6 +13,9 @@ def home(request):
         if not request.user.is_superuser:
             user_roles = request.user.dept_roles.all()
             current_user_role = request.session.get('current_user_role', None)
+            if (not current_user_role) and (user_roles.count() == 1):
+                current_user_role = request.session['current_user_role'] = user_roles[0].role_id
+                request.session.modified = True
         else:
             user_roles = []
     except Exception, e:
