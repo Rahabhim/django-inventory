@@ -89,16 +89,16 @@ class Manufacturer(Partner):
 
 class ItemTemplate(models.Model):
     description = models.CharField(verbose_name=_(u"description"), max_length=256)
-    category = models.ForeignKey(ItemCategory,)
-    approved = models.BooleanField(default=False)
+    category = models.ForeignKey(ItemCategory, verbose_name=_("category"))
+    approved = models.BooleanField(default=False, verbose_name=_("approved"))
     brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True, 
         help_text=_("Brand name, if different from manufacturer"))
-    manufacturer = models.ForeignKey(Manufacturer, related_name="products")
+    manufacturer = models.ForeignKey(Manufacturer, related_name="products", verbose_name=_("manufacturer"))
     model = models.CharField(verbose_name=_(u"model"), max_length=32, null=True, blank=True)
     part_number = models.CharField(verbose_name=_(u"part number"), max_length=32, null=True, blank=True)
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
     supplies = models.ManyToManyField("self", null=True, blank=True, verbose_name=_(u"supplies"))
-    suppliers = models.ManyToManyField(Supplier, null=True, blank=True)
+    suppliers = models.ManyToManyField(Supplier, null=True, blank=True, verbose_name=_("suppliers"))
 
     class Meta:
         ordering = ['description']
