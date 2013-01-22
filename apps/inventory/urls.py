@@ -42,7 +42,7 @@ urlpatterns = patterns('inventory.views',
     #url(r'^inventory/(?P<object_id>\d+)/current/$', 'inventory_current', (), 'inventory_current'),
 
     url(r'^inventory/(?P<object_id>\d+)/compare/$', 'inventory_items_compare', (), 'inventory_items_compare'),
-
+    url(r'^inventory/(?P<object_id>\d+)/validate/$', 'inventory_validate', (), 'inventory_validate'),
     url(r'^inventory_item/list/$', generic_list, dict(queryset=InventoryItem.objects.all(), 
                 extra_context=dict(title=_(u'items'))), 'inventory_item_list'),
     

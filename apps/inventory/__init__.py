@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from models import Inventory
 # , InventoryTransaction
 
-from common.api import register_links, register_menu
+from common.api import register_links, register_menu # , _context_has_perm TODO
 
 import assets
 
@@ -19,6 +19,9 @@ inventory_open = {'text':_(u'open'), 'view':'inventory_open', 'args':'object.id'
 inventory_close = {'text':_(u'close'), 'view':'inventory_close', 'args':'object.id', 'famfam':'package_red'}
 inventory_compare = {'text': _(u'compare'), 'view':'inventory_items_compare', 'args':'object.id', 'famfam':'package_go',  'condition': lambda o,c: not o.date_val}
 
+inventory_validate = {'text': _(u'validate'), 'view':'inventory_validate',
+            'args':'object.id', 'famfam':'package_go',
+            'condition': lambda o,c: True}
 
 jump_to_template = {'text':_(u'template'), 'view':'template_view', 'args':'object.supply.id', 'famfam':'page_go'}
 jump_to_inventory = {'text':_(u'return to inventory'), 'view':'inventory_view', 'args':'object.inventory.id', 'famfam':'package_go'}
@@ -30,7 +33,7 @@ inventory_menu_links = [
 register_links(['inventory_view', 'inventory_list', 'inventory_create', 
         'inventory_update', 'inventory_delete',], [inventory_create], menu_name='sidebar')
 
-register_links(Inventory, [inventory_update, inventory_compare])
+register_links(Inventory, [inventory_update, inventory_compare, inventory_validate])
 register_links(Inventory, [inventory_delete, inventory_open, inventory_close], menu_name='sidebar')
 register_links(Inventory, [inventory_view], menu_name='sidebar')
 
