@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-21 18:42+0200\n"
+"POT-Creation-Date: 2013-01-22 16:22+0200\n"
 "PO-Revision-Date: 2013-01-21 18:47+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -49,19 +49,24 @@ msgstr "κλείσιμο"
 msgid "compare"
 msgstr "Σύγκριση"
 
-#: __init__.py:28
+#: __init__.py:22
+#, fuzzy
+msgid "validate"
+msgstr "επικύρωση από"
+
+#: __init__.py:26
 msgid "template"
 msgstr "προϊόν"
 
-#: __init__.py:29
+#: __init__.py:27
 msgid "return to inventory"
 msgstr "επιστροφή στην απογραφή"
 
-#: __init__.py:50 urls.py:24
+#: __init__.py:44 urls.py:24
 msgid "pending inventories"
 msgstr "Εκκρεμείς Απογραφές"
 
-#: __init__.py:58 models.py:68 urls.py:20
+#: __init__.py:52 models.py:68 urls.py:20
 msgid "inventories"
 msgstr "Απογραφές"
 
@@ -102,7 +107,7 @@ msgid "validated by"
 msgstr "επικύρωση από"
 
 #: models.py:67 models.py:158 urls.py:29 urls.py:34 urls.py:37 urls.py:40
-#: views.py:40 views.py:121
+#: views.py:38 views.py:119
 msgid "inventory"
 msgstr "απογραφή"
 
@@ -129,7 +134,7 @@ msgstr "Ο εξοπλισμός %s δεν είναι στην απογραφή!"
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:140 views.py:49
+#: models.py:140 views.py:47
 msgid "quantity"
 msgstr "Ποσότητα"
 
@@ -155,14 +160,18 @@ msgstr "Απογραφές"
 msgid "items"
 msgstr "εξοπλισμός"
 
-#: views.py:46
+#: views.py:44
 #, fuzzy
 msgid "current balances for inventory"
 msgstr "Νέα Απογραφή"
 
-#: views.py:64
+#: views.py:62
 msgid "purchase orders from supplier"
 msgstr "εντολές προμήθειας από προμηθευτή"
+
+#: views.py:134
+msgid "The inventory validation feature is currently disabled!"
+msgstr ""
 
 #: templates/inventory_compare_have_more.html:6
 #, python-format
