@@ -11,6 +11,8 @@ class ItemCategory(models.Model):
                 verbose_name=_("parent category"))
     approved = models.BooleanField(default=False, verbose_name=_("approved"))
     is_bundle = models.BooleanField(default=False, verbose_name=_("Is bundle"))
+    picture = models.ImageField(verbose_name=_("Picture"), upload_to='categories', 
+                blank=True, null=True)
 
     @models.permalink
     def get_absolute_url(self):
@@ -24,7 +26,7 @@ class ItemCategory(models.Model):
 
 class ItemCategoryContain(models.Model):
     parent_category = models.ForeignKey(ItemCategory, related_name="may_contain", verbose_name=_("May contain"))
-    category = models.ForeignKey(ItemCategory, related_name='+', verbose_name=_("contained category"))
+    category = models.ForeignKey(ItemCategory, related_name='contained_in', verbose_name=_("contained category"))
     min_count = models.IntegerField(verbose_name=_("minimum count"), default=0)
     max_count = models.IntegerField(verbose_name=_("maximum count"), default=1)
 
@@ -77,6 +79,7 @@ class Manufacturer(Partner):
 
     class Meta:
         ordering = ['name']
+        verbose_name = _("manufacturer")
 
     @models.permalink
     def get_absolute_url(self):
@@ -87,16 +90,16 @@ class Manufacturer(Partner):
 
 class ItemTemplate(models.Model):
     description = models.CharField(verbose_name=_(u"description"), max_length=256)
-    category = models.ForeignKey(ItemCategory,)
-    approved = models.BooleanField(default=False)
+    category = models.ForeignKey(ItemCategory, verbose_name=_("category"))
+    approved = models.BooleanField(default=False, verbose_name=_("approved"))
     brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True, 
         help_text=_("Brand name, if different from manufacturer"))
-    manufacturer = models.ForeignKey(Manufacturer, related_name="products")
+    manufacturer = models.ForeignKey(Manufacturer, related_name="products", verbose_name=_("manufacturer"))
     model = models.CharField(verbose_name=_(u"model"), max_length=32, null=True, blank=True)
     part_number = models.CharField(verbose_name=_(u"part number"), max_length=32, null=True, blank=True)
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
     supplies = models.ManyToManyField("self", null=True, blank=True, verbose_name=_(u"supplies"))
-    suppliers = models.ManyToManyField(Supplier, null=True, blank=True)
+    suppliers = models.ManyToManyField(Supplier, null=True, blank=True, verbose_name=_("suppliers"))
 
     class Meta:
         ordering = ['description']

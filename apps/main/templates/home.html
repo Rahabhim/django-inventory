@@ -5,7 +5,8 @@
 
 {% block content %}
     <div class="content">
-        <div class="tc"><h1>{% project_name %}</h1></div>
+        <div class="tc"><h1>{{ user_profile.department.name }}</h1></div>
+
         <div class="block">
         {% get_object_navigation_links "my_pending" %}
         {% if object_navigation_links %}
@@ -27,11 +28,30 @@
         {% endif %}
         </div>
     </div>
+
+        {% if user_roles %}
+        <div class="content" style="float: right;">
+            <div class="tc"> {% trans 'Select department and role:' %}</div>
+            <div class="block">
+            <ul class="user_roles" style="list-style: none;" >
+            {% for r in user_roles %}
+                {% if r.id == current_user_role %}
+                <li><span class="famfam active famfam-tick">&nbsp;</span>
+                    {{ r.department.name }} - {{ r.role.name }} </li>
+                {% else %}
+                <li><a href="{% url select_user_role %}?role_id={{ r.id }}"><span class="famfam active famfam-bullet_orange">&nbsp;</span></a>
+                    {{ r.department.name }} - {{ r.role.name }} </li>
+                {% endif %}
+            {% endfor %}
+            </ul>
+            </div>
+        </div>
+        {% endif %}
 {% endblock %}
 {% block footer %}
     <div id="footer">
         <div class="block">
-            <p>Copyright &copy; 2007 Roberto Rosario, 2012 P. Christeas</p>
+            <p style="font-size: 6pt;">Copyright &copy; 2012 UoA, 2007 Roberto Rosario</p>
         </div>
     </div>
 {% endblock %}

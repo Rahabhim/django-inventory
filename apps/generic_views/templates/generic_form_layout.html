@@ -5,7 +5,7 @@
 
 {% block javascript %}
 {% if formsets and form_mode != 'details' %}
-<script src="{{ MEDIA_URL }}packages/jquery.formset.min.js"></script>
+<script src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
 <script type="text/javascript">
 $(function() {
     {% for formset in formsets %}
@@ -87,7 +87,7 @@ $(function() {
             {% block submit_button %}
                 <div class="group navform wat-cf">
                     <button class="button" type="submit">
-                        <img src="{{ MEDIA_URL }}web_theme_media/images/icons/tick.png" alt="{% if object %}{% trans 'Save' %}{% else %}{% trans 'Submit' %}{% endif %}" /> {% if object %}{% trans 'Save' %}{% else %}{% trans 'Submit' %}{% endif %}
+                        <img src="{{ STATIC_URL }}theme/images/tick.png" alt="{% if object %}{% trans 'Save' %}{% else %}{% trans 'Submit' %}{% endif %}" /> {% if object %}{% trans 'Save' %}{% else %}{% trans 'Submit' %}{% endif %}
                     </button>
                 </div>
             {% endblock %}

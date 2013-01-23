@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
 from django.views.generic.list_detail import object_detail, object_list
 from django.views.generic.create_update import delete_object # create_object, update_object, 
@@ -18,6 +18,8 @@ import django.views.generic as django_gv
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.forms.models import inlineformset_factory #, ModelForm
 from main import cart_utils
+
+from common.api import role_from_request
 
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
                   InlineModelForm, DetailForm
@@ -253,6 +255,8 @@ class GenericBloatedListView(django_gv.ListView):
             # or the foreign models is avoided (too expensive)
             #    A strange thing, here: if base_queryset == none(), it will still yield
             #    all groups available!
+            # Problem: (FIXME) if field is allowed to be null, these entries will be
+            # excluded from the results!
             grp_results = base_queryset.order_by(group + '__id').values(group).annotate(items_count=Count('pk'))
 
             assert rel_field.rel, rel_field # assume it's a Foreign key
@@ -355,17 +359,7 @@ class GenericBloatedListView(django_gv.ListView):
         return self.render_to_response(context)
 
 def generic_delete(*args, **kwargs):
-    try:
-        kwargs['post_delete_redirect'] = reverse(kwargs['post_delete_redirect'])
-    except NoReverseMatch:
-        pass
-
-    if 'extra_context' in kwargs:
-        kwargs['extra_context']['delete_view'] = True
-    else:
-        kwargs['extra_context'] = {'delete_view':True}
-
-    return delete_object(template_name='generic_confirm.html', *args, **kwargs)
+    raise RuntimeError("obsolete")
 
 def generic_confirm(request, _view, _title=None, _model=None, _object_id=None, _message='', *args, **kwargs):
     if request.method == 'POST':
@@ -541,6 +535,8 @@ class _InlineViewMixin(object):
 
     def get_form(self, form_class):
         form = super(_InlineViewMixin, self).get_form(form_class)
+        if hasattr(form, '_init_by_request'):
+            form._init_by_request(self.request)
         if hasattr(form, '_init_by_user'):
             form._init_by_user(self.request.user)
         return form
@@ -569,7 +565,10 @@ class _PermissionsMixin(object):
                 npd['model'] = model._meta.module_name
             np = self.need_permission
             np = np % npd
-            if not request.user.has_perm(np):
+            active_role = role_from_request(request)
+            if active_role and active_role.has_perm(np):
+                pass # literally
+            elif not request.user.has_perm(np):
                 self._logger.warning("%s view denied %s permission to user %s",
                         self.__class__.__name__, np, request.user.username)
                 raise PermissionDenied
@@ -584,6 +583,21 @@ class GenericUpdateView(_PermissionsMixin, _InlineViewMixin, django_gv.UpdateVie
     template_name = 'generic_form_fs.html'
     form_mode = 'update'
     need_permission = '%(app)s.change_%(model)s'
+
+class GenericDeleteView(_PermissionsMixin, django_gv.DeleteView):
+    template_name = 'generic_confirm.html'
+    extra_context = None
+    form_mode = 'delete'
+    need_permission = '%(app)s.delete_%(model)s'
+
+    def get_context_data(self, **kwargs):
+        context = super(GenericDeleteView, self).get_context_data(**kwargs)
+
+        if self.extra_context:
+            context.update(self.extra_context)
+        context['form_mode'] = self.form_mode
+        context['delete_view'] = True
+        return context
 
 class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
     """ Form-based, read-only view of an object

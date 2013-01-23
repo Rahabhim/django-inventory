@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 12:50+0200\n"
-"PO-Revision-Date: 2012-11-18 19:47+0200\n"
+"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"PO-Revision-Date: 2013-01-23 14:05+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -35,11 +35,11 @@ msgstr "διαγραφή"
 
 #: __init__.py:14
 msgid "assign templates"
-msgstr ""
+msgstr "σύνδεση με προϊόντα"
 
 #: __init__.py:15
 msgid "related purchase orders"
-msgstr ""
+msgstr "Σχετικές παραλαβές εξοπλισμού"
 
 #: __init__.py:17 models.py:58 models.py:138 urls.py:28 urls.py:31
 msgid "locations"
@@ -90,9 +90,8 @@ msgid "phone 2"
 msgstr "τηλέφωνο 2"
 
 #: models.py:39
-#, fuzzy
 msgid "addresses"
-msgstr "Διεύθυνση"
+msgstr "Διευθύνσεις"
 
 #: models.py:48 urls.py:15
 msgid "department"
@@ -127,14 +126,12 @@ msgid "Bundled"
 msgstr "Σε Σύνθεση"
 
 #: models.py:90
-#, fuzzy
 msgid "location template"
-msgstr "τοποθεσία"
+msgstr "πρότυπο τοποθεσίας"
 
 #: models.py:91
-#, fuzzy
 msgid "location templates"
-msgstr "τοποθεσίες"
+msgstr "πρότυπα τοποθεσιών"
 
 #: models.py:102
 msgid "VAT number"
@@ -146,30 +143,29 @@ msgstr "προμηθευτής"
 
 #: models.py:116
 msgid "prefix"
-msgstr ""
+msgstr "πρόθεμα"
 
 #: models.py:117
 msgid "suffix"
-msgstr ""
+msgstr "επίθεμα"
 
 #: models.py:118
-#, fuzzy
 msgid "next number"
-msgstr "αριθμός τηλεφώνου"
+msgstr "επόμενος αριθμός"
 
 #: models.py:119
-#, fuzzy
 msgid "increment"
-msgstr "Προμήθεια"
+msgstr "βήμα"
 
 #: models.py:120
 msgid "Number padding"
-msgstr ""
+msgstr "Συμπλήρωση αριθμών"
 
 #: models.py:123
 msgid "sequence"
-msgstr ""
+msgstr "Ακολουθία"
 
 #: models.py:124
 msgid "sequences"
-msgstr ""
+msgstr "Ακολουθίες"
+

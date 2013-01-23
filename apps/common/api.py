@@ -68,5 +68,62 @@ class LookupChannel(ajax_select.LookupChannel):
             cur = cur.filter(**{"%s__icontains" % self.search_field: r})
         return cur.order_by(self.search_field)[:self.max_length]
 
+# Condition functions for the views
+
+def _user_has_perm(user, obj, pattern):
+    """Assert that user has permission as in `pattern` on object
+    """
+    try:
+        npd = {'app': obj._meta.app_label, 'Model': obj._meta.object_name,
+                'model': obj._meta.module_name}
+        return user.has_perm(pattern % npd)
+    except Exception, e:
+        return False
+
+def can_add(model):
+    """ Return a function to test user's permission to create model
+    
+        Since the "create" link will exist in the "list" view, no object
+        will be available.
+    """
+    return lambda obj, context: _user_has_perm(context['user'], model, '%(app)s.add_%(model)s')
+
+def can_edit(obj, context):
+    """ Assert if current user can edit the model of `obj`
+    """
+    return _user_has_perm(context['user'], obj, '%(app)s.change_%(model)s')
+
+def can_delete(obj, context):
+    """ Assert if current user can edit the model of `obj`
+    """
+    return _user_has_perm(context['user'], obj, '%(app)s.delete_%(model)s')
+
+def user_is_staff(obj, context):
+    return context['user'].is_staff
+
+class _fake_role(object):
+    """A fake role, for the superuser
+    """
+    def __init__(self, user):
+        self.user = user
+        self.department = None
+        self.role = None
+
+    def has_perm(self, perm):
+        return True
+
+def role_from_request(request):
+    """Obtain the active DepartmentRole object from the http request
+
+        @return True for superuser, DepartmentRole or False if no role selected
+    """
+    if request.user.is_superuser:
+        return _fake_role(request.user)
+    elif request.session.get('current_user_role', False):
+        role_id = request.session['current_user_role']
+        return request.user.dept_roles.get(pk=role_id)
+    else:
+        return False
+
 #eof
 

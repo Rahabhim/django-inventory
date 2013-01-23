@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 # Django settings for django-inventory project.
 import os
 import sys
@@ -10,7 +11,7 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps'))
 sys.path.append(os.path.join(PROJECT_ROOT, 'shared_apps'))
 sys.path.append(os.path.join(PROJECT_ROOT, '3rd_party_apps'))
 
-PROJECT_TITLE = 'Django Inventory'
+PROJECT_TITLE = 'ΠΣ Κτηματολογίου υποδομών ΠΣΔ + υποδομών ΤΠΕ Σχολείων'
 PROJECT_NAME = 'django_inventory'
 
 DEBUG = True
@@ -59,9 +60,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django_inventory',
-        'USER': 'USERNAME',       # Not used with sqlite3.
-        'PASSWORD': 'USERPASSWORD',   # Not used with sqlite3.
-        'HOST': 'localhost',      # Set to empty string for localhost.
+        #'USER': 'USERNAME',       # Not used with sqlite3.
+        #'PASSWORD': 'USERPASSWORD',   # Not used with sqlite3.
+        #'HOST': 'localhost',      # Set to empty string for localhost.
         'PORT': '',               # Set to empty string for default.
     }
 }
@@ -80,9 +81,9 @@ LANGUAGE_CODE = 'en'
 ugettext = lambda s: s
 
 LANGUAGES = (
-    ('es', ugettext('Spanish')),
+    # ('es', ugettext('Spanish')),
     ('en', ugettext('English')),
-    ('ru', ugettext('Russian')),
+    # ('ru', ugettext('Russian')),
     ('el', ugettext('Greek')),
 )
 
@@ -203,8 +204,10 @@ LOGIN_EXEMPT_URLS = (
     r'^favicon\.ico$',
     r'^about\.html$',
     r'^legal/', # allow the entire /legal/* subsection
-    r'^django-inventory-site_media/',
+    )
 
+if AUTH_BACKEND == 'auth_passwd':
+    LOGIN_EXEMPT_URLS = LOGIN_EXEMPT_URLS + ( \
     r'^accounts/register/$',
     r'^accounts/register/complete/$',
     r'^accounts/register/closed/$',
@@ -216,7 +219,8 @@ LOGIN_EXEMPT_URLS = (
     r'^password/reset/confirm/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
     r'^password/reset/complete/$',
     r'^password/reset/done/$',
-)
+    )
+
 #--------- Generic photos --------------
 #PHOTOS_MAX_PHOTO_SIZE = 1000000
 #INVENTORY_MAX_TEMPLATE_PHOTOS = 5
@@ -228,6 +232,7 @@ PAGINATION_DEFAULT_PAGINATION = 50
 WEB_THEME = 'warehouse'
 
 STATIC_URL= '/static/'
+# Place to copy static files into: Do not commit this, it is generated!
 STATIC_ROOT = './staticfiles/'
 # USE_ETAGS = False
 USE_THOUSAND_SEPARATOR = True
@@ -246,6 +251,8 @@ if DEVELOPMENT:
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
     )
+    LOGIN_EXEMPT_URLS = LOGIN_EXEMPT_URLS + ( r'^django-inventory-site_media/',)
+
     try:
         import rosetta
         INSTALLED_APPS.append('rosetta')

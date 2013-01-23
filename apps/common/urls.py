@@ -2,8 +2,7 @@ from django.db.models import Q
 from django.conf.urls.defaults import patterns, url
 from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic.create_update import create_object, update_object
-from generic_views.views import generic_delete, \
+from generic_views.views import GenericDeleteView, GenericUpdateView, GenericCreateView, \
                                 generic_detail, generic_list, GenericBloatedListView
 
 from models import Location, Supplier
@@ -26,15 +25,15 @@ urlpatterns += patterns('',
                 list_filters=[location_dept_filter],
                 prefetch_fields=('department',),
                 extra_context=dict(title =_(u'locations'))), name='location_list'),
-    url(r'^location/create/$', create_object, {'model':Location, 'form_class': LocationForm, 'template_name':'generic_form.html'}, 'location_create'),
-    url(r'^location/(?P<object_id>\d+)/update/$', update_object, {'model':Location, 'template_name':'generic_form.html'}, 'location_update'),
-    url(r'^location/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Location}, post_delete_redirect="location_list", extra_context=dict(object_name=_(u'locations'))), 'location_delete'),
+    url(r'^location/create/$', GenericCreateView.as_view(model=Location, form_class= LocationForm), name='location_create'),
+    url(r'^location/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(model=Location), name='location_update'),
+    url(r'^location/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Location, success_url="location_list", extra_context=dict(object_name=_(u'locations'))), name='location_delete'),
     url(r'^location/(?P<object_id>\d+)/$', generic_detail, dict(form_class=LocationForm_view, queryset=Location.objects.all()), 'location_view'),
 
     url(r'^supplier/(?P<object_id>\d+)/$', generic_detail, dict(form_class=SupplierForm, queryset=Supplier.objects.all()), 'supplier_view'),
     url(r'^supplier/list/$', generic_list, dict({'queryset':Supplier.objects.all()}, extra_context=dict(title=_(u'suppliers'))), 'supplier_list'),
-    url(r'^supplier/create/$', create_object, {'form_class':SupplierForm, 'template_name':'generic_form.html'}, 'supplier_create'),
-    url(r'^supplier/(?P<object_id>\d+)/update/$', update_object, {'form_class':SupplierForm, 'template_name':'generic_form.html'}, 'supplier_update'),
-    url(r'^supplier/(?P<object_id>\d+)/delete/$', generic_delete, dict({'model':Supplier}, post_delete_redirect="supplier_list", extra_context=dict(object_name=_(u'supplier'))), 'supplier_delete'),
+    url(r'^supplier/create/$', GenericCreateView.as_view(form_class=SupplierForm), name='supplier_create'),
+    url(r'^supplier/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( form_class=SupplierForm, ), name='supplier_update'),
+    url(r'^supplier/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Supplier, success_url="supplier_list", extra_context=dict(object_name=_(u'supplier'))), name='supplier_delete'),
 
 )

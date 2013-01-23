@@ -1,0 +1,80 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block form_layout %}
+
+<div class="content">
+    <div class="group newline">
+        {% field_for location_src %}
+    </div>
+    <div class="group newline">
+        {% field_for name %}
+    </div>
+    <!-- <div class="group inline">
+        {% field_for origin %}
+    </div> -->
+    <div class="group newline">
+        {% field_for date_act %}
+    </div>
+    <div class="group inline">
+        {% field_for create_user %}
+    </div>
+
+    <div class="group newline">
+        {% field_for items %}
+    </div>
+    <div style="clear: both; width=100%;"> </div>
+
+
+    <div class="group newline">
+        {% field_for validate_user %}
+    </div>
+    <div class="group inline">
+        {% field_for date_val %}
+    </div>
+
+    {% comment %}
+    <div class="group newline">
+        {% field_for stype %}
+    </div>
+    {% endcomment %}
+
+    <div class="group newline">
+        {% field_for state %}
+    </div>
+
+    <div class="group newline">
+        {% field_for note %}
+    </div>
+
+    {% comment %}
+    <div class="group newline">
+        {% field_for checkpoint_src %}
+    </div>
+
+    <div class="group inline">
+        {% field_for checkpoint_dest %}
+    </div>
+    {% endcomment %}
+
+    <div style="clear: both; width=100%;"> </div>
+</div>
+{% endblock %}
+
+{% block submit_button %}
+    <div class="group navform wat-cf">
+        {% if object %}
+        <button class="button" type="submit">
+            <img src="{{ STATIC_URL }}theme/images/tick.png" />
+            {% trans 'Save changes' %}
+        </button>
+        {% else %}
+        {% trans 'Next step:' %}
+        <button class="button" type="submit">
+            <img src="{{ STATIC_URL }}theme/images/tick.png" />
+            {% trans 'Select Items' %}
+        </button>
+        {% endif %}
+    </div>
+{% endblock %}

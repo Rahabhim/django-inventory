@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 12:51+0200\n"
-"PO-Revision-Date: 2012-11-18 19:44+0200\n"
+"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"PO-Revision-Date: 2013-01-23 14:06+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -47,7 +47,7 @@ msgstr "κλείσιμο"
 
 #: __init__.py:20
 msgid "compare"
-msgstr ""
+msgstr "Σύγκριση"
 
 #: __init__.py:28
 msgid "template"
@@ -66,9 +66,8 @@ msgid "timedate"
 msgstr "ημερομηνία"
 
 #: models.py:18
-#, fuzzy
 msgid "action"
-msgstr "τοποθεσία"
+msgstr "ενέργεια"
 
 #: models.py:19
 msgid "description"
@@ -95,9 +94,8 @@ msgid "created by"
 msgstr "δημιουργήθηκε από"
 
 #: models.py:43
-#, fuzzy
 msgid "validated by"
-msgstr "ημερομηνία επικύρωσης"
+msgstr "επικύρωση από"
 
 #: models.py:47 models.py:138 urls.py:25 urls.py:30 urls.py:33 urls.py:36
 #: views.py:40 views.py:121
@@ -105,9 +103,9 @@ msgid "inventory"
 msgstr "απογραφή"
 
 #: models.py:61
-#, fuzzy, python-format
+#, python-format
 msgid "Inventory: %s"
-msgstr "Απογραφές"
+msgstr "Απογραφή: %s"
 
 #: models.py:96 models.py:106
 #, python-format
@@ -115,14 +113,13 @@ msgid "Incorrect object passed: %s"
 msgstr "Λάθος αντικείμενο: %s"
 
 #: models.py:99
-#, fuzzy
 msgid "Item already in inventory"
-msgstr "Νέα Απογραφή"
+msgstr "Ο εξοπλισμός έχει ήδη απογραφεί"
 
 #: models.py:113
-#, fuzzy, python-format
+#, python-format
 msgid "Item %s not in inventory!"
-msgstr "Νέα Απογραφή"
+msgstr "Ο εξοπλισμός %s δεν είναι στην απογραφή!"
 
 #: models.py:119
 msgid "asset"
@@ -151,9 +148,8 @@ msgid "inventory items"
 msgstr "Απογραφές"
 
 #: urls.py:43
-#, fuzzy
 msgid "items"
-msgstr "προϊόν"
+msgstr "εξοπλισμός"
 
 #: views.py:46
 #, fuzzy
@@ -187,14 +183,12 @@ msgid ""
 msgstr ""
 
 #: templates/inventory_items_compare.html:8
-#, fuzzy
 msgid "At location"
-msgstr "τοποθεσία"
+msgstr "Στην τοποθεσία"
 
 #: templates/inventory_items_compare.html:8
-#, fuzzy
 msgid "In inventory"
-msgstr "απογραφή"
+msgstr "Στην απογραφή"
 
 #: templates/inventory_items_compare.html:18
 msgid "not accounted"
@@ -230,6 +224,19 @@ msgstr ""
 #, fuzzy
 msgid "NOTES"
 msgstr "σημειώσεις"
+
+#: __init__.py:22
+#, fuzzy
+msgid "validate"
+msgstr "επικύρωση από"
+
+#: __init__.py:44 urls.py:24
+msgid "pending inventories"
+msgstr "Εκκρεμείς Απογραφές"
+
+#: views.py:134
+msgid "The inventory validation feature is currently disabled!"
+msgstr ""
 
 #~ msgid "date"
 #~ msgstr "ημερομηνία"

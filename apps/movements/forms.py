@@ -9,6 +9,7 @@ from inventory.models import Inventory
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
                    PurchaseOrderItem, Movement, ItemTemplate
 from common.models import Location
+from common.api import role_from_request
 
 #TODO: Remove auto_add_now from models and implement custom save method to include date
 
@@ -115,18 +116,24 @@ class MovementForm_view(DetailForm):
         model = Movement
 
 class _baseMovementForm(forms.ModelForm):
-    items = AutoCompleteSelectMultipleField('item', label=_("items"), show_help_text=False, required=False)
+    items = AutoCompleteSelectMultipleField('item', label=_("items"),
+                show_help_text=False, required=False,
+                help_text=_("You can better select the items by saving this form (using the button below), "
+                    "and then picking the items at the next list that will appear."))
     note = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3}),
                 label=_("Notes"))
 
 class _outboundMovementForm(_baseMovementForm):
     location_src = AutoCompleteSelectField('location', label=_("Source location"), required=True, show_help_text=False)
 
-    def _init_by_user(self, user):
+    def _init_by_request(self, request):
+        dept = None
         try:
-            dept = user.get_profile().department
+            active_role = role_from_request(request)
+            if active_role:
+                dept = active_role.department
         except ObjectDoesNotExist:
-            dept = None
+            pass
         if dept:
             locations = Location.objects.filter(department=dept)[:1]
             if locations:
@@ -184,11 +191,14 @@ class MoveItemsForm(_baseMovementForm):
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'location_dest',
                 'items')
 
-    def _init_by_user(self, user):
+    def _init_by_request(self, request):
+        dept = None
         try:
-            dept = user.get_profile().department
+            active_role = role_from_request(request)
+            if active_role:
+                dept = active_role.department
         except ObjectDoesNotExist:
-            dept = None
+            pass
         if dept:
             locations = Location.objects.filter(department=dept)[:1]
             if locations:

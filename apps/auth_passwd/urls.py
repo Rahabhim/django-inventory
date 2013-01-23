@@ -4,6 +4,7 @@ from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('auth_passwd.views',
     url(r'^password/change/done/$', 'password_change_done', (), name='password_change_done'),
+    url(r'^select_user_role/$', 'select_user_role', (), 'select_user_role'),
 )
 
 urlpatterns += patterns('',

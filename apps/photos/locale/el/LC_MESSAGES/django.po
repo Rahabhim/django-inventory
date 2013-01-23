@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 12:51+0200\n"
-"PO-Revision-Date: 2012-11-08 08:09+0200\n"
+"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"PO-Revision-Date: 2013-01-23 14:08+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: __init__.py:7
 msgid "delete photo"
-msgstr ""
+msgstr "Διαγραφή φωτογραφίας"
 
 #: __init__.py:8
 msgid "mark photo as main"
@@ -27,11 +27,11 @@ msgstr ""
 
 #: models.py:20
 msgid "Title"
-msgstr ""
+msgstr "Τίτλος"
 
 #: models.py:21
 msgid "Main photo?"
-msgstr ""
+msgstr "Κύρια φωτογραφία;"
 
 #: models.py:26 views.py:60
 msgid "photo"
@@ -94,9 +94,8 @@ msgid "Are you sure you wish to delete this photo?"
 msgstr ""
 
 #: templates/generic_photos_subtemplate.html:15
-#, fuzzy
 msgid "Photos"
-msgstr "φωτογραφίες"
+msgstr "Φωτογραφίες"
 
 #: templates/generic_photos_subtemplate.html:48
 #, fuzzy, python-format
@@ -105,13 +104,13 @@ msgstr "Δεν υπάρχουν %(title)s"
 
 #: templates/generic_photos_subtemplate.html:50
 msgid "There are no photos"
-msgstr ""
+msgstr "Δεν υπάρχουν φωτογραφίες"
 
 #: templates/photos.html:13
 msgid "Please wait..."
-msgstr ""
+msgstr "Παρακαλώ περιμένετε..."
 
 #: templates/photos.html:20
-#, fuzzy
 msgid "Add / remove photos"
-msgstr "προσθήκη / αφαίρεση φωτογραφιών"
+msgstr "Προσθήκη / αφαίρεση φωτογραφιών"
+

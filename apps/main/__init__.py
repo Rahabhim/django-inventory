@@ -5,7 +5,7 @@ import assets
 import inventory
 import movements
 
-from common.api import register_menu
+from common.api import register_menu, user_is_staff
 
 from assets.models import Item, ItemGroup, State
 
@@ -22,5 +22,7 @@ register_menu([
         movements.purchase_request_state_list,
         movements.purchase_order_state_list,
         movements.purchase_order_item_state_list,
-    ],'famfam':'cog', 'name':'setup','position':20},
+    ],'famfam':'cog', 'name':'setup','position':20, 
+    'condition': user_is_staff
+    },
 ])

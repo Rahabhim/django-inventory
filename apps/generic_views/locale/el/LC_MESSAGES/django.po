@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 12:51+0200\n"
-"PO-Revision-Date: 2012-11-08 08:22+0200\n"
+"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"PO-Revision-Date: 2013-01-16 16:18+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -233,12 +233,12 @@ msgstr "Λίστα %(title)s"
 #: templates/generic_list_subtemplate.html:19
 #, python-format
 msgid "List of %(title)s (%(start)s - %(end)s out of %(total)s)"
-msgstr "Λίστα από %(title)s (%(start)s - %(end)s out of %(total)s)"
+msgstr "%(title)s (%(start)s - %(end)s από %(total)s)"
 
 #: templates/generic_list_subtemplate.html:21
 #, python-format
 msgid "List of %(title)s (%(total)s)"
-msgstr "Λίστα από %(title)s (%(total)s)"
+msgstr "%(title)s (%(total)s)"
 
 #: templates/generic_list_subtemplate.html:34
 msgid "Identifier"

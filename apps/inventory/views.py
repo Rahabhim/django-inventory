@@ -2,17 +2,15 @@
 
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
-# from django.contrib.contenttypes.models import ContentType
 from django.views.generic.list_detail import object_detail, object_list
 # from django.core.urlresolvers import reverse
 from django.db.models import Q, Count
-#from generic_views.views import generic_assign_remove, generic_list
-
-#from photos.views import generic_photos
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 
 from common.models import Supplier
+from common.api import role_from_request
 from assets.models import Item, ItemGroup
 
 from models import Inventory, \
@@ -124,57 +122,17 @@ def inventory_items_compare(request, object_id):
             'subtemplates_dict': subtemplates_dict,
             },
         context_instance=RequestContext(request))
-'''
-def item_log_list(request, object_id):
-    item = Item.objects_passthru.get(pk=object_id)
-    ctype = ContentType.objects.get_for_model(item)
-    log=Log.objects.filter(content_type__pk=ctype.id, object_id=item.id)
-    return object_list(
-        request,
-        queryset=log,
-        template_name='generic_list.html',
-        extra_context={'title':_(u"Asset log: %s") % item},
-        )
 
-'''
-'''
-def render_to_pdf(template_src, context_dict):
-    from django import http
-    from django.shortcuts import render_to_response
-    from django.template.loader import get_template
-    from django.template import Context
-    import ho.pisa as pisa
-    import cStringIO as StringIO
-    import cgi
+def inventory_validate(request, object_id):
+    try:
+        active_role = role_from_request(request)
+        if not (active_role and active_role.has_perm('inventory.validate_inventory')):
+            raise PermissionDenied
+        # TODO check that active_role has the same dept as inventory!
+    except ObjectDoesNotExist:
+        raise PermissionDenied
+    msg = _(u'The inventory validation feature is currently disabled!')
+    messages.error(request, msg, fail_silently=True)
+    return redirect('inventory_view', object_id=object_id)
 
-    template = get_template(template_src)
-    context = Context(context_dict)
-    html  = template.render(context)
-    result = StringIO.StringIO()
-    pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("UTF-8")), result)
-    if not pdf.err:
-        return http.HttpResponse(result.getvalue(), mimetype='application/pdf')
-    return http.HttpResponse('We had some errors<pre>%s</pre>' % cgi.escape(html))
-
-def report_items_per_person(request, object_id):
-    person = Person.objects.get(pk=object_id)
-
-    return render_to_pdf('report-items_per_person.html',
-#	return render_to_response('report-items_per_person.html',
-        {
-            'pagesize':'A4',
-            'object': person
-        })
-
-def fetch_resources(uri, rel):
-    import os
-    from django.conf import settings
-    """
-    Callback to allow pisa/reportlab to retrieve Images,Stylesheets, etc.
-    `uri` is the href attribute from the html link element.
-    `rel` gives a relative path, but it's not used here.
-
-    """
-    path = os.path.join(settings.MEDIA_ROOT, uri.replace(settings.MEDIA_URL, ""))
-    return path
-'''
+#eof

@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 12:51+0200\n"
-"PO-Revision-Date: 2012-12-28 12:57+0200\n"
+"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"PO-Revision-Date: 2013-01-23 14:07+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -131,9 +131,8 @@ msgid "status"
 msgstr "Κατάσταση"
 
 #: __init__.py:88
-#, fuzzy
 msgid "delete pending movement"
-msgstr "Μετακίνηση εξοπλισμού"
+msgstr "Διαγραφή της εκκρεμούς μετακίνησης"
 
 #: __init__.py:93
 msgid "Destroy assets"
@@ -141,7 +140,7 @@ msgstr "Καταστροφή εξοπλισμού"
 
 #: __init__.py:94
 msgid "Lose assets"
-msgstr "Απώλεια εξοπλισμού"
+msgstr "Κλοπή εξοπλισμού"
 
 #: __init__.py:95
 msgid "Move assets"
@@ -181,9 +180,8 @@ msgid "assets at that location"
 msgstr "εξοπλισμός στην τοποθεσία"
 
 #: forms.py:33 views_po_wizard.py:17
-#, fuzzy
 msgid "Procurement Contract"
-msgstr "σύμβαση προμήθειας"
+msgstr "Σύμβαση Προμήθειας"
 
 #: forms.py:36 forms.py:120 models.py:441
 msgid "Notes"
@@ -194,9 +192,8 @@ msgid "Order item form"
 msgstr ""
 
 #: forms.py:101
-#, fuzzy
 msgid "Name"
-msgstr "όνομα"
+msgstr "Όνομα"
 
 #: forms.py:102
 msgid "Suppliers"
@@ -232,7 +229,7 @@ msgstr "Καταστροφή"
 
 #: forms.py:173
 msgid "Lost"
-msgstr "Απώλεια"
+msgstr "Κλοπή"
 
 #: forms.py:180 urls.py:44
 msgid "Destination location"
@@ -340,9 +337,9 @@ msgstr ""
 "αντικείμενα. Παρακαλώ διορθώστε κάποιο από τα δύο."
 
 #: models.py:241
-#, fuzzy, python-format
+#, python-format
 msgid "Purchase Order: %s"
-msgstr "Εντολές Αγοράς"
+msgstr "Παραλαβή: %s"
 
 #: models.py:275 models.py:283 models.py:396 models.py:404 models.py:424
 #: models.py:552 models.py:562
@@ -351,9 +348,9 @@ msgid "Incorrect object passed: %s"
 msgstr "Λάθος αντικείμενο: %s"
 
 #: models.py:291
-#, fuzzy, python-format
+#, python-format
 msgid "Product %s not in movement!"
-msgstr "Μετακίνηση εξοπλισμού"
+msgstr "Το προϊόν %s δεν ανήκει στη μετακίνηση!"
 
 #: models.py:299 models.py:300 models.py:581 urls.py:129
 msgid "purchase order item status"
@@ -376,9 +373,8 @@ msgid "Serial Numbers"
 msgstr "Σειριακοί Αριθμοί"
 
 #: models.py:321
-#, fuzzy
 msgid "bundled items"
-msgstr "διαγραφή αντικειμένου"
+msgstr "περιεχόμενα εξαρτήματα"
 
 #: models.py:325 models.py:583 urls.py:132 urls.py:137
 msgid "purchase order item"
@@ -416,7 +412,7 @@ msgstr "επικύρωση από"
 
 #: models.py:436
 msgid "reference"
-msgstr "Αρ. δελτίου"
+msgstr "Αρ. πρωτοκόλλου"
 
 #: models.py:437
 msgid "Draft"
@@ -431,9 +427,8 @@ msgid "Incoming"
 msgstr "Εισερχόμενο"
 
 #: models.py:438
-#, fuzzy
 msgid "Outgoing"
-msgstr " Εξερχόμενο"
+msgstr "Εξερχόμενο"
 
 #: models.py:439
 msgid "Internal"
@@ -507,14 +502,13 @@ msgid "Movement: %s"
 msgstr "Μετακίνηση: %s"
 
 #: models.py:555
-#, fuzzy
 msgid "Item already in movement"
-msgstr "Μετακίνηση εξοπλισμού"
+msgstr "Ο εξοπλισμός είναι ήδη στη μετακίνηση"
 
 #: models.py:569
-#, fuzzy, python-format
+#, python-format
 msgid "Item %s not in movement!"
-msgstr "Μετακίνηση εξοπλισμού"
+msgstr "Ο εξοπλισμός %s δεν ανήκει στη μετακίνηση!"
 
 #: urls.py:34 views.py:233 views.py:470 views.py:536
 msgid "state"
@@ -533,9 +527,8 @@ msgid "Active"
 msgstr "Ενεργό"
 
 #: urls.py:60
-#, fuzzy
 msgid "(is active?)"
-msgstr "ενεργό"
+msgstr "(ενεργό; )"
 
 #: urls.py:70
 msgid "purchase request state"
@@ -564,14 +557,13 @@ msgstr "Καταστροφή εξοπλισμού"
 
 #: urls.py:155
 msgid "Lost Items"
-msgstr "Απώλεια εξοπλισμού"
+msgstr "Κλοπές Εξοπλισμού"
 
 #: urls.py:161
 msgid "Items movement"
 msgstr "Μετακίνηση εξοπλισμού"
 
 #: urls.py:209
-#, fuzzy
 msgid "Movement"
 msgstr "Μετακίνηση"
 
@@ -647,9 +639,8 @@ msgid "qty received"
 msgstr "Παραληφθείσα Ποσ."
 
 #: views.py:229 views.py:466
-#, fuzzy
 msgid "movements for this purchase order"
-msgstr "λεπτομέρειες της εντολής: %s"
+msgstr "μετακινήσεις για αυτή την παραλαβή"
 
 #: views.py:234 views.py:535
 msgid "date"
@@ -782,9 +773,8 @@ msgid "Purchase Order Header Data"
 msgstr "γραμμή εντολής προμήθειας"
 
 #: views_po_wizard.py:13
-#, fuzzy
 msgid "purchase order number"
-msgstr "γραμμή εντολής προμήθειας"
+msgstr "Αρ. πρωτοκόλλου παραλαβής"
 
 #: views_po_wizard.py:18
 msgid "Find by"
@@ -823,9 +813,8 @@ msgid "Save changes"
 msgstr "Αποθήκευση αλλαγών"
 
 #: templates/movement_form.html:85
-#, fuzzy
 msgid "Select Items"
-msgstr "Απώλεια εξοπλισμού"
+msgstr "Επιλογή Εξοπλισμού"
 
 #: templates/po_transfer_ask.html:64
 msgid ""
@@ -877,6 +866,43 @@ msgstr "Πρώτο βήμα"
 #: templates/po_wizard_step5.html:17
 msgid "prev step"
 msgstr "Προηγ. βήμα"
+
+#: __init__.py:107
+msgid "Select more Items"
+msgstr "Επιλογή επιπλέον εξοπλισμού (από τη λίστα)"
+
+#: __init__.py:108
+msgid "End selection"
+msgstr "Έξοδος από την επιλογή εξοπλισμού"
+
+#: forms.py:121
+msgid ""
+"You can better select the items by saving this form (using the button "
+"below), and then picking the items at the next list that will appear."
+msgstr ""
+"Παρακαλούμε μεταβείτε στη λίστα εξοπλισμού για να επιλέξετε τον εξοπλισμό."
+
+#: models.py:472
+msgid "Format: 23/04/2010"
+msgstr "Μορφή: 23/04/2010"
+
+#: views.py:558
+#, python-format
+msgid "You do not have the permission to validate an incoming movement to %s"
+msgstr ""
+
+#: views.py:561
+#, python-format
+msgid "You do not have the permission to validate an outgoing movement from %s"
+msgstr ""
+
+#: views.py:563
+msgid "Unexpected movement type, you do not have permission to validate"
+msgstr ""
+
+#: templates/destroy_form.html:75 templates/lose_form.html:75
+msgid "Next step:"
+msgstr "Επόμενο βήμα:"
 
 #~ msgid "purchases"
 #~ msgstr "Παραλαβές"

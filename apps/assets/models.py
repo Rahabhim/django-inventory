@@ -55,10 +55,10 @@ class ItemManager(models.Manager):
         try:
             if request.user.is_superuser:
                 return self.all()
-            profile = request.user.get_profile()
-            if profile.department:
-                return self.filter(location__department=profile.department)
-                        #| models.Q(location__isnull=True))
+            elif request.session.get('current_user_role', False):
+                role_id = request.session['current_user_role']
+                role = request.user.dept_roles.get(pk=role_id)
+                return self.filter(location__department=role.department)
         except Exception:
             logger.exception("cannot filter:")
         return self.none()

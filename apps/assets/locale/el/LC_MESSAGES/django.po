@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 12:50+0200\n"
-"PO-Revision-Date: 2012-11-08 08:52+0200\n"
+"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"PO-Revision-Date: 2013-01-23 14:04+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -35,11 +35,11 @@ msgstr "διαγραφή κατάστασης εξοπλισμού"
 
 #: __init__.py:15
 msgid "list all assets"
-msgstr "λίστα εξοπλισμού"
+msgstr "λίστα εξοπλισμού μονάδας"
 
 #: __init__.py:17 __init__.py:24
 msgid "edit serials"
-msgstr ""
+msgstr "Αλλαγή Σειριακών αριθμών"
 
 #: __init__.py:19
 msgid "add / remove photos"
@@ -71,7 +71,7 @@ msgstr "Κατασκευαστής"
 
 #: forms.py:39 urls.py:41 views.py:126
 msgid "Category"
-msgstr "Κατηγορία"
+msgstr "Είδος"
 
 #: models.py:15
 msgid "name"
@@ -152,11 +152,11 @@ msgstr ""
 
 #: models.py:78 views.py:130 views.py:136 views.py:147
 msgid "Source Contract"
-msgstr ""
+msgstr "Σύμβαση Παραλαβής"
 
 #: models.py:80
 msgid "The procurement at which this item was initially obtained"
-msgstr ""
+msgstr "Η σύμβαση προμήθειας με την οποία παρελήφθη αρχικά ο εξοπλισμός."
 
 #: models.py:85 urls.py:22 urls.py:28 urls.py:33
 msgid "asset"
@@ -164,7 +164,7 @@ msgstr "εξοπλισμός"
 
 #: models.py:153
 msgid "bundled items"
-msgstr ""
+msgstr "περιεχόμενα εξαρτήματα"
 
 #: models.py:158
 msgid "item group"
@@ -187,9 +187,8 @@ msgid "Location"
 msgstr "τοποθεσία"
 
 #: urls.py:49
-#, fuzzy
 msgid "Edit item group"
-msgstr "σύνθεση"
+msgstr "Επεξεργασία σύνθεσης"
 
 #: views.py:25
 msgid "manufacturer"
@@ -197,7 +196,7 @@ msgstr "κατασκευαστής"
 
 #: views.py:31
 msgid "category"
-msgstr "κατηγορία"
+msgstr "είδος"
 
 #: views.py:34
 msgid "product"
@@ -209,7 +208,7 @@ msgstr "τοποθεσία"
 
 #: views.py:41
 msgid "procurement contract"
-msgstr ""
+msgstr "σύμβαση προμήθειας"
 
 #: views.py:49
 #, python-format
@@ -223,7 +222,7 @@ msgstr "Θέλετε να σημάνετε τον εξοπλισμό ως '%s' ;
 
 #: views.py:60
 msgid "Any other states this asset may be marked as, will be cleared."
-msgstr ""
+msgstr "Θα μηδενιστούν όλες οι άλλες καταστάσεις που έχει ο εξοπλισμός."
 
 #: views.py:70
 #, python-format
@@ -298,7 +297,7 @@ msgstr "απαιτείται"
 
 #: templates/item_group_form.html:22
 msgid "The location can only be changed through movements of this asset"
-msgstr ""
+msgstr "Η τοποθεσία μπορεί να αλλάξει μόνο από μετακινήσεις εξοπλισμού."
 
 #: templates/state_subtemplate.html:7
 msgid "Item states"
@@ -317,6 +316,11 @@ msgstr "Επιλογή  %(state)s"
 #: templates/state_subtemplate.html:18
 msgid "There are no states defined."
 msgstr "Δεν έχουν οριστεί καταστάσεις"
+
+#: views.py:169
+#, python-format
+msgid "Items of template: %s"
+msgstr "Εξοπλισμός από προϊόν: %s"
 
 #~ msgid "create new asset"
 #~ msgstr "δημιουργία εξοπλισμού"

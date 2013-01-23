@@ -3,7 +3,7 @@
 # Only a few rights reserved
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
-from common.api import register_links, register_menu
+from common.api import register_links, register_menu, user_is_staff
 from common import location_list
 
 import models
@@ -22,14 +22,13 @@ def make_mv_location(destination):
     return lambda q: Q(**{dept_col: models.Department.objects.filter(_department_filter_q(q))}) | \
                     Q(**{dept_col2:True, lname_col: q})
 
+company_department_list = {'text':_('departments'), 'view':'company_department_list', 'famfam':'page_go'}
+company_department_type_list = {'text':_('department types'), 'view':'company_department_type_list', 'famfam':'page_go'}
 
 register_menu([
     {'text':_('company'), 'view':'company_department_list', 
-            'links':[ {'text':_('departments'), 'view':'company_department_list', 'famfam':'page_go'},
-                {'text':_('department types'), 'view':'company_department_type_list', 'famfam':'page_go'},
-                location_list,
-                ],
-        'famfam':'building','position':4}])
+            'links':[ company_department_list, company_department_type_list, location_list, ],
+        'famfam':'building','position':4, 'condition': user_is_staff}])
 
 register_links(models.Department, [department_assets,])
 

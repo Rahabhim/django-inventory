@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-28 12:51+0200\n"
-"PO-Revision-Date: 2012-09-21 16:53+0300\n"
+"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"PO-Revision-Date: 2013-01-23 14:04+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: __init__.py:12
 msgid "type"
-msgstr ""
+msgstr "τύπος"
 
 #: __init__.py:14
 msgid "assets"
-msgstr ""
+msgstr "εξοπλισμός"
 
 #: __init__.py:27
 msgid "company"
@@ -42,23 +42,26 @@ msgid ""
 "These will automatically be setup as locations, for each new department of "
 "this type"
 msgstr ""
+"Αυτές οι τοποθεσίες θα δημιουργηθούν αυτόματα, για κάθε νέα Μονάδα αυτού του "
+"τύπου"
 
 #: models.py:18
-#, fuzzy
 msgid "department type"
-msgstr "Τύποι Μονάδων"
+msgstr "Τύπος Μονάδας"
 
 #: models.py:28 urls.py:15
 msgid "name"
-msgstr ""
+msgstr "όνομα"
 
 #: models.py:29 urls.py:16 urls.py:23
+#, fuzzy
 msgid "code"
-msgstr ""
+msgstr "ΥπΔΒΜΘ id"
 
 #: models.py:30 urls.py:24
+#, fuzzy
 msgid "code 2"
-msgstr ""
+msgstr "κωδικός 2"
 
 #: models.py:31
 msgid "deprecated"
@@ -86,7 +89,7 @@ msgstr "ΟΤΑ"
 
 #: models.py:38
 msgid "Parent Department"
-msgstr ""
+msgstr "Προϊστάμενο τμήμα"
 
 #: models.py:39
 msgid "Section"
@@ -94,46 +97,52 @@ msgstr "Τμήμα"
 
 #: models.py:40
 msgid "Serviced By"
-msgstr ""
+msgstr "Υποστηρίζεται Από"
 
 #: models.py:42
 msgid "Sequence for items"
-msgstr ""
+msgstr "Ακολουθία για τον εξοπλισμό"
 
 #: models.py:48
-#, fuzzy
 msgid "department"
-msgstr "Μονάδες"
+msgstr "μονάδα"
 
 #: models.py:66
 #, python-format
 msgid "No sequence for department %s"
-msgstr ""
+msgstr "Δεν έχει οριστεί ακολουθία για τη μονάδα %s"
 
 #: urls.py:25
 msgid "Parent dept."
-msgstr ""
+msgstr "Προϊστ. τμήμα"
 
 #: templates/department_list.html:6
 #, python-format
 msgid "List of %(title)s"
-msgstr ""
+msgstr "Λίστα %(title)s"
 
 #: templates/department_list.html:23
-#, python-format
+#, fuzzy, python-format
 msgid "List of %(title)s (%(start)s - %(end)s out of %(total)s)"
 msgstr ""
+"#-#-#-#-#  .merge_file_mMeAto  #-#-#-#-#\n"
+"#-#-#-#-#  .merge_file_z3XvAv  #-#-#-#-#\n"
+"Λίστα από %(title)s (%(start)s - %(end)s out of %(total)s)"
 
 #: templates/department_list.html:25
-#, python-format
+#, fuzzy, python-format
 msgid "List of %(title)s (%(total)s)"
 msgstr ""
+"#-#-#-#-#  .merge_file_mMeAto  #-#-#-#-#\n"
+"#-#-#-#-#  .merge_file_z3XvAv  #-#-#-#-#\n"
+"Λίστα από %(title)s (%(total)s)"
 
 #: templates/department_list.html:38
 msgid "Identifier"
-msgstr ""
+msgstr "Όνομα"
 
 #: templates/department_list.html:69
-#, python-format
+#, fuzzy, python-format
 msgid "There are no %(title)s"
-msgstr ""
+msgstr "Δεν υπάρχουν %(title)s"
+

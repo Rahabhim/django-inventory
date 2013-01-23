@@ -12,12 +12,12 @@
 {% block web_theme_project_name %}{% project_name %}{% endblock %}
 
 {% block web_theme_stylesheets %}
-    <link rel="stylesheet" href="{{ MEDIA_URL }}css/jquery-ui-1.9.2.custom.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/jquery-ui-grappelli-extensions.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.9.2.custom.min.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery-ui-grappelli-extensions.css" />
 
-    <link rel="stylesheet" href="{{ MEDIA_URL }}css/override.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="{{ MEDIA_URL }}css/famfamfam-silk-sprite.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/ajax_select.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/famfamfam-silk-sprite.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/ajax_select2.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/override.css" type="text/css" media="screen" />
 
     {% block stylesheets %}{% endblock %}
 {% endblock %}
@@ -25,8 +25,8 @@
 {% block web_theme_javascript %}
     {% block javascript %}{% endblock %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/ajax_select.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}packages/formset-fix.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}packages/cart_functions.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/formset-fix.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/cart_functions.js"></script>
 {% endblock %}
 
 {% block web_theme_user_navigation %}
@@ -36,7 +36,7 @@
             {% trans 'Anonymous' %}
         {% else %}
             {{ user }}
-            <a href="{% url password_change_view %}">({% trans 'New password' %})</a>
+            {# <a href="{% url password_change_view %}">({% trans 'New password' %})</a> #}
         {% endif %}
     </li>
     {% if user.is_staff %}
@@ -111,30 +111,3 @@
 
 {% block web_theme_footer %}{% block footer %}{% endblock %}{% endblock %}
 
-{% comment %}
-        <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}skins/pilu-web-app/javascripts/jquery.scrollTo.js"></script>
-        <script type="text/javascript" charset="utf-8" src="{{ MEDIA_URL }}skins/pilu-web-app/javascripts/jquery.localscroll.js"></script>
-        {% block stylesheets %}{% endblock %}
-
-        <script type="text/javascript" src="{{ MEDIA_URL }}packages/jquery-1.4.2.min.js"></script>
-
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $("form").submit(function() {
-                    $('input:submit', this).attr("value", "{% trans 'Please wait...' %}");
-                    $('input:submit', this).attr("disabled", "disabled");
-                    return true;
-                });
-
-                $().ajaxSend(function(r,s){
-                    $("#loading").show();
-                });
-
-                $().ajaxStop(function(r,s){
-                    $("#loading").fadeOut("fast");
-                });
-            });
-        </script>
-
-    </head>
-{% endcomment %}

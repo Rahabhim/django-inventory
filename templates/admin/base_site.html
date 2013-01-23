@@ -9,14 +9,8 @@
 
 {% block extrastyle %}
 {{ super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/ajax_select.css" type="text/css" media="screen" />
-{% endblock %}
-
-{% block extrahead2 %}
-<script type="text/javascript">
-	(function($){jQuery = $.noConflict(true);})(django.jQuery);
-</script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/ajax_select.js"></script>
+<link rel="stylesheet" href="{{ STATIC_URL }}css/ajax_select2.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="{{ STATIC_URL }}css/override.css" type="text/css" media="screen" />
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
