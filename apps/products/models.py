@@ -79,6 +79,7 @@ class Manufacturer(Partner):
 
     class Meta:
         ordering = ['name']
+        verbose_name = _("manufacturer")
 
     @models.permalink
     def get_absolute_url(self):
