@@ -87,7 +87,8 @@ urlpatterns = patterns('products.views',
             'category_create'), # TODO: permissions?
     url(r'^categories/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
             form_class=ItemCategoryForm, template_name= 'category_form.html',
-            inline_fields={'may_contain': ItemCategoryContainForm},
+            inline_fields={'may_contain': ItemCategoryContainForm,
+                        'attributes': ProductAttributeForm},
             extra_context={'object_name':_(u'item category')}),
             name='category_update' ),
     url(r'^categories/(?P<pk>\d+)/delete/$', GenericDeleteView.\
@@ -99,7 +100,8 @@ urlpatterns = patterns('products.views',
     url(r'^categories/(?P<pk>\d+)/$', GenericDetailView.as_view(form_class=ItemCategoryForm_view,
                     template_name='category_form.html',
                     queryset=ItemCategory.objects.all(),
-                    inline_fields={'may_contain': ItemCategoryContainForm_view},
+                    inline_fields={'may_contain': ItemCategoryContainForm_view,
+                            'attributes': ProductAttributeForm_view },
                     extra_context={'object_name':_(u'item category'),}),
             name='category_view'),
 

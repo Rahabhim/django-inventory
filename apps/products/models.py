@@ -7,10 +7,13 @@ from common.models import Partner, Supplier
 
 class ItemCategory(models.Model):
     name = models.CharField(max_length=64, verbose_name=_("Name"))
+    sequence = models.IntegerField(default=10, verbose_name=_("sequence"))
     parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True,
                 verbose_name=_("parent category"))
     approved = models.BooleanField(default=False, verbose_name=_("approved"))
     is_bundle = models.BooleanField(default=False, verbose_name=_("Is bundle"))
+    is_group = models.BooleanField(default=False, verbose_name=_("Is set"))
+    use_serials = models.BooleanField(default=True, verbose_name=_("Items have serials"))
     picture = models.ImageField(verbose_name=_("Picture"), upload_to='categories', 
                 blank=True, null=True)
 
@@ -23,6 +26,7 @@ class ItemCategory(models.Model):
 
     class Meta:
         verbose_name=_("item category")
+        ordering = ['sequence', 'name']
 
 class ItemCategoryContain(models.Model):
     parent_category = models.ForeignKey(ItemCategory, related_name="may_contain", verbose_name=_("May contain"))
