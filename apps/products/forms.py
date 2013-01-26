@@ -58,8 +58,8 @@ class ManufacturerForm_view(DetailForm):
     class Meta:
         model = Manufacturer
 
-class CMSWItem(StrAndUnicode):
-    """ItemCategory record for the CategoriesMultiSelectWidget
+class CSWItem(StrAndUnicode):
+    """ItemCategory record for the CategoriesSelectWidget
     
         The widget will display all available categories. While building the
         html code, this pseydo-object will represent each Category record to
@@ -91,11 +91,7 @@ class CMSWItem(StrAndUnicode):
         """
         return self._parent._name
 
-    @property
-    def is_checked(self):
-        return unicode(self._obj.id) in self._parent._value
-
-class CMSWItem_Main(CMSWItem):
+class CSWItem_Main(CSWItem):
     """Instance of first-level category in the page
     
         It can be iterated to find 2nd level categories
@@ -104,14 +100,14 @@ class CMSWItem_Main(CMSWItem):
         """Returns non-bundled sub-categories
         """
         for subcat in self._parent._queryset.filter(parent=self._obj, ):
-            yield CMSWItem_Sub(self._parent, subcat)
+            yield CSWItem_Sub(self._parent, subcat)
 
-class CMSWItem_Sub(CMSWItem):
+class CSWItem_Sub(CSWItem):
     """Instance of second-level category
     """
     pass
 
-class CMSWRenderer(StrAndUnicode):
+class CSWRenderer(StrAndUnicode):
     # parent_field = 'parent'
 
     def __init__(self, queryset, name, value, attrs):
@@ -121,28 +117,25 @@ class CMSWRenderer(StrAndUnicode):
         self.attrs = attrs
 
     def __unicode__(self):
-        return "<!-- CMSWRenderer: %s with %d vals -->" % (self._name, len(self._value))
+        return "<!-- CSWRenderer: %s with %d vals -->" % (self._name, len(self._value))
 
     def __iter__(self):
         for icat in self._queryset.filter(parent__isnull=True):
-            yield CMSWItem_Main(self, icat)
+            yield CSWItem_Main(self, icat)
 
     def render(self):
         return mark_safe(unicode(self))
 
-class CategoriesMultiSelectWidget(forms.widgets.SelectMultiple):
-    """Multiple select of ItemCategory entries, in 3-level selectors
+class CategoriesSelectWidget(forms.widgets.Select):
+    """Select widget of ItemCategory entries, in 3-level selectors
 
-        It inherits the SelectMultiple class, so that 'value' is taken
-        as a list out of the multiple selection.
-        
         @param queryset must be the full dataset of *all three* levels
             of item categories to use. It will be filter()ed accordingly
             for each level
     """
 
     def __init__(self, queryset=None, choices=(), *args, **kwargs):
-        super(CategoriesMultiSelectWidget, self).__init__(*args, **kwargs)
+        super(CategoriesSelectWidget, self).__init__(*args, **kwargs)
         self.queryset = queryset
         self.choices = choices # but don't render them to list
         self._renderer = None
@@ -167,7 +160,7 @@ class CategoriesMultiSelectWidget(forms.widgets.SelectMultiple):
                 # its queryset and use it directly
                 self.queryset = self.choices.queryset
                 self.choices = ()
-            self._renderer = CMSWRenderer(self.queryset, name, value, final_attrs)
+            self._renderer = CSWRenderer(self.queryset, name, value, final_attrs)
         return self._renderer
 
 #eof
