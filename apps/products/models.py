@@ -33,43 +33,46 @@ class ItemCategoryContain(models.Model):
     def __unicode__(self):
         return self.category.name
 
-class ItemAttrType(models.Model):
-    """
+class ProductAttribute(models.Model):
+    """Extra properties an ItemTemplate can have
     
-        @attr max_entries If > 0, defines the maximum repetitions of such an
-            attribute for any item in the category
-        @attr optional If false, at least 1 such attribute must exist (and up to
-            max_entries
-        @attr in_name If True, the attribute will be appended in Item's name
+        Properties will be chosen from a finite set
     """
-    unit = models.CharField(max_length=64, verbose_name=_("units"), blank=True, null=True,
-            choices = [('weight', 'kg'), ('memsize', 'MB'), ('cpuspeed', 'MHz'),
-                ('color', 'Color')])
-    name = models.CharField(max_length=64, verbose_name=_("name"),
-            blank=False)
-    applies_category = models.ManyToManyField(ItemCategory, related_name="applies_cat", 
-            blank=True, null=True)
-    max_entries = models.IntegerField()
-    optional = models.BooleanField()
-    in_name = models.BooleanField()
+
+    name = models.CharField(max_length=64, verbose_name=_("name"))
+    short_name = models.CharField(max_length=16, verbose_name=_("short name"), blank=True)
+    sequence = models.IntegerField(default=10, verbose_name=_("sequence"))
+    
+    applies_category = models.ForeignKey(ItemCategory, related_name="attributes",
+                    verbose_name=_("category"))
+    required = models.BooleanField(default=True, verbose_name=_("required"))
+    in_name = models.BooleanField(default=False, verbose_name=_("include in name"))
 
     def __unicode__(self):
-        return self.name
+        return '%s: %s' % (self.applies_category.name, self.name)
 
-
-class AbstractAttribute(models.Model):
-    """Extra properties an Item can have
-    
-        Examples: "weight=10kg" in packages, "RAM=512MB" in PCs etc.
-    """
-    atype = models.ForeignKey(ItemAttrType, verbose_name=_(u"attribute"))
-    value = models.CharField(max_length=32)
-
-    def __unicode__(self):
-        return '%s=%s' % (self.atype.name, self.value)
+    @models.permalink
+    def get_absolute_url(self):
+        return ('attributes_view', [str(self.id)])
 
     class Meta:
-        abstract = True
+        verbose_name=_("attribute")
+        verbose_name_plural=_("attributes")
+        ordering = ['sequence', 'name']
+
+class ProductAttributeValue(models.Model):
+    """Allowed value for some ProductAttribute
+    """
+    atype = models.ForeignKey(ProductAttribute, verbose_name=_(u"attribute"), \
+                    related_name="values")
+    value = models.CharField(max_length=32, verbose_name=_("value"))
+
+    def __unicode__(self):
+        return '%s=%s' % (self.atype.short_name, self.value)
+
+    class Meta:
+        verbose_name=_("attribute value")
+        verbose_name_plural=_("attribute values")
 
 class Manufacturer(Partner):
     #TODO: Contact, extension
@@ -156,8 +159,9 @@ class ItemTemplate(models.Model):
                     self_cat.name)
         return errors
 
-class ItemTemplateAttribute(AbstractAttribute):
+class ItemTemplateAttributes(models.Model):
     template = models.ForeignKey(ItemTemplate, related_name="attributes")
+    value = models.ForeignKey(ProductAttributeValue, verbose_name=_("value"))
 
 register(ItemTemplate, _(u'templates'), ['description', 'brand', 'model', 'part_number', 'notes'])
 

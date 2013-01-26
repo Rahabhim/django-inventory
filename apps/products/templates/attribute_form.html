@@ -1,0 +1,32 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block form_layout %}
+
+<div class="content">
+    <div class="group newline">
+        {% field_for applies_category %}
+    </div>
+    <div class="group inline">
+        {% field_for name %}
+    </div>
+    <div class="group newline">
+        {% field_for short_name %}
+    </div>
+    <div class="group inline">
+        {% field_for sequence %}
+    </div>
+    <div class="group newline">
+        {% field_for required %}
+    </div>
+    <div class="group inline">
+        {% field_for in_name %}
+    </div>
+
+    <div style="clear:both;"> </div>
+    {% for formset in formsets %}
+        {% include 'category_contained_formset.html' %}
+    {% endfor %}
+</div>
+{% endblock %}

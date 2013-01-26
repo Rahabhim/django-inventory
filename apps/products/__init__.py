@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 
-from common.api import register_links, register_menu, can_add, can_edit, can_delete
+from common.api import register_links, register_menu, can_add, can_edit, can_delete, user_is_staff
 
-from models import ItemTemplate, ItemCategory, Manufacturer
+from models import ItemTemplate, ItemCategory, Manufacturer, ProductAttribute
 
 template_list = {'text':_('view all'), 'view':'template_list', 'famfam':'page_go'}
 template_create = {'text':_('create new template'), 'view':'template_create', 
@@ -24,6 +24,15 @@ category_update = {'text':_(u'edit category'), 'view':'category_update',
 category_delete = {'text':_(u'delete category'), 'view':'category_delete',
         'args':'object.id', 'famfam':'page_delete', 'condition': can_delete }
 
+attributes_list = {'text':_('attributes'), 'view':'attributes_list', 'famfam':'page_go',
+        'condition': user_is_staff}
+attributes_create = {'text':_('create new attribute'), 'view':'attributes_create', 
+        'famfam':'page_add', 'condition': can_add(ProductAttribute) }
+attributes_update = {'text':_(u'edit attribute'), 'view':'attributes_update',
+        'args':'object.id', 'famfam':'page_edit', 'condition': can_edit}
+attributes_delete = {'text':_(u'delete attribute'), 'view':'attributes_delete',
+        'args':'object.id', 'famfam':'page_delete', 'condition': can_delete }
+
 manufs_list = {'text':_('manufacturers'), 'view':'manufacturers_list', 'famfam':'page_go'}
 manufacturer_create = {'text':_('create new manufacturer'), 'view':'manufacturer_create', 
         'famfam':'page_add', 'condition': can_add(Manufacturer) }
@@ -32,7 +41,7 @@ manufacturer_update = {'text':_(u'edit manufacturer'), 'view':'manufacturer_upda
 manufacturer_delete = {'text':_(u'delete manufacturer'), 'view':'manufacturer_delete', 
         'args':'object.id', 'famfam':'page_delete', 'condition': can_delete}
 
-template_menu_links = [template_list, categories_list, manufs_list]
+template_menu_links = [template_list, categories_list, manufs_list, attributes_list]
 
 register_links(['template_list', 'template_create', 'template_view', 
                 'template_orphans_list', 'template_update', 'template_delete', 
@@ -47,6 +56,10 @@ register_links(['category_list'], [category_create], menu_name='sidebar')
 register_links(ItemCategory, [category_create, category_update, category_delete], menu_name='sidebar')
 register_links(Manufacturer, [manufacturer_create, manufacturer_update, manufacturer_delete], menu_name='sidebar')
 register_links(['manufacturers_list'], [manufacturer_create], menu_name='sidebar')
+
+register_links(['attributes_list'], [attributes_create], menu_name='sidebar')
+register_links(ProductAttribute, [ attributes_update,] )
+register_links(ProductAttribute, [ attributes_delete,], menu_name='sidebar')
 
 register_menu([
     {'text':_('templates'), 'view':'template_list', 

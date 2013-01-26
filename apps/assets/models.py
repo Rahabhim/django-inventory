@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from dynamic_search.api import register
 from common.models import Location # , Partner, Supplier
-from products.models import ItemTemplate, AbstractAttribute
+from products.models import ItemTemplate
 import logging
 
 logger = logging.getLogger(__name__)

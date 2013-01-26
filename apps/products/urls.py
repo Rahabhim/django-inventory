@@ -13,11 +13,14 @@ from generic_views.views import generic_detail, generic_list, \
                                 GenericBloatedListView, GenericDetailView, \
                                 GenericDeleteView
 
-from models import ItemTemplate, ItemCategory, Manufacturer
+from models import ItemTemplate, ItemCategory, Manufacturer, \
+        ProductAttribute #, ProductAttributeValue
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
         ItemCategoryForm, ItemCategoryForm_view, ItemCategoryContainForm, \
         ItemCategoryContainForm_view, \
-        ManufacturerForm, ManufacturerForm_view
+        ManufacturerForm, ManufacturerForm_view, \
+        ProductAttributeForm, ProductAttributeForm_view, \
+        ProductAttributeValueForm, ProductAttributeValueForm_view
 
 from assets.views import TemplateAssetsView
 
@@ -26,6 +29,9 @@ manufacturer_filter = {'name':'manufacturer', 'title': _(u'manufacturer'),
 
 category_filter = { 'name': 'category', 'title': _(u'category'),
             'queryset': ItemCategory.objects.all(), 'destination': 'category'}
+
+attrib_cat_filter = { 'name': 'category', 'title': _(u'category'),
+            'queryset': ItemCategory.objects.all(), 'destination': 'applies_category'}
 
 product_name_filter = {'name': 'name', 'title': _('name'),
             'destination': ('description__icontains', 'model__icontains',
@@ -117,8 +123,33 @@ urlpatterns = patterns('products.views',
                     extra_context={'object_name':_(u'manufacturer'),}),
             'manufacturer_view'),
 
+    url(r'^attributes/list/$', GenericBloatedListView.as_view(queryset=ProductAttribute.objects.all(),
+            list_filters=[attrib_cat_filter, generic_name_filter,],
+            extra_columns=[ {'name': _("Sequence"), 'attribute': 'sequence'},
+                        {'name':_(u'short name'), 'attribute': 'short_name'},
+                        {'name':_(u'Required'), 'attribute': 'required'}],
+            title=_(u'list of attributes')), name='attributes_list'),
+    url(r'^attributes/create/$', GenericCreateView.as_view(form_class=ProductAttributeForm,
+                    extra_context={'title': _("Create attribute")}),
+            name='attributes_create'),
+    url(r'^attributes/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
+            form_class=ProductAttributeForm, template_name= 'attribute_form.html',
+            inline_fields={'values': ProductAttributeValueForm, },
+            extra_context={'object_name':_(u'attribute')}),
+            name='attributes_update' ),
+    url(r'^attributes/(?P<pk>\d+)/delete/$', GenericDeleteView.\
+            as_view(model=ProductAttribute, success_url="attributes_list",
+                    extra_context=dict(object_name=_(u'attribute'),
+                    )),
+            name='attributes_delete' ),
+    url(r'^attributes/(?P<pk>\d+)/$', GenericDetailView.as_view(form_class=ProductAttributeForm_view,
+                    template_name='attribute_form.html',
+                    queryset=ProductAttribute.objects.all(),
+                    inline_fields={'values': ProductAttributeValueForm_view,},
+                    extra_context={'object_name':_(u'attribute'),}),
+            name='attributes_view'),
+
     )
 
-#TODO: categories, attributes, manufacturers
 
 #eof
