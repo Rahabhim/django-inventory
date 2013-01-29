@@ -72,7 +72,10 @@ class ProductAttributeValue(models.Model):
     value = models.CharField(max_length=32, verbose_name=_("value"))
 
     def __unicode__(self):
-        return '%s=%s' % (self.atype.short_name, self.value)
+        if self.atype.short_name:
+            return '%s=%s' % (self.atype.short_name, self.value)
+        else:
+            return self.value
 
     class Meta:
         verbose_name=_("attribute value")
