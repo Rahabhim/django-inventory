@@ -166,6 +166,10 @@ class ItemTemplate(models.Model):
 class ItemTemplateAttributes(models.Model):
     template = models.ForeignKey(ItemTemplate, related_name="attributes")
     value = models.ForeignKey(ProductAttributeValue, verbose_name=_("value"))
+    
+    class Meta:
+        verbose_name = _("attribute")
+        verbose_name_plural = _("attributes")
 
 register(ItemTemplate, _(u'templates'), ['description', 'brand', 'model', 'part_number', 'notes'])
 

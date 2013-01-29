@@ -20,7 +20,8 @@ from forms import ItemTemplateForm, ItemTemplateForm_view, \
         ItemCategoryContainForm_view, \
         ManufacturerForm, ManufacturerForm_view, \
         ProductAttributeForm, ProductAttributeForm_view, \
-        ProductAttributeValueForm, ProductAttributeValueForm_view
+        ProductAttributeValueForm, ProductAttributeValueForm_view, \
+        ItemTemplateAttributesForm
 
 from assets.views import TemplateAssetsView
 
@@ -51,7 +52,7 @@ urlpatterns = patterns('products.views',
                     extra_context={'object_name':_(u'item template')}),
             name='template_create'),
     url(r'^template/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
-            form_class=ItemTemplateForm, inline_fields=('attributes',),
+            form_class=ItemTemplateForm, # inline_fields=('attributes',),
             extra_context={'object_name':_(u'item template')}),
             name='template_update' ),
     url(r'^template/(?P<pk>\d+)/delete/$', GenericDeleteView.\
@@ -63,11 +64,13 @@ urlpatterns = patterns('products.views',
                     extra_context=dict(title=_('orphan templates'))),
             'template_orphans_list'),
     url(r'^template/(?P<object_id>\d+)/photos/$', generic_photos, {'model':ItemTemplate, 'max_photos':inventory_settings.MAX_TEMPLATE_PHOTOS, 'extra_context':{'object_name':_(u'item template')}}, 'template_photos'),
-    url(r'^template/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ItemTemplateForm_view,
+    url(r'^template/(?P<pk>\d+)/$', GenericDetailView.as_view(form_class=ItemTemplateForm_view,
+                    template_name= 'product_form.html',
+                    inline_fields={'attributes': ItemTemplateAttributesForm },
                     queryset=ItemTemplate.objects.all(),
                     extra_context={'object_name':_(u'item template'), \
                         'sidebar_subtemplates':['generic_photos_subtemplate.html']}),
-            'template_view'),
+            name='template_view'),
     url(r'^template/(?P<product_id>\d+)/items/$', TemplateAssetsView.as_view(), name='template_items_list'),
     url(r'^template/(?P<object_id>\d+)/assign/supplies$', 'template_assign_remove_supply', (), name='template_assign_supply'),
     url(r'^template/(?P<object_id>\d+)/assign/suppliers/$', 'template_assign_remove_suppliers', (), name='template_assign_suppliers'),

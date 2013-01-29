@@ -1,0 +1,46 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block form_layout %}
+
+<div class="content">
+    <div class="group newline">
+        {% field_for description %}
+    </div>
+    <div class="group newline">
+        {% field_for category%}
+    </div>
+    <div class="group inline">
+        {% field_for approved%}
+    </div>
+    <div class="group newline">
+        {% field_for manufacturer %}
+    </div>
+    <div class="group inline">
+        {% field_for brand %}
+    </div>
+    <div class="group inline">
+        {% field_for model %}
+    </div>
+    <div class="group newline">
+        {% field_for part_number %}
+    </div>
+
+    <div style="clear:both;"> </div>
+    {% for formset in formsets %}
+        {% include 'category_contained_formset.html' %}
+    {% endfor %}
+
+    <div class="group newline">
+        {% field_for supplies %}
+    </div>
+
+    <div class="group newline">
+        {% field_for notes %}
+    </div>
+
+
+    <div style="clear:both;"> </div>
+</div>
+{% endblock %}
