@@ -26,13 +26,13 @@ from forms import ItemTemplateForm, ItemTemplateForm_view, \
 from assets.views import TemplateAssetsView
 
 manufacturer_filter = {'name':'manufacturer', 'title': _(u'manufacturer'),
-            'queryset':Manufacturer.objects.all(), 'destination':'manufacturer'}
+            'lookup_channel': 'manufacturer', 'destination':'manufacturer'}
 
 category_filter = { 'name': 'category', 'title': _(u'category'),
-            'queryset': ItemCategory.objects.all(), 'destination': 'category'}
+            'lookup_channel': 'categories', 'destination': 'category'}
 
 attrib_cat_filter = { 'name': 'category', 'title': _(u'category'),
-            'queryset': ItemCategory.objects.all(), 'destination': 'applies_category'}
+            'lookup_channel': 'categories', 'destination': 'applies_category'}
 
 product_name_filter = {'name': 'name', 'title': _('name'),
             'destination': ('description__icontains', 'model__icontains',
