@@ -23,7 +23,7 @@ div {
 }
 
 .u0_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u0_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u0_normal.png');
 }
 
 .u0_container {
@@ -63,7 +63,7 @@ div {
 }
 
 .u3_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u3_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u3_normal.png');
 }
 
 .u3_container {
@@ -111,7 +111,7 @@ div {
 }
 
 .u6_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u6_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
 }
 
 .u6_container {
@@ -159,7 +159,7 @@ div {
 }
 
 .u9_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u6_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
 }
 
 .u9_container {
@@ -207,7 +207,7 @@ div {
 }
 
 .u12_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u6_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
 }
 
 .u12_container {
@@ -255,7 +255,7 @@ div {
 }
 
 .u15_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u15_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u15_normal.png');
 }
 
 .u15_container {
@@ -359,7 +359,7 @@ div {
 }
 
 .u21_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u21_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u21_normal.png');
 }
 
 .u21_container {
@@ -461,7 +461,7 @@ div {
 }
 
 .u28_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u28_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u28_normal.png');
 }
 
 .u28_container {
@@ -495,7 +495,7 @@ div {
 }
 
 .u30_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u28_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u28_normal.png');
 }
 
 .u30_container {
@@ -685,7 +685,7 @@ div {
 }
 
 .u44_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u44_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u44_normal.png');
 }
 
 .u44_container {
@@ -747,7 +747,7 @@ div {
 }
 
 .u48_normal {
-    background-image: url('{{ MEDIA_URL }}/images/u6_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
 }
 
 .u48_container {
@@ -809,7 +809,7 @@ table.wiz_step_cell td.wiz_number {
     font-size:13px;
     text-decoration:none;
     text-align: center;
-    background-image: url('{{ MEDIA_URL }}/images/u6_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
     background-repeat:no-repeat;
     background-position: center;
     width: 34px;
@@ -830,7 +830,7 @@ table.wiz_step_cell_active td.wiz_number {
     font-size:13px;
     text-decoration:none;
     text-align: center;
-    background-image: url('{{ MEDIA_URL }}/images/u3_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u3_normal.png');
     background-repeat:no-repeat;
     background-position: center;
     width: 34px;
@@ -864,7 +864,7 @@ table.wiz_form th {
 }
 
 #submit0 {
-    background-image: url('{{ MEDIA_URL }}/images/u21_normal.png');
+    background-image: url('{{ STATIC_URL }}images/u21_normal.png');
     width:106px;
     height:31px;
 
