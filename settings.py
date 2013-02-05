@@ -184,6 +184,7 @@ AJAX_LOOKUP_CHANNELS = {
     'department': ('company.lookups', 'DepartmentLookup'),
     'location': ('company.lookups', 'LocationLookup'), # searches by department!
     'product': ('products.lookups', 'ItemTemplateLookup'),
+    'categories': ('products.lookups', 'ItemCategoryLookup'),
     'product_part': ('products.lookups', 'ProductPartLookup'),
     'product_specs': ('products.lookups', 'ProductSpecsLookup'),
     'manufacturer': ('products.lookups', 'ManufacturerLookup'),

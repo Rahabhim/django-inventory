@@ -5,12 +5,16 @@
 from django.db import models
 
 from django.http import HttpResponse
-from models import ItemTemplate, Manufacturer
+from models import ItemTemplate, Manufacturer, ItemCategory
 from common.api import LookupChannel
 
 class ItemTemplateLookup(LookupChannel):
     model = ItemTemplate
     search_field = 'description'
+
+class ItemCategoryLookup(LookupChannel):
+    model = ItemCategory
+    search_field = 'name'
 
 class ManufacturerLookup(LookupChannel):
     model = Manufacturer
