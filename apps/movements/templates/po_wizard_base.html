@@ -30,11 +30,13 @@
     <table id="wizard_steps_indicator">
     <tr>{% for wkey, wform in wiz_steps %}
         <td width="{{ wiz_width }}%">
+        <button type="submit" class="wiz_button" name="wizard_goto_step" value="{{ wkey }}" {% if wkey >= wizard.steps.current %}disabled="1"{% endif %} >
         <table class="{% if wkey == wizard.steps.current %}wiz_step_cell_active{% else %}wiz_step_cell{% endif %}">
             <tr><td class="wiz_number">{{ wkey }}</td>
                 <td><span style="">{{ wform.title }}</span></td>
             </tr>
         </table>
+        </button>
         </td>
         {% endfor %}
     </tr></table>
