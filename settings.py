@@ -190,8 +190,8 @@ AJAX_LOOKUP_CHANNELS = {
     'manufacturer': ('products.lookups', 'ManufacturerLookup'),
     'item': ('assets.lookups', 'ItemLookup'),
     'contracts': ('procurements.lookups', 'ContractLookup'),
-    
-    # 'supplier':
+    'supplier_name': ('common.lookups', 'SupplierLookup'),
+    'supplier_vat': ('common.lookups', 'SupplierVATLookup'),
 }
 AJAX_SELECT_BOOTSTRAP = False
 AJAX_SELECT_INLINES = False
