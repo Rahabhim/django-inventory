@@ -6,8 +6,8 @@
 {% block javascript %}
 <script type="text/javascript">
     $(function() {
-        $( "#{{ wizard.form.categories.auto_id }}" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
-        $( "#{{ wizard.form.categories.auto_id }} li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+        $( "#{{ wizard.form.new_category.auto_id }}" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
+        $( "#{{ wizard.form.new_category.auto_id }} li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
     });
 </script>
 {% endblock %}
@@ -17,18 +17,18 @@
 {{ wizard.form.management_form }}
 
 {% with wizard.form as form %}
-    {{ form.categories.errors }}
-    <div id="{{ form.categories.auto_id }}">
+    {{ form.new_category.errors }}
+    <div id="{{ form.new_category.auto_id }}">
         <ul>
-        {% for cat in form.categories %} {# The tabs #}
+        {% for cat in form.new_category %} {# The tabs #}
             <li><a href="#{{ cat.did }}">{{ cat }}</a></li>
         {% endfor %}
         </ul>
-        {% for cat in form.categories %} {# content for each tab #}
+        {% for cat in form.new_category %} {# content for each tab #}
         <div id="{{ cat.did }}">
                 <h2>{{ cat }}</h2>
             {% for cat2 in cat.standalones %}
-                <div id="{{ cat2.did }}"><input type="checkbox" name="{{cat2.name}}" value="{{ cat2.id }}" {% if cat2.is_checked %}checked{% endif %} /><img src="{{ MEDIA_URL }}/images/empty_img.png" />{{ cat2 }}</div>
+                <div id="{{ cat2.did }}"><img src="{{ MEDIA_URL }}/images/empty_img.png" />{{ cat2 }}<input type="radio" name="{{cat2.name}}" value="{{ cat2.id }}" onclick="this.form.submit()" /></div>
             {% endfor %}
         </div>
         {% endfor %}
