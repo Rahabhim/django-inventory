@@ -51,6 +51,7 @@ def register_submenu(menu_id, links):
 
 class LookupChannel(ajax_select.LookupChannel):
     max_length = 50
+    queryset = None
 
     def check_auth(self,request):
         if not request.user.is_authenticated():
@@ -63,7 +64,10 @@ class LookupChannel(ajax_select.LookupChannel):
         if not request.user.is_authenticated():
             raise HttpResponseForbidden()
         # filtering only this user's contacts
-        cur = self.model.objects
+        if self.queryset is None:
+            cur = self.model.objects
+        else:
+            cur = self.queryset
         for r in q.split(' '):
             cur = cur.filter(**{"%s__icontains" % self.search_field: r})
         return cur.order_by(self.search_field)[:self.max_length]
