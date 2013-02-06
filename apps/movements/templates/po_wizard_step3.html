@@ -19,6 +19,9 @@
         margin-left: 36px;
         padding: 10px;
     }
+    #{{wizard.form.item_template.auto_id}}_text {
+        display: none;
+    }
 </style>
 {{ wizard.form.management_form }}
 
@@ -87,7 +90,7 @@
 
         </script>
         <div class="found_product">
-            {{ form.item_template }}
+           Προϊόν: {{ form.item_template }}
             <span id="label_not_found">Δεν βρέθηκε προϊόν. </span>
         </div>
         <div id="note_not_found">Σημείωση: Σε περίπτωση που δεν βρήκατε τον εξοπλισμό που επιθυμείτε μπορείτε να επιλέξετε "Άλλο" και στο παράθυρο που θα εμφανιστεί να μας στείλετε το στοιχείο αυτό.
@@ -100,7 +103,7 @@
         <h3>Ποσότητα και σειριακοί αριθμοί</h3>
     <div>{{ form.quantity.label }}: {{ form.quantity }}
         <br/>
-        {{ form.serials.label}}: {{ form.serials }}
+        {{ form.serials.label}}: <br/> {{ form.serials }}
     </div>
 {% endwith %}
 </div>
