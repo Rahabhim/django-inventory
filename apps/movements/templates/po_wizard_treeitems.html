@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+<table class="">
+<thead>
+    <tr><td>{% trans 'Product'%}</td><td>{% trans 'State' %}</td><td colspan="2">{% trans 'Actions' %}</td></tr>
+</thead>
+
+<tbody>
+    {% for e, item in items %}
+    <tr><td>{{ item.item_template.category }}: {{ item.item_template }}
+        {% if item.quantity != 1 %}x{{ item.quantity}}{% endif %}</td>
+        <td>{{ item.state }}</td>
+        <td><button type="submit" name="iaction" value="edit:{{ e }}" title="{%trans 'Edit' %}"><span class="famfam active famfam-pencil"></span></button></td>
+        <td><button type="submit" name="iaction" value="delete:{{ e }}" title="{%trans 'Delete' %}"><span class="famfam active famfam-cross"></span></button></td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+</table>
+
