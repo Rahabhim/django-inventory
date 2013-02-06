@@ -61,10 +61,8 @@
         }
     }
     function update_product2(){
-        console.log("Something changed!");
         var attribs = new Array();
         $("#{{form.product_attributes.auto_id}} > select").each(function() { attribs.push(this.value)});
-        console.log("Selected attributes:" + attribs.length);
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
                 'data': {'term': 'foo', 'attributes': attribs,
@@ -79,7 +77,6 @@
     function select_some_product(){
         var $selected = $("#{{form.item_template2.auto_id}} option:selected");
         if (! $selected) { return false; }
-        console.log("Product was selected:" + $selected.value);
         
         var fake_win = new Object();
         {# /* bind fake_win to item autocompletion, so that its select() is returned */ #}
