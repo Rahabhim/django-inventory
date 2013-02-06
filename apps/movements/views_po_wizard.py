@@ -118,7 +118,7 @@ class PO_Step3(forms.Form):
             our_data.pop(ufield, None)
         step4_data.setdefault('4-items',[]).append(our_data)
         storage.set_step_data('4', step4_data)
-        storage.set_step_data('3', {self.add_prefix('quantity'): 1}) # reset this form
+        storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
 
 class ItemsTreeWidget(forms.widgets.Widget):
     def render(self, name, value, attrs=None):
