@@ -31,6 +31,10 @@ LOGGING = {
         },
     },
     'loggers': {
+        'apps': {
+            'handlers': ['console',],
+            'level': 'INFO',
+            },
         'django.db.backends': {
             'handlers': ['console',],
             'level': 'INFO',

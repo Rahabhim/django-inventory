@@ -8,13 +8,16 @@
 {{ wizard.form.management_form }}
 
 {% with wizard.form as form %}
-    <p> Foo! </p>
+    <p> Έχετε επιλέξει τον παρακάτω εξοπλισμό. Μπορείτε να επεξεργαστείτε ή να διαγράψετε τα στοιχεία κάποιου εξοπλισμού ή να κάνετε Προσθήκη εξοπλισμού για να προσθέσετε εξοπλισμό με την ίδια διαδικασία.</p>
+
+    {{ form.items }}
 {% endwith %}
 </div>
 
 
 <div width="100%">
 <p align="right">
+    <button type="submit" name="wizard_goto_step" value="2">{% trans 'Add more items' %}</button>
     <input id="submit0" type="submit">
 </p>
 </div>
