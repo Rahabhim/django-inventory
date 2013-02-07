@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-07 10:54+0200\n"
-"PO-Revision-Date: 2013-02-07 11:01+0200\n"
+"POT-Creation-Date: 2013-02-07 15:35+0200\n"
+"PO-Revision-Date: 2013-02-07 15:42+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -178,7 +178,7 @@ msgstr "Εκκρεμείς κινήσεις εξοπλισμού"
 msgid "assets at that location"
 msgstr "εξοπλισμός στην τοποθεσία"
 
-#: forms.py:34 views_po_wizard.py:42
+#: forms.py:34 views_po_wizard.py:43
 msgid "Procurement Contract"
 msgstr "Σύμβαση Προμήθειας"
 
@@ -257,7 +257,7 @@ msgstr "κατάσταση αίτησης"
 msgid "user defined id"
 msgstr "Αρ. Τιμολογίου/εντολής"
 
-#: models.py:32 models.py:117 views_po_wizard.py:40
+#: models.py:32 models.py:117 views_po_wizard.py:41
 msgid "issue date"
 msgstr "Ημερομηνία έκδοσης"
 
@@ -791,80 +791,79 @@ msgstr "Πρόχειρη Περιγραφή"
 msgid "%(item)s added to bundle for %(main)s"
 msgstr "%(item)s προστέθηκε στη σύνθεση %(main)s"
 
-#: views_po_wizard.py:37
-#, fuzzy
-msgid "Purchase Order Header Data"
-msgstr "γραμμή εντολής προμήθειας"
-
 #: views_po_wizard.py:38
+msgid "Purchase Order Header Data"
+msgstr "Στοιχεία Παραλαβής Εξοπλισμού"
+
+#: views_po_wizard.py:39
 msgid "purchase order number"
 msgstr "Αρ. πρωτοκόλλου παραλαβής"
 
-#: views_po_wizard.py:43
+#: views_po_wizard.py:44
 msgid "Find by"
 msgstr "Καταχώρηση με:"
 
-#: views_po_wizard.py:45
+#: views_po_wizard.py:46
 msgid "VAT (exact)"
 msgstr "Α.Φ.Μ. (ακριβής)"
 
-#: views_po_wizard.py:45 views_po_wizard.py:46
+#: views_po_wizard.py:46 views_po_wizard.py:47
 msgid "Company Name"
 msgstr "Επωνυμία εταιρείας"
 
-#: views_po_wizard.py:47
+#: views_po_wizard.py:48
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: views_po_wizard.py:69
+#: views_po_wizard.py:70
 msgid "Select Product Categories"
 msgstr "Επιλογή ειδών Εξοπλισμού"
 
-#: views_po_wizard.py:85
+#: views_po_wizard.py:86
 msgid "Input Product Details"
 msgstr "Καταχώρηση στοιχείων Εξοπλισμού"
 
-#: views_po_wizard.py:87 views_po_wizard.py:93
+#: views_po_wizard.py:88 views_po_wizard.py:94
 #: templates/po_wizard_treeitems.html:7
 msgid "Product"
 msgstr "Προϊόν"
 
-#: views_po_wizard.py:88
+#: views_po_wizard.py:89
 msgid "Product number"
 msgstr "Κωδικός προϊόντος"
 
-#: views_po_wizard.py:89
+#: views_po_wizard.py:90
 #, fuzzy
 msgid "Quantity"
 msgstr "Ποσότητα"
 
-#: views_po_wizard.py:90
+#: views_po_wizard.py:91
 #, fuzzy
 msgid "Serial numbers"
 msgstr "Σειριακοί Αριθμοί"
 
-#: views_po_wizard.py:91
+#: views_po_wizard.py:92
 msgid "manufacturer"
 msgstr "κατασκευαστής"
 
-#: views_po_wizard.py:92
+#: views_po_wizard.py:93
 msgid "attributes"
 msgstr "Χαρακτηριστικά"
 
-#: views_po_wizard.py:159
+#: views_po_wizard.py:161
 msgid "Final Review"
 msgstr "Τελικός έλεγχος"
 
-#: views_po_wizard.py:160
+#: views_po_wizard.py:162
 #, fuzzy
 msgid "Items"
 msgstr "εξοπλισμός"
 
-#: views_po_wizard.py:171
+#: views_po_wizard.py:173
 msgid "Successful Entry - Finish"
 msgstr "Επιτυχής καταχώρηση - τέλος"
 
-#: views_po_wizard.py:280
+#: views_po_wizard.py:282
 msgid "Cannot save data"
 msgstr "Δεν είναι δυνατή η αποθήκευση"
 
@@ -921,13 +920,18 @@ msgstr "Επιβεβαίωση"
 msgid " Purchase order wizard"
 msgstr "γραμμή εντολής προμήθειας"
 
-#: templates/po_wizard_step2.html:43 templates/po_wizard_step3.html:122
+#: templates/po_wizard_step1.html:94 templates/po_wizard_step2.html:43
+#: templates/po_wizard_step3.html:122
 msgid "Continue"
 msgstr "Συνέχεια"
 
 #: templates/po_wizard_step4.html:20
 msgid "Add more items"
 msgstr "Προσθήκη εξοπλισμού"
+
+#: templates/po_wizard_step4.html:21
+msgid "Save and finish"
+msgstr ""
 
 #: templates/po_wizard_step5.html:16
 msgid "first step"
