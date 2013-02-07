@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 import logging
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from django import forms
 from django.shortcuts import render_to_response
