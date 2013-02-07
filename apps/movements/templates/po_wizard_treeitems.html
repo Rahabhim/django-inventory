@@ -8,12 +8,12 @@
 </thead>
 
 <tbody>
-    {% for e, item in items %}
+    {% for item in items %}
     <tr><td>{{ item.item_template.category }}: {{ item.item_template }}
         {% if item.quantity != 1 %}x{{ item.quantity}}{% endif %}</td>
         <td>{{ item.state }}</td>
-        <td><button type="submit" name="iaction" value="edit:{{ e }}" title="{%trans 'Edit' %}"><span class="famfam active famfam-pencil"></span></button></td>
-        <td><button type="submit" name="iaction" value="delete:{{ e }}" title="{%trans 'Delete' %}"><span class="famfam active famfam-cross"></span></button></td>
+        <td><button type="submit" name="iaction" value="edit:{{ item.line_num }}" title="{%trans 'Edit' %}"><span class="famfam active famfam-pencil"></span></button></td>
+        <td><button type="submit" name="iaction" value="delete:{{ item.line_num }}" title="{%trans 'Delete' %}"><span class="famfam active famfam-cross"></span></button></td>
     </tr>
     {% endfor %}
 </tbody>

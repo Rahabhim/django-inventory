@@ -16,7 +16,7 @@ from ajax_select.fields import AutoCompleteSelectField #, AutoCompleteSelectMult
 from django.db.models import Count
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-from django.forms.util import flatatt
+from django.forms.util import flatatt, ErrorDict
 
 from models import PurchaseOrder
 from generic_views.forms import DetailForeignWidget
@@ -88,6 +88,7 @@ class ValidChoiceField(forms.ChoiceField):
 
 class PO_Step3(forms.Form):
     title = _("Input Product Details")
+    line_num = forms.IntegerField(required=False, widget=forms.widgets.HiddenInput)
     item_template = AutoCompleteSelectField('product', label=_("Product"), show_help_text=False, required=False)
     product_number = forms.CharField(max_length=100, required=False, label=_("Product number"))
     quantity = forms.IntegerField(label=_("Quantity"), initial=1)
@@ -116,7 +117,24 @@ class PO_Step3(forms.Form):
         for ufield in ('product_number', 'manufacturer', \
                         'item_template2', 'product_attributes'):
             our_data.pop(ufield, None)
-        step4_data.setdefault('4-items',[]).append(our_data)
+        aitems = step4_data.setdefault('4-items',[])
+        if not our_data.get('line_num', False):
+            # we have to compute an unique id for the new line_num
+            lnmax = 0
+            for it in aitems:
+                if it.get('line_num', 0) > lnmax:
+                    lnmax = it['line_num']
+            assert isinstance(lnmax, int), "Not an int, %s: %r" %( type(lnmax), lnmax)
+            our_data['line_num'] = lnmax + 1
+            aitems.append(our_data)
+        else:
+            for it in aitems:
+                if it.get('line_num', False) == our_data['line_num']:
+                    it.update(our_data) # in-place
+                    break
+            else:
+                # line not found
+                aitems.append(our_data)
         storage.set_step_data('4', step4_data)
         storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
 
@@ -129,7 +147,7 @@ class ItemsTreeWidget(forms.widgets.Widget):
         context = {
             'name': name,
             'html_id': self.html_id,
-            'items': enumerate(value or []),
+            'items': value or [],
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-","")
         }
@@ -197,6 +215,46 @@ class PO_Wizard(SessionWizardView):
             step = self.steps.current
         if step == '4':
             # hack: for step 4, data always comes from the session
+            if 'iaction' in data:
+                if data['iaction'].startswith('edit:'):
+                    # push the item's parameters into "data" and bring up the
+                    # 3rd wizard page again
+                    line_num = int(data['iaction'][5:])
+                    old_data = None
+                    for item in self.storage.get_step_data(step)['4-items']:
+                        if item.get('line_num', -1) == line_num:
+                            old_data = item
+                            break
+                    else:
+                        raise IndexError("No line num: %s" % line_num)
+                    self.storage.current_step = '3'
+                    data = self.storage.get_step_data(self.storage.current_step)
+                    data['3-quantity'] = old_data['quantity']
+                    data['3-item_template'] = old_data['item_template'].id
+                    data['3-serials'] = old_data['serials']
+                    if 'line_num' in old_data:
+                        data['3-line_num'] = int(old_data['line_num'])
+                    form = super(PO_Wizard, self).get_form(step='3', data=data)
+                    # invalidate, so that calling function will just render the form
+                    if form._errors is None:
+                        form._errors = ErrorDict()
+                    form._errors[''] = ''
+                    return form
+                elif data['iaction'].startswith('delete:'):
+                    line_num = data['iaction'][7:]
+                    if line_num:
+                        # only convert if non-empty
+                        line_num = int(line_num)
+                    # switch to stored data:
+                    data = self.storage.get_step_data(step)
+                    data['4-items'] = filter(lambda it: it.get('line_num', '') != line_num, data['4-items'])
+                    self.storage.set_step_data(step, data) # save it immediately
+                    form = super(PO_Wizard, self).get_form(step=step, data=data)
+                    # invalidate, so that calling function will just render the form
+                    if form._errors is None:
+                        form._errors = ErrorDict()
+                    form._errors[''] = ''
+                    return form
             data = self.storage.get_step_data(step)
         return super(PO_Wizard, self).get_form(step=step, data=data, files=files)
 

@@ -29,7 +29,7 @@
     <div id="ss3s-1">
         <h3>Καταχώρηση Στοιχείων  Εξοπλισμού</h3>
         <p>Μπορείτε να καταχωρήσετε τα στοιχεία του Εξοπλισμού με δύο δυνατούς τρόπους:</p>
-
+        {{ form.line_num }}
         <div>{% with form.item_template as it %}
             <p>Κωδικός προϊόντος:
                 <input type="text" name="{{it.name}}_text" id="{{it.auto_id}}_text" value="" width="7em" />
