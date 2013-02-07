@@ -217,7 +217,7 @@ class PO_Wizard(SessionWizardView):
             step = self.steps.current
         if step == '4':
             # hack: for step 4, data always comes from the session
-            if 'iaction' in data:
+            if data and 'iaction' in data:
                 if data['iaction'].startswith('edit:'):
                     # push the item's parameters into "data" and bring up the
                     # 3rd wizard page again
