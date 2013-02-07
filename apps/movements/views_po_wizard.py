@@ -17,6 +17,7 @@ from django.db.models import Count
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.forms.util import flatatt, ErrorDict
+from django.utils.datastructures import MultiValueDict
 
 from models import PurchaseOrder
 from generic_views.forms import DetailForeignWidget
@@ -113,7 +114,8 @@ class PO_Step3(forms.Form):
         # implementation note: with Session storage, the "getattr(data)" called through
         # get_step_data will set "session.modified=True" and hence what we do below
         # will be preserved
-        assert step4_data
+        if step4_data is None:
+            step4_data = MultiValueDict()
         for ufield in ('product_number', 'manufacturer', \
                         'item_template2', 'product_attributes'):
             our_data.pop(ufield, None)
