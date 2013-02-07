@@ -844,6 +844,13 @@ button.wiz_button {
     -moz-appearance: normal;
 }
 
+div.cat_box button {
+    background: none;
+    appearance: normal;
+    -webkit-appearance: listitem;
+    -moz-appearance: normal;
+}
+
 /* title */
 div.u2_title p {
     text-align:left;

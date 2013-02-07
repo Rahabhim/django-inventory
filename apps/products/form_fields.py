@@ -43,6 +43,10 @@ class CSWItem(StrAndUnicode):
         """
         return self._parent._name
 
+    @property
+    def picture(self):
+        return self._obj.picture
+
 class CSWItem_Main(CSWItem):
     """Instance of first-level category in the page
     

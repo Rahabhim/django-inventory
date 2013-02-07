@@ -25,10 +25,10 @@
         {% endfor %}
         </ul>
         {% for cat in form.new_category %} {# content for each tab #}
-        <div id="{{ cat.did }}">
+        <div id="{{ cat.did }}" class="cat_box">
                 <h2>{{ cat }}</h2>
             {% for cat2 in cat.standalones %}
-                <div id="{{ cat2.did }}"><img src="{{ MEDIA_URL }}/images/empty_img.png" />{{ cat2 }}<input type="radio" name="{{cat2.name}}" value="{{ cat2.id }}" onclick="this.form.submit()" /></div>
+                <button id="{{ cat2.did }}" name="{{cat2.name}}" value="{{ cat2.id }}" >{% if cat2.picture %}<img src="{{ MEDIA_URL }}/{{ cat2.picture }}" />{% else %}<img src="{{ MEDIA_URL }}/images/empty_img.png" />{% endif %}{{ cat2 }}</button>
             {% endfor %}
         </div>
         {% endfor %}
