@@ -5,7 +5,7 @@ from common.api import register_links, register_menu, can_add, can_edit, can_del
 
 from models import ItemTemplate, ItemCategory, Manufacturer, ProductAttribute
 
-template_list = {'text':_('view all'), 'view':'template_list', 'famfam':'page_go'}
+template_list = {'text':_('item templates'), 'view':'template_list', 'famfam':'page_go'}
 template_create = {'text':_('create new template'), 'view':'template_create', 
         'famfam':'page_add', 'condition': can_add(ItemTemplate)}
 template_orphan_list = {'text':_('orphans templates'), 'view':'template_orphans_list'}
@@ -48,18 +48,19 @@ register_links(['template_list', 'template_create', 'template_view',
                 'template_photos', 'template_assign_supply', 'template_assign_suppliers'],
             [template_create], menu_name='sidebar')
 
-register_links(ItemTemplate, [template_assets])
-register_links(ItemTemplate, [template_update, template_delete, template_photos, 
+register_links(ItemTemplate, [template_update, template_assets])
+register_links(ItemTemplate, [template_list, template_delete, template_photos, 
             template_assign_supplies], menu_name='sidebar')
 
 register_links(['category_list'], [category_create], menu_name='sidebar')
-register_links(ItemCategory, [category_create, category_update, category_delete], menu_name='sidebar')
-register_links(Manufacturer, [manufacturer_create, manufacturer_update, manufacturer_delete], menu_name='sidebar')
+register_links(ItemCategory, [categories_list, category_create,  category_delete], menu_name='sidebar')
+register_links(ItemCategory, [category_update,])
+register_links(Manufacturer, [manufs_list, manufacturer_create, manufacturer_update, manufacturer_delete], menu_name='sidebar')
 register_links(['manufacturers_list'], [manufacturer_create], menu_name='sidebar')
 
 register_links(['attributes_list'], [attributes_create], menu_name='sidebar')
 register_links(ProductAttribute, [ attributes_update,] )
-register_links(ProductAttribute, [ attributes_delete,], menu_name='sidebar')
+register_links(ProductAttribute, [ attributes_list, attributes_delete,], menu_name='sidebar')
 
 register_menu([
     {'text':_('templates'), 'view':'template_list', 
