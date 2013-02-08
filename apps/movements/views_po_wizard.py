@@ -34,7 +34,17 @@ class DummySupplierWidget(DetailForeignWidget):
         else:
             return data.get(name+'_name', None)
 
-class PO_Step1(forms.ModelForm):
+class _WizardFormMixin:
+    title = "Step x"
+    step_is_hidden = False
+    
+    def save_data(self, wizard):
+        pass
+
+class WizardForm(_WizardFormMixin, forms.Form):
+    pass
+
+class PO_Step1(_WizardFormMixin, forms.ModelForm):
     title = _("Purchase Order Header Data")
     user_id = forms.CharField(max_length=32, required=False, label=_(u'purchase order number'))
     #procurement = models.ForeignKey('procurements.Contract', null=True, blank=True, label=_("procurement contract"))
@@ -54,12 +64,6 @@ class PO_Step1(forms.ModelForm):
         fields = ('user_id', 'issue_date', 'procurement', 'supplier')
                 # That's the fields we want to fill in the PO
 
-    def __init__(self, data=None, files=None, **kwargs):
-        super(PO_Step1, self).__init__(data, files, **kwargs)
-
-    def clean(self):
-        return super(PO_Step1, self).clean()
-
     def save(self, commit=True):
         #if not (self.instance.pk or self.instance.create_user_id):
         #    self.instance.create_user = request.user
@@ -71,13 +75,10 @@ class PO_Step1(forms.ModelForm):
         """
         # self.save()
 
-class PO_Step2(forms.Form):
+class PO_Step2(WizardForm):
     title = _("Select Product Categories")
     new_category = forms.ModelChoiceField(queryset=ItemCategory.objects.filter(approved=True),
             widget=CategoriesSelectWidget)
-
-    def save_data(self, request, storage):
-        pass
 
 class ValidChoiceField(forms.ChoiceField):
     """ A ChoiceField that accepts any value in return data
@@ -87,7 +88,7 @@ class ValidChoiceField(forms.ChoiceField):
     def valid_value(self, value):
         return True
 
-class PO_Step3(forms.Form):
+class PO_Step3(WizardForm):
     title = _("Input Product Details")
     line_num = forms.IntegerField(required=False, widget=forms.widgets.HiddenInput)
     item_template = AutoCompleteSelectField('product', label=_("Product"), show_help_text=False, required=False)
@@ -108,9 +109,9 @@ class PO_Step3(forms.Form):
                         annotate(num_products=Count('products')).order_by('-num_products')
         # self.initial['product_attributes']['all'] = []
 
-    def save_data(self, request, storage):
+    def save_data(self, wizard):
         our_data = self.cleaned_data.copy()
-        step4_data = storage.get_step_data('4')
+        step4_data = wizard.storage.get_step_data('4')
         # implementation note: with Session storage, the "getattr(data)" called through
         # get_step_data will set "session.modified=True" and hence what we do below
         # will be preserved
@@ -137,8 +138,9 @@ class PO_Step3(forms.Form):
             else:
                 # line not found
                 aitems.append(our_data)
-        storage.set_step_data('4', step4_data)
-        storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
+        wizard.storage.set_step_data('4', step4_data)
+        wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
+        return '4'
 
 class ItemsTreeWidget(forms.widgets.Widget):
     def render(self, name, value, attrs=None):
@@ -161,7 +163,7 @@ class ItemsTreeField(forms.Field):
     widget = ItemsTreeWidget
 
 
-class PO_Step4(forms.Form):
+class PO_Step4(WizardForm):
     title = _("Final Review")
     items = ItemsTreeField(label=_("Items"), required=False)
 
@@ -188,7 +190,7 @@ class PO_Wizard(SessionWizardView):
     def get_context_data(self, form, **kwargs):
         context = super(PO_Wizard, self).get_context_data(form, **kwargs)
         context.update(wiz_steps=self.form_list.items(),
-            wiz_width=(100/len(self.form_list)))
+            wiz_width=20)
         return context
     
     def get_form_initial(self, step):
@@ -266,7 +268,7 @@ class PO_Wizard(SessionWizardView):
         `form` contains the last/current form.
         """
         try:
-            form.save_data(self.request, self.storage)
+            next_step = form.save_data(self)
         except Exception, e:
             messages.error(self.request, _('Cannot save data'))
             logger.exception('cannot save at step %s: %s' % (self.steps.current, e))
@@ -274,7 +276,9 @@ class PO_Wizard(SessionWizardView):
 
         # get the form instance based on the data from the storage backend
         # (if available).
-        next_step = self.steps.next
+        if next_step is None:
+            next_step = self.steps.next
+
         new_form = self.get_form(next_step,
             data=self.storage.get_step_data(next_step),
             files=self.storage.get_step_files(next_step))
