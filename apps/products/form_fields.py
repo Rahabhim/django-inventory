@@ -241,7 +241,8 @@ class CategoriesAttributesField(forms.Field):
         return ret
 
     def validate(self, value):
-        return super(CategoriesAttributesField, self).validate(value)
+        # tolerate empty values, we will check at post_clean()
+        return True
 
     def post_clean(self, instance, cleaned_data):
         """ Cleanup of 'attributes' in cleaned_data, according to `instance.category`
