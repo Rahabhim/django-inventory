@@ -6,6 +6,8 @@ from common.api import register_links, register_menu, can_add, can_edit, can_del
 from models import ItemTemplate, ItemCategory, Manufacturer, ProductAttribute
 
 template_list = {'text':_('item templates'), 'view':'template_list', 'famfam':'page_go'}
+template_pending_list = {'text':_('pending item templates'), 'view':'template_pending_list', 
+        'famfam':'page_go', 'condition': user_is_staff }
 template_create = {'text':_('create new template'), 'view':'template_create', 
         'famfam':'page_add', 'condition': can_add(ItemTemplate)}
 template_orphan_list = {'text':_('orphans templates'), 'view':'template_orphans_list'}
@@ -17,6 +19,8 @@ template_assign_supplies = {'text':_(u'assign supplies'), 'view':'template_assig
 template_assign_suppliers = {'text':_(u'assign suppliers'), 'view':'template_assign_suppliers', 'args':'object.id', 'famfam':'lorry_go', 'condition': can_edit}
 
 categories_list = {'text':_('categories'), 'view':'category_list', 'famfam':'page_go'}
+categories_pending_list = {'text':_('pending categories'), 'view':'category_pending_list',
+        'famfam':'page_go', 'condition': user_is_staff }
 category_create = {'text':_('create new category'), 'view':'category_create', 
         'famfam':'page_add', 'condition': can_add(ItemCategory) }
 category_update = {'text':_(u'edit category'), 'view':'category_update',
@@ -66,3 +70,7 @@ register_menu([
     {'text':_('templates'), 'view':'template_list', 
             'links': template_menu_links, 'famfam':'page', 'position':3},
     ])
+
+register_links(['home',], [template_pending_list, categories_pending_list ], menu_name='my_pending')
+
+#eof
