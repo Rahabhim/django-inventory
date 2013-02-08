@@ -107,6 +107,7 @@ class ItemTemplate(models.Model):
     manufacturer = models.ForeignKey(Manufacturer, related_name="products", verbose_name=_("manufacturer"))
     model = models.CharField(verbose_name=_(u"model"), max_length=32, null=True, blank=True)
     part_number = models.CharField(verbose_name=_(u"part number"), max_length=32, null=True, blank=True)
+    url = models.URLField(verbose_name=_("URL"), max_length=256, null=True, blank=True)
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
     supplies = models.ManyToManyField("self", null=True, blank=True, verbose_name=_(u"supplies"))
     suppliers = models.ManyToManyField(Supplier, null=True, blank=True, verbose_name=_("suppliers"))
