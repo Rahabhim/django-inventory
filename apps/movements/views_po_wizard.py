@@ -91,7 +91,7 @@ class ValidChoiceField(forms.ChoiceField):
 class PO_Step3(WizardForm):
     title = _("Input Product Details")
     line_num = forms.IntegerField(required=False, widget=forms.widgets.HiddenInput)
-    item_template = AutoCompleteSelectField('product', label=_("Product"), show_help_text=False, required=False)
+    item_template = AutoCompleteSelectField('product_part', label=_("Product"), show_help_text=False, required=False)
     product_number = forms.CharField(max_length=100, required=False, label=_("Product number"))
     quantity = forms.IntegerField(label=_("Quantity"), initial=1)
     serials = forms.CharField(label=_("Serial numbers"), required=False, widget=forms.widgets.Textarea)
