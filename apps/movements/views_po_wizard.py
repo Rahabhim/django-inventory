@@ -14,25 +14,13 @@ from procurements.models import Contract
 from ajax_select.fields import AutoCompleteSelectField #, AutoCompleteSelectMultipleField
 
 from django.db.models import Count
-from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
-from django.forms.util import flatatt, ErrorDict
+from django.forms.util import ErrorDict
 from django.utils.datastructures import MultiValueDict
 
 from models import PurchaseOrder
-from generic_views.forms import DetailForeignWidget
+from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField
 
 logger = logging.getLogger('apps.movements.po_wizard')
-
-class DummySupplierWidget(DetailForeignWidget):
-    
-    def value_from_datadict(self, data, files, name):
-        """Instead of our widget (that is not rendered in the form), take either -vat or -name data
-        """
-        if data.get(name+'_name_or_vat') == 'vat':
-            return data.get(name+'_vat', None)
-        else:
-            return data.get(name+'_name', None)
 
 class _WizardFormMixin:
     title = "Step x"
@@ -80,13 +68,6 @@ class PO_Step2(WizardForm):
     new_category = forms.ModelChoiceField(queryset=ItemCategory.objects.filter(approved=True),
             widget=CategoriesSelectWidget)
 
-class ValidChoiceField(forms.ChoiceField):
-    """ A ChoiceField that accepts any value in return data
-    
-        Used because choices are added in JavaScript, we don't know them here.
-    """
-    def valid_value(self, value):
-        return True
 
 class PO_Step3(WizardForm):
     title = _("Input Product Details")
@@ -141,26 +122,6 @@ class PO_Step3(WizardForm):
         wizard.storage.set_step_data('4', step4_data)
         wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
         return '4'
-
-class ItemsTreeWidget(forms.widgets.Widget):
-    def render(self, name, value, attrs=None):
-        if value is None:
-            value = {}
-        final_attrs = self.build_attrs(attrs)
-        self.html_id = final_attrs.pop('id', name)
-        context = {
-            'name': name,
-            'html_id': self.html_id,
-            'items': value or [],
-            'extra_attrs': mark_safe(flatatt(final_attrs)),
-            'func_slug': self.html_id.replace("-","")
-        }
-
-        return mark_safe(render_to_string('po_wizard_treeitems.html', context))
-
-
-class ItemsTreeField(forms.Field):
-    widget = ItemsTreeWidget
 
 
 class PO_Step4(WizardForm):
