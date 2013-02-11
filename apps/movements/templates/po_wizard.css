@@ -908,4 +908,33 @@ div.u_or {
 .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
 .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
 
+table.wiz_treeitems {
+    padding: 10px;
+    width: 100%;
+}
+
+table.wiz_treeitems td {
+    vertical-align: top;
+}
+
+table.wiz_treeitems thead {
+    font-weight: bold;
+    font-size: 120%;
+}
+
+table.wiz_treeitems td span.category {
+    font-weight: bold;
+    color: #0000c0;
+}
+
+table.wiz_treeitems td span.qty {
+    font-weight: bold;
+    color: #680068;
+}
+table.wiz_treeitems td ul.item_parts {
+    list-style: disc;
+    padding-left: 22px;
+    font-size: 90%;
+}
+
 /* eof */
