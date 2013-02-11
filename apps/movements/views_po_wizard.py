@@ -56,12 +56,6 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
         #if not (self.instance.pk or self.instance.create_user_id):
         #    self.instance.create_user = request.user
         return super(PO_Step1, self).save(commit=commit)
-    
-    def save_data(self, request, storage):
-        """ It is wise to save here, because we want the user to be able to
-            resume filling in the wizard even after logout/login
-        """
-        # self.save()
 
 class PO_Step2(WizardForm):
     title = _("Select Product Categories")
@@ -181,18 +175,22 @@ class PO_Step3b(WizardForm):
         wizard.storage.set_step_data('3b', {})
         return '4'
 
+class PO_Step3c(WizardForm):
+    step_is_hidden = True
 
 class PO_Step4(WizardForm):
     title = _("Final Review")
     items = ItemsTreeField(label=_("Items"), required=False)
 
-class PO_Step5(forms.Form):
+class PO_Step5(WizardForm):
     title = _("Successful Entry - Finish")
     subject = forms.CharField(max_length=100, required=False)
 
 
 class PO_Wizard(SessionWizardView):
-    form_list = [('1', PO_Step1), ('2', PO_Step2), ('3', PO_Step3), ('4', PO_Step4), ('5', PO_Step5)]
+    form_list = [('1', PO_Step1), ('2', PO_Step2), ('3', PO_Step3), ('3a', PO_Step3_allo),
+            ('3b', PO_Step3b), ('3c', PO_Step3c),
+            ('4', PO_Step4),]
 
     def done(self, form_list, **kwargs):
         return render_to_response('done.html', {
@@ -220,8 +218,8 @@ class PO_Wizard(SessionWizardView):
         """
         ret = super(PO_Wizard, self).get_form_initial(step)
         if step == '3':
-            step2_data =  self.get_cleaned_data_for_step('2')
-            ret['product_attributes'] = {'from_category': step2_data.get('new_category', None), 'all': [] }
+            step2_data =  self.get_cleaned_data_for_step('2') or {}
+            ret['product_attributes'] = {'from_category': step2_data.get('new_category', ItemCategory()), 'all': [] }
         return ret
 
     def get(self, request, *args, **kwargs):

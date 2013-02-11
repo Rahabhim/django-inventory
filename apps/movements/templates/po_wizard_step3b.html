@@ -120,7 +120,6 @@
         pcombo.empty();
         pcombo.append($('<option>', {value: ''}).text('-----'));
 
-        console.log("Data came! " + data.length);
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
         }
@@ -149,10 +148,8 @@
         // Here, we just display the text:
         $(field_id + '_on_deck').text($selected.text());
         var part_val = $(field_id+ '_part').val();
-        console.log("Old value:"+ part_val);
         if (part_val){
             if (part_val != $selected.val()){
-                console.log("updating..." + part_val);
                 $("#cont_parts-"+part_val).remove();
             }
             else {
@@ -161,9 +158,8 @@
             }
         }
         else { // new part
-            console.log("new part");
         }
-        
+
         // But then, we store the real value in the left pane
         var newdiv = $("<div>", {id: "cont_parts-" + $selected.val()});
         var newqty = $(field_id+'_qty').val();
@@ -204,7 +200,6 @@
         @param cat_id   the database id of the category
     */
     function setup_category(field_id, cat_id){
-        console.log("Setup category for " + field_id);
         function upd_product2() {
             update_product2(field_id, cat_id);
         }

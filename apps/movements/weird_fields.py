@@ -19,6 +19,8 @@ from products.form_fields import CATItem
     JS logic.
 """
 
+logger = logging.getLogger('apps.movements.po_wizard')
+
 class DummySupplierWidget(DetailForeignWidget):
 
     def value_from_datadict(self, data, files, name):
@@ -93,9 +95,6 @@ class ItemsTreeWidget(forms.widgets.Widget):
 class ItemsTreeField(forms.Field):
     widget = ItemsTreeWidget
 
-    def to_python(self, value):
-        print "value:", value
-        return value
 
 class _AttribsIter(object):
     def __init__(self, parent):
@@ -191,16 +190,8 @@ class ItemsGroupWidget(forms.widgets.Widget):
                     pa.append((ItemTemplate.objects.get(pk=dpart_id, category=mc.category), dqty))
             return ret
         else:
+            logger.debug("no data at ItemsGroupWidget.value_from_datadict () %r", data)
             return {}
-
-    def bound_data(self, data, initial):
-        if initial:
-            ret = initial.copy()
-        else:
-            ret = {}
-        if data:
-            ret['all'] = data
-        return ret
 
     def render(self, name, value, attrs=None):
         if value is None:
