@@ -136,6 +136,17 @@ class PO_Step3(WizardForm):
             wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
         return '4'
 
+class PO_Step3_allo(_WizardFormMixin, forms.ModelForm):
+    title = _("New Product Request")
+    step_is_hidden = True
+
+    class Meta:
+        model = ItemTemplate
+        fields = ('description', 'category', 'manufacturer', 'model', 'part_number', 'url', 'notes')
+
+    def save_data(self, wizard):
+        # ...
+        raise NotImplementedError
 
 class PO_Step3b(WizardForm):
     title = _("Add bundled items")
