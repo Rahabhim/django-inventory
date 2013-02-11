@@ -148,7 +148,6 @@
         
         // Here, we just display the text:
         $(field_id + '_on_deck').text($selected.text());
-//         TODO!
         var part_val = $(field_id+ '_part').val();
         console.log("Old value:"+ part_val);
         if (part_val){
@@ -168,6 +167,10 @@
         // But then, we store the real value in the left pane
         var newdiv = $("<div>", {id: "cont_parts-" + $selected.val()});
         var newqty = $(field_id+'_qty').val();
+        var str_qty = ' ';
+        if (newqty != 1)
+            str_qty = 'x' + newqty.toString();
+
         newdiv.append($("<input>", {'type': 'hidden', 
                                     name: field_id.substr(1) +'_parts',
                                     value: $selected.val() } ));
@@ -177,10 +180,8 @@
         newdiv.append($("<a>", {'class': 'cont_part',
                                 'onclick': "part_update('" +$selected.val()+"', '"+ field_id+"');",
                                 }).text($selected.text()));
-        var str_qty = '';
-        if (newqty != 1)
-            str_qty = 'x' + newqty.toString();
-        newdiv.append($("<span>", {'class': 'qty'})).text(str_qty);
+        
+        newdiv.append($("<span>", {'class': 'qty'}).text(str_qty));
 
         newdiv.append($("<a>", {'class': 'part_delete', 'onclick': "part_delete('" +$selected.val()+"');"}).text('X'));
 
