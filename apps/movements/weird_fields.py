@@ -14,10 +14,13 @@ from products.models import Manufacturer, ItemTemplate, ItemCategoryContain
 from products.form_fields import CATItem
 
 """ Fields used by the PO wizard
+
+    The wizard is mainly built using custom widgets, with a mixture of http and
+    JS logic.
 """
 
 class DummySupplierWidget(DetailForeignWidget):
-    
+
     def value_from_datadict(self, data, files, name):
         """Instead of our widget (that is not rendered in the form), take either -vat or -name data
         """
@@ -34,16 +37,52 @@ class ValidChoiceField(forms.ChoiceField):
     def valid_value(self, value):
         return True
 
+class ItemsTreePart(object):
+    """ A leaf part contained in some TreeItem
+    """
+    def __init__(self, item, quantity):
+        self.item = item
+        self.quantity = quantity
+
+class ItemsTreeCat(object):
+    """ A category node contained in TreeItem, having TreeParts
+    """
+    def __init__(self, may_contain_id, pqs):
+        self._mc = ItemCategoryContain.objects.get(pk=may_contain_id)
+        self.parts = []
+        for p, q in pqs:
+            self.parts.append(ItemsTreePart(p, q))
+    
+    def __getattr__(self, name):
+        return getattr(self._mc, name)
+
+class ItemsTreeItem(object):
+    def __init__(self, item_template, quantity, line_num, parts=None, serials=None):
+        self.item_template = item_template
+        self.quantity = quantity
+        self.line_num = line_num
+        self.parts = []
+        if parts:
+            for category_id, pqs in parts.items():
+                self.parts.append(ItemsTreeCat(category_id, pqs))
+    
+    @property
+    def state(self):
+        return '??'
+
 class ItemsTreeWidget(forms.widgets.Widget):
     def render(self, name, value, attrs=None):
-        if value is None:
-            value = {}
+        items = []
+        if value:
+            for kv in value:
+                items.append(ItemsTreeItem(**kv))
+
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
         context = {
             'name': name,
             'html_id': self.html_id,
-            'items': value or [],
+            'items': items,
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-","")
         }

@@ -2,15 +2,29 @@
 {% load styling %}
 {% load generic_views_helpers %}
 
-<table class="">
+<table class="wiz_treeitems">
 <thead>
     <tr><td>{% trans 'Product'%}</td><td>{% trans 'State' %}</td><td colspan="2">{% trans 'Actions' %}</td></tr>
 </thead>
 
 <tbody>
     {% for item in items %}
-    <tr><td>{{ item.item_template.category }}: {{ item.item_template }}
-        {% if item.quantity != 1 %}x{{ item.quantity}}{% endif %}</td>
+    <tr><td><span class="category">{{ item.item_template.category }}:</span> {{ item.item_template }}
+        {% if item.quantity != 1 %}<span class="qty">(x{{ item.quantity}})</span>{% endif %}
+        {% if item.parts %}
+            <ul class="item_parts" id="id_{{item.line_num}}">
+                {% for icat in item.parts %} {% if icat.parts %}
+                <li><span class="category">{{icat.category.name}}:</span>
+                    {% for ip in icat.parts %} {{ ip.item }} {% if ip.quantity != 1 %}<span class="qty">(x{{ip.quantity}})</span>{% endif %}
+                    {% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+        </td>
+        
         <td>{{ item.state }}</td>
         <td><button type="submit" name="iaction" value="edit:{{ item.line_num }}" title="{%trans 'Edit' %}"><span class="famfam active famfam-pencil"></span></button></td>
         <td><button type="submit" name="iaction" value="delete:{{ item.line_num }}" title="{%trans 'Delete' %}"><span class="famfam active famfam-cross"></span></button></td>
