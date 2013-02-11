@@ -6,6 +6,11 @@ div {
     background-repeat: no-repeat;
 }
 
+/* override the one at style.css , just for the wizard */
+#main {
+    width: 80%;
+}
+
 .raw_image {
     width: 100%;
     height: 100%;
