@@ -13,8 +13,11 @@ class ItemTemplateForm(forms.ModelForm):
         super(ItemTemplateForm, self).__init__(data, files, **kwargs)
         # Ugly hack: let our category be contained in initial data fed to
         # the field+widget
-        self.initial['attributes'] = {'from_category': self.instance.category,
-            'all': self.instance.attributes.values_list('value_id', flat=True) }
+        if self.instance and self.instance.pk:
+            self.initial['attributes'] = {'from_category': self.instance.category,
+                'all': self.instance.attributes.values_list('value_id', flat=True) }
+        else:
+            self.initial['attributes'] = {}
 
     def save(self, commit=True):
         ret = super(ItemTemplateForm, self).save(commit=commit)

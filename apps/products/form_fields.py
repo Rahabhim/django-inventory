@@ -185,7 +185,7 @@ class CategoriesAttributesWidget(forms.widgets.Widget):
 
     def subwidgets(self, name, value, attrs=None, choices=()):
         if not (value and ('from_category' in value)):
-            raise KeyError("Value is not prepared!")
+            return
         for cattr in value['from_category'].attributes.all():
             yield CATItem(name, cattr, value.get('all', []))
 
@@ -235,7 +235,10 @@ class CategoriesAttributesField(forms.Field):
         return filter(bool, value)
 
     def bound_data(self, data, initial):
-        ret = initial.copy()
+        if initial:
+            ret = initial.copy()
+        else:
+            ret = {}
         if data:
             ret['all'] = data
         return ret
@@ -251,7 +254,8 @@ class CategoriesAttributesField(forms.Field):
             force those attributes required, reject ones that do not apply to the
             category
         """
-        
+        if not instance.pk:
+            return
         orig_aval_ids = map(int, cleaned_data.pop('attributes', []))
         attribs = {}
         for id, required, name in instance.category.attributes.values_list('id', 'required', 'name'):
