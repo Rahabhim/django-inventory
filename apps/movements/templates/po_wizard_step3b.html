@@ -85,6 +85,7 @@
         $(field_id +'_menu').addClass('selected');
         $('#fill_in_pane > div').hide();
         $(field_id).show('fast');
+        $(field_id+"_part").val('');
     }
 
     /** edit part
@@ -96,13 +97,14 @@
         $('#cont_parts-'+ part_id).addClass('selected');
         $('#fill_in_pane > div').hide();
         $(field_id).show('fast');
+        var part_qty = $('#cont_parts-'+ part_id +' input[name="'+ field_id.substr(1)+'_part_qty"]').val();
         /* Cleanup the right pane and display our part on deck */
         $(field_id + "_manuf_combo option:selected").prop("selected", false);
         $(field_id + "_combo option:selected").prop("selected", false);
         $(field_id + "_attribs option:selected").prop("selected", false);
         $(field_id + "_part").val(part_id);
         $(field_id + "_on_deck").text($('#cont_parts-' + part_id + ' > a.cont_part').text());
-        /* TODO: quantity */
+        $(field_id + "_qty").val(part_qty);
     }
 
     /** Remove part
@@ -143,28 +145,58 @@
             return false; 
         }
 
-        var fake_win = new Object();
-        {# /* bind fake_win to item autocompletion, so that its select() is returned */ #}
-        /* $("#{{form.item_template.auto_id}}").autocompleteselect(fake_win);
-        fake_win.select(null, {item: {pk: $selected.val(), repr: $selected.text()}}); */
-
+        
         // Here, we just display the text:
         $(field_id + '_on_deck').text($selected.text());
 //         TODO!
+        var part_val = $(field_id+ '_part').val();
+        console.log("Old value:"+ part_val);
+        if (part_val){
+            if (part_val != $selected.val()){
+                console.log("updating..." + part_val);
+                $("#cont_parts-"+part_val).remove();
+            }
+            else {
+                // no need to do anything, or is there?
+                return;
+            }
+        }
+        else { // new part
+            console.log("new part");
+        }
+        
         // But then, we store the real value in the left pane
         var newdiv = $("<div>", {id: "cont_parts-" + $selected.val()});
+        var newqty = $(field_id+'_qty').val();
         newdiv.append($("<input>", {'type': 'hidden', 
                                     name: field_id.substr(1) +'_parts',
                                     value: $selected.val() } ));
+        newdiv.append($("<input>", {'type': 'hidden', 
+                                    name: field_id.substr(1) +'_part_qty',
+                                    value: newqty } ));
         newdiv.append($("<a>", {'class': 'cont_part',
                                 'onclick': "part_update('" +$selected.val()+"', '"+ field_id+"');",
                                 }).text($selected.text()));
+        var str_qty = '';
+        if (newqty != 1)
+            str_qty = 'x' + newqty.toString();
+        newdiv.append($("<span>", {'class': 'qty'})).text(str_qty);
 
         newdiv.append($("<a>", {'class': 'part_delete', 'onclick': "part_delete('" +$selected.val()+"');"}).text('X'));
 
         $(field_id + '_on_deck1').append(newdiv);
+        $(field_id+ '_part').val($selected.val()); // update this, so that 2nd selection replaces the first
     }
 
+    function upd_quantity(field_id) {
+        var part_id = $(field_id+ '_part').val();
+        var newqty = $(field_id + "_qty").val();
+        $('#cont_parts-'+ part_id +' input[name="'+ field_id.substr(1)+'_part_qty"]').val(newqty);
+        if (newqty != 1)
+            $('#cont_parts-'+ part_id +' span.qty').text('x' + newqty.toString());
+        else
+            $('#cont_parts-'+ part_id +' span.qty').text('');
+    }
     /** Setup some field to provide search for category
 
         @param field_id the html id of the field (and sub-elements)
@@ -178,6 +210,7 @@
         $(field_id + "_manuf_combo").change(upd_product2);
         $(field_id + "_attribs > select").change(upd_product2);
         $(field_id + "_combo").change(function() { select_some_part(field_id); } );
+        $(field_id + "_qty").change(function() { upd_quantity(field_id); });
     }
 </script>
 

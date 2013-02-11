@@ -28,7 +28,9 @@
                     <div class="on_deck" id="{{mand.did}}_on_deck1">
                     {% for part, qty in mand.parts %}
                         <div id="cont_parts-{{part.id}}">
-                            <input type="hidden" name="{{mand.did }}_parts" value="{{part.id}}"><a class="cont_part" onclick="part_update('{{part.id}}', '#{{mand.did}}');">{{part.description}}</a><a class="part_delete" onclick="part_delete('{{part.id}}');">X</a>
+                            <input type="hidden" name="{{mand.did }}_parts" value="{{part.id}}"><input type="hidden" name="{{mand.did }}_part_qty" value="{{qty}}"><a class="cont_part" onclick="part_update('{{part.id}}', '#{{mand.did}}');">{{part.description}}</a>
+                        <span class="qty">{% if qty > 1%}x{{qty}}{% endif %}</span>
+                        <a class="part_delete" onclick="part_delete('{{part.id}}');">X</a>
                         </div>
                     {% endfor %}
                     </div>
@@ -71,7 +73,7 @@
                         <div id="{{ mand.did }}_on_deck">Δεν βρέθηκε</div>
                     </div>
                     <div class="line_vals">
-                        <label for="">Ποσότητα</label><input type="text" name="_qty" value="1" />
+                        <label for="{{mand.did}}_qty">Ποσότητα</label><input type="text" id="{{mand.did}}_qty" value="1" />
                     </div>
                 </div>
             {% endfor %}
