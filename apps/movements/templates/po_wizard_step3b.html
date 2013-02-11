@@ -186,6 +186,9 @@
 
 {% with wizard.form as form %}
 
+    {% for error in form.ig.errors %}
+        <div class="error">{{ error }}</div>
+    {% endfor %}
     {{ form.ig }}
 {% endwith %}
 </div>

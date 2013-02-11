@@ -102,7 +102,6 @@ class PO_Step3(WizardForm):
                         'item_template2', 'product_attributes'):
             our_data.pop(ufield, None)
         aitems = step4_data.setdefault('4-items',[])
-        full_data = None
         if not our_data.get('line_num', False):
             # we have to compute an unique id for the new line_num
             lnmax = 0
@@ -111,24 +110,25 @@ class PO_Step3(WizardForm):
                     lnmax = it['line_num']
             assert isinstance(lnmax, int), "Not an int, %s: %r" %( type(lnmax), lnmax)
             our_data['line_num'] = lnmax + 1
+            our_data['parts'] = {}
             aitems.append(our_data)
         else:
             for it in aitems:
                 if it.get('line_num', False) == our_data['line_num']:
                     it.update(our_data) # in-place
-                    full_data = it
+                    our_data = it
                     break
             else:
                 # line not found
+                our_data['parts'] = {}
                 aitems.append(our_data)
         wizard.storage.set_step_data('4', step4_data)
-        print "itl;", our_data['item_template']
         if our_data['item_template'].category.is_bundle:
-            print "iz bundleh"
-            
             step3b_data = MultiValueDict()
             step3b_data['3b-ig'] = { 'line_num': our_data['line_num'],
-                                    'item_template': our_data['item_template'] }
+                                    'item_template': our_data['item_template'],
+                                    'parts': our_data.get('parts', {}),
+                                    }
             wizard.storage.set_step_data('3b', step3b_data)
             return '3b'
         else:
@@ -142,6 +142,34 @@ class PO_Step3b(WizardForm):
     step_is_hidden = True
 
     ig = ItemsGroupField()
+    
+    def save_data(self, wizard):
+        # ...
+        step4_data = wizard.storage.get_step_data('4')
+        # implementation note: with Session storage, the "getattr(data)" called through
+        # get_step_data will set "session.modified=True" and hence what we do below
+        # will be preserved
+        if step4_data is None:
+            step4_data = MultiValueDict()
+            
+        aitems = step4_data.setdefault('4-items',[])
+        our_data = self.cleaned_data.get('ig', {})
+        if not our_data.get('line_num', False):
+            raise RuntimeError("Step 3b data does not have a line_num from step 3!")
+        else:
+            for it in aitems:
+                if it.get('line_num', False) == our_data['line_num']:
+                    assert it.get('item_template') == our_data['item_template'], \
+                            "Templates mismatch: %r != %r" % (it.get('item_template'), our_data['item_template'])
+                    it['parts'] = our_data['parts']  # in-place
+                    break
+            else:
+                raise RuntimeError("Step 3b data match any line_num at step 4!")
+        wizard.storage.set_step_data('4', step4_data)
+        wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'})
+        wizard.storage.set_step_data('3b', {})
+        return '4'
+
 
 class PO_Step4(WizardForm):
     title = _("Final Review")

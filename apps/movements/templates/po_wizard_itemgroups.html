@@ -23,16 +23,21 @@
     </thead>
     
     <tbody><tr><td id="groups_mandatory" width="40%">
-            {% for mand in mandatory_groups %}
+            {% for mand in igroups %}{% if mand.mandatory %}
                 <div id="{{ mand.did }}_menu"><div class="gname">{{ mand.name }}</div>
                     <div class="on_deck" id="{{mand.did}}_on_deck1">
+                    {% for part, qty in mand.parts %}
+                        <div id="cont_parts-{{part.id}}">
+                            <input type="hidden" name="{{mand.did }}_parts" value="{{part.id}}"><a class="cont_part" onclick="part_update('{{part.id}}', '#{{mand.did}}');">{{part.description}}</a><a class="part_delete" onclick="part_delete('{{part.id}}');">X</a>
+                        </div>
+                    {% endfor %}
                     </div>
                     <div class="add_more"><a onClick="add_to('#{{mand.did}}')">Προσθήκη</a></div>
                 </div>
-            {% endfor %}
+            {% endif %}{% endfor %}
             </td>
         <td id="fill_in_pane" rowspan="4" width="60%">
-            {% for mand in mandatory_groups %}
+            {% for mand in igroups %}
                 <div id="{{mand.did}}">
                     <input type="hidden" id="{{mand.did}}_part" value="" />
                     <div class="gname">{{ mand.name }}</div>
@@ -77,9 +82,10 @@
             {# TODO: filled ones #}
             <select name="{{ html_id }}_add_more">
                 <option value="">-----</option>
-            {% for opt in optional_groups %}
+            {% for opt in igroups %}{% if opt.mandatory or opt.parts %}
+                {% else %}
                 <option value="opt.value">{{ opt.name }}</option>
-            {% endfor %}
+            {% endif %}{% endfor %}
             </select>
             <div class="add_more"><a onclick="">Προσθήκη</a></div>
             </td>
@@ -97,7 +103,7 @@
 
 <script>
 $(function () {
-    {% for mand in mandatory_groups %}
+    {% for mand in igroups %}
         setup_category('#{{mand.did}}', '{{ mand.cat_id }}');
     {% endfor %}
  });

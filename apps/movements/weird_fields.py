@@ -10,7 +10,7 @@ from django.db.models import Count
 from generic_views.forms import DetailForeignWidget
 from django.forms.util import flatatt
 
-from products.models import Manufacturer
+from products.models import Manufacturer, ItemTemplate, ItemCategoryContain
 from products.form_fields import CATItem
 
 """ Fields used by the PO wizard
@@ -68,9 +68,10 @@ class _AttribsIter(object):
             yield CATItem(name, cattr, []) # value.get('all', []))
 
 class IGW_Attribute(StrAndUnicode):
-    def __init__(self, parent, obj):
+    def __init__(self, parent, obj, parts=None):
         self._parent = parent
         self._obj = obj
+        self._parts = parts or []
 
     def __unicode__(self):
         return unicode(self._obj)
@@ -99,20 +100,57 @@ class IGW_Attribute(StrAndUnicode):
                         annotate(num_products=Count('products')).order_by('-num_products')
 
     @property
+    def parts(self):
+        return self._parts
+
+    @property
     def attribs(self):
         return _AttribsIter(self)
 
+    @property
+    def mandatory(self):
+        return (self._obj.min_count > 0)
+
+    @property
+    def min_count(self):
+        return self._obj.min_count
+
+    @property
+    def max_count(self):
+        return self._obj.max_count
+
 class ItemsGroupWidget(forms.widgets.Widget):
+    """
+        The value should be like::
+        
+            {   line_num: the line at step4 being edited
+                item_template: the main product, in which we add parts
+                parts: { may_contain.id: list[ tuple(object, quantity), ...] }
+            }
+    """
 
     def value_from_datadict(self, data, files, name):
         # TODO
-        #if isinstance(data, QueryDict):
-            ## it comes from form submission
-            #pass
-        #elif isinstance(data, MultiValueDict):
-            ## from step 3
-            #pass
-        return data.get(name, {})
+        if name in data:
+            # from step 3
+            return data[name]
+        elif ('id_%s_item_template' % name) in data:
+            # it comes from form submission
+            ret = {}
+            # We have to decode the various fields:
+            ret['item_template'] = ItemTemplate.objects.get(pk=data['id_%s_item_template' % name])
+            ret['line_num'] = data.get('id_%s_line_num' % name, None)
+            if ret['line_num']:
+                ret['line_num'] = int(ret['line_num'])
+            ret['parts'] = {}
+            for mc in ret['item_template'].category.may_contain.all():
+                pa = ret['parts'][mc.id] = []
+                for dpart in data.getlist('id_%s-%d_parts' %(name, mc.id), []):
+                    dpart_id = int(dpart) # TODO
+                    pa.append((ItemTemplate.objects.get(pk=dpart_id, category=mc.category), 1))
+            return ret
+        else:
+            return {}
 
     def bound_data(self, data, initial):
         if initial:
@@ -129,25 +167,22 @@ class ItemsGroupWidget(forms.widgets.Widget):
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
         item_template = value.get('item_template', None)
-        optional_groups = []
-        mandatory_groups = []
+        parts = value.get('parts', {})
+        igroups = []
         if item_template is not None:
             for mc in item_template.category.may_contain.all():
-                if mc.min_count > 0:
-                    mandatory_groups.append(IGW_Attribute(self, mc))
-                else:
-                    optional_groups.append(IGW_Attribute(self, mc))
+                igroups.append(IGW_Attribute(self, mc, parts.get(mc.id, [])))
             # TODO fill previous data
 
         context = {
             'name': name,
             'html_id': self.html_id,
+            'line_num': value.get('line_num', ''),
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
 
             'item_template': item_template,
-            'optional_groups': optional_groups,
-            'mandatory_groups': mandatory_groups,
+            'igroups': igroups,
         }
 
         return mark_safe(render_to_string('po_wizard_itemgroups.html', context))
