@@ -1,0 +1,104 @@
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+<p class="product" >
+    Επιλεγμένος εξοπλισμός:<br/>
+    <input type="hidden" name="{{html_id}}_item_template" value="{{item_template.id}}" />
+    <input type="hidden" name="{{html_id}}_line_num" value="{{ line_num }}" />
+    {{ item_template.description }}
+</p>
+
+<p class="hint">Παρακαλούμε συμπληρώστε τα εξαρτήματα του εξοπλισμού που επιλέξατε.
+Για τα εξαρτήματα με * είναι υποχρεωτική η συμπλήρωση. 
+Για κάθε ένα από τα εξαρτήματα στα αριστερά επιλέξτε Προσθήκη και εισάγετε
+την περιγραφή του στα δεξιά.
+Δε μπορείτε να προχωρήσετε στο επόμενο βήμα, αν δεν έχετε ολοκληρώσει την
+εισαγωγή των στοιχείων όλων των υποχρεωτικών εξαρτημάτων.
+</p>
+
+<table class="two_cols">
+    <thead><tr><th>Υποχρεωτικά εξαρτήματα</th>
+        <th>Χώρος εισαγωγής στοιχείων</th></tr>
+    </thead>
+    
+    <tbody><tr><td id="groups_mandatory" width="40%">
+            {% for mand in mandatory_groups %}
+                <div id="{{ mand.did }}_menu"><div class="gname">{{ mand.name }}</div>
+                    <div class="on_deck" id="{{mand.did}}_on_deck1">
+                    </div>
+                    <div class="add_more"><a onClick="add_to('#{{mand.did}}')">Προσθήκη</a></div>
+                </div>
+            {% endfor %}
+            </td>
+        <td id="fill_in_pane" rowspan="4" width="60%">
+            {% for mand in mandatory_groups %}
+                <div id="{{mand.did}}">
+                    <input type="hidden" id="{{mand.did}}_part" value="" />
+                    <div class="gname">{{ mand.name }}</div>
+                    <div class="product_search">
+                        <!-- like step 3 -->
+                        <div>
+                            <p>Κωδικός προϊόντος:
+                                <input type="text" id="{{mand.did}}_text" value="" width="7em" />
+                            </p>
+                        </div>
+                        <p align="center"> ή </p>
+
+                        <div> <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία: </p>
+            
+                            Κατασκευαστής:
+                            <select id="{{mand.did}}_manuf_combo">
+                                <option value="">------</option>
+                                {% for manuf in mand.manufs  %}
+                                <option value="{{manuf.id}}">{{ manuf.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <br/>
+                            <div id="{{mand.did }}_attribs">
+                            {% for attrib in mand.attribs %}
+                                {{ attrib|safe }}
+                            {% endfor %}
+                            </div>
+                            <br/>
+                            Προϊόν: <select id="{{mand.did}}_combo" ><option value="">-----</option></select>
+                        </div>
+                        <div id="{{ mand.did }}_on_deck">Δεν βρέθηκε</div>
+                    </div>
+                    <div class="line_vals">
+                        <label for="">Ποσότητα</label><input type="text" name="_qty" value="1" />
+                    </div>
+                </div>
+            {% endfor %}
+        </td>
+        </tr>
+        <tr><th id="title_optional">Λοιπές κατηγορίες (Προαιρετική συμπλήρωση)</th></tr>
+        <tr><td id="groups_optional">
+            {# TODO: filled ones #}
+            <select name="{{ html_id }}_add_more">
+                <option value="">-----</option>
+            {% for opt in optional_groups %}
+                <option value="opt.value">{{ opt.name }}</option>
+            {% endfor %}
+            </select>
+            <div class="add_more"><a onclick="">Προσθήκη</a></div>
+            </td>
+        </tr>
+        <tr><td>
+            <b>Σημείωση:</b><br/>
+            • Αν το εξάρτημα που επιθυμείτε να προσθέσετε δεν υπάρχει στην
+            παραπάνω λίστα επιλέξτε <b>Άλλο Εξάρτημα</b>, όπου θα ανοίξει 
+            νέο παράθυρο και θα σας ζητηθεί να εισάγετε την περιγραφή του προϊόντος.
+            <button type="submit" name="{{html_id}}_other_item" value="1">Άλλο Εξάρτημα</button>
+        </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+$(function () {
+    {% for mand in mandatory_groups %}
+        setup_category('#{{mand.did}}', '{{ mand.cat_id }}');
+    {% endfor %}
+ });
+</script>

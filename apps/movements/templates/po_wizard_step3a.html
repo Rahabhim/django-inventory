@@ -1,0 +1,37 @@
+{% extends "po_wizard_base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+{% block pow_content %}
+<div class="u2_form">
+{{ wizard.form.management_form }}
+
+{% with wizard.form as form %}
+    <table class="wiz_form">
+    <tr><td colspan="3">Επιλέξατε Άλλο, που σημαίνει ότι το στοιχείο που αναζητάτε δεν περιέχεται στη λίστα.</td></tr>
+    <tr><td colspan="3">Παρακαλούμε εισάγετε παρακάτω τις παρακάτω πληροφορίες για το στοιχείο αυτό και πατήστε Αποστολή για να μας σταλεί. Στη συνέχεια θα λάβετε απάντηση το συντομότερο δυνατό στο email του λογαριασμού με τον οποίο έχετε συνδεθεί.</td></tr>
+    {% for field in form%}
+    <tr><th>{{ field.label }}</th>
+        {% if field.errors %}
+        <td colspan="2" class="wf_error">
+            {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
+        </td>
+        </tr><tr><th>&nbsp;</th>
+        {% endif %}
+        <td class="wf_middle"></td><td class="wf_field">{{field }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+
+{% endwith %}
+</div>
+
+<div width="100%">
+<p align="right">
+    <input id="submit0" type="submit" value="{% trans 'Submit' %}">
+</p>
+</div>
+
+{% endblock %}
+

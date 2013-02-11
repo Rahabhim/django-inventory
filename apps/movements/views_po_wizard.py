@@ -8,7 +8,7 @@ from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib import messages
 
 from common.models import Supplier
-from products.models import ItemCategory, Manufacturer
+from products.models import ItemCategory, Manufacturer, ItemTemplate
 from products.form_fields import CategoriesSelectWidget, CategoriesAttributesField
 from procurements.models import Contract
 from ajax_select.fields import AutoCompleteSelectField #, AutoCompleteSelectMultipleField
@@ -18,7 +18,7 @@ from django.forms.util import ErrorDict
 from django.utils.datastructures import MultiValueDict
 
 from models import PurchaseOrder
-from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField
+from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField
 
 logger = logging.getLogger('apps.movements.po_wizard')
 
@@ -102,6 +102,7 @@ class PO_Step3(WizardForm):
                         'item_template2', 'product_attributes'):
             our_data.pop(ufield, None)
         aitems = step4_data.setdefault('4-items',[])
+        full_data = None
         if not our_data.get('line_num', False):
             # we have to compute an unique id for the new line_num
             lnmax = 0
@@ -115,14 +116,32 @@ class PO_Step3(WizardForm):
             for it in aitems:
                 if it.get('line_num', False) == our_data['line_num']:
                     it.update(our_data) # in-place
+                    full_data = it
                     break
             else:
                 # line not found
                 aitems.append(our_data)
         wizard.storage.set_step_data('4', step4_data)
-        wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
+        print "itl;", our_data['item_template']
+        if our_data['item_template'].category.is_bundle:
+            print "iz bundleh"
+            
+            step3b_data = MultiValueDict()
+            step3b_data['3b-ig'] = { 'line_num': our_data['line_num'],
+                                    'item_template': our_data['item_template'] }
+            wizard.storage.set_step_data('3b', step3b_data)
+            return '3b'
+        else:
+            # note: this must also happen after step 3b!
+            wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
         return '4'
 
+
+class PO_Step3b(WizardForm):
+    title = _("Add bundled items")
+    step_is_hidden = True
+
+    ig = ItemsGroupField()
 
 class PO_Step4(WizardForm):
     title = _("Final Review")
