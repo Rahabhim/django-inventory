@@ -313,6 +313,16 @@ class GenericDeleteView(_PermissionsMixin, django_gv.DeleteView):
         context['delete_view'] = True
         return context
 
+    def get_success_url(self):
+        if self.success_url:
+            if '/' in self.success_url:
+                return self.success_url
+            else:
+                return reverse(self.success_url)
+        else:
+            raise ImproperlyConfigured(
+                "No URL to redirect to. Provide a success_url.")
+
 class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
     """ Form-based, read-only view of an object
     """
