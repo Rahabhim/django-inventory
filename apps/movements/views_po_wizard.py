@@ -39,8 +39,8 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
     title = _("Purchase Order Header Data")
     user_id = forms.CharField(max_length=32, required=False, label=_(u'purchase order number'))
     #procurement = models.ForeignKey('procurements.Contract', null=True, blank=True, label=_("procurement contract"))
-    issue_date = forms.DateField(label=_(u'issue date'), required=False)
-    
+    issue_date = forms.DateField(label=_(u'issue date'), required=True)
+
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.all())
     supplier_name_or_vat = forms.ChoiceField(label=_('Find by'), widget=forms.widgets.RadioSelect,
             initial='name',
