@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
 import logging
+from collections import defaultdict
 from django.utils.translation import ugettext_lazy as _
 
 from django import forms
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib import messages
 
@@ -182,6 +183,36 @@ class PO_Step4(WizardForm):
     title = _("Final Review")
     items = ItemsTreeField(label=_("Items"), required=False)
 
+
+    @classmethod
+    def prepare_data_from(cls, po_instance):
+        """Read the db data from po_instance and populate our special dictionary
+        """
+        items = []
+        for po_item in po_instance.items.all():
+            r = {'line_num': po_item.id,
+                 'item_template': po_item.item_template,
+                 'quantity': po_item.qty,
+                 'serials': po_item.serial_nos,
+                 'parts': {},
+                 }
+            pbc = defaultdict(list) # parts, by category
+            for p in po_item.bundled_items.all():
+                pbc[p.category_id].append((p.item_template, p.qty))
+
+            if po_item.item_template.category.is_bundle:
+                for mc in po_item.item_template.category.may_contain.all():
+                    r['parts'][mc.id] = pbc.pop(mc.category_id, [])
+
+            if pbc:
+                logger.warning("Stray parts found for template %s: %r", po_item.item_template, pbc)
+
+            items.append(r)
+
+        ret = MultiValueDict()
+        ret['4-items'] = items
+        return ret
+
 class PO_Step5(WizardForm):
     title = _("Successful Entry - Finish")
     subject = forms.CharField(max_length=100, required=False)
@@ -222,12 +253,36 @@ class PO_Wizard(SessionWizardView):
             ret['product_attributes'] = {'from_category': step2_data.get('new_category', ItemCategory()), 'all': [] }
         return ret
 
+    def get_form_instance(self, step):
+        if step == '1' and 'po_pk' in self.storage.extra_data:
+            return PurchaseOrder.objects.get(pk=self.storage.extra_data['po_pk'])
+        return super(PO_Wizard, self).get_form_instance(step)
+
     def get(self, request, *args, **kwargs):
         """ This method handles GET requests.
         
             Unlike the parent WizardView, keep the storage accross GETs and let the
             user continue with previous wizard data.
+            
+            BUT, if we are called with `object_id=123` , that means we need to reset
+            the storage, load an existing PO and edit that instead. We do all the
+            loading into the storage and then redirect to the persistent wizard.
         """
+        if 'object_id' in kwargs:
+            # code from super().get() :
+            self.storage.reset()
+            # Start from step 4!
+            self.storage.current_step = '4' # rather than: self.steps.first
+            
+            po_instance = get_object_or_404(PurchaseOrder, pk=kwargs['object_id'])
+            self.storage.extra_data = {'po_pk': po_instance.id }
+            # Loading the instance into step1's data is hard, so we defer to
+            # get_form_instance(step=1) instead
+            
+            # But, we can do the pre-processing of step4 here:
+            self.storage.set_step_data('4', self.form_list['4'].prepare_data_from(po_instance))
+            
+            return redirect('purchaseorder_wizard') # use the plain url, that won't reset again
         # TODO: load PO from kwargs
         return self.render(self.get_form())
     
@@ -243,13 +298,15 @@ class PO_Wizard(SessionWizardView):
                     line_num = int(data['iaction'][5:])
                     old_data = None
                     for item in self.storage.get_step_data(step)['4-items']:
-                        if item.get('line_num', -1) == line_num:
+                        if item.get('line_num', 'foo') == line_num:
                             old_data = item
                             break
                     else:
                         raise IndexError("No line num: %s" % line_num)
                     self.storage.current_step = '3'
                     data = self.storage.get_step_data(self.storage.current_step)
+                    if data is None:
+                        data = MultiValueDict()
                     data['3-quantity'] = old_data['quantity']
                     data['3-item_template'] = old_data['item_template'].id
                     data['3-serials'] = old_data['serials']
@@ -303,9 +360,6 @@ class PO_Wizard(SessionWizardView):
         # change the stored current step
         self.storage.current_step = next_step
         return self.render(new_form, **kwargs)
-
-def get_po_wizview(*args, **kwargs):
-    return PO_Wizard.as_view(**kwargs)
 
 
 #eof

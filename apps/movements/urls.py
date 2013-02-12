@@ -28,7 +28,7 @@ from company import make_mv_location
 from main import cart_utils
 import views
 
-from views_po_wizard import get_po_wizview
+from views_po_wizard import PO_Wizard
 
 state_filter = {'name':'state', 'title':_(u'state'), 
             'choices':'movements.Movement.state' , 'destination':'state'}
@@ -225,7 +225,8 @@ urlpatterns = patterns('movements.views',
     url(r'^objects/moves/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Movement, success_url="movements_pending_list", 
                 extra_context=dict(object_name=_(u'Movement'))), name='movement_delete'),
 
-    url(r'^po/wizard/$', get_po_wizview(), name="purchaseorder_wizard" ),
+    url(r'^po/wizard/$', PO_Wizard.as_view(), name="purchaseorder_wizard" ),
+    url(r'^po/wizard/(?P<object_id>\d+)/$', PO_Wizard.as_view(), name="purchaseorder_wizard_update" ),
 )
 
 #eof

@@ -47,6 +47,7 @@ purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'ar
 purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_link',
             'view':'purchase_order_receive', 'args':'object.id', 
             'condition': lambda o,c: o.active }
+purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard', 'famfam':'cart_add'}
 
 purchase_order_item_create = {'text':_('add new item'), 'view':'purchase_order_item_create', 'args':'object.id', 'famfam':'cart_put'}
 purchase_order_item_update = {'text':_('edit item'), 'view':'purchase_order_item_update', 'args':'object.id', 'famfam':'cart_go'}
@@ -96,7 +97,7 @@ action_move = dict(text=_(u'Move assets'), view='move_items', famfam='computer_g
 
 register_links( ['item_list'], [ action_destroy, action_lose, action_move ], menu_name='sidebar')
 register_links(['home',], [action_destroy, action_lose, action_move ], menu_name='start_actions')
-register_links(['home',], [purchase_order_create ], menu_name='start_actions')
+register_links(['home',], [purchase_order_wizard ], menu_name='start_actions')
 
 register_links([('purchase_order_receive', Movement),], 
         [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',
