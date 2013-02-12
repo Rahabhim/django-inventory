@@ -47,7 +47,7 @@ purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'ar
 purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_link',
             'view':'purchase_order_receive', 'args':'object.id', 
             'condition': lambda o,c: o.active }
-purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard', 'famfam':'cart_add'}
+purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add'}
 
 purchase_order_item_create = {'text':_('add new item'), 'view':'purchase_order_item_create', 'args':'object.id', 'famfam':'cart_put'}
 purchase_order_item_update = {'text':_('edit item'), 'view':'purchase_order_item_update', 'args':'object.id', 'famfam':'cart_go'}

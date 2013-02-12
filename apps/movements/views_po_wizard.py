@@ -278,14 +278,19 @@ class PO_Wizard(SessionWizardView):
             self.storage.extra_data = {'po_pk': po_instance.id }
             # Loading the instance into step1's data is hard, so we defer to
             # get_form_instance(step=1) instead
-            
+
             # But, we can do the pre-processing of step4 here:
             self.storage.set_step_data('4', self.form_list['4'].prepare_data_from(po_instance))
-            
+
             return redirect('purchaseorder_wizard') # use the plain url, that won't reset again
+        elif kwargs.get('new', False):
+            # just reset the data..
+            self.storage.reset()
+            return redirect('purchaseorder_wizard')
+    
         # TODO: load PO from kwargs
         return self.render(self.get_form())
-    
+
     def get_form(self, step=None, data=None, files=None):
         if step is None:
             step = self.steps.current

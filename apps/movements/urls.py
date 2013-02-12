@@ -226,6 +226,7 @@ urlpatterns = patterns('movements.views',
                 extra_context=dict(object_name=_(u'Movement'))), name='movement_delete'),
 
     url(r'^po/wizard/$', PO_Wizard.as_view(), name="purchaseorder_wizard" ),
+    url(r'^po/wizard/new/$', PO_Wizard.as_view(), kwargs={'new': True}, name="purchaseorder_wizard_new" ),
     url(r'^po/wizard/(?P<object_id>\d+)/$', PO_Wizard.as_view(), name="purchaseorder_wizard_update" ),
 )
 
