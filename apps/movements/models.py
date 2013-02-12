@@ -327,7 +327,6 @@ class PurchaseOrderItemStatus(models.Model):
     def get_absolute_url(self):
         return ('purchase_order_item_state_list', [])
 
-
 class PurchaseOrderItem(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'), related_name='items')
     item_name = models.CharField(max_length=128, null=True, blank=True,
@@ -339,8 +338,6 @@ class PurchaseOrderItem(models.Model):
     qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
     received_qty = models.PositiveIntegerField(default=0, null=True, blank=True, verbose_name=_(u'received'))
     serial_nos = models.CharField(max_length=512, verbose_name=_(u"Serial Numbers"), blank=True)
-    bundled_items = models.ManyToManyField(ItemTemplate, verbose_name=_("bundled items"),
-                null=True, blank=True, related_name='+')
 
     class Meta:
         verbose_name = _(u'purchase order item')
@@ -447,6 +444,18 @@ class PurchaseOrderItem(models.Model):
         self.item_template = obj
         self.save()
         return 'return'
+
+class PurchaseOrderBundledItem(models.Model):
+    parent_item = models.ForeignKey(PurchaseOrderItem, verbose_name=_("bundled items"), related_name="bundled_items")
+    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'), null=True, blank=True)
+    qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
+
+    class Meta:
+        verbose_name = _(u'bundled item')
+        verbose_name_plural = _(u'bundled items')
+
+    def __unicode__(self):
+        return unicode(self.item_template)
 
 class MovementManager(models.Manager):
     def by_request(self, request):
