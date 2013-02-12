@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+{% block title %}{%trans " Purchase order wizard" %}{% endblock %}
+
+{% block stylesheets %}
+    {{ wizard.form.media }}
+    <!--<link href="{{ STATIC_URL }}css/po_wizard.css" type="text/css" rel="stylesheet">-->
+    <style type="text/css">
+    /*-*/
+    {% include "po_wizard.css" %}
+
+    </style>
+{% endblock %}
+
+{% block content %}
+<div id="u0" class="u0_container"   >
+
+<div class="u2_form">
+    {% with po=form_data %}
+    <p>{% blocktrans %} The purchase order {{ po.user_id }} has been saved. You can now proceed to validation. {% endblocktrans %} </p>
+    {% endwith %}
+</div>
+
+
+
+{% endblock %}
+

@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
 import logging
 from collections import defaultdict
+from operator import itemgetter
 from django.utils.translation import ugettext_lazy as _
+from django.template import RequestContext
 
 from django import forms
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -26,7 +28,7 @@ logger = logging.getLogger('apps.movements.po_wizard')
 class _WizardFormMixin:
     title = "Step x"
     step_is_hidden = False
-    
+
     def save_data(self, wizard):
         pass
 
@@ -45,18 +47,28 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
             choices=[('vat', _('VAT (exact)')), ('name', _('Company Name'))], )
     supplier_name = AutoCompleteSelectField('supplier_name', label=_("Company Name"), required=False)
     supplier_vat = AutoCompleteSelectField('supplier_vat', label=_("VAT number"), required=False)
-    
+
     supplier = forms.ModelChoiceField(queryset=Supplier.objects.filter(active=True), widget=DummySupplierWidget)
-    
+
     class Meta:
         model = PurchaseOrder
         fields = ('user_id', 'issue_date', 'procurement', 'supplier')
                 # That's the fields we want to fill in the PO
+    
+    def __init__(self, data=None, files=None, **kwargs):
+        if kwargs.get('instance', None) is not None:
+            initial = kwargs.get('initial', {})
+            if not initial.get('supplier_name', None):
+                initial['supplier_name'] = kwargs['instance'].supplier_id
 
-    def save(self, commit=True):
-        #if not (self.instance.pk or self.instance.create_user_id):
-        #    self.instance.create_user = request.user
-        return super(PO_Step1, self).save(commit=commit)
+        super(PO_Step1, self).__init__(data, files, **kwargs)
+
+    def save_to_db(self, request):
+        """ Explicitly commit the data into the database
+        """
+        if not (self.instance.pk or self.instance.create_user_id):
+            self.instance.create_user = request.user
+        self.instance.save()
 
 class PO_Step2(WizardForm):
     title = _("Select Product Categories")
@@ -213,6 +225,54 @@ class PO_Step4(WizardForm):
         ret['4-items'] = items
         return ret
 
+    def save_to_db(self, request, po_instance):
+        """ Actually save the data in DB (only at this step)
+        """
+        assert po_instance and po_instance.pk
+        items_dict = {}
+        for item in self.cleaned_data['items']:
+            assert item['line_num'] not in items_dict, "duplicate line!"
+            items_dict[item['line_num']] = item
+
+        for po_item in po_instance.items.all():
+            item = items_dict.pop(po_item.id, None)
+            if item is None:
+                po_item.delete()
+            else:
+                po_item.item_template = item['item_template']
+                po_item.qty = item['quantity']
+                po_item.received_qty = po_item.qty
+                po_item.serial_nos = item['serials']
+
+                bits = {} # arrange all bundled parts in dict
+                          # by part.item_template.id
+                for pcats in item.get('parts',{}).values():
+                    for p, q in pcats:
+                        n = bits.get(p.id, (p, 0))[1]
+                        bits[p.id] = (p, n + q)
+                for bitem in po_item.bundled_items.all():
+                    if bitem.item_template_id not in bits:
+                        bitem.delete()
+                    else:
+                        p, q = bits.pop(bitem.item_template_id)
+                        if bitem.qty != q:
+                            bitem.qty = q
+                            bitem.save()
+                for p, q in bits.values():
+                    po_item.bundled_items.create(item_template=p, qty=q)
+
+        if items_dict:
+            # convert to list again, sort by (fake, yet) id
+            items_list2 = items_dict.values()
+            items_list2.sort(key=itemgetter('line_num'))
+            for item in items_list2:
+                po_item = po_instance.items.create(item_template=item['item_template'],
+                                qty=item['quantity'], received_qty=item['quantity'],
+                                serial_nos=item['serials'])
+                for pcats in item.get('parts',{}).values():
+                    for p, q in pcats:
+                        po_item.bundled_items.create(item_template=p, qty=q)
+
 class PO_Step5(WizardForm):
     title = _("Successful Entry - Finish")
     subject = forms.CharField(max_length=100, required=False)
@@ -223,11 +283,7 @@ class PO_Wizard(SessionWizardView):
             ('3b', PO_Step3b), ('3c', PO_Step3c),
             ('4', PO_Step4),]
 
-    def done(self, form_list, **kwargs):
-        return render_to_response('done.html', {
-            'form_data': [form.cleaned_data for form in form_list],
-        })
-    
+
     @classmethod
     def as_view(cls, **kwargs):
         return super(PO_Wizard,cls).as_view(cls.form_list, **kwargs)
@@ -366,5 +422,27 @@ class PO_Wizard(SessionWizardView):
         self.storage.current_step = next_step
         return self.render(new_form, **kwargs)
 
+    def render_done(self, form, **kwargs):
+
+        # First, prepare forms 1 and 4 and validate them:
+        step1 = self.get_form(step='1', data=self.storage.get_step_data('1'),
+                    files=self.storage.get_step_files('1'))
+        if not step1.is_valid():
+            logger.debug("Step 1 is not valid: %r", step1._errors)
+            return self.render_revalidation_failure('1', step1, **kwargs)
+
+        step4 = self.get_form(step='4', data=self.storage.get_step_data('4'),
+                    files=self.storage.get_step_files('4'))
+
+        if not step4.is_valid():
+            return self.render_revalidation_failure('4', step4, **kwargs)
+
+        # then save "1", use the instance to save "4"
+        step1.save_to_db(self.request)
+        step4.save_to_db(self.request, step1.instance)
+
+        return render_to_response('po_wizard_done.html',
+                    { 'form_data': step1.cleaned_data, },
+                    context_instance=RequestContext(self.request))
 
 #eof
