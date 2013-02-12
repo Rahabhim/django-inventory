@@ -210,7 +210,7 @@ class PO_Step4(WizardForm):
                  }
             pbc = defaultdict(list) # parts, by category
             for p in po_item.bundled_items.all():
-                pbc[p.category_id].append((p.item_template, p.qty))
+                pbc[p.item_template.category_id].append((p.item_template, p.qty))
 
             if po_item.item_template.category.is_bundle:
                 for mc in po_item.item_template.category.may_contain.all():
