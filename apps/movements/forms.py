@@ -63,13 +63,12 @@ class PurchaseOrderItemForm(forms.ModelForm):
 
 class PurchaseOrderItemForm_inline(InlineModelForm):
     item_template = AutoCompleteSelectField('product', show_help_text=False, required=False)
-    bundled_items = AutoCompleteSelectMultipleField('product',  show_help_text=False, required=False)
     received_qty = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         verbose_name=_("Order item form")
         model = PurchaseOrderItem
-        fields = ('item_name', 'item_template', 'qty', 'received_qty', 'serial_nos', 'bundled_items')
+        fields = ('item_name', 'item_template', 'qty', 'received_qty', 'serial_nos')
         # fields left out:  'agreed_price', 'status'
 
     def clean(self):
