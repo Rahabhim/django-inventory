@@ -165,18 +165,25 @@
             });
     }
 
+    /** Read the field_combo (when changed) and update the selection
+    */
     function select_some_part(field_id){
         var $selected = $(field_id +"_combo option:selected");
         if (! $selected) {
             $(field_id + '_on_deck').text('---');
             return false; 
         }
+        select_part2(field_id, $selected.text(), $selected.val());
+    }
 
+    /** Update the selected part at both the left menu and right pane
+    */
+    function select_part2(field_id, sel_text, sel_val){
         // Here, we just display the text:
-        $(field_id + '_on_deck').text($selected.text());
+        $(field_id + '_on_deck').text(sel_text);
         var part_val = $(field_id+ '_part').val();
         if (part_val){
-            if (part_val != $selected.val()){
+            if (part_val != sel_val){
                 $("#cont_parts-"+part_val).remove();
             }
             else {
@@ -188,7 +195,7 @@
         }
 
         // But then, we store the real value in the left pane
-        var newdiv = $("<div>", {id: "cont_parts-" + $selected.val()});
+        var newdiv = $("<div>", {id: "cont_parts-" + sel_val});
         var newqty = $(field_id+'_qty').val();
         var str_qty = ' ';
         if (newqty != 1)
@@ -196,20 +203,20 @@
 
         newdiv.append($("<input>", {'type': 'hidden', 
                                     name: field_id.substr(1) +'_parts',
-                                    value: $selected.val() } ));
+                                    value: sel_val } ));
         newdiv.append($("<input>", {'type': 'hidden', 
                                     name: field_id.substr(1) +'_part_qty',
                                     value: newqty } ));
         newdiv.append($("<a>", {'class': 'cont_part',
-                                'onclick': "part_update('" +$selected.val()+"', '"+ field_id+"');",
-                                }).text($selected.text()));
+                                'onclick': "part_update('" +sel_val+"', '"+ field_id+"');",
+                                }).text(sel_text));
         
         newdiv.append($("<span>", {'class': 'qty'}).text(str_qty));
 
-        newdiv.append($("<a>", {'class': 'part_delete', 'onclick': "part_delete('" +$selected.val()+"');"}).text('X'));
+        newdiv.append($("<a>", {'class': 'part_delete', 'onclick': "part_delete('" +sel_val+"');"}).text('X'));
 
         $(field_id + '_on_deck1').append(newdiv);
-        $(field_id+ '_part').val($selected.val()); // update this, so that 2nd selection replaces the first
+        $(field_id+ '_part').val(sel_val); // update this, so that 2nd selection replaces the first
     }
 
     function upd_quantity(field_id) {
@@ -234,6 +241,15 @@
         $(field_id + "_attribs > select").change(upd_product2);
         $(field_id + "_combo").change(function() { select_some_part(field_id); } );
         $(field_id + "_qty").change(function() { upd_quantity(field_id); });
+        $(field_id + "_code").autocomplete({
+                source: "{% url ajax_lookup 'product_part' %}?category="+cat_id,
+                minLength: 2,
+                select: function( event, ui ) {
+                    $(field_id + "_combo option:selected").prop("selected", false);
+                    select_part2(field_id, ui.item.repr, ui.item.pk);
+                    return false; /* Don't update the _code text */
+                    }
+                });
     }
 </script>
 
