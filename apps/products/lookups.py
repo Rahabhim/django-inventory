@@ -26,7 +26,16 @@ class ProductPartLookup(LookupChannel):
     model = ItemTemplate
 
     def get_query(self, q, request):
-        return self.model.objects.filter(approved=True, part_number=q)[:self.max_length]
+        params = None
+        if request.method == "GET":
+            params = request.GET
+        else:
+            params = request.POST
+        category = params.get('category')
+        kwargs = {}
+        if category:
+            kwargs['category__pk'] = int(category)
+        return self.model.objects.filter(approved=True, part_number=q, **kwargs)[:self.max_length]
 
 class ProductSpecsLookup(LookupChannel):
     """Locate product by specs
