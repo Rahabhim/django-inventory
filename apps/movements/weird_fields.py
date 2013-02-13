@@ -163,6 +163,8 @@ class ItemsGroupWidget(forms.widgets.Widget):
         
             {   line_num: the line at step4 being edited
                 item_template: the main product, in which we add parts
+                quantity
+                serials
                 parts: { may_contain.id: list[ tuple(object, quantity), ...] }
             }
     """
@@ -185,7 +187,7 @@ class ItemsGroupWidget(forms.widgets.Widget):
                 pa = ret['parts'][mc.id] = []
                 qtys = data.getlist('id_%s-%d_part_qty' %(name, mc.id), [])
                 for dpart in data.getlist('id_%s-%d_parts' %(name, mc.id), []):
-                    dpart_id = int(dpart) # TODO
+                    dpart_id = int(dpart)
                     dqty = int(qtys.pop(0) or '0')
                     pa.append((ItemTemplate.objects.get(pk=dpart_id, category=mc.category), dqty))
             return ret

@@ -163,7 +163,7 @@ class PO_Step3b(WizardForm):
     step_is_hidden = True
 
     ig = ItemsGroupField()
-    
+
     def save_data(self, wizard):
         # ...
         step4_data = wizard.storage.get_step_data('4')
@@ -172,7 +172,7 @@ class PO_Step3b(WizardForm):
         # will be preserved
         if step4_data is None:
             step4_data = MultiValueDict()
-            
+
         aitems = step4_data.setdefault('4-items',[])
         our_data = self.cleaned_data.get('ig', {})
         if not our_data.get('line_num', False):
