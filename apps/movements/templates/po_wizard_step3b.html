@@ -39,6 +39,22 @@
         font-weight: bold;
         margin-left: 0.4em;
     }
+    #groups_optional > div {
+        border-bottom: gray 1px solid;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    #groups_optional > div.selected {
+        background: #d0d0d0;
+    }
+
+    #groups_optional div.gname {
+        font-size: 120%;
+        font-weight: bold;
+        margin-left: 0.4em;
+    }
+
     #fill_in_pane div.gname {
         font-size: 120%;
         font-weight: bold;
@@ -82,10 +98,21 @@
     */
     function add_to(field_id){
         $('#groups_mandatory > div').removeClass('selected');
+        $('#groups_optional > div').removeClass('selected');
         $(field_id +'_menu').addClass('selected');
         $('#fill_in_pane > div').hide();
         $(field_id).show('fast');
         $(field_id+"_part").val('');
+    }
+
+    /** Add an optional category, display in left menu and activate on right
+    */
+    function add_more(html_id){
+        var selected = $(html_id).val();
+        if (! selected)
+            return;
+        $("#"+selected+"_menu").show('fast');
+        add_to("#"+ selected);
     }
 
     /** edit part
@@ -94,6 +121,7 @@
     */
     function part_update(part_id, field_id) {
         $('#groups_mandatory > div').removeClass('selected');
+        $('#groups_optional > div').removeClass('selected');
         $('#cont_parts-'+ part_id).addClass('selected');
         $('#fill_in_pane > div').hide();
         $(field_id).show('fast');
@@ -144,7 +172,6 @@
             return false; 
         }
 
-        
         // Here, we just display the text:
         $(field_id + '_on_deck').text($selected.text());
         var part_val = $(field_id+ '_part').val();
