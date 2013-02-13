@@ -152,8 +152,11 @@ class PO_Step3_allo(_WizardFormMixin, forms.ModelForm):
         fields = ('description', 'category', 'manufacturer', 'model', 'part_number', 'url', 'notes')
 
     def save_data(self, wizard):
-        # ...
-        raise NotImplementedError
+        self.instance.save()
+        wizard.storage.set_step_data('3a', MultiValueDict())
+        messages.info(wizard.request, _("Your request for %s has been stored. An administrator of the Helpdesk will review it and come back to you. In the meanwhile, please continue filling the Purchase Order form with the remaining items") % \
+                self.instance.description)
+        return '4'
 
 class PO_Step3b(WizardForm):
     title = _("Add bundled items")
