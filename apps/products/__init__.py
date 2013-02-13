@@ -52,7 +52,7 @@ register_links(['template_list', 'template_create', 'template_view',
                 'template_photos', 'template_assign_supply', 'template_assign_suppliers'],
             [template_create], menu_name='sidebar')
 
-register_links(ItemTemplate, [template_update, template_assets])
+register_links(ItemTemplate, [dict(template_update, hide_text=True ), dict(template_assets, hide_text=True )])
 register_links(ItemTemplate, [template_list, template_delete, template_photos, 
             template_assign_supplies], menu_name='sidebar')
 
