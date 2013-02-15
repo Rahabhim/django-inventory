@@ -37,6 +37,7 @@ class SyncCommand(BaseCommand):
     def _pre_handle(self, *args, **options):
         self._logger = logging.getLogger('command')
         v = options.get('verbosity', None)
+        self._answered = {}
         if v:
             self._verbose = int(v)
             self._logger.setLevel(verbosity_levels.get(self._verbose, logging.INFO))
@@ -60,14 +61,26 @@ class SyncCommand(BaseCommand):
                 prompt = question % args
             else:
                 prompt = question
+
+            if question in self._answered:
+                answer = self._answered[question]
+                print prompt, " < %s" % ( answer and 'yes' or 'no')
+                return answer
             while True:
                 print prompt, # this handles unicode better than raw_input
+                print '(y,n,a,d)',
                 r = raw_input()
                 if not r:
                     return False
                 if r.lower() in ('y', 'yes'):
                     return True
                 elif r.lower() in ('n', 'no'):
+                    return False
+                elif r.lower() in ('a', 'all'):
+                    self._answered[question] = True
+                    return True
+                elif r.lower() in ('d', 'deny'):
+                    self._answered[question] = False
                     return False
         else:
             self._logger.debug(question+ ' No', *args)
