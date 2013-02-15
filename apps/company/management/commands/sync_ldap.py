@@ -51,8 +51,8 @@ class Command(SyncCommand):
                 self.cmd_verify_incr()
         except ldap.CONNECT_ERROR:
             self._logger.exception("LDAP connect error:")
-        except ldap.ADMINLIMIT_EXCEEDED:
-            self._logger.exception("LDAP admin limit exceeded:")
+        except ldap.ADMINLIMIT_EXCEEDED, e:
+            self._logger.error("LDAP admin limit exceeded: %s", e)
         except ldap.LDAPError, e:
             edir = e.args[0]
             self._logger.error("LDAP error: %s", edir['desc'])
