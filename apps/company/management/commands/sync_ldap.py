@@ -146,8 +146,11 @@ class Command(SyncCommand):
                     dn, attrs = result[0]
                     part_dn = _subtract_dn(dn, self._ou_base)
                     log.debug("Found DN=%s for department #%s %s [%s]", part_dn, dept.id, dept.code, dept.code2)
-                    self._verify_name(dept, result[0])
-                    if self.ask("Do you want to associate dept #%s \"%s\" with DN=%s ?", dept.id, dept.name, part_dn):
+                    question = "Do you want to associate dept #%s \"%s\" with DN=%s ?"
+                    if not self._verify_name(dept, result[0]):
+                        # question must be different so that ask() won't store the same default
+                        question = "Do you still want to associate dept #%s \"%s\" with DN=%s ?"
+                    if self.ask(question, dept.id, dept.name, part_dn):
                         dept.ldap_dn = part_dn
                         dept.ldap_mtime = datetime.datetime.now()
                         dept.save()
@@ -159,8 +162,11 @@ class Command(SyncCommand):
         if lname:
             assert len(lname) == 1, repr(lname)
             lname = ustr(lname[0])
-        if dept.name != lname:
+        if dept.name == lname:
+            return True
+        else:
             self._logger.info("Department #%d has different name in our db compared to LDAP:\n\tHere: %s\n\tLDAP: %s",
                     dept.id, dept.name, lname or '<null>')
+            return False
         # then, do nothing about that
 #eof
