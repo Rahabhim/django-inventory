@@ -75,6 +75,12 @@ class PO_Step2(WizardForm):
     new_category = forms.ModelChoiceField(queryset=ItemCategory.objects.filter(approved=True),
             widget=CategoriesSelectWidget)
 
+    def save_data(self, wizard):
+        step3_data = MultiValueDict()
+        step3_data['3-quantity'] = 1
+        step3_data['3-product_attributes'] = {'from_category': self.cleaned_data['new_category']}
+        wizard.storage.set_step_data('3', step3_data)
+        return '3'
 
 class PO_Step3(WizardForm):
     title = _("Input Product Details")
@@ -303,18 +309,6 @@ class PO_Wizard(SessionWizardView):
         context.update(wiz_steps=self.form_list.items(),
             wiz_width=20)
         return context
-    
-    def get_form_initial(self, step):
-        """
-            Feed the `initial` data of step3 with the selection of step2. The
-            category is not a field of step3, so we can only communicate the
-            value through the `initial` dictionary
-        """
-        ret = super(PO_Wizard, self).get_form_initial(step)
-        if step == '3':
-            step2_data =  self.get_cleaned_data_for_step('2') or {}
-            ret['product_attributes'] = {'from_category': step2_data.get('new_category', ItemCategory()), 'all': [] }
-        return ret
 
     def get_form_instance(self, step):
         if step == '1' and 'po_pk' in self.storage.extra_data:
