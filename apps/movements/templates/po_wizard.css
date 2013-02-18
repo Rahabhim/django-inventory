@@ -937,4 +937,55 @@ table.wiz_treeitems td ul.item_parts {
     font-size: 90%;
 }
 
+table.wiz_treeitems tr.igroup td {
+    border-top: solid 1px gray;
+    margin-top: 1em;
+    padding-top: 0.3em;
+    font-size: 130%;
+}
+table.wiz_treeitems tr.egroup td {
+    border-bottom: solid 1px gray;
+    margin-bottom: 0.5em;
+}
+
+table.wiz_treeitems tr.subrow td.left {
+    padding-left: 2em;
+}
+
+/* Styles for step 3s
+ */
+table.group_3s_t1 {
+    margin-left: 2em;
+    width: 80%;
+}
+
+table.group_3s_t1 button {
+    background: none;
+    appearance: normal;
+    color: blue;
+    text-decoration: underline;
+    -webkit-appearance: listitem;
+    -moz-appearance: normal;
+}
+
+table.group_3s_t1 td.left {
+    width: 50%;
+    color: blue;
+    font-weight: bold;
+}
+
+table.group_3s_t2 {
+    margin-left: 2em;
+    width: 80%;
+}
+
+table.group_3s_t2 td.left {
+    /*width: 80%;*/
+}
+
+table.group_3s_t2 tr.cat td.left {
+    color: blue;
+    font-weight: bold;
+}
+
 /* eof */

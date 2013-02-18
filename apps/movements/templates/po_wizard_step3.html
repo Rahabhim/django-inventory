@@ -30,6 +30,7 @@
         <h3>Καταχώρηση Στοιχείων  Εξοπλισμού</h3>
         <p>Μπορείτε να καταχωρήσετε τα στοιχεία του Εξοπλισμού με δύο δυνατούς τρόπους:</p>
         {{ form.line_num }}
+        {{ form.in_group }}
         <div>{% with form.item_template as it %}
             <p>Κωδικός προϊόντος:
                 <input type="text" name="{{it.name}}_text" id="{{it.auto_id}}_text" value="" width="7em" />
@@ -66,7 +67,7 @@
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
                 'data': {'term': 'foo', 'attributes': attribs,
-                        'category': "{{ form.initial.product_attributes.from_category.id }}",
+                        'category': "{{ form.category_id }}",
                         'manufacturer': $("#{{ form.manufacturer.auto_id }}")[0].value },
                 'success': update_product3});
     }
@@ -99,8 +100,10 @@
     <div id="ss3s-2">
         <h3>Ποσότητα και σειριακοί αριθμοί</h3>
     <div>{{ form.quantity.label }}: {{ form.quantity }}
+            {% if form.quantity.errors %}<div class="wf_error">{% for error in form.quantity.errors %}<div class="error">{{ error }}</div>{%endfor %}</div>{% endif %}
         <br/>
         {{ form.serials.label}}: <br/> {{ form.serials }}
+        {% if form.serials.errors %}<div class="wf_error">{% for error in form.serials.errors %}<div class="error">{{ error }}</div>{%endfor %}</div>{% endif %}
     </div>
 {% endwith %}
 </div>

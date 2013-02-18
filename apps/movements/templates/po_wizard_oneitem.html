@@ -1,0 +1,28 @@
+{% load i18n %}
+{% load styling %}
+
+    <tr class="{{subrow}}"><td class="left"><span class="category">{{ item.item_template.category }}:</span> {{ item.item_template }}
+        {% if item.quantity != 1 %}<span class="qty">(x{{ item.quantity}})</span>{% endif %}
+        {% if item.parts %}
+            <ul class="item_parts" id="id_{{item.line_num}}">
+                {% for icat in item.parts %} {% if icat.parts %}
+                <li><span class="category">{{icat.category.name}}:</span>
+                    {% for ip in icat.parts %} {{ ip.item }} {% if ip.quantity != 1 %}<span class="qty">(x{{ip.quantity}})</span>{% endif %}
+                    {% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+        </td>
+        
+        <td><span class="state_{{item.state }}"
+            {% if item.errors %} title="{{ item.htmlerrors }}"{%endif%}>
+            {% if item.state == 'ok' %}{% trans 'OK' %}
+            {% elif item.state == 'bad' %}{% trans 'Bad' %}
+            {% elif item.state == 'missing' %}{% trans 'Missing' %}
+            {% else %}{{ item.state}}{% endif %}</span></td>
+        <td><button type="submit" name="iaction" value="edit:{{ item.line_num }}" title="{%trans 'Edit' %}"><span class="famfam active famfam-pencil"></span></button></td>
+        <td><button type="submit" name="iaction" value="delete:{{ item.line_num }}" title="{%trans 'Delete' %}"><span class="famfam active famfam-cross"></span></button></td>
+    </tr>

@@ -21,7 +21,7 @@ from django.forms.util import ErrorDict
 from django.utils.datastructures import MultiValueDict
 
 from models import PurchaseOrder
-from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField
+from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField
 
 logger = logging.getLogger('apps.movements.po_wizard')
 
@@ -54,7 +54,7 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
         model = PurchaseOrder
         fields = ('user_id', 'issue_date', 'procurement', 'supplier')
                 # That's the fields we want to fill in the PO
-    
+
     def __init__(self, data=None, files=None, **kwargs):
         if kwargs.get('instance', None) is not None:
             initial = kwargs.get('initial', {})
@@ -85,6 +85,7 @@ class PO_Step2(WizardForm):
 class PO_Step3(WizardForm):
     title = _("Input Product Details")
     line_num = forms.IntegerField(required=False, widget=forms.widgets.HiddenInput)
+    in_group = forms.IntegerField(required=False, widget=forms.widgets.HiddenInput)
     item_template = AutoCompleteSelectField('product_part', label=_("Product"), show_help_text=False, required=False)
     product_number = forms.CharField(max_length=100, required=False, label=_("Product number"))
     quantity = forms.IntegerField(label=_("Quantity"), initial=1)
@@ -95,13 +96,24 @@ class PO_Step3(WizardForm):
 
     def __init__(self, data=None, files=None, **kwargs):
         super(PO_Step3, self).__init__(data, files, **kwargs)
-        if 'product_attributes' in self.initial and 'from_category' in self.initial['product_attributes']:
+        pa_pref = self.add_prefix('product_attributes')
+        it_pref = self.add_prefix('item_template')
+        if data and self.data.get(pa_pref, {}).get('from_category', False):
             # Set the manufacturer according to the existing products of `from_category` ,
             # in descending popularity order
+            category = self.data[pa_pref]['from_category']
+        elif data and self.data.get(it_pref, {}):
+            item = ItemTemplate.objects.get(pk=self.data[it_pref])
+            category = item.category
+        else:
+            category = None
+        if category:
             self.fields['manufacturer'].queryset = Manufacturer.objects.\
-                        filter(products__category=self.initial['product_attributes']['from_category']).\
+                        filter(products__category=category).\
                         annotate(num_products=Count('products')).order_by('-num_products')
+            self.category_id = category.id
         # self.initial['product_attributes']['all'] = []
+
 
     def save_data(self, wizard):
         our_data = self.cleaned_data.copy()
@@ -143,6 +155,22 @@ class PO_Step3(WizardForm):
             step3b_data['3b-ig'] = our_data.copy()
             wizard.storage.set_step_data('3b', step3b_data)
             return '3b'
+        elif our_data['item_template'].category.is_group:
+            step3s_data = MultiValueDict()
+            step3s_data['3s-iset'] = wizard._make_3sdata(our_data, aitems)
+            wizard.storage.set_step_data('3s', step3s_data)
+            return '3s'
+        elif our_data['in_group']:
+            # we are a non-bundle item in a group, return to that group
+            # find the group from step4 data
+            wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'})
+            for it in aitems:
+                if it.get('line_num', False) == our_data['in_group']:
+                    step3s_data = MultiValueDict()
+                    step3s_data['3s-iset'] = wizard._make_3sdata(it, aitems)
+                    wizard.storage.set_step_data('3s', step3s_data)
+                    return '3s'
+            # if none found (an error), proceed to step 4!
         else:
             # note: this must also happen after step 3b!
             wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
@@ -170,7 +198,6 @@ class PO_Step3b(WizardForm):
     ig = ItemsGroupField()
 
     def save_data(self, wizard):
-        # ...
         step4_data = wizard.storage.get_step_data('4')
         # implementation note: with Session storage, the "getattr(data)" called through
         # get_step_data will set "session.modified=True" and hence what we do below
@@ -195,13 +222,48 @@ class PO_Step3b(WizardForm):
                     break
             else:
                 raise RuntimeError("Step 3b data match any line_num at step 4!")
+        if our_data.get('in_group', None):
+            # if we are part of a group, don't jump to step 4 but rather return to '3s'
+            group_data = False
+            for it in aitems:
+                if it.get('line_num', None) == our_data['in_group']:
+                    group_data = it
+            if group_data:
+                step3s_data = MultiValueDict()
+                step3s_data['3s-iset'] = wizard._make_3sdata(group_data, aitems)
+                wizard.storage.set_step_data('3s', step3s_data)
+                return '3s'
         wizard.storage.set_step_data('4', step4_data)
-        wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'})
+        wizard.storage.set_step_data('3', {})
         wizard.storage.set_step_data('3b', {})
         return '4'
 
-class PO_Step3c(WizardForm):
+class PO_Step3s(WizardForm):
+    title = _("Add set items")
     step_is_hidden = True
+
+    iset = GroupGroupField()
+
+    def save_data(self, wizard):
+        iset = self.cleaned_data['iset']
+        if 'add-groupped' in iset:
+            # We need to prepare and jump to step 3, for the "in_group" line
+            step3_data = MultiValueDict()
+            step3_data['3-quantity'] = 1
+            category = ItemCategory.objects.get(pk=iset['add-groupped'])
+            step3_data['3-product_attributes'] = {'from_category': category}
+            step3_data['3-in_group'] = iset['line_num']
+            wizard.storage.set_step_data('3', step3_data)
+            return '3'
+        # elif 'edit-group' in self.cleaned_data
+        else:
+            # Normally, there is no data submission with step 3s, so we'd better
+            # just clear our data and move on to step 4
+            wizard.storage.set_step_data('3', {})
+            wizard.storage.set_step_data('3b', {})
+            wizard.storage.set_step_data('3s', {})
+            return '4'
+        raise RuntimeError
 
 class PO_Step4(WizardForm):
     title = _("Final Review")
@@ -293,7 +355,7 @@ class PO_Step5(WizardForm):
 
 class PO_Wizard(SessionWizardView):
     form_list = [('1', PO_Step1), ('2', PO_Step2), ('3', PO_Step3), ('3a', PO_Step3_allo),
-            ('3b', PO_Step3b), ('3c', PO_Step3c),
+            ('3s', PO_Step3s), ('3b', PO_Step3b),
             ('4', PO_Step4),]
 
 
@@ -317,10 +379,10 @@ class PO_Wizard(SessionWizardView):
 
     def get(self, request, *args, **kwargs):
         """ This method handles GET requests.
-        
+
             Unlike the parent WizardView, keep the storage accross GETs and let the
             user continue with previous wizard data.
-            
+
             BUT, if we are called with `object_id=123` , that means we need to reset
             the storage, load an existing PO and edit that instead. We do all the
             loading into the storage and then redirect to the persistent wizard.
@@ -330,7 +392,7 @@ class PO_Wizard(SessionWizardView):
             self.storage.reset()
             # Start from step 4!
             self.storage.current_step = '4' # rather than: self.steps.first
-            
+
             po_instance = get_object_or_404(PurchaseOrder, pk=kwargs['object_id'])
             self.storage.extra_data = {'po_pk': po_instance.id }
             # Loading the instance into step1's data is hard, so we defer to
@@ -344,33 +406,48 @@ class PO_Wizard(SessionWizardView):
             # just reset the data..
             self.storage.reset()
             return redirect('purchaseorder_wizard')
-    
+
         # TODO: load PO from kwargs
         return self.render(self.get_form())
 
     def get_form(self, step=None, data=None, files=None):
         if step is None:
             step = self.steps.current
-        if step == '4':
-            # hack: for step 4, data always comes from the session
+        if step in ('4', '3s'):
+            # edit actions of items
             if data and 'iaction' in data:
                 if data['iaction'].startswith('edit:'):
                     # push the item's parameters into "data" and bring up the
                     # 3rd wizard page again
                     line_num = int(data['iaction'][5:])
                     old_data = None
-                    for item in self.storage.get_step_data(step)['4-items']:
+                    for item in self.storage.get_step_data('4')['4-items']:
                         if item.get('line_num', 'foo') == line_num:
                             old_data = item
                             break
                     else:
                         raise IndexError("No line num: %s" % line_num)
+                    if old_data['item_template'].category.is_group:
+                        # a group cannot be edited.
+                        # Instead, we proceed to step 3s to edit its contents
+                        self.storage.current_step = '3s'
+                        data = self.storage.get_step_data(self.storage.current_step)
+                        if data is None:
+                            data = MultiValueDict()
+                        data['3s-iset'] = self._make_3sdata(old_data, False)
+                        form = super(PO_Wizard, self).get_form(step='3s', data=data)
+                        if form._errors is None:
+                            form._errors = ErrorDict()
+                        form._errors[''] = ''
+                        return form
+                    # else, goto step 3:
                     self.storage.current_step = '3'
                     data = self.storage.get_step_data(self.storage.current_step)
                     if data is None:
                         data = MultiValueDict()
                     data['3-quantity'] = old_data['quantity']
                     data['3-item_template'] = old_data['item_template'].id
+                    data['3-in_group'] = old_data.get('in_group', None)
                     data['3-serials'] = old_data['serials']
                     if 'line_num' in old_data:
                         data['3-line_num'] = int(old_data['line_num'])
@@ -386,15 +463,28 @@ class PO_Wizard(SessionWizardView):
                         # only convert if non-empty
                         line_num = int(line_num)
                     # switch to stored data:
-                    data = self.storage.get_step_data(step)
-                    data['4-items'] = filter(lambda it: it.get('line_num', '') != line_num, data['4-items'])
-                    self.storage.set_step_data(step, data) # save it immediately
+                    data4 = self.storage.get_step_data('4')
+                    data4['4-items'] = filter(lambda it: it.get('line_num', '') != line_num, data4['4-items'])
+                    self.storage.set_step_data('4', data4) # save it immediately
+                    if step == '3s':
+                        # update the data for 3s
+                        old_data = None
+                        line_num = int(data['id_3s-iset_line_num'])
+                        for it in data4['4-items']:
+                            if it.get('line_num', None) == line_num:
+                                old_data = it
+                        data = data.copy()
+                        data['3s-iset'] = self._make_3sdata(old_data, data4['4-items'])
+                    else:
+                        data = data4
                     form = super(PO_Wizard, self).get_form(step=step, data=data)
                     # invalidate, so that calling function will just render the form
                     if form._errors is None:
                         form._errors = ErrorDict()
                     form._errors[''] = ''
                     return form
+        if step == '4':
+            # hack: for step 4, data always comes from the session
             data = self.storage.get_step_data(step)
         return super(PO_Wizard, self).get_form(step=step, data=data, files=files)
 
@@ -446,4 +536,21 @@ class PO_Wizard(SessionWizardView):
                     { 'form_data': step1.cleaned_data, },
                     context_instance=RequestContext(self.request))
 
+    def _make_3sdata(self, data3, aitems):
+        """Prepare the data structure for step 3s
+
+            The 3s structure has a full item (including `item_template` and `line_num`),
+            as well as the `contents`.
+        """
+        if not aitems:
+            step4_data = self.storage.get_step_data('4')
+            if step4_data is None:
+                step4_data = MultiValueDict()
+            aitems = step4_data.setdefault('4-items',[])
+        ret = dict(data3, contents=[])
+        line_num = ret['line_num']
+        for it in aitems:
+            if it.get('in_group', None) == line_num:
+                ret['contents'].append(it)
+        return ret
 #eof

@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import logging
+from collections import defaultdict
 from django.utils.translation import ugettext_lazy as _
 
 from django import forms
@@ -59,10 +60,13 @@ class ItemsTreeCat(object):
         return getattr(self._mc, name)
 
 class ItemsTreeItem(object):
-    def __init__(self, item_template, quantity, line_num, parts=None, serials=None, state=None, errors=None):
+    def __init__(self, item_template, quantity, line_num, parts=None, serials=None, state=None, errors=None, in_group=None):
         self.item_template = item_template
         self.quantity = quantity
         self.line_num = line_num
+        self.is_group = item_template.category.is_group
+        self.in_group = in_group
+        self.contents = []
         self.parts = []
         self.state = state or ''
         self.errors = []
@@ -82,9 +86,22 @@ class ItemsTreeItem(object):
 class ItemsTreeWidget(forms.widgets.Widget):
     def render(self, name, value, attrs=None):
         items = []
+        contained = defaultdict(list)
         if value:
             for kv in value:
+                in_group = kv.get('in_group', None)
+                if in_group:
+                    contained[in_group].append(ItemsTreeItem(**kv))
+                    continue
                 items.append(ItemsTreeItem(**kv))
+
+            for it in items:
+                if it.line_num in contained:
+                    it.is_group = True
+                    it.contents = contained.pop(it.line_num)
+
+            if contained:
+                logger.debug("Stray contents remaining: %r", contained)
 
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
@@ -189,6 +206,10 @@ class ItemsGroupWidget(forms.widgets.Widget):
             ret['line_num'] = data.get('id_%s_line_num' % name, None)
             if ret['line_num']:
                 ret['line_num'] = int(ret['line_num'])
+
+            ret['in_group'] = data.get('id_%s_in_group' % name, None)
+            if ret['in_group']:
+                ret['in_group'] = int(ret['in_group'])
             ret['parts'] = {}
             for mc in ret['item_template'].category.may_contain.all():
                 pa = ret['parts'][mc.id] = []
@@ -219,6 +240,7 @@ class ItemsGroupWidget(forms.widgets.Widget):
             'name': name,
             'html_id': self.html_id,
             'line_num': value.get('line_num', ''),
+            'in_group': value.get('in_group', ''),
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
 
@@ -252,4 +274,78 @@ class ItemsGroupField(forms.Field):
             else:
                 value['state'] = 'ok'
         return True
+
+class GroupMCat(StrAndUnicode):
+    def __init__(self, mc_cat, value, html_id):
+        self._mc_cat = mc_cat
+        self.parent_html_id = html_id
+        self.html_id = '%s-%d' %(html_id , mc_cat.id)
+        self.contents = []
+        if 'contents' in value:
+            for c in value['contents']:
+                if c['item_template'].category_id == mc_cat.category_id:
+                    self.contents.append(c)
+
+    def __unicode__(self):
+        return unicode(self._mc_cat.category.name)
+
+    @property
+    def name(self):
+        return self._mc_cat.category.name
+
+    @property
+    def cat_id(self):
+        return self._mc_cat.category_id
+
+class GroupTreeWidget(forms.widgets.Widget):
+    def render(self, name, value, attrs=None):
+        """ Plain render() will only yield the management form
+
+            For the categories, please iterate over this widget
+        """
+        items = []
+        if not value:
+            return mark_safe(u'<!-- no value for GTW -->')
+        assert 'item_template' in value, 'Strange value: %r' % value.keys()
+        assert 'line_num' in value, 'Strange value: %r' % value.keys()
+
+        final_attrs = self.build_attrs(attrs)
+        self.html_id = final_attrs.pop('id', name)
+        return mark_safe((u'<input type="hidden" name="%s_item_template" value="%s" %s />' + \
+                u'<input type="hidden" name="%s_line_num" value="%s" />') % \
+                (self.html_id, value['item_template'].id, flatatt(final_attrs),
+                 self.html_id, value['line_num']))
+
+    def subwidgets(self, name, value, attrs=None, choices=()):
+        if not value:
+            return
+
+        assert 'item_template' in value, 'Strange value: %r' % value.keys()
+        for mc_cat in value['item_template'].category.may_contain.all():
+            yield GroupMCat(mc_cat, value, self.html_id)
+
+    def value_from_datadict(self, data, files, name):
+        if name in data:
+            # from step 3
+            return data[name]
+        elif ('id_%s_item_template' % name) in data:
+            # it comes from form submission
+            ret = {}
+            # We have to decode the various fields:
+            ret['item_template'] = ItemTemplate.objects.get(pk=data['id_%s_item_template' % name])
+            ret['line_num'] = data.get('id_%s_line_num' % name, None)
+            if ret['line_num']:
+                ret['line_num'] = int(ret['line_num'])
+            # ret['parts'] = {}
+            if 'add-groupped' in data:
+                ret['add-groupped'] = data['add-groupped']
+            return ret
+        else:
+            logger.debug("no data at GroupGroupWidget.value_from_datadict () %r", data)
+            return {}
+
+class GroupGroupField(forms.Field):
+    widget = GroupTreeWidget
+
+
 # eof
