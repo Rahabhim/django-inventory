@@ -25,7 +25,12 @@
         {% endif %}
         </td>
         
-        <td>{{ item.state }}</td>
+        <td><span class="state_{{item.state }}"
+            {% if item.errors %} title="{{ item.htmlerrors }}"{%endif%}>
+            {% if item.state == 'ok' %}{% trans 'OK' %}
+            {% elif item.state == 'bad' %}{% trans 'Bad' %}
+            {% elif item.state == 'missing' %}{% trans 'Missing' %}
+            {% else %}{{ item.state}}{% endif %}</span></td>
         <td><button type="submit" name="iaction" value="edit:{{ item.line_num }}" title="{%trans 'Edit' %}"><span class="famfam active famfam-pencil"></span></button></td>
         <td><button type="submit" name="iaction" value="delete:{{ item.line_num }}" title="{%trans 'Delete' %}"><span class="famfam active famfam-cross"></span></button></td>
     </tr>

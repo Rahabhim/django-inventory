@@ -109,6 +109,8 @@ class PO_Step3(WizardForm):
                         'item_template2', 'product_attributes'):
             our_data.pop(ufield, None)
         aitems = step4_data.setdefault('4-items',[])
+        ItemsGroupField.post_validate(our_data)
+
         if not our_data.get('line_num', False):
             # we have to compute an unique id for the new line_num
             lnmax = 0
@@ -132,10 +134,7 @@ class PO_Step3(WizardForm):
         wizard.storage.set_step_data('4', step4_data)
         if our_data['item_template'].category.is_bundle:
             step3b_data = MultiValueDict()
-            step3b_data['3b-ig'] = { 'line_num': our_data['line_num'],
-                                    'item_template': our_data['item_template'],
-                                    'parts': our_data.get('parts', {}),
-                                    }
+            step3b_data['3b-ig'] = our_data.copy()
             wizard.storage.set_step_data('3b', step3b_data)
             return '3b'
         else:
@@ -175,6 +174,8 @@ class PO_Step3b(WizardForm):
 
         aitems = step4_data.setdefault('4-items',[])
         our_data = self.cleaned_data.get('ig', {})
+        if our_data:
+            ItemsGroupField.post_validate(our_data)
         if not our_data.get('line_num', False):
             raise RuntimeError("Step 3b data does not have a line_num from step 3!")
         else:
@@ -183,6 +184,8 @@ class PO_Step3b(WizardForm):
                     assert it.get('item_template') == our_data['item_template'], \
                             "Templates mismatch: %r != %r" % (it.get('item_template'), our_data['item_template'])
                     it['parts'] = our_data['parts']  # in-place
+                    it['state'] = our_data.get('state', '')
+                    it['errors'] = our_data.get('errors', {})
                     break
             else:
                 raise RuntimeError("Step 3b data match any line_num at step 4!")
@@ -222,6 +225,7 @@ class PO_Step4(WizardForm):
             if pbc:
                 logger.warning("Stray parts found for template %s: %r", po_item.item_template, pbc)
 
+            ItemsGroupField.post_validate(r)
             items.append(r)
 
         ret = MultiValueDict()

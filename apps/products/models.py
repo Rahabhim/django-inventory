@@ -2,6 +2,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from dynamic_search.api import register
+from collections import defaultdict
 
 from common.models import Partner, Supplier
 
@@ -124,13 +125,15 @@ class ItemTemplate(models.Model):
     def __unicode__(self):
         return self.description
 
-    def validate_bundle(self, bundled_items):
+    def validate_bundle(self, bundled_items, flat=True):
         """Validates that this bundle is assembled according to category rules
 
             @param bundled_items a list of (ItemCategory.id, qty) tuples
-            @return [] if valid, or a list of error messages
+            @param flat Return all errors in one list, rather than dict(cat=)
+            @return empty if valid, a list of error messages when flat=True, or
+                    a dict of lists of errors, having key=category
         """
-        errors = []
+        errors = defaultdict(list)
         self_cat = self.category
         if self_cat.is_bundle:
             if not bundled_items:
@@ -155,17 +158,20 @@ class ItemTemplate(models.Model):
                     err_msg = _("An item of %(self_cat)s cannot have more than %(max_count)d of %(sub_cat)s. You have entered %(count)d.")
 
                 if err_msg:
-                    errors.append(err_msg % {'self_cat': self_cat.name, 'sub_cat': subcat.category.name, \
+                    errors[subcat.category_id].append(err_msg % {'self_cat': self_cat.name, 'sub_cat': subcat.category.name, \
                             'min_count': subcat.min_count, 'max_count': subcat.max_count})
             if haz_it:
                 err_msg = _("An item of %(self_cat)s cannot contain any items of %(sub_cat)s.")
                 for subcat in ItemCategory.objects.filter(pk__in=haz_it.keys()):
-                    errors.append(err_msg % {'self_cat': self_cat.name, 'sub_cat': subcat.name})
+                    errors['*'].append(err_msg % {'self_cat': self_cat.name, 'sub_cat': subcat.name})
         elif bundled_items:
             # it is not a bundle, don't allow bundled items
-            errors.append(_("An item of %s is not a bundle, cannot contain anything") % \
+            errors['*'].append(_("An item of %s is not a bundle, cannot contain anything") % \
                     self_cat.name)
-        return errors
+        if flat:
+            return reduce(lambda a,b: a+b, errors.values())
+        else:
+            return errors
 
 class ItemTemplateAttributes(models.Model):
     template = models.ForeignKey(ItemTemplate, related_name="attributes")

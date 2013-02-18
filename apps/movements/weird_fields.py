@@ -59,18 +59,25 @@ class ItemsTreeCat(object):
         return getattr(self._mc, name)
 
 class ItemsTreeItem(object):
-    def __init__(self, item_template, quantity, line_num, parts=None, serials=None):
+    def __init__(self, item_template, quantity, line_num, parts=None, serials=None, state=None, errors=None):
         self.item_template = item_template
         self.quantity = quantity
         self.line_num = line_num
         self.parts = []
+        self.state = state or ''
+        self.errors = []
+        # at this view, we want all the errors together
+        if errors:
+            self.errors = reduce(lambda a,b: a+b, errors.values())
         if parts:
             for category_id, pqs in parts.items():
                 self.parts.append(ItemsTreeCat(category_id, pqs))
-    
+
     @property
-    def state(self):
-        return '??'
+    def htmlerrors(self):
+        """ Format the errors for a html title="" attribute
+        """
+        return u'\n'.join(self.errors)
 
 class ItemsTreeWidget(forms.widgets.Widget):
     def render(self, name, value, attrs=None):
@@ -224,5 +231,25 @@ class ItemsGroupWidget(forms.widgets.Widget):
 class ItemsGroupField(forms.Field):
     widget = ItemsGroupWidget
 
-
+    @classmethod
+    def post_validate(cls, value):
+        """ Run the bundle validation algorithm and store out within `value`
+        """
+        item_template = value.get('item_template', None)
+        if item_template:
+            bundled_items = {}
+            # sum up the quantity of items per category:
+            for pvals in value.get('parts', {}).values():
+                for part, qty in pvals:
+                    cat_id = part.category_id
+                    bundled_items[cat_id] = bundled_items.get(cat_id, 0) + int(qty)
+            errors = item_template.validate_bundle(bundled_items.items(), flat=False)
+            value['errors'] = errors
+            if errors and '*' in errors:
+                value['state'] = 'bad'
+            elif errors:
+                value['state'] = 'missing'
+            else:
+                value['state'] = 'ok'
+        return True
 # eof
