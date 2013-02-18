@@ -278,6 +278,7 @@ class PO_Step4(WizardForm):
         for po_item in po_instance.items.all():
             r = {'line_num': po_item.id,
                  'item_template': po_item.item_template,
+                 'in_group': po_item.in_group,
                  'quantity': po_item.qty,
                  'serials': po_item.serial_nos,
                  'parts': {},
@@ -309,13 +310,19 @@ class PO_Step4(WizardForm):
             assert item['line_num'] not in items_dict, "duplicate line!"
             items_dict[item['line_num']] = item
 
+        line_map = {} # map of db.id => "line_num"
+        in_group_defer = []
         for po_item in po_instance.items.all():
             item = items_dict.pop(po_item.id, None)
             if item is None:
                 po_item.delete()
             else:
+                line_map[item['line_num']] = po_item.id
                 po_item.item_template = item['item_template']
                 po_item.qty = item['quantity']
+                if item.get('in_group', None):
+                    in_group_defer.append((po_item.id, item['in_group']))
+                po_item.in_group = item['in_group']
                 po_item.received_qty = po_item.qty
                 po_item.serial_nos = item['serials']
 
@@ -344,9 +351,22 @@ class PO_Step4(WizardForm):
                 po_item = po_instance.items.create(item_template=item['item_template'],
                                 qty=item['quantity'], received_qty=item['quantity'],
                                 serial_nos=item['serials'])
+                if item.get('in_group', None):
+                    in_group_defer.append((po_item.id, item['in_group']))
+                line_map[item['line_num']] = po_item.id
                 for pcats in item.get('parts',{}).values():
                     for p, q in pcats:
                         po_item.bundled_items.create(item_template=p, qty=q)
+        if in_group_defer:
+            for pk, grp_line in in_group_defer:
+                contained = po_instance.items.get(pk=pk)
+                group_pk = line_map.get(grp_line, None)
+                if not group_pk:
+                    logger.warning("Algo failure: cannot locate group %s", grp_line)
+                    continue
+                contained.in_group = group_pk
+                contained.save()
+        return
 
 class PO_Step5(WizardForm):
     title = _("Successful Entry - Finish")
@@ -374,7 +394,10 @@ class PO_Wizard(SessionWizardView):
 
     def get_form_instance(self, step):
         if step == '1' and 'po_pk' in self.storage.extra_data:
-            return PurchaseOrder.objects.get(pk=self.storage.extra_data['po_pk'])
+            try:
+                return PurchaseOrder.objects.get(pk=self.storage.extra_data['po_pk'])
+            except PurchaseOrder.DoesNotExist:
+                pass
         return super(PO_Wizard, self).get_form_instance(step)
 
     def get(self, request, *args, **kwargs):
