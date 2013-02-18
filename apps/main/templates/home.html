@@ -33,17 +33,16 @@
         <div class="content" style="float: right;">
             <div class="tc"> {% trans 'Select department and role:' %}</div>
             <div class="block">
-            <ul class="user_roles" style="list-style: none;" >
+            <form method="POST" action="{% url select_user_role %}">
+            {% csrf_token %}
+            <div id="wait_for_user_role" style="display: none;">{% trans 'Updating, please wait'%}</div>
+            <select id="select_user_role" name="role_id" onchange="this.form.submit()">
+                <option value="">--------</option>
             {% for r in user_roles %}
-                {% if r.id == current_user_role %}
-                <li><span class="famfam active famfam-tick">&nbsp;</span>
-                    {{ r.department.name }} - {{ r.role.name }} </li>
-                {% else %}
-                <li><a href="{% url select_user_role %}?role_id={{ r.id }}"><span class="famfam active famfam-bullet_orange">&nbsp;</span></a>
-                    {{ r.department.name }} - {{ r.role.name }} </li>
-                {% endif %}
+                <option value="{{ r.id }}" {% if r.id == current_user_role %} selected="1" {% endif %}>
+                    {{ r.department.name }} - {{ r.role.name }} </option>
             {% endfor %}
-            </ul>
+            </select></form>
             </div>
         </div>
         {% endif %}
