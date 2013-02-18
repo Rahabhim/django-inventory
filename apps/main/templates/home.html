@@ -46,6 +46,43 @@
             </div>
         </div>
         {% endif %}
+{% comment %}
+<script type="text/javascript">
+function change_user_role(){
+    var selected_val = $("#select_user_role option:selected").val();
+    if (! selected_val)
+        return false;
+
+    $("#select_user_role").hide();
+    $("#wait_for_user_role").show();
+
+    /* response functions */
+    function show_again() {
+        $("#select_user_role").show();
+        $("#wait_for_user_role").hide();
+    }
+    function on_success(data, status, xhr){
+        console.log("Success!" + data.data);
+        $("#select_user_role [value="+data.data + "]").prop("selected", true);
+        // We have to reload, because actions may have changed:
+        window.location.reload();
+    }
+    $("#select_user_role option:selected").prop("selected", false);
+
+    $.ajax("{% url select_user_role %}", {
+                'dataType': 'json',
+                'data': {'role_id': selected_val },
+                'success': on_success, 'complete': show_again,
+            });
+}
+
+/* The way to do that in AJAX, but the reloading makes it redundant
+    $(function () {
+        $("#select_user_role").change(change_user_role);
+    }); */
+</script>
+{% endcomment %}
+
 {% endblock %}
 {% block footer %}
     <div id="footer">
