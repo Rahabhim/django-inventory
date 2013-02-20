@@ -238,8 +238,8 @@ class ItemsGroupWidget(forms.widgets.Widget):
         context = {
             'name': name,
             'html_id': self.html_id,
-            'line_num': value.get('line_num', ''),
-            'in_group': value.get('in_group', ''),
+            'line_num': value.get('line_num', None) or '',
+            'in_group': value.get('in_group', None) or '',
             'extra_attrs': mark_safe(flatatt(final_attrs)),
             'func_slug': self.html_id.replace("-",""),
 
