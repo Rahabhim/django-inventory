@@ -11,7 +11,7 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'apps'))
 sys.path.append(os.path.join(PROJECT_ROOT, 'shared_apps'))
 sys.path.append(os.path.join(PROJECT_ROOT, '3rd_party_apps'))
 
-PROJECT_TITLE = 'ΠΣ Κτηματολογίου υποδομών ΠΣΔ + υποδομών ΤΠΕ Σχολείων'
+PROJECT_TITLE = 'ΠΣ Κτηματολογίου υποδομών ΠΣΔ & υποδομών ΤΠΕ Σχολείων'
 PROJECT_NAME = 'django_inventory'
 
 DEBUG = True
