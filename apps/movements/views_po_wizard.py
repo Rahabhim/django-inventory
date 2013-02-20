@@ -1,8 +1,10 @@
 # -*- encoding: utf-8 -*-
 import logging
+import datetime
 from collections import defaultdict
 from operator import itemgetter
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.template import RequestContext
 
 from django import forms
@@ -10,7 +12,9 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib import messages
 
-from common.models import Supplier
+from common.models import Supplier, Location
+from common.api import role_from_request
+from company.models import Department
 from products.models import ItemCategory, Manufacturer, ItemTemplate
 from products.form_fields import CategoriesSelectWidget, CategoriesAttributesField
 from procurements.models import Contract
@@ -20,7 +24,7 @@ from django.db.models import Count
 from django.forms.util import ErrorDict
 from django.utils.datastructures import MultiValueDict
 
-from models import PurchaseOrder
+from models import PurchaseOrder, Movement
 from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField
 
 logger = logging.getLogger('apps.movements.po_wizard')
@@ -300,6 +304,61 @@ class PO_Step4(WizardForm):
         ret['4-items'] = items
         return ret
 
+    def save_data(self, wizard):
+        step1 = wizard.get_form(step='1', data=wizard.storage.get_step_data('1'),
+                    files=wizard.storage.get_step_files('1'))
+        if step1.is_bound and not step1.is_valid():
+            # a non-bound form has never received data and therefore
+            # cannot be valid. However, we can still save the instance.
+            logger.debug("Step 1 is not valid: %r", step1._errors)
+            return '1'
+
+        # then save "1", use the instance to save "4"
+        step1.save_to_db(wizard.request)
+        wizard.storage.extra_data['po_pk'] = step1.instance.pk
+        self.save_to_db(wizard.request, step1.instance)
+        
+        # Validate the bundles and groups
+        # Stop at the first error
+        errors = False
+        line_groups = defaultdict(list)
+        for item in self.cleaned_data['items']:
+            # check that line is a sensible entry:
+            if not item.get('item_template', False):
+                logger.debug("Line %s does not have a product", item.get('line_num', 0))
+                errors = True
+                break
+            if not item.get('quantity', 0):
+                logger.debug("Line %s does not have quantity", item.get('line_num', 0))
+                errors = True
+                break
+            ItemsGroupField.post_validate(item)
+            if item['state'] != 'ok':
+                logger.debug("Line %s:%s is %s", item.get('line_num', 0), item['item_template'], item['state'])
+                errors = True
+                break
+            if item['in_group'] and item.get('item_template'):
+                line_groups[item['in_group']].append((item['item_template'].category_id, item['quantity']))
+        
+        if not errors:
+            for item in self.cleaned_data['items']:
+                if item['item_template'].validate_bundle(line_groups[item['line_num']], flat=True, group_mode=True):
+                    # validate returned some errors
+                    logger.debug("Line %s:%s failed group validation", item.get('line_num', 0), item['item_template'])
+                    errors = True
+                    break
+        if errors:
+            return '4a'
+        else:
+            step5_data = wizard.storage.get_step_data('5')
+            if step5_data is None:
+                step5_data = MultiValueDict()
+            active_role = role_from_request(wizard.request)
+            if active_role:
+                step5_data['5-department'] = active_role.department
+                wizard.storage.set_step_data('5', step5_data)
+            return '5'
+
     def save_to_db(self, request, po_instance):
         """ Actually save the data in DB (only at this step)
         """
@@ -367,15 +426,83 @@ class PO_Step4(WizardForm):
                 contained.save()
         return
 
+class PO_Step4a(WizardForm):
+    step_is_hidden = True
+    title = _("Pending Items - Finish")
+
+
 class PO_Step5(WizardForm):
     title = _("Successful Entry - Finish")
-    subject = forms.CharField(max_length=100, required=False)
+    department = forms.ModelChoiceField(queryset=Department.objects.all(), widget=forms.widgets.HiddenInput, required=False)
+    location = forms.ModelChoiceField(label=_("location"), widget=forms.widgets.RadioSelect,
+                    queryset=Location.objects.none())
 
+    def __init__(self, data=None, files=None, **kwargs):
+        super(PO_Step5, self).__init__(data, files, **kwargs)
+        if data and data.get('5-department', None):
+            dept = data['5-department']
+        else:
+            dept = Department.objects.filter(deprecate=False, location__isnull=False)[:1][0]
+            logger.warning("Using an arbitrary department: #%s %s !", dept.id, dept.name)
+        self.fields['location'].queryset = Location.objects.filter(department=dept)
+
+    def save_data(self, wizard):
+        # Mostly copied from views.purchase_order_receive
+        po_instance = wizard.get_form_instance('1')
+        request = wizard.request
+        if not po_instance.pk:
+            raise RuntimeError("PO instance must be saved by step 5")
+        try:
+            items_left = po_instance.calc_unmoved_items()
+        except ValueError, ve:
+            messages.error(request, unicode(ve), fail_silently=True)
+            return '5'
+
+        active_role = None
+        msg = None
+        try:
+            active_role = role_from_request(request)
+        except ObjectDoesNotExist:
+            pass
+
+        if items_left:
+            if not active_role.has_perm('movements.receive_purchaseorder'):
+                raise PermissionDenied
+            lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
+            lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
+            ldests = [self.cleaned_data['location'],]
+            if not lsrcs:
+                msg = _(u'There is no procurement location configured in the system!')
+                messages.error(request, msg, fail_silently=True)
+            elif not ldests:
+                msg = _(u'This is not default department and location for this user, please fix!')
+                messages.error(request, msg, fail_silently=True)
+            elif not lbdls:
+                msg = _(u'This is not bundling location configured in the system!')
+                messages.error(request, msg, fail_silently=True)
+            else:
+                movement = Movement(create_user=request.user, date_act=datetime.date.today(),
+                        stype='in', origin=po_instance.user_id,
+                        location_src=lsrcs[0], location_dest=ldests[0],
+                        purchase_order=po_instance)
+                movement.save()
+                bundled = po_instance.fill_out_movement(items_left, movement)
+                if bundled:
+                    # print "must put a few items in bundle, too"
+                    movement = Movement(create_user=request.user, date_act=datetime.date.today(),
+                        stype='in', origin=po_instance.user_id,
+                        location_src=lsrcs[0], location_dest=lbdls[0],
+                        purchase_order=po_instance)
+                    movement.save()
+                    po_instance.fill_out_bundle_move(bundled, movement)
+        
+        if msg:
+            return '5'
 
 class PO_Wizard(SessionWizardView):
     form_list = [('1', PO_Step1), ('2', PO_Step2), ('3', PO_Step3), ('3a', PO_Step3_allo),
             ('3s', PO_Step3s), ('3b', PO_Step3b),
-            ('4', PO_Step4),]
+            ('4', PO_Step4), ('4a', PO_Step4a), ('5', PO_Step5)]
 
 
     @classmethod
@@ -392,7 +519,7 @@ class PO_Wizard(SessionWizardView):
         """
         context = super(PO_Wizard, self).get_context_data(form, **kwargs)
         context.update(wiz_steps=self.form_list.items(),
-            wiz_width=20)
+            wiz_width=16)
         return context
 
     def get_form_instance(self, step):
@@ -542,31 +669,15 @@ class PO_Wizard(SessionWizardView):
 
     def render_done(self, form, **kwargs):
         # First, prepare forms 1 and 4 and validate them:
-        step1 = self.get_form(step='1', data=self.storage.get_step_data('1'),
-                    files=self.storage.get_step_files('1'))
-        if step1.is_bound and not step1.is_valid():
-            # a non-bound form has never received data and therefore
-            # cannot be valid. However, we can still save the instance.
-            logger.debug("Step 1 is not valid: %r", step1._errors)
-            return self.render_revalidation_failure('1', step1, **kwargs)
-        elif not step1.is_bound:
-            # fake them here:
-            opts = step1._meta
-            step1.cleaned_data = forms.model_to_dict(step1.instance, opts.fields, opts.exclude)
-
-        step4 = self.get_form(step='4', data=self.storage.get_step_data('4'),
-                    files=self.storage.get_step_files('4'))
-
-        if not step4.is_valid():
-            return self.render_revalidation_failure('4', step4, **kwargs)
-
-        # then save "1", use the instance to save "4"
-        step1.save_to_db(self.request)
-        step4.save_to_db(self.request, step1.instance)
-
-        return render_to_response('po_wizard_done.html',
-                    { 'form_data': step1.cleaned_data, },
-                    context_instance=RequestContext(self.request))
+        try:
+            res = form.save_data(self)
+        except Exception, e:
+            messages.error(self.request, _('Cannot save data'))
+            logger.exception('cannot finish at step %s: %s' % (self.steps.current, e))
+            return self.render(form)
+        if res:
+            self.render_revalidation_failure(self.steps.current, form, **kwargs)
+        return redirect('purchase_order_pending_list')
 
     def _make_3sdata(self, data3, aitems):
         """Prepare the data structure for step 3s

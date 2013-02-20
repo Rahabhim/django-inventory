@@ -988,4 +988,13 @@ table.group_3s_t2 tr.cat td.left {
     font-weight: bold;
 }
 
+a.like-button {
+    appearance: button;
+    /*text-decoration: underline;*/
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    vertical-align: top;
+    padding: 4px;
+}
+
 /* eof */

@@ -1,0 +1,28 @@
+{% extends "po_wizard_base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+{% block pow_content %}
+<div class="u2_form">
+{{ wizard.form.management_form }}
+
+    <div class="wf_error">{% blocktrans %}
+        Some items in the previous form are not complete. You cannot proceed with
+        the purchase order.<br/>
+        However, your data has successfully been saved.<br/>
+        You can now go back to step 4 and complete the items, or exit this wizard
+        and come back some later time.
+        {% endblocktrans %}
+    </div>
+</div>
+
+<div width="100%">
+<p align="right">
+    <button name="wizard_goto_step" type="submit" value="4">{% trans "Go Back" %}</button>
+    <a class="like-button" href="{% url purchase_order_pending_list %}">{% trans 'Exit' %}</a>
+</p>
+</div>
+
+{% endblock %}
+

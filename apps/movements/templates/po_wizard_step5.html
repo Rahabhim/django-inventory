@@ -8,20 +8,38 @@
 {{ wizard.form.management_form }}
 
 {% with wizard.form as form %}
-    <p> Foo! </p>
+    {{ form.department }}
+    <table class="wiz_form">
+    <tr><td colspan="3">{% blocktrans %}
+        In order to finish the Purchase Order wizard, you need to select the location
+        into which the items will be received.
+        {% endblocktrans %}
+        </td>
+    </tr>
+    {% with form.location as field %}
+    <tr><th>{{ field.label }}</th>
+        {% if field.errors %}
+        <td colspan="2" class="wf_error">
+            {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
+        </td>
+        </tr><tr><th>&nbsp;</th>
+        {% endif %}
+        <td class="wf_middle"></td><td class="wf_field">
+            {% for choice in field|slice:":25" %}
+                {{ choice }}<br/>
+            {% endfor %}
+            </td>
+    </tr>
+    {% endwith %}
+    </table>
 {% endwith %}
 </div>
 
-{% if wizard.steps.prev %}
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
-{% endif %}
 
 <div width="100%">
 <p align="right">
-    <input id="submit0" type="submit">
+    <input id="submit0" type="submit" value="{%trans 'Finish' %}">
 </p>
 </div>
-
 {% endblock %}
 
