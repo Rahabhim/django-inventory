@@ -55,7 +55,7 @@ class ItemsTreeCat(object):
         self.parts = []
         for p, q in pqs:
             self.parts.append(ItemsTreePart(p, q))
-    
+
     def __getattr__(self, name):
         return getattr(self._mc, name)
 
@@ -184,7 +184,7 @@ class IGW_Attribute(StrAndUnicode):
 class ItemsGroupWidget(forms.widgets.Widget):
     """
         The value should be like::
-        
+
             {   line_num: the line at step4 being edited
                 item_template: the main product, in which we add parts
                 quantity
@@ -194,7 +194,6 @@ class ItemsGroupWidget(forms.widgets.Widget):
     """
 
     def value_from_datadict(self, data, files, name):
-        # TODO
         if name in data:
             # from step 3
             return data[name]

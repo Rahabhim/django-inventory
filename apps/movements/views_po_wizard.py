@@ -269,7 +269,6 @@ class PO_Step4(WizardForm):
     title = _("Final Review")
     items = ItemsTreeField(label=_("Items"), required=False)
 
-
     @classmethod
     def prepare_data_from(cls, po_instance):
         """Read the db data from po_instance and populate our special dictionary
@@ -381,18 +380,24 @@ class PO_Wizard(SessionWizardView):
 
     @classmethod
     def as_view(cls, **kwargs):
+        """ Hard-code the form_list in the constructor.
+        """
         return super(PO_Wizard,cls).as_view(cls.form_list, **kwargs)
 
     def get_template_names(self):
         return ['po_wizard_step%s.html' % self.steps.current,]
 
     def get_context_data(self, form, **kwargs):
+        """ Add the wizard steps counter into the context
+        """
         context = super(PO_Wizard, self).get_context_data(form, **kwargs)
         context.update(wiz_steps=self.form_list.items(),
             wiz_width=20)
         return context
 
     def get_form_instance(self, step):
+        """ Load the PurchaseOrder instance for step1, from the primary key
+        """
         if step == '1' and 'po_pk' in self.storage.extra_data:
             try:
                 return PurchaseOrder.objects.get(pk=self.storage.extra_data['po_pk'])
@@ -430,7 +435,6 @@ class PO_Wizard(SessionWizardView):
             self.storage.reset()
             return redirect('purchaseorder_wizard')
 
-        # TODO: load PO from kwargs
         return self.render(self.get_form())
 
     def get_form(self, step=None, data=None, files=None):
