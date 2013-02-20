@@ -537,13 +537,18 @@ class PO_Wizard(SessionWizardView):
         return self.render(new_form, **kwargs)
 
     def render_done(self, form, **kwargs):
-
         # First, prepare forms 1 and 4 and validate them:
         step1 = self.get_form(step='1', data=self.storage.get_step_data('1'),
                     files=self.storage.get_step_files('1'))
-        if not step1.is_valid():
+        if step1.is_bound and not step1.is_valid():
+            # a non-bound form has never received data and therefore
+            # cannot be valid. However, we can still save the instance.
             logger.debug("Step 1 is not valid: %r", step1._errors)
             return self.render_revalidation_failure('1', step1, **kwargs)
+        elif not step1.is_bound:
+            # fake them here:
+            opts = step1._meta
+            step1.cleaned_data = forms.model_to_dict(step1.instance, opts.fields, opts.exclude)
 
         step4 = self.get_form(step='4', data=self.storage.get_step_data('4'),
                     files=self.storage.get_step_files('4'))
