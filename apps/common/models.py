@@ -45,6 +45,7 @@ class Location(models.Model):
         inventory is a virtual location, used to correct stock levels
     """
     name = models.CharField(max_length=32, verbose_name=_("name"), db_index=True)
+    sequence = models.IntegerField(verbose_name=_("sequence"), default=10)
     department = models.ForeignKey('company.Department', null=True, blank=True, verbose_name=_("department"))
 
     usage = models.CharField(max_length=32, verbose_name=_("location type"),
@@ -53,7 +54,7 @@ class Location(models.Model):
                     ('supplier', _('Supplier Location')), ('production', _('Bundled'))])
 
     class Meta:
-        ordering = ['name']
+        ordering = ['sequence', 'name']
         verbose_name = _(u"location")
         verbose_name_plural = _(u"locations")
 
@@ -84,9 +85,10 @@ class LocationTemplate(models.Model):
 
     """
     name = models.CharField(max_length=32, verbose_name=_("name"))
+    sequence = models.IntegerField(verbose_name=_("sequence"), default=10)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['sequence', 'name']
         verbose_name = _(u"location template")
         verbose_name_plural = _(u"location templates")
 

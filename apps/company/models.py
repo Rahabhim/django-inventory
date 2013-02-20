@@ -81,7 +81,7 @@ def post_save(sender, **kwargs):
         dept = kwargs['instance']
         try:
             for lt in dept.dept_type.location_tmpl.all():
-                dept.location_set.create(name=lt.name, usage='internal')
+                dept.location_set.create(name=lt.name, sequence=lt.sequence, usage='internal')
         except ObjectDoesNotExist:
             pass
 
