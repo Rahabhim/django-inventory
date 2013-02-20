@@ -125,8 +125,8 @@ class ItemTemplate(models.Model):
     def __unicode__(self):
         return self.description
 
-    def validate_bundle(self, bundled_items, flat=True):
-        """Validates that this bundle is assembled according to category rules
+    def validate_bundle(self, bundled_items, flat=True, group_mode=False):
+        """Validates that this bundle/group is assembled according to category rules
 
             @param bundled_items a list of (ItemCategory.id, qty) tuples
             @param flat Return all errors in one list, rather than dict(cat=)
@@ -135,16 +135,17 @@ class ItemTemplate(models.Model):
         """
         errors = defaultdict(list)
         self_cat = self.category
-        if self_cat.is_bundle:
+        if group_mode:
+            iz_group = self_cat.is_group
+        else:
+            iz_group = self_cat.is_bundle
+        if iz_group:
             if not bundled_items:
                 bundled_items = [] # just in case it was None or False
 
-            haz_it = {}
+            haz_it = defaultdict(int)
             for catid, qty in bundled_items:
-                if catid in haz_it:
-                    haz_it[catid] += qty
-                else:
-                    haz_it[catid] = qty
+                haz_it[catid] += qty
 
             for subcat in self_cat.may_contain.all():
                 err_msg = False
@@ -166,10 +167,16 @@ class ItemTemplate(models.Model):
                     errors['*'].append(err_msg % {'self_cat': self_cat.name, 'sub_cat': subcat.name})
         elif bundled_items:
             # it is not a bundle, don't allow bundled items
-            errors['*'].append(_("An item of %s is not a bundle, cannot contain anything") % \
-                    self_cat.name)
+            if group_mode:
+                estr = _("An item of %s is not a group, cannot have contained items")
+            else:
+                estr = _("An item of %s is not a bundle, cannot contain anything")
+            errors['*'].append( estr % self_cat.name)
         if flat:
-            return reduce(lambda a,b: a+b, errors.values())
+            if errors:
+                return reduce(lambda a,b: a+b, errors.values())
+            else:
+                return []
         else:
             return errors
 

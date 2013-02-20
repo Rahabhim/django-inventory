@@ -96,9 +96,15 @@ class ItemsTreeWidget(forms.widgets.Widget):
                 items.append(ItemsTreeItem(**kv))
 
             for it in items:
+                gcontents = []
                 if it.line_num in contained:
                     it.is_group = True
                     it.contents = contained.pop(it.line_num)
+                    gcontents = [ (ic.item_template.category_id, ic.quantity) for ic in it.contents]
+                new_errors = it.item_template.validate_bundle(gcontents,flat=True, group_mode=True)
+                if new_errors:
+                    it.errors += new_errors
+                    it.state = 'bad'
 
             if contained:
                 logger.debug("Stray contents remaining: %r", contained)
