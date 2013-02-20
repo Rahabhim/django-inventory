@@ -112,7 +112,7 @@ class Item(models.Model):
             raise ValidationError("A bundled item cannot be assigned to any location itself")
         return super(Item, self).clean()
 
-    def save(self):
+    def save(self, **kwargs):
         if self.location and self.location.department and not self.property_number:
             try:
                 seq = self.location.department.get_sequence()
@@ -120,7 +120,7 @@ class Item(models.Model):
                     self.property_number = seq.get_next()
             except ObjectDoesNotExist:
                 pass
-        return super(Item, self).save()
+        return super(Item, self).save(**kwargs)
 
     def get_specs(self):
         return ""
