@@ -575,19 +575,11 @@ def repair_itemgroup(request):
 
 class POCartOpenView(CartOpenView):
     model=PurchaseOrder
-
-    def _action_fn(self, context):
-        if context['carts'].close_carts_by_model((PurchaseOrder, PurchaseOrderItem)):
-            self.request.session.modified = True
-        return super(POCartOpenView, self)._action_fn(context)
+    exclusive = True
 
 class POItemCartOpenView(CartOpenView):
     model=PurchaseOrderItem
-
-    def _action_fn(self, context):
-        if context['carts'].close_carts_by_model((PurchaseOrder, PurchaseOrderItem)):
-            self.request.session.modified = True
-        return super(POItemCartOpenView, self)._action_fn(context)
+    exclusive = True
 
 class POIAddMainView(_ModifyCartView):
     cart_model=PurchaseOrderItem

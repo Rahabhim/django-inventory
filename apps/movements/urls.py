@@ -209,7 +209,7 @@ urlpatterns = patterns('movements.views',
             name='movement_do_close'),
 
     url(r'^objects/moves/(?P<pk>\d+)/cart_open/$', CartOpenView.as_view(
-                model=Movement, dest_model='assets.Item',
+                model=Movement, dest_model='assets.Item', exclusive=True,
                 extra_context={'object_name':_(u'movement')}), 
             name='movement_cart_open'),
     url(r'^objects/moves/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=Movement), 
