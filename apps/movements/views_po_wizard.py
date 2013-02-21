@@ -314,7 +314,9 @@ class PO_Step4(WizardForm):
 
         # then save "1", use the instance to save "4"
         step1.save_to_db(wizard.request)
-        wizard.storage.extra_data['po_pk'] = step1.instance.pk
+        extra_data = wizard.storage.extra_data
+        extra_data['po_pk'] = step1.instance.pk
+        wizard.storage.extra_data = extra_data
         self.save_to_db(wizard.request, step1.instance)
         
         # Validate the bundles and groups
@@ -363,7 +365,7 @@ class PO_Step4(WizardForm):
         """
         assert po_instance and po_instance.pk
         items_dict = {}
-        for item in self.cleaned_data['items']:
+        for item in (self.cleaned_data['items'] or []):
             assert item['line_num'] not in items_dict, "duplicate line!"
             items_dict[item['line_num']] = item
 
