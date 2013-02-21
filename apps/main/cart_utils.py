@@ -103,6 +103,16 @@ class CartsContainer(object):
 
         return modified
 
+    def close_all_carts(self):
+        modified = False
+        if self._carts:
+            self._carts.clear()
+            modified = True
+        if self._session_carts:
+            self._session_carts[:] = [] # clear the list in-place
+            modified = True
+        return modified
+
     @classmethod
     def _remove_from_session(cls, ref, session_carts):
         to_del = []

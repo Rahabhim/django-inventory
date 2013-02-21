@@ -669,12 +669,17 @@ class _CartOpenCloseView(_PermissionsMixin, django_gv.detail.SingleObjectMixin, 
 
 class CartOpenView(_CartOpenCloseView):
     """ A view that immediately adds the object as a cart, and then gives instructions
+
+        @attribute exclusive If set, opening this cart will close all others
     """
     template_name = 'generic_cart_open.html'
     extra_context = None
     dest_model = None
+    exclusive = False
 
     def _action_fn(self, context):
+        if self.exclusive and context['carts'].close_all_carts():
+            self.request.session.modified = True
         if context['carts'].open_as_cart(self.object, self.dest_model):
             self.request.session.modified = True
         else:
