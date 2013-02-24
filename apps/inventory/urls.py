@@ -1,14 +1,11 @@
 # -*- encoding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic.create_update import create_object, update_object
 
 from generic_views.views import GenericDeleteView, \
                                 generic_detail, generic_list, \
                                 GenericCreateView, GenericUpdateView, \
                                 CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
-
-#from photos.views import generic_photos
 
 from models import Inventory, InventoryItem, Log
 

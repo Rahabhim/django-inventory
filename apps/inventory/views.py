@@ -4,9 +4,9 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
-from django.views.generic.list_detail import object_detail, object_list
+from django.views.generic.list_detail import object_list
 # from django.core.urlresolvers import reverse
-from django.db.models import Q, Count
+from django.db.models import Q #, Count
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 
 from common.models import Supplier
