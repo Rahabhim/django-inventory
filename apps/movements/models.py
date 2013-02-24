@@ -489,7 +489,7 @@ class Movement(models.Model):
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('validated by'))
 
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
-    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('done', _('Done'))])
+    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done'))])
     stype = models.CharField(max_length=16, choices=[('in', _('Incoming')),('out', _('Outgoing')),
                 ('internal', _('Internal')), ('other', _('Other'))], verbose_name=_('type'))
     origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
@@ -521,7 +521,7 @@ class Movement(models.Model):
         if val_date is None:
             val_date = datetime.date.today()
 
-        if self.state != 'draft':
+        if self.state not in ('draft', 'pending'):
             raise ValueError(_("Cannot close movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
         if self.validate_user:
             raise ValueError(_("Cannot close movement because it seems already validated!"))
