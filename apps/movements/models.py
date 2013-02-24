@@ -157,6 +157,10 @@ class PurchaseOrder(models.Model):
             if not item.item_template_id:
                 raise ValueError(_('Item template for item "%s" has not been assigned. Cannot continue.'), item.item_name)
             serials = []
+
+            if item.item_template.category.is_group:
+                # Skip group containers. We never receive them as items
+                continue
             for s in item.serial_nos.split(','):
                 s = s.strip()
                 if s:
