@@ -7,7 +7,7 @@ from models import Inventory
 from common.api import register_links, register_menu # , _context_has_perm TODO
 
 import assets
-
+import signals
 
 inventory_list = {'text':_('view all inventories'), 'view':'inventory_list', 'famfam':'package_go'}
 inventory_create = {'text':_('create new inventory'), 'view':'inventory_create', 'famfam':'package_add'}
