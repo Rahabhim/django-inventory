@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
-from django.db.models.signals import post_save, pre_save
-#from models import *
-from django.contrib.auth.models import Message
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from models import Inventory
 
-from products.models import ItemTemplate
-from models import Item, ItemGroup, Log
-Person = None
+from assets.models import Item
+import logging
 
+logger = logging.getLogger('apps.inventory')
 
 def __get_changelog(sender, instance, old_record=True):
     new_instance = instance
@@ -36,27 +36,19 @@ def __get_changelog(sender, instance, old_record=True):
 
     return change_log
 
-def update_log_object_update(sender, **kwargs):
-    if sender!=Item or sender!=ItemTemplate or sender!=ItemGroup or sender!=Item or sender!=Person:
-        return
 
-    try:
-        old_instance = sender.objects.get(pk=kwargs['instance'].id)
-    except:
-        return
+@receiver(post_save, sender=Inventory, dispatch_uid='139i439')
+def post_save_inventory(sender, instance=None, created=False, raw=False,  **kwargs):
+    """ create the locations, after a department has been saved
+    """
+    if instance is not None and created and not raw:
+        logger.debug("New inventory %s, fill it with items.", instance)
+        if instance.items.exists():
+            return
 
-    entry = Log(content_object=kwargs['instance'], action="object updated: %s" % kwargs['instance'], description=__get_changelog(sender, kwargs['instance']))
-    entry.save()
+        for item in Item.objects.filter(location=instance.location):
+            instance.items.create(asset=item, quantity=1)
 
+        logger.debug("Created %d items in inventory", instance.items.count())
 
-def update_log_object_create(sender, **kwargs):
-    if sender!=Item or sender!=ItemTemplate or sender!=ItemGroup or sender!=Item or sender!=Person:
-        return
-
-    if 'created' in kwargs:
-        if kwargs['created']:
-            entry = Log(content_object=kwargs['instance'], action="object created: %s" % kwargs['instance'], description=__get_changelog(sender, kwargs['instance'],old_record=False))
-            entry.save()
-
-#pre_save.connect(update_log_object_update)
-#post_save.connect(update_log_object_create)
+#eof
