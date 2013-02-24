@@ -6,7 +6,7 @@ from django.db import models
 from django.http import HttpResponseForbidden
 from models import Department
 from common.models import Location
-from common.api import LookupChannel
+from common.api import LookupChannel, role_from_request
 
 def _departments_by_q(q):
     return Department.objects.filter(_department_filter_q(q))
@@ -56,5 +56,17 @@ class LocationLookup(LookupChannel):
         return Location.objects.filter(models.Q(department__in=_departments_by_q(q))| \
                     models.Q(department=None, name__icontains=q)).\
                 order_by('department__name', 'name')[:20]
+
+class RoleLocationLookup(LookupChannel):
+    """ Only lookup the Locations under the active role's Department
+    """
+    model = Location
+
+    def get_query(self, q, request):
+        active_role = role_from_request(request)
+        if not active_role:
+            return Location.objects.none()
+        return Location.objects.filter(department=active_role.department, name__icontains=q).\
+                order_by('name')[:20]
 
 #eof
