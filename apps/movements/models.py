@@ -9,6 +9,7 @@ from assets.models import Item, ItemTemplate
 from dynamic_search.api import register
 import datetime
 import logging
+from settings import DATE_FORMAT
 
 logger = logging.getLogger(__name__)
 
@@ -511,6 +512,25 @@ class Movement(models.Model):
         verbose_name_plural = _("movements")
         permissions = (('validate_movement', 'Can validate a movement'), )
 
+    def clean(self):
+        """Before saving the Movement, update checkpoint_src to the last validated one
+        """
+        from inventory.models import Inventory
+        super(Movement, self).clean()
+        locs = []
+        if self.location_dest_id and self.location_dest.usage in 'internal':
+            locs.append(self.location_dest)
+        if self.location_src_id and self.location_src.usage in 'internal':
+            locs.append(self.location_src)
+
+        if locs:
+            # find if there is any validated inventory for either location,
+            # use it as checkpoint_src
+            chks = Inventory.objects.filter(location__in=locs, date_val__isnull=False). \
+                        order_by('-date_act')[:1]
+            if chks:
+                self.checkpoint_src = chks[0]
+
     def do_close(self, val_user, val_date=None):
         """Check the items and set the movement as 'done'
 
@@ -525,6 +545,14 @@ class Movement(models.Model):
             raise ValueError(_("Cannot close movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
         if self.validate_user:
             raise ValueError(_("Cannot close movement because it seems already validated!"))
+
+        if self.checkpoint_dest is not None:
+            raise ValueError(_("Internal error, movement is already checkpointed"))
+
+        self.clean()
+        if self.checkpoint_src and self.date_act <= self.checkpoint_src.date_act:
+            raise ValueError(_("You are not allowed to make any movements before %s, when last inventory was validated") %\
+                        self.checkpoint_src.date_act.strftime(DATE_FORMAT))
 
         if not self.items.exists():
             raise ValueError(_("You cannot close a movement with no items selected"))
