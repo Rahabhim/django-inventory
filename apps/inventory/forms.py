@@ -2,7 +2,10 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectField
+from django.core.exceptions import ObjectDoesNotExist
 
+from common.api import role_from_request
+from common.models import Location
 from generic_views.forms import DetailForm, InlineModelForm, ReadOnlyInput
 
 from models import Log, Inventory, InventoryItem
@@ -23,6 +26,19 @@ class InventoryForm(forms.ModelForm):
     def _pre_save_by_user(self, user):
         if not self.instance.create_user_id:
             self.instance.create_user = user
+
+    def _init_by_request(self, request):
+        dept = None
+        try:
+            active_role = role_from_request(request)
+            if active_role:
+                dept = active_role.department
+        except ObjectDoesNotExist:
+            pass
+        if dept:
+            locations = Location.objects.filter(department=dept)
+            if locations:
+                self.initial['location'] = locations[0].id
 
 
 class InventoryForm_view(DetailForm):
