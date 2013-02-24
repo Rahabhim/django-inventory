@@ -14,7 +14,7 @@ class LogForm(forms.ModelForm):
 
 
 class InventoryForm(forms.ModelForm):
-    location = AutoCompleteSelectField('location', show_help_text=False)
+    location = AutoCompleteSelectField('location_by_role', show_help_text=False)
 
     class Meta:
         model = Inventory
