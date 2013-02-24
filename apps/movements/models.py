@@ -526,8 +526,14 @@ class Movement(models.Model):
         if self.validate_user:
             raise ValueError(_("Cannot close movement because it seems already validated!"))
 
+        if not self.items.exists():
+            raise ValueError(_("You cannot close a movement with no items selected"))
+
         all_items = self.items.all()
         for item in all_items:
+            if not item.item_template.approved:
+                raise ValueError(_("Product %s is not approved, you cannot use it in this movement") % \
+                        item.item_template)
             if item.location_id == self.location_src_id:
                 pass
             elif item.location is None and self.location_src.usage in ('procurement', 'supplier'):
@@ -536,9 +542,6 @@ class Movement(models.Model):
             else:
                 raise ValueError(_("Item %(item)s is at %(location)s, rather than the move source location!") % \
                         dict(item=unicode(item), location=item.location))
-
-
-        # TODO: validate that all itemgroups of items are active
 
         if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
             all_items.update(src_contract=self.purchase_order.procurement)
@@ -624,6 +627,7 @@ class Movement(models.Model):
             raise ValueError(_("Item %s not in movement!") % unicode(obj))
         self.save()
         return 'removed'
+
 
 #class MovementLine(models.Model):
     #movement = models.ForeignKey(Movement)
