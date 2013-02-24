@@ -123,7 +123,7 @@ class _baseMovementForm(forms.ModelForm):
                 label=_("Notes"))
 
 class _outboundMovementForm(_baseMovementForm):
-    location_src = AutoCompleteSelectField('location', label=_("Source location"), required=True, show_help_text=False)
+    location_src = AutoCompleteSelectField('location_by_role', label=_("Source location"), required=True, show_help_text=False)
 
     def _init_by_request(self, request):
         dept = None
