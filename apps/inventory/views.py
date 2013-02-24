@@ -93,15 +93,26 @@ def inventory_items_compare(request, object_id):
         context_instance=RequestContext(request))
 
 def inventory_validate(request, object_id):
+    # file upload?
+    inventory = get_object_or_404(Inventory, pk=object_id)
     try:
         active_role = role_from_request(request)
         if not (active_role and active_role.has_perm('inventory.validate_inventory')):
             raise PermissionDenied
-        # TODO check that active_role has the same dept as inventory!
-    except ObjectDoesNotExist:
-        raise PermissionDenied
-    msg = _(u'The inventory validation feature is currently disabled!')
-    messages.error(request, msg, fail_silently=True)
+        # check that active_role has the same dept as inventory!
+        if active_role.department != inventory.location.department:
+            raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
+
+        # actual act of closing the inventory: (note, we don't pass the date)
+        inventory.do_close(request.user)
+        messages.success(request, _("The inventory has been validated and all movements fixated"), fail_silently=True)
+    except ValidationError, e:
+        for msg in e.messages:
+            messages.error(request, msg, fail_silently=True)
+    except PermissionDenied, e:
+        messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
+    except ObjectDoesNotExist, e:
+        messages.error(request, _("Incorrect role or department to validate inventory: %s") % e, fail_silently=True)
     return redirect('inventory_view', object_id=object_id)
 
 #eof

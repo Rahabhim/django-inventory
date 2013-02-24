@@ -172,6 +172,41 @@ class Inventory(models.Model):
                 have_pending = True
         return (have_pending, res)
 
+    def do_close(self, val_user, val_date=None):
+        """Validate the inventory and fix Item quantities
+
+            After a validation, no more Movements will be allowed for the
+            inventory's location on an earlier date. All subsequent moves
+            will have to use this inventory as checkpoint_src
+        """
+        Q = models.Q
+        # First, check that we are not already closed
+        logger.debug("Inventory %d %s do_close()", self.id, self.name)
+        if self.date_val or self.validate_user:
+            raise ValidationError(_("Inventory already validated"))
+
+        # Second, check that items match
+        # Does an *empty* inventory make sense?
+        have_pending, res = self._compute_state(pending_only=True, limit=10)
+        if have_pending:
+            raise ValidationError(_("Inventory has pending items that don't match computed state. Cannot close"))
+
+        # Third, check that no movements are later than this inventory
+        if movements.Movement.objects.filter(Q(location_src=self.location)|Q(location_dest=self.location))\
+                .filter(date_act__gt=self.date_act).exists():
+            raise ValidationError(_("You cannot validate an inventory for %s, because there is movements to/from that location on a later date") %\
+                    self.date_act.strftime(DATE_FORMAT))
+
+        # Mark the inventory as closed
+        self.date_val = val_date or datetime.date.today()
+        self.validate_user = val_user
+        self.save()
+
+        # Lock any Done moves that reference our location
+        movements.Movement.objects.filter(Q(location_src=self.location)|Q(location_dest=self.location))\
+                .filter(checkpoint_dest__isnull=True, state='done', )\
+                .update(checkpoint_dest=self)
+        logger.info("Inventory %d %s validated and closed", self.id, self.name)
 
 class InventoryItem(models.Model):
     inventory = models.ForeignKey(Inventory, related_name='items')
@@ -192,7 +227,6 @@ class InventoryItem(models.Model):
 
     def __unicode__(self):
         return u"%s: '%s' qty=%s" % (unicode(self.inventory), unicode(self.asset), self.quantity)
-
 
 register(Inventory, _(u'inventory'), ['name', 'location__name'])
 
