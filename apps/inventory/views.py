@@ -6,12 +6,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
 from django.views.generic.list_detail import object_list
 # from django.core.urlresolvers import reverse
-from django.db.models import Q #, Count
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 
 from common.models import Supplier
 from common.api import role_from_request
-from assets.models import Item, ItemGroup
 
 from models import Inventory, \
                    InventoryItem
@@ -74,41 +72,12 @@ def inventory_items_compare(request, object_id):
         offset = request.GET.get('offset', 0)
         limit = request.GET.get('limit', 10)
         pending_only = request.GET.get('pending_only', False)
-        
-        items_in_inventory = [ ii.asset_id for ii in inventory.items.all()]
-        res = []
-        items_base = Item.objects.filter(Q(pk__in=items_in_inventory)|Q(location=inventory.location)).order_by('id')
 
-        items_in_inventory = set(items_in_inventory)
-        have_pending = False
-        found = True
-        while found and len(res) < limit:
-            found = False
-            for item in items_base[offset:offset+limit]:
-                found = True
-                if item.id not in items_in_inventory:
-                    res.append((item, 'new'))
-                    have_pending = True
-                elif item.location_id != inventory.location_id:
-                    res.append((item, 'missing'))
-                    have_pending = True
-                elif not pending_only:
-                    res.append((item, 'ok'))
-            offset += limit
+        have_pending, res = inventory._compute_state(pending_only=pending_only, offset=offset, limit=limit)
+
         if res:
             subtemplates_dict.append({ 'name':'inventory_items_compare.html',
                             'object_list': res, })
-
-        if not (have_pending or pending_only):
-            # We must search the full set about wrong items
-            print "compute again"
-            items_mismatch = Item.objects.filter( \
-                    (Q(pk__in=items_in_inventory) & ~Q(location=inventory.location)) | \
-                    (Q(location=inventory.location) & ~Q(pk__in=items_in_inventory)) ).exists()
-
-            print "items mismatch", items_mismatch
-            if items_mismatch:
-                have_pending = True
 
         if have_pending:
             subtemplates_dict.append({'name': 'inventory_compare_have_more.html'})

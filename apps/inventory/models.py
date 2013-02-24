@@ -1,17 +1,23 @@
 # -*- encoding: utf-8 -*-
 
 from django.db import models
+from django.db.models import Q #, Count
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 #from django.contrib.auth.models import User, UserManager
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
+from settings import DATE_FORMAT
 
 from dynamic_search.api import register
 from common import models as common
 from assets import models as assets
-from products import models as products
+
+# from products import models as products
+from movements import models as movements
 import logging
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +41,6 @@ class Log(models.Model):
 
 class InventoryManager(models.Manager):
     def by_request(self, request):
-        Q = models.Q
         try:
             if request.user.is_superuser:
                 return self.all()
@@ -132,6 +137,41 @@ class Inventory(models.Model):
             raise ValueError(_("Item %s not in inventory!") % unicode(obj))
         self.save()
         return 'removed'
+
+    def _compute_state(self, pending_only=True, offset=0, limit=100):
+        items_in_inventory = [ ii.asset_id for ii in self.items.all()]
+        res = []
+        items_base = assets.Item.objects.filter(Q(pk__in=items_in_inventory)|Q(location=self.location)).order_by('id')
+
+        items_in_inventory = set(items_in_inventory)
+        have_pending = False
+        found = True
+        while found and len(res) < limit:
+            found = False
+            for item in items_base[offset:offset+max(limit, 100)]:
+                # max(..,100) is used to prevent small,inefficient batches
+                found = True
+                if item.id not in items_in_inventory:
+                    res.append((item, 'new'))
+                    have_pending = True
+                elif item.location_id != self.location_id:
+                    res.append((item, 'missing'))
+                    have_pending = True
+                elif not pending_only:
+                    res.append((item, 'ok'))
+            offset += limit
+
+        if not (have_pending or pending_only):
+            # We must search the full set about wrong items, just to raise
+            # the correct flag (in case we have `limit` results of 'ok' state)
+            items_mismatch = assets.Item.objects.filter( \
+                    (Q(pk__in=items_in_inventory) & ~Q(location=self.location)) | \
+                    (Q(location=self.location) & ~Q(pk__in=items_in_inventory)) ).exists()
+
+            if items_mismatch:
+                have_pending = True
+        return (have_pending, res)
+
 
 class InventoryItem(models.Model):
     inventory = models.ForeignKey(Inventory, related_name='items')
