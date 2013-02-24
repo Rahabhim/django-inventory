@@ -9,7 +9,7 @@ def home(request):
         user_profile = request.user.get_profile()
     except Exception, e:
         logger.warning("Cannot get profile:", exc_info=True)
-        pass
+        user_profile = None
     current_user_role = None
     try:
         if not request.user.is_superuser:
