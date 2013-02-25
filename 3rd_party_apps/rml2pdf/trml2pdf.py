@@ -43,7 +43,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-if __name__=="__main__":
+if True:
     import optparse
 
     def file_open(name, mode="r", subdir=None, pathinfo=False):
@@ -69,11 +69,6 @@ if __name__=="__main__":
             return fo, name
         else:
             return fo
-
-else:
-    # we are imported in OpenERP server
-    from tools.safe_eval import safe_eval as eval
-    from tools.misc import file_open
 
 def _open_image(filename, path=None):
     """Attempt to open a binary file and return the descriptor

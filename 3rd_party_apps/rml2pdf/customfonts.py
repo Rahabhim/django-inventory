@@ -26,14 +26,19 @@ import logging
 import platform
 
 from reportlab import rl_config
+try:
+    from main.conf import settings
+except ImportError:
+    settings = {}
 
-if 'openerp-server' in sys.modules['__main__'].__file__:
-    from tools import config
-else:
+if True:
     class config(object):
         @staticmethod
         def get_misc(k, k2, default):
-            return default
+            if settings and k in settings:
+                return settings[k].get(k2, default)
+            else:
+                return default
 
 
 #.apidoc title: TTF Font Table

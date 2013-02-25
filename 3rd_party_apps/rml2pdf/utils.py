@@ -44,10 +44,7 @@ import re
 import reportlab
 import sys
 
-if 'openerp-server' in sys.modules['__main__'].__file__:
-    from tools.safe_eval import safe_eval
-    from tools import ustr
-else:
+if True:
     def ustr(value):
         if isinstance(value, unicode):
             return value
