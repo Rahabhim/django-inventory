@@ -5,10 +5,9 @@ from collections import defaultdict
 from operator import itemgetter
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.template import RequestContext
 
 from django import forms
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect # render_to_response,
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib import messages
 
