@@ -649,6 +649,10 @@ class PO_Wizard(SessionWizardView):
         """
         try:
             next_step = form.save_data(self)
+        except PermissionDenied:
+            messages.error(self.request, _('Not permitted to save data'))
+            logger.exception('cannot save at step %s: ' % (self.steps.current))
+            return self.render(form)
         except Exception, e:
             messages.error(self.request, _('Cannot save data'))
             logger.exception('cannot save at step %s: %s' % (self.steps.current, e))
@@ -671,6 +675,10 @@ class PO_Wizard(SessionWizardView):
         # First, prepare forms 1 and 4 and validate them:
         try:
             res = form.save_data(self)
+        except PermissionDenied:
+            messages.error(self.request, _('No permission to save data'))
+            logger.exception('cannot save at step %s: ' % self.steps.current)
+            return self.render(form)
         except Exception, e:
             messages.error(self.request, _('Cannot save data'))
             logger.exception('cannot finish at step %s: %s' % (self.steps.current, e))
