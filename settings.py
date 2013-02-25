@@ -43,6 +43,10 @@ LOGGING = {
             'handlers': ['console',],
             'level': 'INFO',
             },
+        'report': {
+            'handlers': ['console', ],
+            'level': 'INFO',
+            },
         }
     }
 
