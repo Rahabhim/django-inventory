@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 #from django.contrib.auth.models import User, UserManager
 from django.core.urlresolvers import reverse
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 from settings import DATE_FORMAT
 
 from dynamic_search.api import register
@@ -116,6 +116,9 @@ class Inventory(models.Model):
         return state, href
 
     def add_to_cart(self, obj):
+        if self.validate_user is not None or self.date_val is not None:
+            raise PermissionDenied(_("Inventory is validated, cannot modify"))
+
         if obj is None or not isinstance(obj, assets.Item):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
 
@@ -126,6 +129,9 @@ class Inventory(models.Model):
         return 'added'
 
     def remove_from_cart(self, obj):
+        if self.validate_user is not None or self.date_val is not None:
+            raise PermissionDenied(_("Inventory is validated, cannot modify"))
+
         if obj is None or not isinstance(obj, assets.Item):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
 

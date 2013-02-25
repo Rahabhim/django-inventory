@@ -21,7 +21,7 @@ inventory_compare = {'text': _(u'compare'), 'view':'inventory_items_compare', 'a
 
 inventory_validate = {'text': _(u'validate'), 'view':'inventory_validate',
             'args':'object.id', 'famfam':'package_go',
-            'condition': lambda o,c: True}
+            'condition': lambda o,c: not o.date_val}
 
 jump_to_template = {'text':_(u'template'), 'view':'template_view', 'args':'object.supply.id', 'famfam':'page_go'}
 jump_to_inventory = {'text':_(u'return to inventory'), 'view':'inventory_view', 'args':'object.inventory.id', 'famfam':'package_go'}
@@ -30,13 +30,12 @@ inventory_menu_links = [
     inventory_list,
 ]
 
-register_links(['inventory_view', 'inventory_list', 'inventory_create', 
-        'inventory_update', 'inventory_delete',], [inventory_create], menu_name='sidebar')
+register_links(['inventory_view', 'inventory_list',], [inventory_create], menu_name='sidebar')
 
-register_links(Inventory, [inventory_update, inventory_compare, inventory_validate])
+register_links(Inventory, [inventory_update, inventory_compare])
 register_links(Inventory, [inventory_delete, inventory_open, inventory_close], menu_name='sidebar')
 register_links(Inventory, [inventory_view], menu_name='sidebar')
-
+register_links(['inventory_compare', 'inventory_view'], [inventory_validate], menu_name='sidebar')
 
 def has_pending_inventories(obj, context):
     return Inventory.objects.by_request(context['request']).filter(date_val__isnull=True).exists()

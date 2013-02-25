@@ -12,6 +12,11 @@ from models import Inventory, InventoryItem, Log
 from forms import InventoryForm, InventoryItemForm, \
                  LogForm, InventoryItemForm_inline
 
+def check_inventory(inventory):
+    """ Check that it is an open inventory
+    """
+    return inventory.date_val is None and inventory.validate_user is None
+
 urlpatterns = patterns('inventory.views',
     url(r'^inventory/list/$', generic_list, dict({'queryset':Inventory.objects.by_request}, 
                 extra_context=dict(title=_(u'inventories'), 
@@ -26,14 +31,14 @@ urlpatterns = patterns('inventory.views',
                 extra_context={'object_name':_(u'inventory')}), name='inventory_create'),
     url(r'^inventory/(?P<object_id>\d+)/$', 'inventory_view', (),'inventory_view'),
     url(r'^inventory/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(
-                form_class=InventoryForm,
+                form_class=InventoryForm, check_object=check_inventory,
                 inline_fields={'items': InventoryItemForm_inline },
                 extra_context={'object_name':_(u'inventory')}), name='inventory_update'),
     url(r'^inventory/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Inventory,
-                success_url="inventory_list", 
+                success_url="inventory_list", check_object=check_inventory,
                 extra_context=dict(object_name=_(u'inventory'))), name='inventory_delete'),
     url(r'^inventory/(?P<pk>\d+)/open/$', CartOpenView.as_view(
-                model=Inventory, dest_model='assets.Item',
+                model=Inventory, dest_model='assets.Item', check_object=check_inventory,
                 extra_context={'object_name':_(u'inventory')}), name='inventory_open'),
     url(r'^inventory/(?P<pk>\d+)/close/$', CartCloseView.as_view(model=Inventory), name='inventory_close'),
     #url(r'^inventory/(?P<object_id>\d+)/current/$', 'inventory_current', (), 'inventory_current'),
@@ -49,7 +54,6 @@ urlpatterns = patterns('inventory.views',
 
     url(r'^supplier/(?P<object_id>\d+)/purchase/orders/$', 'supplier_purchase_orders', (), 'supplier_purchase_orders'),
 
-    # TODO: validate..
     url(r'^inventory/(?P<pk>\d+)/add_item/$', AddToCartView.as_view( \
                 cart_model=Inventory, item_model='assets.Item'), \
             name='inventory_item_add'),
