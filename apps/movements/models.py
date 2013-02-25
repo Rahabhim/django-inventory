@@ -9,7 +9,7 @@ from assets.models import Item, ItemTemplate
 from dynamic_search.api import register
 import datetime
 import logging
-from settings import DATE_FORMAT
+from settings import DATE_FMT_FORMAT
 
 logger = logging.getLogger(__name__)
 
@@ -552,7 +552,7 @@ class Movement(models.Model):
         self.clean()
         if self.checkpoint_src and self.date_act <= self.checkpoint_src.date_act:
             raise ValueError(_("You are not allowed to make any movements before %s, when last inventory was validated") %\
-                        self.checkpoint_src.date_act.strftime(DATE_FORMAT))
+                        self.checkpoint_src.date_act.strftime(DATE_FMT_FORMAT))
 
         if not self.items.exists():
             raise ValueError(_("You cannot close a movement with no items selected"))

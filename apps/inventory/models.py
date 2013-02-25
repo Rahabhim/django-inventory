@@ -8,7 +8,7 @@ from django.contrib.contenttypes import generic
 #from django.contrib.auth.models import User, UserManager
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError, PermissionDenied
-from settings import DATE_FORMAT
+from settings import DATE_FMT_FORMAT
 
 from dynamic_search.api import register
 from common import models as common
@@ -201,7 +201,7 @@ class Inventory(models.Model):
         if movements.Movement.objects.filter(Q(location_src=self.location)|Q(location_dest=self.location))\
                 .filter(date_act__gt=self.date_act).exists():
             raise ValidationError(_("You cannot validate an inventory for %s, because there is movements to/from that location on a later date") %\
-                    self.date_act.strftime(DATE_FORMAT))
+                    self.date_act.strftime(DATE_FMT_FORMAT))
 
         # Mark the inventory as closed
         self.date_val = val_date or datetime.date.today()
