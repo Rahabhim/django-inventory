@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<document filename="{{ report_name }}">
+  <template pageSize="(595.0,842.0)" title="{{ internal_title }}"
+        author="{{ author }}" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="34.0" y1="42.0" width="527" height="758"/>
+      <para> First page template</para>
+    </pageTemplate>
+    <pageTemplate id="main">
+      <frame id="first" x1="34.0" y1="42.0" width="527" height="758"/>
+      <para>Main page template</para>
+    </pageTemplate>
+
+  </template>
+  <stylesheet>
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="Standard" fontName="Helvetica"/>
+    <paraStyle name="Text body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="List" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Header" fontName="Helvetica"/>
+    <paraStyle name="Footer" fontName="Helvetica"/>
+    <paraStyle name="Heading 1" fontName="Helvetica-Bold" fontSize="115%" leading="NaN" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="style.Title" fontName="Helvetica" fontSize="14.0"
+                alignment="CENTER"
+                leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
+    <images>
+    </images>
+    {% block extrastyles %}{% endblock %}
+  </stylesheet>
+  <story>
+    <para style="Heading 1">{% block title %}Report{% endblock %}</para>
+
+    {% block content %}
+    {% endblock %}
+  </story>
+</document>
