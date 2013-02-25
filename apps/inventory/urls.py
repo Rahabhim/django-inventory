@@ -60,6 +60,8 @@ urlpatterns = patterns('inventory.views',
     url(r'^inventory/(?P<pk>\d+)/remove_item/$', RemoveFromCartView.as_view(\
                 cart_model=Inventory, item_model='assets.Item'), \
             name='inventory_item_remove'),
+    url(r'^inventory/(?P<object_id>\d+)/inventory.pdf$', 'inventory_printout', \
+            name='inventory_printout'),
 )
 
 

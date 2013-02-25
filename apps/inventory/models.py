@@ -65,7 +65,8 @@ class Inventory(models.Model):
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))
-
+    signed_file = models.FileField(verbose_name=_("Signed file"), upload_to='inventories',
+                blank=True, null=True)
 
     class Meta:
         verbose_name = _(u'inventory')

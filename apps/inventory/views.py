@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
-
+import logging
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
+from django.http import HttpResponse
 from django.views.generic.list_detail import object_list
 # from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
@@ -16,7 +17,7 @@ from models import Inventory, \
 
 #from inventory import location_filter
 
-from forms import InventoryForm_view, InventoryItemForm
+from forms import InventoryForm_view, InventoryItemForm, InventoryValidateForm
 
 
 def inventory_view(request, object_id):
@@ -95,6 +96,7 @@ def inventory_items_compare(request, object_id):
 def inventory_validate(request, object_id):
     # file upload?
     inventory = get_object_or_404(Inventory, pk=object_id)
+    form = InventoryValidateForm(request.POST, request.FILES, instance=inventory)
     try:
         active_role = role_from_request(request)
         if not (active_role and active_role.has_perm('inventory.validate_inventory')):
@@ -104,8 +106,12 @@ def inventory_validate(request, object_id):
             raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
 
         # actual act of closing the inventory: (note, we don't pass the date)
-        inventory.do_close(request.user)
-        messages.success(request, _("The inventory has been validated and all movements fixated"), fail_silently=True)
+        if request.method == 'POST' and form.is_valid() and inventory.signed_file:
+            inventory.save() # for the file
+            inventory.do_close(request.user)
+            messages.success(request, _("The inventory has been validated and all movements fixated"), fail_silently=True)
+
+            return redirect('inventory_view', object_id=object_id)
     except ValidationError, e:
         for msg in e.messages:
             messages.error(request, msg, fail_silently=True)
@@ -113,6 +119,25 @@ def inventory_validate(request, object_id):
         messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
     except ObjectDoesNotExist, e:
         messages.error(request, _("Incorrect role or department to validate inventory: %s") % e, fail_silently=True)
-    return redirect('inventory_view', object_id=object_id)
+
+    # else, if no form posted:
+    return render_to_response('inventory_validate_ask.html',
+        { 'object': inventory, 'form': form },
+        context_instance=RequestContext(request))
+
+def inventory_printout(request, object_id):
+    inventory = get_object_or_404(Inventory, pk=object_id)
+    from django.template.loader import render_to_string
+    from rml2pdf import parseString
+    logger = logging.getLogger('apps.inventory')
+    logger.info("Rendering inventory #%d %s to HTTP", inventory.id, inventory.name)
+
+    rml_str = render_to_string('inventory_list.rml.tmpl',
+                dictionary={ 'object': inventory, 'report_name': 'inventory.pdf',
+                        'internal_title': "Inventory %d" % inventory.id,
+                        'user': request.user,
+                        'author': "Django-inventory"  } )
+    outPDF = parseString(rml_str, localcontext={})
+    return HttpResponse(outPDF, content_type='application/pdf')
 
 #eof

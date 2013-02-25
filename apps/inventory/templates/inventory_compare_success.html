@@ -3,8 +3,10 @@
 {% load carts %}
 
 <div class="content">
+    {% url inventory_printout object_id=object.id as printout_url %}
+    {% url inventory_validate object_id=object.id as validate_url %}
     {% blocktrans %}The sums of this inventory and the movements recorded in the systems
     agree.<br/>
-    You can now proceed to <a href="#">Validate the inventory</a>
-    {% endblocktrans %}
+    You should now first <a href="{{ printout_url}}" target="_new" title="Inventory PDF">print the inventory</a>,
+    then digitally sign it and proceed to <a href="{{ validate_url }}">validate it</a>{% endblocktrans %}
 </div>

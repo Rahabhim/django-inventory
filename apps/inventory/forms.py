@@ -21,7 +21,7 @@ class InventoryForm(forms.ModelForm):
 
     class Meta:
         model = Inventory
-        exclude = ('create_user', 'validate_user', 'date_val')
+        exclude = ('create_user', 'validate_user', 'date_val', 'signed_file')
 
     def _pre_save_by_user(self, user):
         if not self.instance.create_user_id:
@@ -39,6 +39,12 @@ class InventoryForm(forms.ModelForm):
             locations = Location.objects.filter(department=dept)
             if locations:
                 self.initial['location'] = locations[0].id
+
+class InventoryValidateForm(forms.ModelForm):
+    class Meta:
+        model = Inventory
+        fields = ('signed_file',)
+        widgets = { }
 
 
 class InventoryForm_view(DetailForm):
