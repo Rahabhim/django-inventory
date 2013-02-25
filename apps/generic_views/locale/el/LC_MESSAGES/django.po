@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"POT-Creation-Date: 2013-02-26 01:38+0200\n"
 "PO-Revision-Date: 2013-01-16 16:18+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -21,54 +21,54 @@ msgstr ""
 msgid "None"
 msgstr "Κανένα"
 
-#: views.py:130
+#: views.py:131
 #, python-format
 msgid "List of %s"
 msgstr "Λίστα %s"
 
-#: views.py:132
+#: views.py:133
 msgid "List"
 msgstr "Λίστα"
 
-#: views.py:353
+#: views.py:356
 #, python-format
 msgid "Empty list and '%(class_name)s.allow_empty' is False."
 msgstr ""
 "Άδεια λίστα και η μεταβλητή '%(class_name)s.allow_empty' είναι Αρνητική"
 
-#: views.py:423
+#: views.py:415
 #, python-format
 msgid "The selected %s were added."
 msgstr "Προστέθηκαν %s"
 
-#: views.py:429
+#: views.py:421
 #, python-format
 msgid "The selected %s were removed."
 msgstr "Αφαιρέθηκαν %s"
 
-#: views.py:660
+#: views.py:709
 msgid "The cart is already open."
 msgstr ""
 
-#: views.py:673
+#: views.py:722
 msgid "The cart is not open."
 msgstr ""
 
-#: views.py:736
+#: views.py:785
 #, python-format
 msgid "Item %s could not be found."
 msgstr ""
 
-#: views.py:747
+#: views.py:796
 msgid "Could not alter item"
 msgstr ""
 
-#: views.py:755
+#: views.py:804
 #, python-format
 msgid "%(item)s added to %(cart)s"
 msgstr ""
 
-#: views.py:761
+#: views.py:810
 #, python-format
 msgid "%(item)s removed from %(cart)s"
 msgstr ""
@@ -89,31 +89,31 @@ msgstr "πλήθος"
 msgid "There are no %(title)s"
 msgstr "Δεν υπάρχουν %(title)s"
 
-#: templates/calculate_form_title.html:12
+#: templates/calculate_form_title.html:11
 #, python-format
 msgid "Details for %(object_name)s: %(object)s"
 msgstr "Λεπτομέρειες για %(object_name)s: %(object)s"
 
-#: templates/calculate_form_title.html:14
+#: templates/calculate_form_title.html:13
 #, python-format
 msgid "Details for: %(object)s"
 msgstr "Λεπτομέρειες για: %(object)s"
 
-#: templates/calculate_form_title.html:19
+#: templates/calculate_form_title.html:18
 #, python-format
 msgid "Edit %(object_name)s:"
 msgstr "Επεξεργασία %(object_name)s"
 
-#: templates/calculate_form_title.html:21
+#: templates/calculate_form_title.html:20
 msgid "Edit"
 msgstr "επεξεργασία"
 
-#: templates/calculate_form_title.html:25
+#: templates/calculate_form_title.html:24
 #, python-format
 msgid "Create new %(object_name)s"
 msgstr "Δημιουργία νέου %(object_name)s"
 
-#: templates/calculate_form_title.html:27
+#: templates/calculate_form_title.html:26
 msgid "Create"
 msgstr "Δημιουργία"
 

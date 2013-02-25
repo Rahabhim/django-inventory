@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"POT-Creation-Date: 2013-02-26 01:38+0200\n"
 "PO-Revision-Date: 2013-01-16 09:55+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -25,59 +25,59 @@ msgstr "προμήθειες"
 msgid "delegates"
 msgstr "ανάδοχοι"
 
-#: __init__.py:11
+#: __init__.py:12
 msgid "projects"
 msgstr "έργα"
 
-#: __init__.py:12
+#: __init__.py:14
 msgid "contracts"
 msgstr "συμβάσεις"
 
-#: urls.py:17
+#: urls.py:16
 msgid "Active"
 msgstr "Ενεργό"
 
-#: urls.py:18
+#: urls.py:17
 msgid "delegates list"
 msgstr "Λίστα ανάδοχων"
 
-#: urls.py:21 urls.py:25 urls.py:29 urls.py:34
+#: urls.py:19 urls.py:22 urls.py:26 urls.py:30
 msgid "delegate"
 msgstr "ανάδοχος"
 
-#: urls.py:30
-#, fuzzy
-msgid "Will delete delegate and all references in contracts"
-msgstr ""
-"#-#-#-#-#  .merge_file_iCYaJj  #-#-#-#-#\n"
-"#-#-#-#-#  .merge_file_Tx0HGr  #-#-#-#-#\n"
-"Θα διαγράψει τον ανάδοχο και θα μηδενίσει αντίστοιχα το πεδίο στις συμβάσεις."
-
-#: urls.py:38
+#: urls.py:34
 msgid "Department"
 msgstr "Μονάδα"
 
-#: urls.py:39
+#: urls.py:35
 msgid "Date"
 msgstr "Ημερομηνία"
 
-#: urls.py:40
+#: urls.py:36
 #, fuzzy
 msgid "Delegate"
 msgstr "ανάδοχος"
 
-#: urls.py:43
+#: urls.py:39
 msgid "list of contracts"
 msgstr "λίστα συμβάσεων"
 
-#: urls.py:46 urls.py:50 urls.py:54 urls.py:60
+#: urls.py:41 urls.py:44 urls.py:48 urls.py:52
 msgid "contract"
 msgstr "σύμβαση"
 
-#: urls.py:64
+#: urls.py:56
 msgid "list of projects"
 msgstr "λίστα έργων"
 
-#: urls.py:67 urls.py:71 urls.py:75 urls.py:81
+#: urls.py:58 urls.py:61 urls.py:65 urls.py:69
 msgid "project"
 msgstr "έργο"
+
+#, fuzzy
+#~ msgid "Will delete delegate and all references in contracts"
+#~ msgstr ""
+#~ "#-#-#-#-#  .merge_file_iCYaJj  #-#-#-#-#\n"
+#~ "#-#-#-#-#  .merge_file_Tx0HGr  #-#-#-#-#\n"
+#~ "Θα διαγράψει τον ανάδοχο και θα μηδενίσει αντίστοιχα το πεδίο στις "
+#~ "συμβάσεις."

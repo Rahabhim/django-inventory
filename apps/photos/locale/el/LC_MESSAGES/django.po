@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"POT-Creation-Date: 2013-02-26 01:38+0200\n"
 "PO-Revision-Date: 2013-01-23 14:08+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -113,4 +113,3 @@ msgstr "Παρακαλώ περιμένετε..."
 #: templates/photos.html:20
 msgid "Add / remove photos"
 msgstr "Προσθήκη / αφαίρεση φωτογραφιών"
-

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"POT-Creation-Date: 2013-02-26 01:38+0200\n"
 "PO-Revision-Date: 2013-01-23 14:06+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -45,10 +45,6 @@ msgstr "Χρήστης"
 msgid "Anonymous"
 msgstr "Ανώνυμος"
 
-#: templates/base.html:39
-msgid "New password"
-msgstr "Νέος κωδικός"
-
 #: templates/base.html:43
 msgid "Admin site"
 msgstr "Διαχείριση"
@@ -79,21 +75,28 @@ msgstr "Ενέργειες"
 msgid "Other available actions"
 msgstr "Άλλες διαθέσιμες ενέργειες"
 
-#: templates/home.html:12
+#: templates/home.html:13
 msgid "My pending actions "
 msgstr "Ενέργειες σε εκκρεμότητα"
 
-#: templates/home.html:21
+#: templates/home.html:22
 msgid "Available actions"
 msgstr "Διαθέσιμες ενέργειες"
+
+#: templates/home.html:34
+msgid "Select department and role:"
+msgstr "Επιλέξτε μονάδα και ρόλο:"
+
+#: templates/home.html:38
+msgid "Updating, please wait"
+msgstr ""
 
 #: templates/object_list_carts.html:5
 msgid "Return to "
 msgstr "Επιστροφή στη "
 
-#: templates/home.html:34
-msgid "Select department and role:"
-msgstr "Επιλέξτε μονάδα και ρόλο:"
+#~ msgid "New password"
+#~ msgstr "Νέος κωδικός"
 
 #~ msgid "tools"
 #~ msgstr "εργαλεία"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"POT-Creation-Date: 2013-02-26 01:38+0200\n"
 "PO-Revision-Date: 2013-01-21 14:02+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,7 +17,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: views.py:6 templates/password_change_done.html:5
+#: models.py:20
+msgid "Department"
+msgstr "Μονάδα"
+
+#: models.py:21
+msgid "Group"
+msgstr "Ομάδα"
+
+#: views.py:10 templates/password_change_done.html:5
 msgid "Your password has been successfully changed."
 msgstr "Ο κωδικός πρόσβασής σας άλλαξε."
 
@@ -29,11 +37,3 @@ msgstr "Σύνδεση"
 #: templates/password_change_form.html:5
 msgid "Password change"
 msgstr "Αλλαγή κωδικού πρόσβασης"
-
-#: models.py:20
-msgid "Department"
-msgstr "Μονάδα"
-
-#: models.py:21
-msgid "Group"
-msgstr "Ομάδα"

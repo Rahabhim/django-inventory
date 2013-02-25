@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 16:22+0200\n"
-"PO-Revision-Date: 2013-01-23 14:06+0200\n"
+"POT-Creation-Date: 2013-02-26 01:38+0200\n"
+"PO-Revision-Date: 2013-02-26 01:53+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -49,116 +49,171 @@ msgstr "κλείσιμο"
 msgid "compare"
 msgstr "Σύγκριση"
 
-#: __init__.py:28
+#: __init__.py:22
+#, fuzzy
+msgid "validate"
+msgstr "επικύρωση από"
+
+#: __init__.py:26
 msgid "template"
 msgstr "προϊόν"
 
-#: __init__.py:29
+#: __init__.py:27
 msgid "return to inventory"
 msgstr "επιστροφή στην απογραφή"
 
-#: __init__.py:48 models.py:48 urls.py:20
+#: __init__.py:43 urls.py:26
+msgid "pending inventories"
+msgstr "Εκκρεμείς Απογραφές"
+
+#: __init__.py:51 models.py:73 urls.py:22
 msgid "inventories"
 msgstr "Απογραφές"
 
-#: models.py:17
+#: models.py:25
 msgid "timedate"
 msgstr "ημερομηνία"
 
-#: models.py:18
+#: models.py:26
 msgid "action"
 msgstr "ενέργεια"
 
-#: models.py:19
+#: models.py:27
 msgid "description"
 msgstr "περιγραφή"
 
-#: models.py:38
+#: models.py:62
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:39 urls.py:21
+#: models.py:63 urls.py:23 urls.py:27
 msgid "location"
 msgstr "τοποθεσία"
 
-#: models.py:40
+#: models.py:64
 msgid "date performed"
 msgstr "ημερομηνία εκτέλεσης"
 
-#: models.py:41
+#: models.py:65
 msgid "date validated"
 msgstr "ημερομηνία επικύρωσης"
 
-#: models.py:42
+#: models.py:66
 msgid "created by"
 msgstr "δημιουργήθηκε από"
 
-#: models.py:43
+#: models.py:67
 msgid "validated by"
 msgstr "επικύρωση από"
 
-#: models.py:47 models.py:138 urls.py:25 urls.py:30 urls.py:33 urls.py:36
-#: views.py:40 views.py:121
+#: models.py:68
+msgid "Signed file"
+msgstr "Υπογεγραμμένο αρχείο"
+
+#: models.py:72 models.py:238 urls.py:31 urls.py:36 urls.py:39 urls.py:42
+#: views.py:37 views.py:89
 msgid "inventory"
 msgstr "απογραφή"
 
-#: models.py:61
+#: models.py:86
 #, python-format
 msgid "Inventory: %s"
 msgstr "Απογραφή: %s"
 
-#: models.py:96 models.py:106
+#: models.py:121 models.py:134
+msgid "Inventory is validated, cannot modify"
+msgstr "Η απογραφή έχει επικυρωθεί, δεν μπορείτε να την τροποποιήσετε"
+
+#: models.py:124 models.py:137
 #, python-format
 msgid "Incorrect object passed: %s"
 msgstr "Λάθος αντικείμενο: %s"
 
-#: models.py:99
+#: models.py:127
 msgid "Item already in inventory"
 msgstr "Ο εξοπλισμός έχει ήδη απογραφεί"
 
-#: models.py:113
+#: models.py:144
 #, python-format
 msgid "Item %s not in inventory!"
 msgstr "Ο εξοπλισμός %s δεν είναι στην απογραφή!"
 
-#: models.py:119
+#: models.py:193
+msgid "Inventory already validated"
+msgstr "Η απογραφή έχει επικυρωθεί ήδη"
+
+#: models.py:199
+msgid ""
+"Inventory has pending items that don't match computed state. Cannot close"
+msgstr ""
+
+#: models.py:204
+#, python-format
+msgid ""
+"You cannot validate an inventory for %s, because there is movements to/from "
+"that location on a later date"
+msgstr ""
+"Δεν μπορείτε να επικυρώσετε απογραφή για τις %s, γιατί υπάρχουν οριστικές "
+"κινήσεις "
+"από/προς την τοποθεσία αυτή σε μεταγενέστερες ημερομηνίες."
+
+#: models.py:220
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:120 views.py:49
+#: models.py:221 views.py:46
 msgid "quantity"
 msgstr "Ποσότητα"
 
-#: models.py:121
+#: models.py:222
 msgid "item state"
 msgstr "κατάσταση"
 
-#: models.py:123
+#: models.py:224
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:126 urls.py:47
+#: models.py:227 urls.py:53
 #, fuzzy
 msgid "inventory item"
 msgstr "Απογραφές"
 
-#: models.py:127
+#: models.py:228
 #, fuzzy
 msgid "inventory items"
 msgstr "Απογραφές"
 
-#: urls.py:43
+#: urls.py:49
 msgid "items"
 msgstr "εξοπλισμός"
 
-#: views.py:46
+#: views.py:43
 #, fuzzy
 msgid "current balances for inventory"
 msgstr "Νέα Απογραφή"
 
-#: views.py:64
+#: views.py:61
 msgid "purchase orders from supplier"
 msgstr "εντολές προμήθειας από προμηθευτή"
+
+#: views.py:106
+msgid "You are not currently signed at the same Department as this Inventory"
+msgstr "Δεν έχετε την ίδια Μονάδα με αυτή της απογραφής"
+
+#: views.py:112
+msgid "The inventory has been validated and all movements fixated"
+msgstr ""
+"Η απογραφή επικυρώθηκε, και όλες οι κινήσεις της τοποθεσίας οριστικοποιήθηκαν."
+
+#: views.py:119
+#, python-format
+msgid "Permission denied: %s"
+msgstr "Μη επιτρεπτή ενέργεια: %s"
+
+#: views.py:121
+#, python-format
+msgid "Incorrect role or department to validate inventory: %s"
+msgstr ""
 
 #: templates/inventory_compare_have_more.html:6
 #, python-format
@@ -174,12 +229,15 @@ msgid ""
 "    "
 msgstr ""
 
-#: templates/inventory_compare_success.html:6
+#: templates/inventory_compare_success.html:8
+#, python-format
 msgid ""
 "The sums of this inventory and the movements recorded in the systems\n"
 "    agree.<br/>\n"
-"    You can now proceed to <a href=\"#\">Validate the inventory</a>\n"
-"    "
+"    You should now first <a href=\"%(printout_url)s\" target=\"_new\" title="
+"\"Inventory PDF\">print the inventory</a>,\n"
+"    then digitally sign it and proceed to <a href=\"%(validate_url)s"
+"\">validate it</a>"
 msgstr ""
 
 #: templates/inventory_items_compare.html:8
@@ -196,7 +254,44 @@ msgstr ""
 
 #: templates/inventory_items_compare.html:21
 msgid "missing!"
+msgstr "Ελλειπής!"
+
+#: templates/inventory_validate_ask.html:3
+msgid "Confirm inventory validation "
 msgstr ""
+
+#: templates/inventory_validate_ask.html:11
+#, fuzzy
+msgid "Inventory validation"
+msgstr "Απογραφές"
+
+#: templates/inventory_validate_ask.html:14
+#, python-format
+msgid "Are you sure you wish to validate: %(object)s?"
+msgstr ""
+
+#: templates/inventory_validate_ask.html:15
+#, fuzzy
+msgid "Location:"
+msgstr "τοποθεσία"
+
+#: templates/inventory_validate_ask.html:16
+#, fuzzy
+msgid "Date performed:"
+msgstr "ημερομηνία εκτέλεσης"
+
+#: templates/inventory_validate_ask.html:17
+msgid "Please also upload the signed PDF of the inventory "
+msgstr ""
+
+#: templates/inventory_validate_ask.html:24
+#, fuzzy
+msgid "Validate"
+msgstr "επικύρωση από"
+
+#: templates/inventory_validate_ask.html:27
+msgid "Abort"
+msgstr "Εγκατάλειψη"
 
 #: templates/report-items_per_person.html:14
 msgid "User assets report"
@@ -224,19 +319,6 @@ msgstr ""
 #, fuzzy
 msgid "NOTES"
 msgstr "σημειώσεις"
-
-#: __init__.py:22
-#, fuzzy
-msgid "validate"
-msgstr "επικύρωση από"
-
-#: __init__.py:44 urls.py:24
-msgid "pending inventories"
-msgstr "Εκκρεμείς Απογραφές"
-
-#: views.py:134
-msgid "The inventory validation feature is currently disabled!"
-msgstr ""
 
 #~ msgid "date"
 #~ msgstr "ημερομηνία"

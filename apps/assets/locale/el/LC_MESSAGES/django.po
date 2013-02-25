@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-22 16:22+0200\n"
+"POT-Creation-Date: 2013-02-26 01:38+0200\n"
 "PO-Revision-Date: 2013-01-23 14:04+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -65,11 +65,11 @@ msgstr "εξοπλισμός"
 msgid "Contained Item"
 msgstr "Περιεχόμενο αντικείμενο"
 
-#: forms.py:38 urls.py:40 views.py:125
+#: forms.py:38 urls.py:40 views.py:126
 msgid "Manufacturer"
 msgstr "Κατασκευαστής"
 
-#: forms.py:39 urls.py:41 views.py:126
+#: forms.py:39 urls.py:41 views.py:125
 msgid "Category"
 msgstr "Είδος"
 
@@ -81,7 +81,7 @@ msgstr "όνομα"
 msgid "exclusive"
 msgstr "αποκλειστική"
 
-#: models.py:20 models.py:166 urls.py:52 urls.py:55
+#: models.py:20 models.py:166 urls.py:51 urls.py:54
 msgid "states"
 msgstr "καταστάσεις"
 
@@ -150,7 +150,7 @@ msgstr ""
 "Δηλώνει ότι ο εξοπλισμός είναι μέρος Σύνθεσης, και γι' αυτό δεν έχει "
 "τοποθεσία."
 
-#: models.py:78 views.py:130 views.py:136 views.py:147
+#: models.py:78 views.py:131 views.py:137 views.py:148 views.py:161
 msgid "Source Contract"
 msgstr "Σύμβαση Παραλαβής"
 
@@ -182,7 +182,7 @@ msgstr "λίστα εξοπλισμού"
 msgid "Assigned to:"
 msgstr "Ανατέθηκε σε:"
 
-#: urls.py:39 views.py:129
+#: urls.py:39 views.py:130 views.py:164
 msgid "Location"
 msgstr "τοποθεσία"
 
@@ -261,23 +261,28 @@ msgstr "Δεν γίνεται να αφαιρεθεί η σήμανση '%s'."
 msgid "Item Template"
 msgstr "προϊόν"
 
-#: views.py:127 views.py:134 views.py:145
+#: views.py:128 views.py:135 views.py:146 views.py:162
 msgid "specifications"
 msgstr "προδιαγραφές"
 
-#: views.py:128 views.py:135 views.py:146
+#: views.py:129 views.py:136 views.py:147 views.py:163
 msgid "Serial number"
 msgstr "Σειριακός αριθμός"
 
-#: views.py:140
+#: views.py:141
 #, python-format
 msgid "location assets: %s"
 msgstr "Εξοπλισμός τοποθεσίας: %s"
 
-#: views.py:151
+#: views.py:152
 #, python-format
 msgid "department assets: %s"
 msgstr "εξοπλισμός μονάδας: %s"
+
+#: views.py:169
+#, python-format
+msgid "Items of template: %s"
+msgstr "Εξοπλισμός από προϊόν: %s"
 
 #: templates/asset_detail.html:5
 msgid "Asset Details"
@@ -316,11 +321,6 @@ msgstr "Επιλογή  %(state)s"
 #: templates/state_subtemplate.html:18
 msgid "There are no states defined."
 msgstr "Δεν έχουν οριστεί καταστάσεις"
-
-#: views.py:169
-#, python-format
-msgid "Items of template: %s"
-msgstr "Εξοπλισμός από προϊόν: %s"
 
 #~ msgid "create new asset"
 #~ msgstr "δημιουργία εξοπλισμού"
