@@ -465,7 +465,7 @@ class PO_Step5(WizardForm):
             pass
 
         if items_left:
-            if not active_role.has_perm('movements.receive_purchaseorder'):
+            if not active_role.has_perm('movements.change_purchaseorder'):
                 raise PermissionDenied
             lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
             lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
