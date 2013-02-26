@@ -13,7 +13,9 @@ def password_change_done(request):
 def select_user_role(request):
     role_id = request.REQUEST.get('role_id', None)
     http_accept = request.META.get('HTTP_ACCEPT','-')
-    if role_id:
+    if role_id == 'x':
+        request.session['current_user_role'] = False
+    elif role_id:
         role = get_object_or_404(DepartmentRole, pk=role_id)
         assert role.user == request.user, "User mismatch!"
 

@@ -116,6 +116,9 @@ class _fake_role(object):
     def has_perm(self, perm):
         return True
 
+    def __nonzero__(self):
+        return False
+
 def role_from_request(request):
     """Obtain the active DepartmentRole object from the http request
 
