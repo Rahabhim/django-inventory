@@ -5,7 +5,9 @@ from django.core.urlresolvers import reverse
 
 from common.models import Supplier, Location
 from assets.models import Item, ItemTemplate
+from company.models import Department
 
+from common.api import role_from_request
 from dynamic_search.api import register
 import datetime
 import logging
@@ -120,6 +122,8 @@ class PurchaseOrder(models.Model):
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     status = models.ForeignKey(PurchaseOrderStatus, null=True, blank=True, verbose_name=_(u'status'))
+    department = models.ForeignKey(Department, verbose_name=_("corresponding department"), 
+                blank=True, null=True, related_name='+')
 
     class Meta:
         verbose_name = _(u'purchase order')
