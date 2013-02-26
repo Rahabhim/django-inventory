@@ -98,12 +98,14 @@ class PurchaseOrderManager(models.Manager):
             if request.user.is_superuser:
                 return self.all()
             else:
-                q = Q(create_user=request.user) | Q(validate_user=request.user)
-                if request.session.get('current_user_role', False):
-                    role_id = request.session['current_user_role']
-                    role = request.user.dept_roles.get(pk=role_id)
+                active_role = role_from_request(request)
+                if active_role:
                     # remember: location_src is always the supplier!
-                    q = Q(movements__location_dest__department=role.department)
+                    q = Q(movements__location_dest__department=active_role.department) \
+                        | Q(department=active_role.department)
+                else:
+                    q = Q(create_user=request.user) | Q(validate_user=request.user) \
+                        | Q(department__in=request.user.dept_roles.values_list('department', flat=True))
                 return self.filter(q)
         except Exception:
             logger.exception("cannot filter:")
@@ -474,12 +476,15 @@ class MovementManager(models.Manager):
             if request.user.is_superuser:
                 return self.all()
             else:
-                q = Q(create_user=request.user) | Q(validate_user=request.user)
-                if request.session.get('current_user_role', False):
-                    role_id = request.session['current_user_role']
-                    role = request.user.dept_roles.get(pk=role_id)
-                    q = Q(location_src__department=role.department) \
-                          | Q(location_dest__department=role.department)
+                active_role = role_from_request(request)
+                if active_role:
+                    q = Q(location_src__department=active_role.department) \
+                          | Q(location_dest__department=active_role.department)
+                else:
+                    allowed_depts = request.user.dept_roles.values_list('department', flat=True)
+                    q = Q(create_user=request.user) | Q(validate_user=request.user) \
+                        | Q(location_src__department__in=allowed_depts) \
+                        | Q(location_dest__department__in=allowed_depts)
                 return self.filter(q)
         except Exception:
             logger.exception("cannot filter:")

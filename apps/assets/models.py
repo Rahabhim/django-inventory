@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
 from dynamic_search.api import register
+from common.api import role_from_request
 from common.models import Location # , Partner, Supplier
 from products.models import ItemTemplate
 import logging
@@ -55,10 +56,12 @@ class ItemManager(models.Manager):
         try:
             if request.user.is_superuser:
                 return self.all()
-            elif request.session.get('current_user_role', False):
-                role_id = request.session['current_user_role']
-                role = request.user.dept_roles.get(pk=role_id)
-                return self.filter(location__department=role.department)
+            else:
+                role = role_from_request(request)
+                if role:
+                    return self.filter(location__department=role.department)
+                else:
+                    return self.filter(location__department__in=request.user.dept_roles.values_list('department', flat=True))
         except Exception:
             logger.exception("cannot filter:")
         return self.none()
