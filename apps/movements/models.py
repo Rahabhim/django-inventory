@@ -183,7 +183,8 @@ class PurchaseOrder(models.Model):
             old_serials.update(serials)
             po_items_qty[iid] = po_items_qty.get(iid, 0) + item.received_qty - len(serials)
             for bid in item.bundled_items.all():
-                po_bundled_qty[bid.id] = po_bundled_qty.get(bid.id, 0) + item.received_qty
+                biid = bid.item_template_id
+                po_bundled_qty[biid] = po_bundled_qty.get(biid, 0) + item.received_qty
 
         # 2st step: remove from dicts those items who are already in movements
         #           linked to this one
