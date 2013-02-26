@@ -41,10 +41,10 @@ class WizardForm(_WizardFormMixin, forms.Form):
 class PO_Step1(_WizardFormMixin, forms.ModelForm):
     title = _("Purchase Order Header Data")
     user_id = forms.CharField(max_length=32, required=False, label=_(u'purchase order number'))
-    #procurement = models.ForeignKey('procurements.Contract', null=True, blank=True, label=_("procurement contract"))
     issue_date = forms.DateField(label=_(u'issue date'), required=True)
 
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.all())
+    department = AutoCompleteSelectField('department', label=_("Department"), required=False, show_help_text=False)
     supplier_name_or_vat = forms.ChoiceField(label=_('Find by'), widget=forms.widgets.RadioSelect,
             initial='name',
             choices=[('vat', _('VAT (exact)')), ('name', _('Company Name'))], )
@@ -55,7 +55,7 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
 
     class Meta:
         model = PurchaseOrder
-        fields = ('user_id', 'issue_date', 'procurement', 'supplier')
+        fields = ('user_id', 'issue_date', 'procurement', 'supplier', 'department')
                 # That's the fields we want to fill in the PO
 
     def __init__(self, data=None, files=None, **kwargs):
@@ -71,6 +71,10 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
         """
         if not (self.instance.pk or self.instance.create_user_id):
             self.instance.create_user = request.user
+        if self.instance.department is None:
+            active_role = role_from_request(request)
+            if active_role:
+                self.instance.department = active_role.department
         self.instance.save()
 
 class PO_Step2(WizardForm):
@@ -352,11 +356,10 @@ class PO_Step4(WizardForm):
             return '4a'
         else:
             step5_data = wizard.storage.get_step_data('5')
-            if step5_data is None:
-                step5_data = MultiValueDict()
-            active_role = role_from_request(wizard.request)
-            if active_role:
-                step5_data['5-department'] = active_role.department
+            if step1.instance.department is not None:
+                if step5_data is None:
+                    step5_data = MultiValueDict()
+                step5_data['5-department'] = step1.instance.department.id
                 wizard.storage.set_step_data('5', step5_data)
             return '5'
 
@@ -496,7 +499,7 @@ class PO_Step5(WizardForm):
                         purchase_order=po_instance)
                     movement.save()
                     po_instance.fill_out_bundle_move(bundled, movement)
-        
+
         if msg:
             return '5'
 
