@@ -308,7 +308,6 @@ class GroupTreeWidget(forms.widgets.Widget):
 
             For the categories, please iterate over this widget
         """
-        items = []
         if not value:
             return mark_safe(u'<!-- no value for GTW -->')
         assert 'item_template' in value, 'Strange value: %r' % value.keys()
