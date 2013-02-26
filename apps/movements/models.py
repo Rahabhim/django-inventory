@@ -101,7 +101,7 @@ class PurchaseOrderManager(models.Manager):
                     role_id = request.session['current_user_role']
                     role = request.user.dept_roles.get(pk=role_id)
                     # remember: location_src is always the supplier!
-                    q = q | Q(movements__location_dest__department=role.department)
+                    q = Q(movements__location_dest__department=role.department)
                 return self.filter(q)
         except Exception:
             logger.exception("cannot filter:")
@@ -474,7 +474,7 @@ class MovementManager(models.Manager):
                 if request.session.get('current_user_role', False):
                     role_id = request.session['current_user_role']
                     role = request.user.dept_roles.get(pk=role_id)
-                    q = q | Q(location_src__department=role.department) \
+                    q = Q(location_src__department=role.department) \
                           | Q(location_dest__department=role.department)
                 return self.filter(q)
         except Exception:
