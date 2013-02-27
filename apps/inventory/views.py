@@ -100,7 +100,7 @@ def inventory_validate(request, object_id):
     try:
         active_role = role_from_request(request)
         if not (active_role and active_role.has_perm('inventory.validate_inventory')):
-            raise PermissionDenied
+            raise PermissionDenied(_("Your active role does not have permission to validate an inventory"))
         # check that active_role has the same dept as inventory!
         if active_role.department != inventory.location.department:
             raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
@@ -117,6 +117,7 @@ def inventory_validate(request, object_id):
             messages.error(request, msg, fail_silently=True)
     except PermissionDenied, e:
         messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
+        return redirect('inventory_view', object_id=object_id)
     except ObjectDoesNotExist, e:
         messages.error(request, _("Incorrect role or department to validate inventory: %s") % e, fail_silently=True)
 
