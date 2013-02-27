@@ -1,4 +1,5 @@
 import types
+import logging
 
 from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
@@ -11,6 +12,7 @@ from common.api import object_navigation, menu_links as menu_navigation
 
 register = Library()
 
+logger = logging.getLogger('apps.common')
 
 def process_links(links, view_name, url, context=None):
     items = []
@@ -249,3 +251,19 @@ def object_navigation_template(context):
     }
 register.inclusion_tag('generic_navigation.html', takes_context=True)(object_navigation_template)
 
+@register.simple_tag(takes_context=True)
+def session_active_role(context):
+    try:
+        role_id = context['request'].session.get('current_user_role', False)
+        if role_id:
+            active_role = context['user'].dept_roles.get(pk=role_id)
+            return "%s: %s" % (active_role.department.name, active_role.role.name)
+
+    except Exception:
+        logger.warning("Cannot get role:", exc_info=True)
+        if settings.DEBUG:
+            raise
+
+    return ''
+
+#eof
