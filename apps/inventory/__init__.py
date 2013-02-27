@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from models import Inventory
 # , InventoryTransaction
 
-from common.api import register_links, register_menu # , _context_has_perm TODO
+from common.api import register_links, register_menu, _context_has_perm
 
 import assets
 import signals
@@ -47,10 +47,19 @@ action_inventories_pending = {'text':_('pending inventories'), \
 
 register_links(['home',], [action_inventories_pending ], menu_name='my_pending')
 
+def has_inventories(o, context):
+    """ Assert if current user can edit the model of `obj`
+    """
+    return context['user'].is_staff \
+        or _context_has_perm(context, Inventory, '%(app)s.change_%(model)s') \
+        or _context_has_perm(context, Inventory, '%(app)s.add_%(model)s') \
+        or _context_has_perm(context, Inventory, '%(app)s.validate_inventory')
+
 register_menu([
     {'text':_('inventories'), 'view':'inventory_list', 
         'links':inventory_menu_links,
-        'famfam':'package', 'position':6},
+        'famfam':'package', 'position':6,
+        'condition': has_inventories},
 ])
 
 
