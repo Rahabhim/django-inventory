@@ -9,7 +9,11 @@
 .secondary-navigation ul li a {
   line-height: 23px;
 }
- 
+
+#user-navigation ul li {
+    color: #ebebeb;
+}
+
 table.filter_form td select {
   width: 10em;
   /* konqueror ? */
