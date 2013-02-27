@@ -79,10 +79,10 @@ register_links(['purchase_order_item_state_create', 'purchase_order_item_state_l
 
 register_links(PurchaseOrder, [dict(purchase_order_updwiz, hide_text=True),])
 register_links(['purchase_order_view',], [ purchase_order_update, purchase_order_delete, purchase_order_receive], menu_name='sidebar')
-register_links(['purchase_order_list', 'purchase_order_view', 'supplier_purchase_orders'], [purchase_order_create], menu_name='sidebar')
+# register_links(['purchase_order_list', 'purchase_order_view', 'supplier_purchase_orders'], [purchase_order_create], menu_name='sidebar')
 
 register_links(['purchase_order_item_update'], [purchase_order_item_update, purchase_order_item_delete, jump_to_template])
-register_links(['purchase_order_item_create'], [purchase_order_create], menu_name='sidebar')
+#register_links(['purchase_order_item_create'], [purchase_order_create], menu_name='sidebar')
 
 
 register_submenu( 'menu_procurements', [ purchase_order_list,])
