@@ -536,6 +536,7 @@ class PurchaseOrderListView(GenericBloatedListView):
     prefetch_fields = ('procurement', 'supplier')
     extra_columns = [ {'name': _('Contract'), 'attribute': 'procurement'},
                     {'name': _('Supplier'), 'attribute': 'supplier', },
+                    {'name': _('Department'), 'attribute': 'department' },
                     # not needed: {'name': _('Issue date'), 'attribute': 'issue_date' },
                     {'name':_(u'Active'), 'attribute': 'fmt_active'}]
 
