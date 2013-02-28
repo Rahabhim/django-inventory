@@ -3,7 +3,7 @@
 # Only a few rights reserved
 
 from django.utils.translation import ugettext_lazy as _
-from common.api import register_links, register_menu, can_add, can_edit, can_delete
+from common.api import register_links, register_menu, can_add, can_edit, can_delete, user_is_staff
 
 from models import Supplier, Location
 
@@ -16,7 +16,7 @@ supplier_delete = {'text':_('delete'), 'view':'supplier_delete', 'args':'object.
             'condition': can_delete}
 supplier_assign_itemtemplate = {'text':_(u'assign templates'), 'view':'supplier_assign_itemtemplates', 'args':'object.id', 'famfam':'page_go',
             'condition': can_edit}
-supplier_purchase_orders = {'text':_(u'related purchase orders'), 'view':'supplier_purchase_orders', 'args':'object.id', 'famfam':'cart_go'}
+supplier_purchase_orders = {'text':_(u'related purchase orders'), 'view':'supplier_purchase_orders', 'args':'object.id', 'famfam':'cart_go', 'condition': user_is_staff}
 
 location_list = {'text':_('locations'), 'view':'location_list', 'famfam':'map'}
 location_create = {'text':_(u'create new location'), 'view':'location_create', 'famfam':'map_add',

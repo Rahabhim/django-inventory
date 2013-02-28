@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 
-from common.api import register_links, register_menu, register_submenu, user_is_staff
+from common.api import register_links, register_menu, register_submenu, \
+                    can_add, user_is_staff, _context_has_perm
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
@@ -41,14 +42,14 @@ purchase_order_item_state_delete = {'text':_('delete state'), 'view':'purchase_o
 purchase_order_list = {'text':_('purchase orders'), 'view':'purchase_order_list', 'famfam':'cart_go'}
 purchase_order_create = {'text':_('create new order'), 'view':'purchase_order_create', 'famfam':'cart_add'}
 purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.active }
-purchase_order_updwiz = {'text':_('edit order'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.active }
-purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': lambda o,c: o.active }
+purchase_order_updwiz = {'text':_('edit order'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.change_%(model)s') }
+purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.delete_%(model)s')  }
 purchase_order_close = {'text':_('close order'), 'view':'purchase_order_close', 'args':'object.id', 'famfam':'cross'}
 purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'args':'object.id', 'famfam':'accept'}
 purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_link',
             'view':'purchase_order_receive', 'args':'object.id', 
-            'condition': lambda o,c: o.active }
-purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add'}
+            'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.receive_%(model)s')  }
+purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 'condition': can_add(PurchaseOrder)}
 
 purchase_order_item_create = {'text':_('add new item'), 'view':'purchase_order_item_create', 'args':'object.id', 'famfam':'cart_put'}
 purchase_order_item_update = {'text':_('edit item'), 'view':'purchase_order_item_update', 'args':'object.id', 'famfam':'cart_go'}
@@ -104,13 +105,13 @@ register_links([('purchase_order_receive', Movement),],
         [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',
             'famfam':'page_go', 'condition': lambda o,c: o.state == 'done'},
           {'text':_(u'edit'), 'view':'movement_update_po', 'args':'object.id', 'famfam':'page_go',
-           'condition': lambda o,c: o.state == 'draft'}])
+           'condition': lambda o,c: o.state in ('draft', 'pending')}])
 
 movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open', 'args':'object.id', 'famfam':'package_green', 'condition': lambda o,c: o.state == 'draft'}
 movement_cart_close = {'text':_(u'End selection'), 'view':'movement_cart_close', 'args':'object.id', 'famfam':'package_red', 'condition': lambda o,c: o.state == 'draft'}
 
 register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movement_do_close',
-            'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.state == 'draft'},
+            'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.state == 'draft' and _context_has_perm(c, Movement, '%(app)s.validate_%(model)s') },
             movement_cart_open, movement_cart_close, movement_delete,
             ])
 
