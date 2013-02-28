@@ -7,6 +7,7 @@ from django.core.urlresolvers import RegexURLResolver, RegexURLPattern, Resolver
 from django.template import TemplateSyntaxError, Library, \
                             VariableDoesNotExist, Node, Variable
 from django.utils.text import unescape_string_literal
+from django.core.exceptions import ObjectDoesNotExist
 
 from common.api import object_navigation, menu_links as menu_navigation
 
@@ -278,6 +279,8 @@ def session_active_role(context):
             active_role = context['user'].dept_roles.get(pk=role_id)
             return "%s: %s" % (active_role.department.name, active_role.role.name)
 
+    except ObjectDoesNotExist:
+        logger.warning("Cannot get role:", exc_info=True)
     except Exception:
         logger.warning("Cannot get role:", exc_info=True)
         if settings.DEBUG:
