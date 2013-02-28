@@ -64,9 +64,19 @@ class RoleLocationLookup(LookupChannel):
 
     def get_query(self, q, request):
         active_role = role_from_request(request)
-        if not active_role:
-            return Location.objects.none()
-        return Location.objects.filter(department=active_role.department, name__icontains=q).\
-                order_by('name')[:20]
+        loc_list = None
+        if request.user.is_staff:
+            # search for term in all departments' names, or in location name
+            loc_list =  Location.objects.filter(models.Q(department__in=_departments_by_q(q))| \
+                    models.Q(department=None, name__icontains=q))
+        elif active_role:
+            # search for term in all departments the user has access to
+            loc_list = Location.objects.filter(department=active_role.department, name__icontains=q) \
+                    .filter(models.Q(department__in=_departments_by_q(q))| models.Q(department=None, name__icontains=q))
+        else:
+            # search for term in the locations of the current department
+            loc_list = Location.objects.filter(department__in=request.user.dept_roles.values_list('department', flat=True))
+
+        return loc_list.order_by('name')[:20]
 
 #eof
