@@ -185,7 +185,7 @@ urlpatterns = patterns('movements.views',
                                 location_src_filter, location_dest_filter],),
             name='movements_list'),
     url(r'^objects/moves/pending_list/$', views.MovementListView.as_view( \
-                    queryset=lambda r: Movement.objects.by_request(r).filter(state='draft'),
+                    queryset=lambda r: Movement.objects.by_request(r).filter(state='draft').exclude(stype='in'),
                     list_filters=[ stype_filter, \
                                 location_src_filter, location_dest_filter],),
             name='movements_pending_list'),
