@@ -390,6 +390,7 @@ def purchase_order_receive(request, object_id):
                         moves_pending = True
                         continue
                     if active_role.department is not None \
+                            and move.location_dest.usage == 'internal' \
                             and active_role.department != move.location_dest.department:
                         # User is not allowed to validate the movement for that
                         # department, so carry on, avoid confirming the PO.
@@ -410,7 +411,7 @@ def purchase_order_receive(request, object_id):
                     messages.success(request, _("Purchase order has been confirmed"), fail_silently=True)
                     return redirect(purchase_order.get_absolute_url())
                 else:
-                    msg = _(u'Purchase order %s cannot be confirmed, because it contains pending moves! Please inspect and close these first.')
+                    msg = _(u'Purchase order %s cannot be confirmed, because it contains pending moves! Please inspect and close these first.') % purchase_order.user_id
                     messages.error(request, msg, fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
             except Exception, e:
