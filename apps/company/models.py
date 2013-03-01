@@ -55,12 +55,18 @@ class Department(models.Model):
     def get_absolute_url(self):
         return ('company_department_view', [str(self.id)])
 
+    def clean(self):
+        if self.parent and self.parent == self:
+            raise ValidationError(_("The department cannot have itself as a parent"))
+        return super(Department, self).clean()
+
     def get_sequence(self):
         if self.deprecate or self.merge:
             return ValueError("A deprecated or merged department cannot issue sequence IDs")
         if self.sequence:
             return self.sequence
         elif self.parent:
+            assert self.parent != self, "Department \"%s\" is self-parented!" % self.name
             return self.parent.get_sequence()
         else:
             raise ObjectDoesNotExist(_("No sequence for department %s") % self.name)
