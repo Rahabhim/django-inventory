@@ -85,4 +85,7 @@ def can_delete(obj, context):
 def user_is_staff(obj, context):
     return context['user'].is_staff
 
+def user_is_super(obj, context):
+    return context['user'].is_superuser
+
 #eof
