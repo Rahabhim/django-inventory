@@ -119,10 +119,17 @@ class Sequence(models.Model):
     number_increment = models.IntegerField(verbose_name=_('increment'), default=1)
     padding = models.IntegerField(verbose_name=_('Number padding'), default=3)
 
+    def __unicode__(self):
+        return self.name
+
+    #@models.permalink
+    #def get_absolute_url(self):
+    #    return ('location_template_view', [str(self.id)])
+
     class Meta:
         verbose_name = _("sequence")
         verbose_name = _("sequences")
-    
+
     def get_next(self):
         # doing it *without* any lock!
         try:
