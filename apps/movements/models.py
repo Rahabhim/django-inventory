@@ -585,6 +585,11 @@ class Movement(models.Model):
             all_items.update(src_contract=self.purchase_order.procurement)
         # everything seems OK by now...
         all_items.update(location=self.location_dest)
+        if self.stype == 'in':
+            for item in all_items:
+                if not item.property_number:
+                    # a plain save will update the property_number
+                    item.save()
         self.validate_user = val_user
         self.date_val = val_date
         self.state = 'done'
