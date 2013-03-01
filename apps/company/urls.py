@@ -6,9 +6,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 from generic_views.views import GenericDeleteView, \
                                 generic_detail, generic_list, \
-                                GenericBloatedListView, GenericDetailView
+                                GenericBloatedListView, GenericDetailView, \
+                                GenericUpdateView
 
-from forms import DepartmentForm_view, DepartmentTypeForm_view
+from forms import DepartmentForm, DepartmentForm_view, DepartmentTypeForm_view
 from company import department_type_filter
 from lookups import _department_filter_q
 
@@ -38,6 +39,9 @@ urlpatterns = patterns('',
     url(r'^object/view/company_department_type/(?P<pk>\d+)/$', GenericDetailView.as_view( \
                 form_class=DepartmentTypeForm_view, queryset=DepartmentType.objects.all()),
             name='company_department_type_view'),
+    url(r'^object/update/company_department/(?P<pk>\d+)/$', GenericUpdateView\
+                .as_view(model=Department, form_class=DepartmentForm), name='department_update'),
+
     )
 
 #eof
