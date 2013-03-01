@@ -1,0 +1,25 @@
+{% load i18n %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
+
+    <title>Permission denied</title>
+</head>
+<body>
+<div style="box-align: center">
+<div style="margin: 20px 60px 10px 60px; width: 403px; height: 213px; background: url('{{ STATIC_URL }}/not-permitted.jpg') no-repeat center center;">
+  <div style="padding: 6px 10px 6px 10px;">
+        <h1 style="color: black; font-size: 160%;">{% trans '403 Permission Denied' %}</h1>
+
+        <p style="margin-top: 130px; color: #f0f0f0;">
+        {% blocktrans %}You do not have the permission to perform this action.
+        {% endblocktrans %}
+        </p>
+    </div>
+</div>
+</div>
+<!-- I guess the previous 403 pages have been found .. -->
+
+</body>
+</html>

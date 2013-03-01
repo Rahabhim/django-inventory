@@ -1,0 +1,20 @@
+{% load i18n %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="{{ LANGUAGE_CODE }}" />
+
+    <title>404 page not found</title>
+</head>
+<body>
+ <h1>404 Page not found</h1>
+
+<p>
+ {% blocktrans %}The page you requested cannot be found. Please verify the URL you
+    have entered.
+ {% endblocktrans %}
+</p>
+<!-- I guess the previous 403 pages have been found .. -->
+
+</body>
+</html>
