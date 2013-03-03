@@ -358,7 +358,7 @@ def purchase_order_receive(request, object_id):
                 msg = _(u'This is not default department and location for this user, please fix!')
                 messages.error(request, msg, fail_silently=True)
             elif not lbdls:
-                msg = _(u'This is not bundling location configured in the system!')
+                msg = _(u'This is no bundling location configured in the system!')
                 messages.error(request, msg, fail_silently=True)
             else:
                 movement = Movement(create_user=request.user, date_act=datetime.date.today(),
@@ -400,6 +400,8 @@ def purchase_order_receive(request, object_id):
                     if move.state != 'done':
                         moves_pending = True
                 if not moves_pending:
+                    # First, associate bundled items to their container bundles
+                    purchase_order.recalc_bundle_items()
                     for po_item in purchase_order.items.all():
                         po_item.active = False
                         po_item.status = None # TODO

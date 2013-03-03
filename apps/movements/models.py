@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
+from collections import defaultdict
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
 from common.models import Supplier, Location
-from assets.models import Item, ItemTemplate
+from assets.models import Item, ItemTemplate, ItemGroup
 from company.models import Department
 
 from common.api import role_from_request
@@ -154,7 +155,7 @@ class PurchaseOrder(models.Model):
         po_items = {} # sets of serial numbers
         po_items_qty = {} # counters of quantities
         po_bundled_qty = {} # counters of quantities for bundled items
-        logger = logging.getLogger('movements.PurchaseOrder.calc')
+        logger = logging.getLogger('apps.movements.PurchaseOrder.calc')
 
         # 1st step: fill dicts with the things we've ordered
         for item in self.items.all():
@@ -265,8 +266,98 @@ class PurchaseOrder(models.Model):
         for iid, qty in bundled:
             for i in range(qty):
                 # create individual items of item.qty=1
-                new_move.items.create(item_template_id=iid)
+                new_move.items.create(item_template_id=iid, is_bundled=True)
         return True
+
+    def recalc_bundle_items(self):
+        """Restore the relation of bundled items to their parents of a PO
+        """
+        logger = logging.getLogger('apps.movements.PurchaseOrder.calc')
+        lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
+        if not lbdls:
+            raise RuntimeError(_(u'This is no bundling location configured in the system!'))
+        pending_bundled = defaultdict(list)
+
+        for mm in self.movements.filter(location_dest=lbdls[0]):
+            for bb in mm.items.filter(bundled_in__isnull=True):
+                pending_bundled[bb.item_template_id].append(bb)
+
+        logger.debug("Pending bundled: %d items of %d products", sum(map(len, pending_bundled.values())), len(pending_bundled))
+        for item in self.items.all():
+            if not item.received_qty:
+                continue
+
+            if (not item.item_template_id) or item.item_template.category.is_group:
+                # Skip non-ready lines or group containers.
+                continue
+            if not (item.item_template.category.is_bundle and item.bundled_items.exists()):
+                continue
+
+            serials = []
+            for s in item.serial_nos.split(','):
+                s = s.strip()
+                if s:
+                    serials.append(s)
+
+            rqty = item.received_qty - len(serials)
+            assert rqty >= 0, "serials more than received for line %d %s" %(item.id, item)
+            serials = set(serials)
+
+            for bitem in Item.objects.filter(movements__purchase_order=self, item_template=item.item_template).iterator():
+                if bitem.serial_number:
+                    if bitem.serial_number not in serials:
+                        continue
+                    serials.remove(bitem.serial_number)
+                else:
+                    if rqty < 1:
+                        continue
+                    rqty -= 1
+                igroup, c = ItemGroup.objects.get_or_create(item_ptr=bitem,
+                                defaults={'item_template': bitem.item_template })
+                bitem.save() # just restore the other fields
+                if c:
+                    logger.debug("Created itemgroup for item %d, to host bundled items", bitem.id)
+                logger.debug("Arrived at bundle #%d %s for line #%d %s: group %d",
+                            bitem.id, bitem, item.id, item, igroup.id)
+
+                # count the items already bundled, by template id
+                acc_bundled = defaultdict(int)
+                for ab in igroup.items.all():
+                    acc_bundled[ab.item_template_id] += ab.qty
+                # we now *repeat* this for every serial/single item created for this
+                # PO line:
+
+                for buli in item.bundled_items.all():
+                    missing = buli.qty - acc_bundled[buli.item_template_id]
+                    if missing < 0: # can happen if we have 2x buli lines for the same template
+                        acc_bundled[buli.item_template_id] -= buli.qty
+                        continue
+                    elif missing > 0:
+                        logger.debug("Need to bundle %d more '%s' in '%s'",
+                                    missing, buli.item_template, bitem)
+                        ub = []
+                        while missing and len(pending_bundled[buli.item_template_id]):
+                            unbundled = pending_bundled[buli.item_template_id].pop(0)
+                            if unbundled.qty > missing:
+                                # Rare case, not currently possible: there is an item
+                                # whose quantity is more than we want to connect here
+                                ub.append(unbundled)
+                                continue
+
+                            unbundled.bundled_in = [igroup, ] # add to our group
+                            missing -= unbundled.qty
+                            unbundled.save()
+
+                        if ub:
+                            pending_bundled[buli.item_template_id] += ub
+
+                        if missing:
+                            logger.debug("Still missing %d items of '%s' for '%s'",
+                                    missing, buli.item_template, bitem)
+            if rqty or len(serials):
+                logger.info("Remaining %d items to process for line %s", rqty + len(serials), item)
+
+        # end of fn
 
     def get_cart_name(self):
         """ Returns the "shopping-cart" name of this model
