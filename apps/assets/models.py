@@ -154,7 +154,7 @@ class ItemGroup(Item):
     """
     objects = ItemManager()
     items = models.ManyToManyField(Item, blank=True, null=True, verbose_name=_(u"bundled items"), 
-            related_name='items+')
+            related_name='bundled_in')
 
     class Meta:
         # ordering = ['name']
