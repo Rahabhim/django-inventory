@@ -210,7 +210,6 @@ class CategoriesAttributesWidget(forms.widgets.Widget):
         return data.get(name, None)
 
     def _has_changed(self, initial, data): # TODO
-        print "has_changed", initial, data
         if initial is None:
             initial = []
         if data is None:
