@@ -315,6 +315,9 @@ class PO_Step4(WizardForm):
             # cannot be valid. However, we can still save the instance.
             logger.debug("Step 1 is not valid: %r", step1._errors)
             return '1'
+        elif not (step1.is_bound or wizard.storage.extra_data.get('po_pk', False)):
+            logger.debug("No data for step 1")
+            return '1'
 
         # then save "1", use the instance to save "4"
         step1.save_to_db(wizard.request)
@@ -327,6 +330,10 @@ class PO_Step4(WizardForm):
         # Stop at the first error
         errors = False
         line_groups = defaultdict(list)
+        if not self.cleaned_data.get('items', False):
+            logger.warning("No equipment selected for step 4")
+            messages.error(wizard.request, _("You must select some equipment into the purchase order"))
+            return '4a'
         for item in self.cleaned_data['items']:
             # check that line is a sensible entry:
             if not item.get('item_template', False):
