@@ -28,7 +28,7 @@
         <div id="{{ cat.did }}" class="cat_box">
                 <h2>{{ cat }}</h2>
             {% for cat2 in cat.standalones %}
-                <button id="{{ cat2.did }}" name="{{cat2.name}}" value="{{ cat2.id }}" >{% if cat2.picture %}<img src="{{ MEDIA_URL }}/{{ cat2.picture }}" />{% else %}<img src="{{ MEDIA_URL }}/images/empty_img.png" />{% endif %}{{ cat2 }}</button>
+                <div><button id="{{ cat2.did }}" name="{{cat2.name}}" value="{{ cat2.id }}" >{% if cat2.picture %}<img src="{{ MEDIA_URL }}/{{ cat2.picture }}" />{% else %}<img src="{{ MEDIA_URL }}/images/empty_img.png" />{% endif %}{{ cat2 }}</button></div>
             {% endfor %}
         </div>
         {% endfor %}

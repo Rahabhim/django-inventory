@@ -848,12 +848,27 @@ button.wiz_button {
     -webkit-appearance: listitem;
     -moz-appearance: normal;
 }
+div.cat_box div {
+    width: 160px;
+    height: 80px;
+    vertical-align: top;
+    display: inline-block;
+    border: 2px outset;
+    margin: 2px;
+}
 
 div.cat_box button {
+    vertical-align: middle;
     background: none;
     appearance: normal;
+    border: none;
     -webkit-appearance: listitem;
     -moz-appearance: normal;
+}
+
+div.cat_box button img {
+    float: left;
+    margin-right: 2px;
 }
 
 /* title */
@@ -903,7 +918,14 @@ div.u_or {
 /* from jQuery-UI example, vertical tabs: */
 .ui-tabs-vertical { width: 55em; }
 .ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
-.ui-tabs-vertical .ui-tabs-nav li { clear: left; width: 100%; border-bottom-width: 1px !important; border-right-width: 0 !important; margin: 0 -1px .2em 0; }
+.ui-tabs-vertical .ui-tabs-nav li {
+        clear: left;
+        width: 100%;
+        border-bottom-width: 1px !important;
+        border-right-width: 0 !important;
+        margin: 0 -1px .2em 0;
+        white-space: normal;
+}
 .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
 .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
 .ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
