@@ -58,7 +58,9 @@ supplier_filter = {'name': 'supplier', 'title':_(u'Supplier'),
 po_active_filter = {'name': 'active', 'title': _(u'Active'),
             'choices': (('', _('(is active?)')), ('1', _('Active')), ('0', _('Closed')) ), 
             'destination': lambda q: Q(active=bool(q == '1')) }
+
 def open_move_as_cart(obj, request):
+    cart_utils.close_all_carts(request)
     cart_utils.add_cart_to_session(obj, request)
     return reverse('location_assets', kwargs=dict(loc_id=obj.location_src.id))
 

@@ -144,6 +144,10 @@ def add_cart_to_session(obj, request, destination=None):
     request.session.modified = True
     return ret
 
+def close_all_carts(request):
+    request.session['carts'][:] = []
+    request.session.modified = True
+
 def in_context(request):
     if 'carts' not in request.session:
         request.session['carts'] = [] # these are in non-object form
