@@ -14,16 +14,16 @@ import signals
 inventory_list = {'text':_('view all inventories'), 'view':'inventory_list', 'famfam':'package_go'}
 inventory_create = {'text':_('create new inventory'), 'view':'inventory_create', 'famfam':'package_add', 'condition': can_add(Inventory)}
 #inventory_balances = {'text':_(u'current balances'), 'view':'inventory_current', 'args':'object.id', 'famfam':'book_addresses'}
-inventory_update = {'text':_(u'edit'), 'view':'inventory_update', 'args':'object.id', 'famfam':'package_green', 'condition': lambda o,c: not o.date_val and _context_has_perm(c, Inventory, '%(app)s.change_%(model)s')  }
-inventory_delete = {'text':_(u'delete'), 'view':'inventory_delete', 'args':'object.id', 'famfam':'package_delete', 'condition': lambda o,c: not o.date_val and _context_has_perm(c, Inventory, '%(app)s.delete_%(model)s') }
+inventory_update = {'text':_(u'edit'), 'view':'inventory_update', 'args':'object.id', 'famfam':'package_green', 'condition': (Inventory.can_use, can_edit)  }
+inventory_delete = {'text':_(u'delete'), 'view':'inventory_delete', 'args':'object.id', 'famfam':'package_delete', 'condition': (Inventory.can_use, can_delete) }
 inventory_view = {'text':_(u'details'), 'view':'inventory_view', 'args':'object.id', 'famfam':'package_go'}
-inventory_open = {'text':_(u'open'), 'view':'inventory_open', 'args':'object.id', 'famfam':'package_green', 'condition': lambda o,c: not o.date_val and _context_has_perm(c, Inventory, '%(app)s.change_%(model)s') }
+inventory_open = {'text':_(u'open'), 'view':'inventory_open', 'args':'object.id', 'famfam':'package_green', 'condition': (Inventory.can_use, can_edit) }
 inventory_close = {'text':_(u'close'), 'view':'inventory_close', 'args':'object.id', 'famfam':'package_red'}
-inventory_compare = {'text': _(u'compare'), 'view':'inventory_items_compare', 'args':'object.id', 'famfam':'package_go',  'condition': lambda o,c: not o.date_val}
+inventory_compare = {'text': _(u'compare'), 'view':'inventory_items_compare', 'args':'object.id', 'famfam':'package_go',  'condition': Inventory.can_use}
 
 inventory_validate = {'text': _(u'validate'), 'view':'inventory_validate',
             'args':'object.id', 'famfam':'package_go',
-            'condition': lambda o,c: (not o.date_val) and _context_has_perm(c, Inventory, '%(app)s.validate_%(model)s')}
+            'condition': (Inventory.can_use, lambda o,c: _context_has_perm(c, Inventory, '%(app)s.validate_%(model)s'))}
 
 jump_to_template = {'text':_(u'template'), 'view':'template_view', 'args':'object.supply.id', 'famfam':'page_go'}
 jump_to_inventory = {'text':_(u'return to inventory'), 'view':'inventory_view', 'args':'object.inventory.id', 'famfam':'package_go'}
