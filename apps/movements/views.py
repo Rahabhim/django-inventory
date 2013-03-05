@@ -361,7 +361,7 @@ def purchase_order_receive(request, object_id):
                 msg = _(u'This is no bundling location configured in the system!')
                 messages.error(request, msg, fail_silently=True)
             else:
-                movement = Movement(create_user=request.user, date_act=datetime.date.today(),
+                movement = Movement(create_user=request.user, date_act=purchase_order.issue_date,
                         stype='in', origin=purchase_order.user_id,
                         location_src=lsrcs[0], location_dest=ldests[0],
                         purchase_order=purchase_order)
@@ -369,7 +369,7 @@ def purchase_order_receive(request, object_id):
                 bundled = purchase_order.fill_out_movement(items_left, movement)
                 if bundled:
                     # print "must put a few items in bundle, too"
-                    movement = Movement(create_user=request.user, date_act=datetime.date.today(),
+                    movement = Movement(create_user=request.user, date_act=purchase_order.issue_date,
                         stype='in', origin=purchase_order.user_id,
                         location_src=lsrcs[0], location_dest=lbdls[0],
                         purchase_order=purchase_order)
