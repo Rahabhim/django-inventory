@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 
+from common import has_pending_inventories, has_no_pending_inventories
 from common.api import register_links, register_menu, register_submenu, \
-                    can_add, user_is_staff, _context_has_perm
+                    can_add, user_is_staff, _context_has_perm, can_edit, can_delete
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
@@ -42,14 +43,14 @@ purchase_order_item_state_delete = {'text':_('delete state'), 'view':'purchase_o
 purchase_order_list = {'text':_('purchase orders'), 'view':'purchase_order_list', 'famfam':'cart_go'}
 purchase_order_create = {'text':_('create new order'), 'view':'purchase_order_create', 'famfam':'cart_add', 'condition': can_add(PurchaseOrder)}
 purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.active }
-purchase_order_updwiz = {'text':_('edit order items'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.change_%(model)s') }
-purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.delete_%(model)s')  }
+purchase_order_updwiz = {'text':_('edit order items'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': ((lambda o,c: o.active),  can_edit, has_no_pending_inventories)  }
+purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': ((lambda o,c: o.active), can_delete)  }
 purchase_order_close = {'text':_('close order'), 'view':'purchase_order_close', 'args':'object.id', 'famfam':'cross'}
 purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'args':'object.id', 'famfam':'accept'}
 purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_link',
             'view':'purchase_order_receive', 'args':'object.id', 
             'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.receive_%(model)s')  }
-purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 'condition': can_add(PurchaseOrder)}
+purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 'condition': (can_add(PurchaseOrder), has_no_pending_inventories)}
 
 purchase_order_item_create = {'text':_('add new item'), 'view':'purchase_order_item_create', 'args':'object.id', 'famfam':'cart_put'}
 purchase_order_item_update = {'text':_('edit item'), 'view':'purchase_order_item_update', 'args':'object.id', 'famfam':'cart_go'}
@@ -93,9 +94,9 @@ movement_delete = {'text':_('delete pending movement'), 'view':'movement_delete'
             'condition': lambda o,c: o and o.state == 'draft'}
 
 # register_submenu('menu_assets', .. )
-action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete', condition= can_add(Movement))
-action_lose = dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error', condition= can_add(Movement))
-action_move = dict(text=_(u'Move assets'), view='move_items', famfam='computer_go', condition= can_add(Movement))
+action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete', condition= (can_add(Movement), has_no_pending_inventories))
+action_lose = dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error', condition= (can_add(Movement), has_no_pending_inventories))
+action_move = dict(text=_(u'Move assets'), view='move_items', famfam='computer_go', condition= (can_add(Movement), has_no_pending_inventories))
 
 register_links( ['item_list'], [ action_destroy, action_lose, action_move ], menu_name='sidebar')
 register_links(['home',], [action_destroy, action_lose, action_move ], menu_name='start_actions')
@@ -103,11 +104,11 @@ register_links(['home',], [purchase_order_wizard ], menu_name='start_actions')
 
 register_links([('purchase_order_receive', Movement),], 
         [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',
-            'famfam':'page_go', 'condition': lambda o,c: o.state == 'done'},
+            'famfam':'page_go', 'condition': ((lambda o,c: o.state == 'done'), has_no_pending_inventories)},
           {'text':_(u'edit'), 'view':'movement_update_po', 'args':'object.id', 'famfam':'page_go',
            'condition': lambda o,c: o.state in ('draft', 'pending')}])
 
-movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open', 'args':'object.id', 'famfam':'package_green', 'condition': lambda o,c: o.state == 'draft' and _context_has_perm(c, Movement,'%(app)s.change_%(model)s') }
+movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open', 'args':'object.id', 'famfam':'package_green', 'condition': ((lambda o,c: o.state == 'draft'),  can_edit, has_no_pending_inventories) }
 movement_cart_close = {'text':_(u'End selection'), 'view':'movement_cart_close', 'args':'object.id', 'famfam':'package_red', 'condition': lambda o,c: o.state == 'draft' and _context_has_perm(c, Movement,'%(app)s.change_%(model)s')}
 
 register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movement_do_close',
@@ -118,6 +119,8 @@ register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movem
 register_links(['movement_update_po',], [movement_delete,])
 
 def has_pending_po(obj, context):
+    if has_pending_inventories(None, context):
+        return False
     all_pos = PurchaseOrder.objects.by_request(context['request']).filter(active=True)
     # We should preferrably filter 'all_pos' for those with all movements belonging
     # to our department.
@@ -128,6 +131,8 @@ purchase_pending_orders = {'text':_('pending purchase orders'), \
         'view':'purchase_order_pending_list', 'famfam':'cart_go'}
 
 def has_pending_moves(obj, context):
+    if has_pending_inventories(None, context):
+        return False
     return Movement.objects.by_request(context['request']).filter(state='draft') \
                 .exclude(stype='in').exists()
 
