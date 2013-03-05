@@ -20,10 +20,21 @@ def process_links(links, view_name, url, context=None):
     is_first = True
     for item in links:
         if 'condition' in item:
+            allowed = False
             try:
-                if not item['condition'](None, context):
-                    continue
+                if isinstance(item['condition'], (list, tuple)):
+                    conds = item['condition']
+                else:
+                    conds = (item['condition'],)
+                for cond in conds:
+                    if not cond(None, context):
+                        break
+                else:
+                    # when for-loop has passed all of them
+                    allowed = True
             except Exception, e:
+                logger.debug("Exception at condition %s:", item.get('url',False) or item.get('view', '?'), exc_info=True)
+            if not allowed:
                 continue
         item_view = 'view' in item and item['view']
         item_url = 'url' in item and item['url']
@@ -154,14 +165,22 @@ def resolve_links(context, links, current_view, current_path, obj=None):
     context_links = []
     for link in links:
         if 'condition' in link:
-            cond_fn = link['condition']
-            assert callable(cond_fn), repr(cond_fn)
-            res = False
+            allowed = False
             try:
-                res = cond_fn(obj, context)
+                if isinstance(link['condition'], (list, tuple)):
+                    conds = link['condition']
+                else:
+                    conds = (link['condition'],)
+                for cond in conds:
+                    assert callable(cond), repr(cond)
+                    if not cond(obj, context):
+                        break
+                else:
+                    # when for-loop has passed all of them
+                    allowed = True
             except Exception, e:
-                res = False
-            if not res:
+                logger.debug("Exception at condition %s:", link.get('url', False) or link.get('view','?'), exc_info=True)
+            if not allowed:
                 continue
         args, kwargs = resolve_arguments(context, link.get('args', {}))
 
