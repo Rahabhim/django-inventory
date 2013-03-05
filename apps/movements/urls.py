@@ -99,7 +99,7 @@ urlpatterns = patterns('movements.views',
                 list_filters=[po_active_filter, purchase_order_state_filter, contract_filter, supplier_filter]),
             name='purchase_order_list'),
     url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
-                queryset=lambda r: PurchaseOrder.objects.by_request(r).filter(active=True)), 
+                queryset=lambda r: PurchaseOrder.objects.by_request(r).filter(active=True).distinct()), 
             name='purchase_order_pending_list'),
 
     url(r'^purchase/order/(?P<object_id>\d+)/$', 'purchase_order_view', (), 'purchase_order_view'),
