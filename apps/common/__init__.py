@@ -45,5 +45,8 @@ def has_pending_inventories(obj, context):
 def has_no_pending_inventories(obj, context):
     """ Inverse function, prevents using a lambda
     """
+    if context['user'].is_staff or context['user'].is_superuser:
+        # but also unlock superusers to actions
+        return True
     return not has_pending_inventories(obj, context)
 #eof
