@@ -38,4 +38,12 @@ location_filter = {'name':'location', 'title':_(u'location'), \
                 'lookup_channel': 'location', 'destination':'location'}
 
 
+def has_pending_inventories(obj, context):
+    from inventory.models import Inventory # lazy import!
+    return Inventory.objects.by_request(context['request']).filter(date_val__isnull=True).exists()
+
+def has_no_pending_inventories(obj, context):
+    """ Inverse function, prevents using a lambda
+    """
+    return not has_pending_inventories(obj, context)
 #eof

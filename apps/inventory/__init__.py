@@ -4,7 +4,9 @@ from django.utils.translation import ugettext_lazy as _
 from models import Inventory
 # , InventoryTransaction
 
-from common.api import register_links, register_menu, _context_has_perm, can_add
+from common import has_pending_inventories
+from common.api import register_links, register_menu, _context_has_perm, \
+        can_add, can_edit, can_delete
 
 import assets
 import signals
@@ -36,9 +38,6 @@ register_links(Inventory, [inventory_update, inventory_compare])
 register_links(Inventory, [inventory_delete, ], menu_name='sidebar')
 register_links(Inventory, [inventory_view], menu_name='sidebar')
 register_links(['inventory_compare', 'inventory_view'], [inventory_validate], menu_name='sidebar')
-
-def has_pending_inventories(obj, context):
-    return Inventory.objects.by_request(context['request']).filter(date_val__isnull=True).exists()
 
 action_inventories_pending = {'text':_('pending inventories'), \
         'condition': has_pending_inventories,
