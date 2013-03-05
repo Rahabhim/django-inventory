@@ -34,7 +34,7 @@ inventory_menu_links = [
 
 register_links(['inventory_view', 'inventory_list',], [inventory_create], menu_name='sidebar')
 
-register_links(Inventory, [inventory_update, inventory_compare])
+register_links(Inventory, [inventory_compare,])
 register_links(Inventory, [inventory_delete, ], menu_name='sidebar')
 register_links(Inventory, [inventory_view], menu_name='sidebar')
 register_links(['inventory_compare', 'inventory_view'], [inventory_validate], menu_name='sidebar')
