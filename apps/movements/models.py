@@ -763,10 +763,6 @@ class Movement(models.Model):
         return 'removed'
 
 
-#class MovementLine(models.Model):
-    #movement = models.ForeignKey(Movement)
-    #asset = models.ForeignKey(Item)
-
 register(PurchaseRequestStatus, _(u'purchase request status'), ['name'])
 register(PurchaseRequest, _(u'purchase request'), ['user_id', 'id', 'budget', 'required_date', 'status__name', 'originator'])
 register(PurchaseRequestItem, _(u'purchase request item'), ['item_template__description', 'qty', 'notes'])
