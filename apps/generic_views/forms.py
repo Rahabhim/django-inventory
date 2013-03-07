@@ -265,6 +265,7 @@ class ColumnsDetailWidget(_RO_mixin, forms.widgets.Widget):
         super(ColumnsDetailWidget, self).__init__(*args, **kwargs)
         self.queryset = queryset
         self.choices = choices # but don't render them to list
+        self.attrs.setdefault('class', 'columns-detail')
 
     def render(self, name, value, attrs=None, choices=()):
         final_attrs = self.build_attrs(attrs, name=name)
@@ -292,29 +293,37 @@ class ColumnsDetailWidget(_RO_mixin, forms.widgets.Widget):
             objs = []
 
         ret = ['<table%s>' % flatatt(final_attrs),]
+        first = True
         if self.show_header:
             ret.append('<thead><tr>')
             for c in self.columns:
-                ret.append('\t<th>%s</th>\n' % unicode(c['name']))
+                width = ''
+                if 'width' in c:
+                    width = ' width="%s"' % c['width']
+                ret.append('\t<th%s>%s</th>\n' % (width, unicode(c['name'])))
             ret.append('</tr></thead>\n')
+            first = False
         ret.append('<tbody>\n')
 
         for obj in objs:
             ret.append('\t<tr>')
             for c in self.columns:
-                cell = '<td>%s</td>'
+                cell = '<td%s>%s</td>'
+                width = ''
+                if first and 'width' in c:
+                    width = ' width="%s"' % c['width']
                 if c.get('attribute', False):
                     val = return_attrib(obj, c['attribute'])
                 else:
                     # no attribute, this must be the unicode(obj)
                     val = obj
                     try:
-                        cell = '<td><a href="%s">%%s</a></td>' % obj.get_absolute_url()
+                        cell = '<td%%s><a href="%s">%%s</a></td>' % obj.get_absolute_url()
                     except AttributeError:
                         pass
 
                 val = conditional_escape(unicode(val))
-                ret.append(cell % val)
+                ret.append(cell % (width, val))
             ret.append('</tr>\n')
         ret.append('</table>\n\n')
 

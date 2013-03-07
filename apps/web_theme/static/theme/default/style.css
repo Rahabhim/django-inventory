@@ -460,3 +460,7 @@ a.button, button.button, .pagination a, .pagination span {
 	-webkit-border-radius: 4px;
   border-radius: 4px;
 }
+
+table.columns-detail {
+    width: 100%;
+}
