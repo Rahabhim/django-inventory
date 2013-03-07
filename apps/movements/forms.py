@@ -2,18 +2,18 @@
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
-from generic_views.forms import DetailForm, InlineModelForm, \
-                    ColumnsDetailWidget, DetailForeignWidget
+from generic_views.forms import DetailForm, InlineModelForm, RModelForm, \
+                    ROModelChoiceField, ColumnsDetailWidget, DetailForeignWidget
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from inventory.models import Inventory
 
+from django.contrib.auth.models import User
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
                    PurchaseOrderItem, Movement, ItemTemplate
 from common.models import Location
 from common.api import role_from_request
 from assets.models import Item
 
-#TODO: Remove auto_add_now from models and implement custom save method to include date
 
 class PurchaseRequestForm(forms.ModelForm):
     class Meta:
@@ -111,11 +111,6 @@ class PurchaseOrderItemTransferForm(forms.Form):
     inventory = forms.ModelChoiceField(queryset = Inventory.objects.all(), help_text = _(u'Inventory that will receive the item.'))
     qty = forms.CharField(label=_(u'Qty received'))
 
-
-class MovementForm_view(DetailForm):
-    class Meta:
-        model = Movement
-
 class SubItemsDetailWidget(ColumnsDetailWidget):
     columns = [{'name': _(u'Item')},
             {'name': _(u'Category'), 'attribute': 'item_template.category.name'},
@@ -123,17 +118,39 @@ class SubItemsDetailWidget(ColumnsDetailWidget):
             ]
     order_by = 'item_template__category__name'
 
-class _baseMovementForm(forms.ModelForm):
-    #items = AutoCompleteSelectMultipleField('item', label=_("items"),
-    #            show_help_text=False, required=False,
-    #            help_text=_("You can better select the items by saving this form (using the button below), "
-    #                "and then picking the items at the next list that will appear."))
+class UserDetailsWidget(ColumnsDetailWidget):
+    show_header = False
+    columns = [{ 'name': _('first name'), 'attribute': 'first_name' },
+                { 'name': _('last name'), 'attribute': 'last_name' },
+                { 'name': _('email'), 'attribute': 'email'},
+                # the username is hidden! We don't want to give it away
+            ]
+
+class MovementForm_view(DetailForm):
+    items = forms.ModelMultipleChoiceField(Item.objects.all(), required=False,
+                widget=SubItemsDetailWidget, label=_("Items"))
+
+    create_user = ROModelChoiceField(User.objects.all(),
+                widget=UserDetailsWidget, label=_('created by'))
+    validate_user = ROModelChoiceField(User.objects.all(),
+                widget=UserDetailsWidget, label=_('validated by'))
+
+    class Meta:
+        model = Movement
+
+class _baseMovementForm(RModelForm):
     items = forms.ModelMultipleChoiceField(Item.objects.all(), required=False,
                 widget=SubItemsDetailWidget, label=_("Items"),
                 help_text=_("You can better select the items by saving this form (using the button below), "
                     "and then picking the items at the next list that will appear."))
     note = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3}),
                 label=_("Notes"))
+
+    create_user = ROModelChoiceField(User.objects.all(),
+                widget=UserDetailsWidget, label=_('created by'))
+    validate_user = ROModelChoiceField(User.objects.all(),
+                widget=UserDetailsWidget, label=_('validated by'))
+
 
 class _outboundMovementForm(_baseMovementForm):
     location_src = AutoCompleteSelectField('location_by_role', label=_("Source location"), required=True, show_help_text=False)
