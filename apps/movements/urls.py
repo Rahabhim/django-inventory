@@ -64,6 +64,11 @@ def open_move_as_cart(obj, request):
     cart_utils.add_cart_to_session(obj, request)
     return reverse('location_assets', kwargs=dict(loc_id=obj.location_src.id))
 
+def check_movement(move):
+    """ Check that it is an open inventory
+    """
+    return move.date_val is None and move.validate_user is None
+
 urlpatterns = patterns('movements.views',
     url(r'^purchase/request/state/list/$', generic_list, dict({'queryset':PurchaseRequestStatus.objects.all()}, extra_context=dict(title =_(u'purchase request states'))), 'purchase_request_state_list'),
     url(r'^purchase/request/state/create/$', GenericCreateView.as_view(model=PurchaseRequestStatus, extra_context={'title':_(u'create new purchase request state')}), name='purchase_request_state_create'),
@@ -201,6 +206,7 @@ urlpatterns = patterns('movements.views',
             'movement_view'),
     url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
                 template_name="movement_form.html",
+                check_object=check_movement,
                 form_class=MovementForm_update_po,
                 success_url=lambda obj, *a: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
                 extra_context={'object_name':_(u'movement')}
@@ -212,7 +218,8 @@ urlpatterns = patterns('movements.views',
 
     url(r'^objects/moves/(?P<pk>\d+)/cart_open/$', CartOpenView.as_view(
                 model=Movement, dest_model='assets.Item', exclusive=True,
-                extra_context={'object_name':_(u'movement')}), 
+                check_object=check_movement,
+                extra_context={'object_name':_(u'movement')}),
             name='movement_cart_open'),
     url(r'^objects/moves/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=Movement), 
             name='movement_cart_close'),
@@ -225,6 +232,7 @@ urlpatterns = patterns('movements.views',
             name='movement_item_remove'),
 
     url(r'^objects/moves/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Movement, success_url="movements_pending_list", 
+                check_object=check_movement,
                 extra_context=dict(object_name=_(u'Movement'))), name='movement_delete'),
 
     url(r'^po/wizard/$', PO_Wizard.as_view(), name="purchaseorder_wizard" ),

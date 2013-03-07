@@ -740,6 +740,8 @@ class Movement(models.Model):
         return state, href
 
     def add_to_cart(self, obj):
+        if self.date_val is not None or self.validate_user is not None:
+            raise ValueError(_("Cannot modify items of a validated move"))
         if obj is None or not isinstance(obj, Item):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
 
@@ -750,6 +752,8 @@ class Movement(models.Model):
         return 'added'
 
     def remove_from_cart(self, obj):
+        if self.date_val is not None or self.validate_user is not None:
+            raise ValueError(_("Cannot modify items of a validated move"))
         if obj is None or not isinstance(obj, Item):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
 
