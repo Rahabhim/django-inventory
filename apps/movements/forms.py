@@ -179,6 +179,19 @@ class MovementForm_update_po(_baseMovementForm):
         fields = ('name', 'origin', 'note', 'items')
         model = Movement
 
+class MovementForm_gu(_baseMovementForm):
+    """ Generic update of a Movement
+    """
+    location_src = ROModelChoiceField(Location.objects.all(), label=_("From") )
+    location_dest = ROModelChoiceField(Location.objects.all(), label=_("To") )
+
+    checkpoint_src = ROModelChoiceField(Inventory.objects.all(), label=_("Since inventory") )
+    checkpoint_dest = ROModelChoiceField(Inventory.objects.all(), label=_("Accounted in inventory") )
+
+    class Meta:
+        model = Movement
+        exclude = ('date_val', 'validate_user', 'state', 'stype')
+
 class DestroyItemsForm(_outboundMovementForm):
     """This form is registered whenever defective equipment is trashed (destroyed)
     """

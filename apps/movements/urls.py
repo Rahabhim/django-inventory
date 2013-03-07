@@ -20,7 +20,7 @@ from movements import purchase_request_state_filter, \
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
         PurchaseOrderItemForm_inline, \
         DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
-        MovementForm, MovementForm_view, MovementForm_update_po
+        MovementForm_gu, MovementForm_view, MovementForm_update_po
 
 from procurements.models import Contract
 
@@ -204,6 +204,13 @@ urlpatterns = patterns('movements.views',
                 #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
                 ),
             'movement_view'),
+    url(r'^objects/moves/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
+                template_name="movement_form_gu.html",
+                check_object=check_movement,
+                form_class=MovementForm_gu,
+                extra_context={'object_name':_(u'movement')}
+            ),
+            name='movement_update_generic'),
     url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
                 template_name="movement_form.html",
                 check_object=check_movement,
