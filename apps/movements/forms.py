@@ -2,7 +2,8 @@
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
-from generic_views.forms import DetailForm, InlineModelForm
+from generic_views.forms import DetailForm, InlineModelForm, \
+                    ColumnsDetailWidget, DetailForeignWidget
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from inventory.models import Inventory
 
@@ -10,6 +11,7 @@ from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
                    PurchaseOrderItem, Movement, ItemTemplate
 from common.models import Location
 from common.api import role_from_request
+from assets.models import Item
 
 #TODO: Remove auto_add_now from models and implement custom save method to include date
 
@@ -114,9 +116,20 @@ class MovementForm_view(DetailForm):
     class Meta:
         model = Movement
 
+class SubItemsDetailWidget(ColumnsDetailWidget):
+    columns = [{'name': _(u'Item')},
+            {'name': _(u'Category'), 'attribute': 'item_template.category.name'},
+            {'name': _(u'Manufacturer'), 'attribute': 'item_template.manufacturer.name'},
+            ]
+    order_by = 'item_template__category__name'
+
 class _baseMovementForm(forms.ModelForm):
-    items = AutoCompleteSelectMultipleField('item', label=_("items"),
-                show_help_text=False, required=False,
+    #items = AutoCompleteSelectMultipleField('item', label=_("items"),
+    #            show_help_text=False, required=False,
+    #            help_text=_("You can better select the items by saving this form (using the button below), "
+    #                "and then picking the items at the next list that will appear."))
+    items = forms.ModelMultipleChoiceField(Item.objects.all(), required=False,
+                widget=SubItemsDetailWidget, label=_("Items"),
                 help_text=_("You can better select the items by saving this form (using the button below), "
                     "and then picking the items at the next list that will appear."))
     note = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3}),
