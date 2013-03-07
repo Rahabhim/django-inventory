@@ -584,7 +584,8 @@ class MovementManager(models.Manager):
 
 class Movement(models.Model):
     objects = MovementManager()
-    date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'), 
+    date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'),
+            default=datetime.date.today,
             help_text=_("Format: 23/04/2010"))
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_('created by'))
