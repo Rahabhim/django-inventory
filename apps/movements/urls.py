@@ -20,7 +20,7 @@ from movements import purchase_request_state_filter, \
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
         PurchaseOrderItemForm_inline, \
         DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
-        MovementForm_gu, MovementForm_view, MovementForm_update_po
+        MovementForm_gu, MovementForm_view, MovementForm_update_po, MoveInternalForm
 
 from procurements.models import Contract
 
@@ -187,6 +187,11 @@ urlpatterns = patterns('movements.views',
             success_url=open_move_as_cart),
         name='move_items'),
 
+    url(r'^objects/items/move_internal/$', GenericCreateView.as_view(form_class=MoveInternalForm, 
+            template_name="movement_form.html",
+            extra_context={'title':_(u'Items internal movement')},
+            success_url=open_move_as_cart),
+        name='move_items_internal'),
     url(r'^objects/moves/list/$', views.MovementListView.as_view( \
                     list_filters=[state_filter, stype_filter, \
                                 location_src_filter, location_dest_filter],),

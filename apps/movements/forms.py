@@ -297,4 +297,23 @@ class RepairGroupForm(forms.Form):
     """
     name = forms.CharField(label=_("Protocol ID"),)
 
+class MoveInternalForm(_baseMovementForm):
+    """ Registered whenever equipment moves from one inventory to another
+    """
+    location_src = AutoCompleteSelectField('location_by_role', label=_("Source location"), required=True, show_help_text=False)
+    location_dest = AutoCompleteSelectField('location_by_role', label=_("Destination location"), required=True, show_help_text=False)
+
+    class Meta:
+        model = Movement
+        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'location_dest',
+                'items')
+
+    def _init_by_request(self, request):
+        UnAutoCompleteField(self.fields, 'location_src', request)
+        UnAutoCompleteField(self.fields, 'location_dest', request)
+
+    def _pre_save_by_user(self, user):
+        self.instance.stype = 'internal'
+        if not self.instance.create_user_id:
+            self.instance.create_user = user
 #eof

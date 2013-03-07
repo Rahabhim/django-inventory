@@ -97,9 +97,10 @@ movement_delete = {'text':_('delete pending movement'), 'view':'movement_delete'
 action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete', condition= (can_add(Movement), has_no_pending_inventories))
 action_lose = dict(text=_(u'Lose assets'), view='lose_items', famfam='computer_error', condition= (can_add(Movement), has_no_pending_inventories))
 action_move = dict(text=_(u'Move assets'), view='move_items', famfam='computer_go', condition= (can_add(Movement), has_no_pending_inventories))
+action_move_internal = dict(text=_(u'Move assets (internal)'), view='move_items_internal', famfam='computer_go', condition= (can_add(Movement), has_no_pending_inventories))
 
-register_links( ['item_list'], [ action_destroy, action_lose, action_move ], menu_name='sidebar')
-register_links(['home',], [action_destroy, action_lose, action_move ], menu_name='start_actions')
+register_links( ['item_list'], [ action_destroy, action_lose, action_move, action_move_internal ], menu_name='sidebar')
+register_links(['home',], [action_destroy, action_lose, action_move, action_move_internal ], menu_name='start_actions')
 register_links(['home',], [purchase_order_wizard ], menu_name='start_actions')
 
 register_links([('purchase_order_receive', Movement),], 
