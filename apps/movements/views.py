@@ -553,7 +553,9 @@ class MovementListView(GenericBloatedListView):
 def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
     active_role = role_from_request(request)
-    if not (active_role and active_role.has_perm('movements.validate_movement')):
+    if request.user.is_superuser:
+        pass
+    elif not (active_role and active_role.has_perm('movements.validate_movement')):
         raise PermissionDenied
     try:
         if active_role.department is not None:
