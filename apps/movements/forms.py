@@ -112,7 +112,7 @@ class PurchaseOrderItemTransferForm(forms.Form):
     qty = forms.CharField(label=_(u'Qty received'))
 
 class SubItemsDetailWidget(ColumnsDetailWidget):
-    columns = [{'name': _(u'Item')},
+    columns = [{'name': _(u'Item'), 'width': '**'},
             {'name': _(u'Category'), 'attribute': 'item_template.category.name'},
             {'name': _(u'Manufacturer'), 'attribute': 'item_template.manufacturer.name'},
             ]
