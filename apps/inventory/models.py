@@ -221,6 +221,10 @@ class Inventory(models.Model):
         if have_pending:
             raise ValidationError(_("Inventory has pending items that don't match computed state. Cannot close"))
 
+        self.date_val = val_date or datetime.date.today()
+        if self.date_val < self.date_act:
+            raise ValidationError(_("The active date cannot be after the validation date"))
+
         # Third, check that no movements are later than this inventory
         if movements.Movement.objects.filter(Q(location_src=self.location)|Q(location_dest=self.location))\
                 .filter(date_act__gt=self.date_act).exists():
@@ -228,7 +232,6 @@ class Inventory(models.Model):
                     self.date_act.strftime(DATE_FMT_FORMAT))
 
         # Mark the inventory as closed
-        self.date_val = val_date or datetime.date.today()
         self.validate_user = val_user
         self.save()
 
