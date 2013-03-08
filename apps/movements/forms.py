@@ -79,7 +79,7 @@ class PurchaseOrderForm(forms.ModelForm):
         model = PurchaseOrder
         exclude = ('active', 'validate_user', 'date_val', 'create_user', 
                 'purchase_request', 'required_date', 'status' )
-    
+
     def _pre_save_by_user(self, user):
         if not self.instance.create_user_id:
             self.instance.create_user = user
@@ -213,7 +213,7 @@ class MovementForm(_baseMovementForm):
         model = Movement
 
 class MovementForm_update_po(_baseMovementForm):
-    
+
     class Meta:
         fields = ('name', 'origin', 'note', 'items')
         model = Movement
@@ -316,4 +316,6 @@ class MoveInternalForm(_baseMovementForm):
         self.instance.stype = 'internal'
         if not self.instance.create_user_id:
             self.instance.create_user = user
+
+
 #eof
