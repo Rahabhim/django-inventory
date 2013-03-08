@@ -652,7 +652,7 @@ class Movement(models.Model):
             raise ValueError(_("Internal error, movement is already checkpointed"))
 
         self.clean()
-        if self.checkpoint_src and self.date_act <= self.checkpoint_src.date_act:
+        if self.checkpoint_src and self.date_act < self.checkpoint_src.date_val:
             raise ValueError(_("You are not allowed to make any movements before %s, when last inventory was validated") %\
                         self.checkpoint_src.date_act.strftime(DATE_FMT_FORMAT))
 
