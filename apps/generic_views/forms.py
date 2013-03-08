@@ -62,24 +62,21 @@ class DetailSelectMultiple(forms.widgets.SelectMultiple):
             output += u'<li>%s</li>' % _(u"None")
         return mark_safe(output + u'</ul>\n')
 
-class _RO_mixin:
+def _read_only_bound_data(data, initial):
+    return data
+
+class _ROw_mixin:
     """ Read-only widget behavior
     """
     read_only = True
-
-    def bound_data(self, data, initial):
-        if self.read_only:
-            return initial
-        else:
-            return data
 
     def _has_changed(self, initial, data):
         if self.read_only:
             return False
         else:
-            return super(_RO_mixin, self)._has_changed(initial, data)
+            return super(_ROw_mixin, self)._has_changed(initial, data)
 
-class DetailForeignWidget(_RO_mixin, forms.widgets.Widget):
+class DetailForeignWidget(_ROw_mixin, forms.widgets.Widget):
     """A widget displaying read-only values of ForeignKey and ManyToMany fields
 
         Unlike Select* widgets, it won't query the db for choices
@@ -158,6 +155,9 @@ class RModelForm(forms.ModelForm):
         for field in self.fields.values():
             if getattr(field.widget, 'read_only', False):
                 field.required = False
+                # patch the function, so that it never uses data (not) supplied
+                # at the POST request
+                field.bound_data = _read_only_bound_data
 
     def _post_clean(self):
         if self.cleaned_data is not None:
@@ -252,7 +252,7 @@ class InlineModelForm(forms.ModelForm):
             help_text_html = u'<br /><span class="helptext">%s</span>',
             errors_on_separate_row = False)
 
-class ColumnsDetailWidget(_RO_mixin, forms.widgets.Widget):
+class ColumnsDetailWidget(_ROw_mixin, forms.widgets.Widget):
     """Read-only values of ForeignKey or ManyToMany fields, with columns
 
         Unlike Select* widgets, it won't query the db for choices
@@ -329,12 +329,12 @@ class ColumnsDetailWidget(_RO_mixin, forms.widgets.Widget):
 
         return mark_safe(''.join(ret))
 
-class ReadOnlyInput(_RO_mixin, forms.widgets.Input):
+class ReadOnlyInput(_ROw_mixin, forms.widgets.Input):
 
     def build_attrs(self, extra_attrs=None, **kwargs):
         return super(ReadOnlyInput, self).build_attrs(extra_attrs=extra_attrs, disabled=True, **kwargs)
 
-class ROModelChoiceField(_RO_mixin, forms.ModelChoiceField):
+class ROModelChoiceField(forms.ModelChoiceField):
     widget = DetailForeignWidget
 
 
