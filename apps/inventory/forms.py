@@ -8,11 +8,11 @@ from django.contrib.auth.models import User
 from common.api import role_from_request
 from common.models import Location
 from generic_views.forms import DetailForm, InlineModelForm, \
-        ReadOnlyInput, ROModelChoiceField, RModelForm
+        ReadOnlyInput, ROModelChoiceField, RModelForm, ReadOnlyDateInput
 
 from models import Log, Inventory, InventoryItem
 from movements.forms import UserDetailsWidget, UnAutoCompleteField
-
+import datetime
 
 class LogForm(forms.ModelForm):
     class Meta:
@@ -22,6 +22,8 @@ class LogForm(forms.ModelForm):
 class InventoryForm(RModelForm):
     create_user = ROModelChoiceField(User.objects.all(), label=_("created by"), widget=UserDetailsWidget, required=False)
     location = AutoCompleteSelectField('location_by_role', show_help_text=False)
+    date_act = forms.DateField(label=_(u'date performed'), initial=datetime.date.today, 
+                widget=ReadOnlyDateInput)
 
     class Meta:
         model = Inventory
