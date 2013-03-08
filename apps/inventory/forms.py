@@ -3,12 +3,15 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectField
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
 
 from common.api import role_from_request
 from common.models import Location
-from generic_views.forms import DetailForm, InlineModelForm, ReadOnlyInput
+from generic_views.forms import DetailForm, InlineModelForm, \
+        ReadOnlyInput, ROModelChoiceField, RModelForm
 
 from models import Log, Inventory, InventoryItem
+from movements.forms import UserDetailsWidget, UnAutoCompleteField
 
 
 class LogForm(forms.ModelForm):
@@ -16,12 +19,13 @@ class LogForm(forms.ModelForm):
         model = Log
 
 
-class InventoryForm(forms.ModelForm):
+class InventoryForm(RModelForm):
+    create_user = ROModelChoiceField(User.objects.all(), label=_("created by"), widget=UserDetailsWidget, required=False)
     location = AutoCompleteSelectField('location_by_role', show_help_text=False)
 
     class Meta:
         model = Inventory
-        exclude = ('create_user', 'validate_user', 'date_val', 'signed_file')
+        exclude = ('validate_user', 'date_val', 'signed_file')
 
     def _pre_save_by_user(self, user):
         if not self.instance.create_user_id:
@@ -35,6 +39,7 @@ class InventoryForm(forms.ModelForm):
                 dept = active_role.department
         except ObjectDoesNotExist:
             pass
+        UnAutoCompleteField(self.fields, 'location', request, use_radio=True)
         if dept:
             locations = Location.objects.filter(department=dept)
             if locations:

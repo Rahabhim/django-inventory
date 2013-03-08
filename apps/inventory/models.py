@@ -60,9 +60,9 @@ class Inventory(models.Model):
     """ An inventory is a periodical check of all items at some locations
     """
     objects = InventoryManager()
-    name = models.CharField(max_length=32, verbose_name=_(u'name'))
+    name = models.CharField(max_length=32, verbose_name=_(u'inventory number'))
     location = models.ForeignKey(common.Location, verbose_name=_(u'location'))
-    date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'))
+    date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'), default=datetime.date.today)
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))

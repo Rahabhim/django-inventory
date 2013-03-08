@@ -1,0 +1,32 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block form_layout %}
+
+    <div class="group inline">
+        {% field_for name %}
+    </div>
+
+    <div class="group inline">
+        {% field_for date_act %}
+    </div>
+
+    <div class="group newline">
+        {% field_for location %}
+    </div>
+
+    {% comment %}
+    <div class="group inline">
+        {% field_for create_user %}
+    </div>
+    {% endcomment %}
+
+    <div class="group">
+        {% field_for notes %}
+    </div>
+
+    <div style="clear: both; width=100%;"> </div>
+
+
+{% endblock %}
