@@ -50,7 +50,7 @@ class InventoryForm(RModelForm):
 class InventoryValidateForm(forms.ModelForm):
     class Meta:
         model = Inventory
-        fields = ('signed_file',)
+        fields = ('signed_file', 'name')
         widgets = { }
 
 

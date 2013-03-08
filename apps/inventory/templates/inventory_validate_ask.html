@@ -14,6 +14,7 @@
                 <h3>{% blocktrans %}Are you sure you wish to validate: {{ object }}?{% endblocktrans %}</h3>
             <div>{% trans 'Location:' %} {{ object.location }}</div>
             <div>{% trans 'Date performed:' %} {{ object.date_act }}</div>
+            <div>{{form.name.label}}* {{form.name}}</div>
             <div>{% blocktrans %}Please also upload the signed PDF of the inventory {% endblocktrans %}
                 <br/> {{ form.signed_file }}
             </div>

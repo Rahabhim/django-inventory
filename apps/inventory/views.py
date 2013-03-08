@@ -107,7 +107,7 @@ def inventory_validate(request, object_id):
             raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
 
         # actual act of closing the inventory: (note, we don't pass the date)
-        if request.method == 'POST' and form.is_valid() and inventory.signed_file:
+        if request.method == 'POST' and form.is_valid() and inventory.signed_file and inventory.name:
             inventory.save() # for the file
             inventory.do_close(request.user)
             messages.success(request, _("The inventory has been validated and all movements fixated"), fail_silently=True)
