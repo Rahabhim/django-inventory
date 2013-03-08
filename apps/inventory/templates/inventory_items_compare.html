@@ -5,7 +5,8 @@
 <div class="content">
 
     <table class="inventory_compare" width="100%" >
-    <thead><tr><th width="50%">{% trans 'At location' %}</th><th width="50%">{% trans 'In inventory' %}</th></tr>
+    {% if have_pending %}
+    <thead><tr><th width="*">{% trans 'At location' %}</th><th width="*">{% trans 'In inventory' %}</th></tr>
     </thead>
 
     <tbody>
@@ -27,6 +28,21 @@
         </tr>
     {% endfor %}
     </tbody>
+    {% else %}{# no pending items #}
+    <thead><tr><th width="50%">{% trans 'In inventory' %}</th></tr>
+    </thead>
+    <tbody>
+    {% for item, status in object_list %}
+        <tr>
+        {% if status == 'ok' %}
+            <td class="compare_ok">{{ item }}</td>
+        {% else %}
+            <td > {{item }}: {{status}}</td>
+        {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    {% endif %}
     </table>
 </div>
 <div style="margin-bottom: 2em"> </div>

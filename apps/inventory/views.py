@@ -86,6 +86,7 @@ def inventory_items_compare(request, object_id):
             subtemplates_dict.append({'name': 'inventory_compare_success.html'})
 
     return render_to_response('inventory_compare_details.html', {
+            'have_pending': bool(have_pending),
             'object_name':_(u'inventory'),
             'object':inventory,
             'form':form, 'form_mode': 'details',

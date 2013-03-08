@@ -53,6 +53,8 @@ class InventoryValidateForm(forms.ModelForm):
 
 
 class InventoryForm_view(DetailForm):
+    create_user = ROModelChoiceField(User.objects.all(), label=_("created by"), widget=UserDetailsWidget)
+    validate_user = ROModelChoiceField(User.objects.all(), label=_("validated by"), widget=UserDetailsWidget)
     class Meta:
         model = Inventory
 
