@@ -337,5 +337,8 @@ class ReadOnlyInput(_ROw_mixin, forms.widgets.Input):
 class ROModelChoiceField(forms.ModelChoiceField):
     widget = DetailForeignWidget
 
+class ReadOnlyDateInput(_ROw_mixin, forms.widgets.DateInput):
+    def build_attrs(self, extra_attrs=None, **kwargs):
+        return super(ReadOnlyDateInput, self).build_attrs(extra_attrs=extra_attrs, disabled=True, **kwargs)
 
 #eof
