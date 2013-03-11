@@ -759,10 +759,10 @@ class Movement(models.Model):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
 
         done = False
-        for item in self.items.filter(id=obj.id):
-            item.delete()
+        try:
+            self.items.remove(obj)
             done = True
-        if not done:
+        except Exception, e:
             raise ValueError(_("Item %s not in movement!") % unicode(obj))
         self.save()
         return 'removed'
