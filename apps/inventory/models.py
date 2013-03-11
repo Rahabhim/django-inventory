@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.db.models import Q #, Count
+from django.utils import formats
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
@@ -101,7 +102,11 @@ class Inventory(models.Model):
         return False
 
     def __unicode__(self):
-        return self.name
+        date_fmt = formats.get_format('DATE_INPUT_FORMATS')[0]
+        if self.name:
+            return _("%(name)s on %(date)s") % {'name': self.name, 'date': self.date_act.strftime(date_fmt)}
+        else:
+            return self.date_act.strftime(date_fmt)
 
     def get_cart_name(self):
         """ Returns the "shopping-cart" name of this model
