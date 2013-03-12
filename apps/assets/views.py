@@ -2,6 +2,7 @@
 # from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404 #, redirect
+from django.core.exceptions import PermissionDenied
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q, Count
@@ -138,6 +139,8 @@ class LocationAssetsView(AssetListView):
                   ]
     def get(self, request, loc_id, **kwargs):
         location = get_object_or_404(Location, pk=loc_id)
+        if not (request.user.is_staff or location.department_id):
+            raise PermissionDenied
         self.title = _(u"location assets: %s") % location
         self.queryset = Item.objects.filter(location=location)
         return super(LocationAssetsView, self).get(request, **kwargs)
