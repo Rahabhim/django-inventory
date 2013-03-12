@@ -49,9 +49,11 @@
         {% field_for state %}
     </div>
 
+    {% if user.is_staff %}
     <div class="group inline">
         {% field_for purchase_order %}
     </div>
+    {% endif %}
 
 
     <div class="group newline">
