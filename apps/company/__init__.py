@@ -23,7 +23,7 @@ def make_mv_location(destination):
     dept_col2 = destination + '__department__isnull'
     lname_col = destination + '__name__icontains'
     return lambda q: Q(**{dept_col: models.Department.objects.filter(_department_filter_q(q))}) | \
-                    Q(**{dept_col2:True, lname_col: q})
+                    Q(**{lname_col: q})
 
 company_department_list = {'text':_('departments'), 'view':'company_department_list', 'famfam':'page_go'}
 company_department_type_list = {'text':_('department types'), 'view':'company_department_type_list', 'famfam':'page_go'}
