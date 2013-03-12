@@ -70,7 +70,9 @@
         {% endfor %}
         </tbody>
     </table>
+    {% if side_bar %}
          {% object_list_carts object_list %}
+    {% endif %}
   </form>
     {% paginate %}
 </div>
