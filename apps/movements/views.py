@@ -224,8 +224,9 @@ def purchase_order_view(request, object_id):
                 #{'name': _(u'status'), 'attribute': 'status'},
                 #{'name': _(u'active'), 'attribute': 'fmt_active'}
                 ],
-            },
-            {
+            },]
+    if request.user.is_staff:
+        subtemplates.append({
                 'name':'generic_list_subtemplate.html',
                 'title': _(u'movements for this purchase order'),
                 'object_list': purchase_order.movements.all(),
@@ -235,8 +236,7 @@ def purchase_order_view(request, object_id):
                     {'name': _(u'date'), 'attribute': 'date_act'},
                     # {'name':_(u'destination'), 'attribute': 'location_dest'}
                     ],
-            },
-        ]
+            },)
     return render_to_response('purchase_order_form.html', {
         'title': _(u'details for purchase order: %s') % purchase_order,
         'object':purchase_order,
