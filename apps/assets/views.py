@@ -34,7 +34,7 @@ category_filter = { 'name': 'category', 'title': _(u'category'), 'tree_by_parent
 
 product_filter = {'name': 'product_name', 'title': _('product'),
             'destination': ('item_template__description__icontains', 'item_template__model__icontains',
-                            'item_template__part_number')}
+                            'item_template__part_number', 'serial_number', 'property_number')}
 
 location_filter = {'name': 'location', 'title': _('location'),
             'destination': make_mv_location('location')}
