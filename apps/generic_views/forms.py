@@ -286,6 +286,7 @@ class ColumnsDetailWidget(_ROw_mixin, forms.widgets.Widget):
     order_by = False
     show_header = True
     blind_mode = False
+    extra_filter = None
     date_fmt = formats.get_format('DATE_INPUT_FORMATS')[0]
     datetime_fmt = formats.get_format('DATETIME_INPUT_FORMATS')[0]
 
@@ -310,6 +311,13 @@ class ColumnsDetailWidget(_ROw_mixin, forms.widgets.Widget):
                 objs = objs.order_by(self.order_by)
         elif self.blind_mode and self.queryset is not None:
             objs = self.queryset
+            if self.extra_filter:
+                if isinstance(self.extra_filter, dict):
+                    objs = objs.filter(**self.extra_filter)
+                elif isinstance(self.extra_filter, models.Q):
+                    objs = objs.filter(self.extra_filter)
+                else:
+                    raise TypeError("Cannot filter by %s" %(type(self.extra_filter)))
             if self.order_by:
                 objs = objs.order_by(self.order_by)
         elif value and self.queryset is not None:
