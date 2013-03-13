@@ -283,6 +283,7 @@ class ColumnsDetailWidget(_ROw_mixin, forms.widgets.Widget):
     columns = []
     order_by = False
     show_header = True
+    blind_mode = False
 
     def __init__(self, queryset=None, choices=(), *args, **kwargs):
         super(ColumnsDetailWidget, self).__init__(*args, **kwargs)
@@ -301,6 +302,10 @@ class ColumnsDetailWidget(_ROw_mixin, forms.widgets.Widget):
 
         if value and hasattr(value, '__iter__') and self.queryset is not None:
             objs = self.queryset.filter(pk__in=value)
+            if self.order_by:
+                objs = objs.order_by(self.order_by)
+        elif self.blind_mode and self.queryset is not None:
+            objs = self.queryset
             if self.order_by:
                 objs = objs.order_by(self.order_by)
         elif value and self.queryset is not None:
