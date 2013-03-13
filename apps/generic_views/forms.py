@@ -132,11 +132,34 @@ class DetailForm(forms.ModelForm):
         super(DetailForm, self).__init__(*args, **kwargs)
         if extra_fields:
             for extra_field in extra_fields:
+                if 'name' in extra_field:
+                    fname = extra_field['name']
+                else:
+                    fname = extra_field['field']
+                    if fname.endswith('.all'):
+                        fname = fname[:-4]
                 result = return_attrib(self.instance, extra_field['field'])
-                label = 'label' in extra_field and extra_field['label'] or None
+                ekws = {}
+                klass = None
+                if 'label' in extra_field:
+                    ekws['label'] = extra_field['label']
+                if 'widget' in extra_field:
+                    ekws['widget'] = extra_field['widget']
+                elif self._meta.widgets and fname in self._meta.widgets:
+                    ekws['widget'] = self._meta.widgets[fname]
+                if 'kwargs' in extra_field:
+                    ekws.update(extra_field['kwargs'])
                 #TODO: Add others result types <=> Field types
                 if isinstance(result, models.query.QuerySet):
-                    self.fields[extra_field['field']]=forms.ModelMultipleChoiceField(queryset=result, label=label)
+                    klass = forms.ModelMultipleChoiceField
+                    ekws['queryset'] = result
+                elif isinstance(result, models.fields.related.ManyRelatedManager):
+                    klass = forms.ModelMultipleChoiceField
+                    ekws['queryset'] = result.all()
+
+                if klass is None:
+                    raise TypeError("Cannot determine right field for a result of %s" % type(result))
+                self.fields[fname] = klass(**ekws)
 
         for field_name, field in self.fields.items():
             if isinstance(field.widget, (forms.widgets.Select, forms.widgets.SelectMultiple)):
