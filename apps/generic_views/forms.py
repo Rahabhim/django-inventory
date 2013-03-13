@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.util import flatatt
+from django.utils import formats
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
 from django.utils.translation import ugettext as _
@@ -11,6 +12,7 @@ import types
 
 import settings
 from tree_field import ModelTreeChoiceField
+import datetime
 
 def return_attrib(obj, attrib, arguments=None):
     try:
@@ -284,6 +286,8 @@ class ColumnsDetailWidget(_ROw_mixin, forms.widgets.Widget):
     order_by = False
     show_header = True
     blind_mode = False
+    date_fmt = formats.get_format('DATE_INPUT_FORMATS')[0]
+    datetime_fmt = formats.get_format('DATETIME_INPUT_FORMATS')[0]
 
     def __init__(self, queryset=None, choices=(), *args, **kwargs):
         super(ColumnsDetailWidget, self).__init__(*args, **kwargs)
@@ -350,6 +354,10 @@ class ColumnsDetailWidget(_ROw_mixin, forms.widgets.Widget):
                     except AttributeError:
                         pass
 
+                if isinstance(val, datetime.date):
+                    val = val.strftime(self.date_fmt)
+                elif isinstance(val, datetime.datetime):
+                    val = val.strftime(self.datetime_fmt)
                 val = conditional_escape(unicode(val))
                 ret.append(cell % (width, val))
             ret.append('</tr>\n')
