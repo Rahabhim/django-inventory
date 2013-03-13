@@ -18,6 +18,7 @@ asset_edit = {'text':_(u'edit serials'), 'view':'item_update', 'args':'object.id
 # asset_delete = {'text':_(u'delete'), 'view':'item_delete', 'args':'object.id', 'famfam':'computer_delete'}
 asset_photos = {'text':_(u'add / remove photos'), 'view':'item_photos', 'args':'object.id', 'famfam':'picture_edit'}
 asset_template = {'text':_(u'template'), 'view':'template_view', 'args':'object.item_template.id', 'famfam':'page_go'}
+asset_history = {'text':_(u'trace'), 'view':'item_history_view', 'args':'object.id', 'famfam':'book_open'}
 
 
 group_list = {'text':_(u'list all groups'), 'view':'group_list', 'famfam':'chart_pie'}
@@ -34,9 +35,9 @@ state_filter = {'name':'state', 'title':_(u'state'), 'queryset':State.objects.al
         #'item_update_serials', 'item_delete', 'item_photos',
         #'template_items_list'], [asset_create], menu_name='sidebar')
 
-register_links(Item, [asset_edit, asset_template], menu_name='sidebar')
+register_links(Item, [asset_edit, asset_template, asset_history], menu_name='sidebar')
 
-register_links(ItemGroup, [group_edit, asset_template])
+register_links(ItemGroup, [group_edit, asset_template, asset_history])
 
 register_links(['state_list', 'state_create', 'state_update', 'state_delete'], [state_create], menu_name='sidebar')
 register_links(State, [state_edit, state_delete])

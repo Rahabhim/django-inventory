@@ -5,12 +5,14 @@ from django.views.generic.create_update import create_object, update_object
 
 from generic_views.views import GenericDeleteView, \
                                 generic_detail, generic_list, \
-                                GenericUpdateView
+                                GenericUpdateView, GenericDetailView
 
 from photos.views import generic_photos
 
 from models import Item, ItemGroup, State
-from forms import ItemForm, ItemForm_view, ItemGroupForm, ItemGroupForm_view, ItemGroupForm_edit
+from forms import ItemForm, ItemForm_view, \
+                    ItemGroupForm, ItemGroupForm_view, ItemGroupForm_edit, \
+                    ItemMovesForm_view
 from conf import settings as asset_settings
 from views import AssetListView, LocationAssetsView, DepartmentAssetsView
 
@@ -30,6 +32,12 @@ urlpatterns = patterns('assets.views',
                                                 'state_subtemplate.html']}, 
                 extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]),
             'item_view'),
+    url(r'^asset/(?P<pk>\d+)/trace$', GenericDetailView.as_view(form_class=ItemMovesForm_view, 
+                template_name="asset_trace.html",
+                queryset=Item.objects.by_request,
+                extra_fields= [{'field':'movements.all', 'label':_(u'Movements')}, ],
+                extra_context={'title':_(u'asset trace'),}),
+            name='item_history_view'),
     url(r'^asset/(?P<object_id>\d+)/photos/$', generic_photos, {'model':Item, 'max_photos':asset_settings.MAX_ASSET_PHOTOS, 'extra_context':{'object_name':_(u'asset')}}, 'item_photos'),
     url(r'^asset/(?P<object_id>\d+)/state/(?P<state_id>\d+)/set/$', 'item_setstate', (), 'item_setstate'),
     url(r'^asset/(?P<object_id>\d+)/state/(?P<state_id>\d+)/unset$', 'item_remove_state', (), 'item_remove_state'),
