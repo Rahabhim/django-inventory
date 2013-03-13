@@ -446,6 +446,7 @@ class PO_Step5(WizardForm):
     title = _("Successful Entry - Finish")
     department = forms.ModelChoiceField(queryset=Department.objects.all(), widget=forms.widgets.HiddenInput, required=False)
     location = forms.ModelChoiceField(label=_("location"), widget=forms.widgets.RadioSelect,
+                    empty_label=None,
                     queryset=Location.objects.none())
 
     def __init__(self, data=None, files=None, **kwargs):
