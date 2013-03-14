@@ -41,11 +41,12 @@ class InventoryForm(RModelForm):
                 dept = active_role.department
         except ObjectDoesNotExist:
             pass
-        UnAutoCompleteField(self.fields, 'location', request, use_radio=True)
         if dept:
             locations = Location.objects.filter(department=dept)
             if locations:
                 self.initial['location'] = locations[0].id
+                self.fields['location'].initial = locations[0].id
+        UnAutoCompleteField(self.fields, 'location', request, use_radio=True)
 
 class InventoryValidateForm(forms.ModelForm):
     class Meta:
