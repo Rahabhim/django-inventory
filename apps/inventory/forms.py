@@ -21,7 +21,7 @@ class LogForm(forms.ModelForm):
 
 class InventoryForm(RModelForm):
     create_user = ROModelChoiceField(User.objects.all(), label=_("created by"), widget=UserDetailsWidget, required=False)
-    location = AutoCompleteSelectField('location_by_role', show_help_text=False)
+    location = AutoCompleteSelectField('location_by_role', show_help_text=False, label=_('Location'))
     date_act = forms.DateField(label=_(u'date performed'), initial=datetime.date.today, 
                 widget=ReadOnlyDateInput)
 
