@@ -76,7 +76,7 @@
             </div>
             {% endwith %}{% endwith %}
 
-            <div class="u_or"> or </div>
+            <div class="u_or">{% trans 'or' %} </div>
             {% with form.supplier_name_or_vat.1 as radio %}{% with form.supplier_name as field %}
             <div>{{ radio.tag }} {{ radio.choice_label }}<br/>
                 {{ field.errors }}

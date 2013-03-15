@@ -21,7 +21,7 @@ class LogForm(forms.ModelForm):
 
 class InventoryForm(RModelForm):
     create_user = ROModelChoiceField(User.objects.all(), label=_("created by"), widget=UserDetailsWidget, required=False)
-    location = AutoCompleteSelectField('location_by_role', show_help_text=False)
+    location = AutoCompleteSelectField('location_by_role', show_help_text=False, label=_('Location'))
     date_act = forms.DateField(label=_(u'date performed'), initial=datetime.date.today, 
                 widget=ReadOnlyDateInput)
 
@@ -41,11 +41,12 @@ class InventoryForm(RModelForm):
                 dept = active_role.department
         except ObjectDoesNotExist:
             pass
-        UnAutoCompleteField(self.fields, 'location', request, use_radio=True)
         if dept:
             locations = Location.objects.filter(department=dept)
             if locations:
                 self.initial['location'] = locations[0].id
+                self.fields['location'].initial = locations[0].id
+        UnAutoCompleteField(self.fields, 'location', request, use_radio=True)
 
 class InventoryValidateForm(forms.ModelForm):
     class Meta:

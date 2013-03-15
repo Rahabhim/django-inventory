@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
 from generic_views.views import GenericDeleteView, generic_list, generic_detail, \
-                GenericCreateView, GenericUpdateView, \
+                GenericCreateView, GenericUpdateView, GenericDetailView, \
                 CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
@@ -201,19 +201,18 @@ urlpatterns = patterns('movements.views',
                     list_filters=[ stype_filter, \
                                 location_src_filter, location_dest_filter],),
             name='movements_pending_list'),
-    url(r'^objects/moves/(?P<object_id>\d+)/$', generic_detail,
-            dict(form_class=MovementForm_view,
+    url(r'^objects/moves/(?P<pk>\d+)/$', GenericDetailView.as_view(
+                form_class=MovementForm_view,
                 template_name='movement_form.html',
                 queryset=Movement.objects.all(),
-                extra_context={'object_name':_(u'movement'), },
-                #extra_fields=[{'field':'get_owners', 'label':_(u'Assigned to:')}]
+                extra_context={'title': _(u'movement details') },
                 ),
-            'movement_view'),
+            name='movement_view'),
     url(r'^objects/moves/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
                 template_name="movement_form_gu.html",
                 check_object=check_movement,
                 form_class=MovementForm_gu,
-                extra_context={'object_name':_(u'movement')}
+                extra_context={'title':_(u'edit movement')}
             ),
             name='movement_update_generic'),
     url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
@@ -221,7 +220,7 @@ urlpatterns = patterns('movements.views',
                 check_object=check_movement,
                 form_class=MovementForm_update_po,
                 success_url=lambda obj, *a: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
-                extra_context={'object_name':_(u'movement')}
+                extra_context={'title':_(u'edit movement')}
             ),
             name='movement_update_po'),
 
@@ -231,7 +230,7 @@ urlpatterns = patterns('movements.views',
     url(r'^objects/moves/(?P<pk>\d+)/cart_open/$', CartOpenView.as_view(
                 model=Movement, dest_model='assets.Item', exclusive=True,
                 check_object=check_movement,
-                extra_context={'object_name':_(u'movement')}),
+                extra_context={'title':_(u'add items to movement')}),
             name='movement_cart_open'),
     url(r'^objects/moves/(?P<pk>\d+)/cart_close/$', CartCloseView.as_view(model=Movement), 
             name='movement_cart_close'),
