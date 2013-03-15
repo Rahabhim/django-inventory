@@ -169,7 +169,7 @@ class PurchaseOrder(models.Model):
             if item.item_template.category.is_group:
                 # Skip group containers. We never receive them as items
                 continue
-            for s in item.serial_nos.split(','):
+            for s in item.serial_nos.replace('\n', ',').split(','):
                 s = s.strip()
                 if s:
                     serials.append(s)
