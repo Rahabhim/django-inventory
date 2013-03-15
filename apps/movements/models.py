@@ -3,6 +3,7 @@ from collections import defaultdict
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 
 from common.models import Supplier, Location
 from assets.models import Item, ItemTemplate, ItemGroup
@@ -620,6 +621,9 @@ class Movement(models.Model):
         from inventory.models import Inventory
         super(Movement, self).clean()
         locs = []
+        if self.location_src_id and (self.location_src_id == self.location_dest_id):
+            raise ValidationError(_("A movement cannot have the same source and destination locations!"))
+
         if self.location_dest_id and self.location_dest.usage in 'internal':
             locs.append(self.location_dest)
         if self.location_src_id and self.location_src.usage in 'internal':
