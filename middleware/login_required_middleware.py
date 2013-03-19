@@ -1,6 +1,8 @@
 from django.http import HttpResponseRedirect
 from django.conf import settings
+from django.contrib import auth
 from re import compile
+from urllib import urlencode
 
 EXEMPT_URLS = [compile(settings.LOGIN_URL.lstrip('/'))]
 if hasattr(settings, 'LOGIN_EXEMPT_URLS'):
@@ -27,5 +29,7 @@ class LoginRequiredMiddleware:
         if not request.user.is_authenticated():
             path = request.path_info.lstrip('/')
             if not any(m.match(path) for m in EXEMPT_URLS):
-                return HttpResponseRedirect(settings.LOGIN_URL)
+                return HttpResponseRedirect( settings.LOGIN_URL + '?' + \
+                                    urlencode({auth.REDIRECT_FIELD_NAME: request.get_full_path()}))
 
+#eof
