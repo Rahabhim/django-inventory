@@ -155,12 +155,16 @@ class DetailForm(forms.ModelForm):
                 if isinstance(result, models.query.QuerySet):
                     klass = forms.ModelMultipleChoiceField
                     ekws['queryset'] = result
-                elif isinstance(result, models.fields.related.ManyRelatedManager):
+                elif hasattr(result, 'all'):
                     klass = forms.ModelMultipleChoiceField
                     ekws['queryset'] = result.all()
+                elif isinstance(result, (basestring,)):
+                    klass = forms.CharField
+                    ekws['initial'] = result
 
                 if klass is None:
-                    raise TypeError("Cannot determine right field for a result of %s" % type(result))
+                    raise TypeError("Cannot determine right field %s for a result of %s" % \
+                                ( extra_field['field'], type(result)))
                 self.fields[fname] = klass(**ekws)
 
         for field_name, field in self.fields.items():
