@@ -13,34 +13,50 @@ function refreshStory(){
     var div_story = $("#story");
     div_story.find("ul").empty();
 
-    var added = Array();
-//     var added_ids = Array();
+    var has_add = false;
     $("#item_target ul li:not(.hint)").each(function() {
-        added.push($("<li>").text($(this).text()));
+        var item_id = this.id.replace(/^item-/,'');
+        var new_li = $("<li>").text($(this).text());
+        new_li.append($("<input>", {type: "hidden", name: "parts_in", value: item_id}));
+        $("#story_added ul").append(new_li);
+        has_add = true;
     });
 
-    if (added.length){
+    if (has_add) {
         $("#story_noitems").hide();
         $("#story_added").show();
-        $("#story_added ul").append(added);
     }
-    else $("#story_added").hide();
+    else
+        $("#story_added").hide();
     
     // list the items removed
-    var removed = Array();
+    var has_remove = false;
+    $("#story_removed h5").hide();
+    $("#story_removed ul").hide();
     $("#dests div.target ul li:not(.hint)").each(function() {
-        removed.push($("<li>").text($(this).text()));
+            var item_id = this.id.replace(/^item-/,'');
+            var loc_id = $(this).parent().get(0).id.replace(/^outbin-/,'');
+            // console.log("Removed " + item_id + " into " + loc_id);
+            var new_li = $("<li>").text($(this).text());
+            new_li.append($("<input>", {type: "hidden", name: "parts_out", value: loc_id+":" + item_id}));
+            $("#story_removed #outstory-h-"+loc_id).show();
+            $("#story_removed #outstory-"+loc_id).show().append(new_li);
+            has_remove = true;
         });
 
-    if (removed.length){
+    if (has_remove){
         $("#story_noitems").hide();
         $("#story_removed").show();
-        $("#story_removed ul").append(removed);
     }
-    else $("#story_removed").hide();
+    else
+        $("#story_removed").hide();
 
-    if ( (added.length + removed.length) == 0)
+    if ( has_add || has_remove)
+        $("#dsubmit").show();
+    else {
+        $("#dsubmit").hide();
         $("#story_noitems").show();
+    }
 }
 
 function receive_items(event, ui) {
@@ -156,7 +172,7 @@ $(function() {
                 <h3>{{ src }}</h3>
                 <div class="source"><ul>
                     {% for si in items %}
-                        <li>{{si }}</li>
+                        <li id="item-{{si.id}}">{{si }}</li>
                     {% endfor %}
                 </ul></div>
             {% endfor %}
@@ -167,7 +183,7 @@ $(function() {
         <div id="parts_in_item">
             <ul>
             {% for part in item.itemgroup.items.all %}
-                <li>{{ part }}</li>
+                <li id="item-{{part.id}}">{{ part }}</li>
             {% endfor %}
             </ul>
         </div>
@@ -184,7 +200,7 @@ $(function() {
                 <h3>{{ trg }}</h3>
                 <div>
                     <div class="target">
-                        <ul>
+                        <ul id="outbin-{{ trg.id }}" >
                             <li class="hint">{% trans 'Drag here the parts you want to remove.' %}</li>
                         </ul>
                     </div>
@@ -204,10 +220,23 @@ $(function() {
     </div>
     <div style="display: none" id="story_removed">
         <h4>{% trans 'These parts will be removed from the bundle' %}</h4>
-        <ul> </ul>
+        {% for trg in dest_locations %}
+                <h5 id="outstory-h-{{trg.id}}">{% trans 'To:' %} {{ trg }}</h5>
+                <ul id="outstory-{{ trg.id }}" style="display: none;"> </ul>
+        {% endfor %}
     </div>
 </div>
 
+<div id="dsubmit" style="display: none">
+    <p>
+    {%blocktrans %}If you agree with the above movements, you can now press the submit
+    button and the appropriate actions will be prepared for the repair. <br/>
+    After those, the repair form will still need to be validated by an authorized user.
+    {% endblocktrans %}
+    </p>
+    <p style="text-align: left; width: 100%">
+        <input type="submit" value="{% trans 'Submit' %}" />
+    </p>
 </form>
 
 
