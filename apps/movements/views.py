@@ -15,7 +15,7 @@ from django.forms.formsets import formset_factory
 
 from common.models import Supplier, Location
 from common.api import role_from_request
-from assets.models import ItemTemplate
+from assets.models import ItemTemplate, Item, ItemGroup
 from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
 from main import cart_utils
 
@@ -576,8 +576,43 @@ def movement_do_close(request, object_id):
 
     return redirect(movement.get_absolute_url())
 
-def repair_itemgroup(request):
-    raise NotImplementedError
+def repair_itemgroup(request, object_id):
+    item = get_object_or_404(ItemGroup, pk=object_id)
+    active_role = role_from_request(request)
+    if not active_role.has_perm('assets.change_itemgroup'):
+        raise PermissionDenied
+    print "active_role:", active_role
+
+    data = {'title': _("Repair of asset"), }
+    # we need data for the three columns:
+    # TODO: load pending movements and pre-populate our data
+
+    # A: the locations we can fetch from + their available parts
+    if active_role:
+        dept = active_role.department
+        if not (request.user.is_staff or (dept and dept == item.location.department)):
+            raise PermissionDenied
+    else:
+        dept = item.location.department
+    
+    may_contain = [ mc.category for mc in item.item_template.category.may_contain.all()]
+    print "May contain:", may_contain
+    
+    data['src_locations'] = []
+    for loc in Location.objects.filter(department=dept):
+        data['src_locations'].append((loc, Item.objects.filter(location=loc, \
+                                        item_template__category__in=may_contain)))
+    
+    # B: the current details of the item
+    data['item'] = item
+    
+    # C: the locations we can send parts to:
+    data['dest_locations'] = list(Location.objects.filter(department=dept, usage='internal'))
+    data['dest_locations'] += list(Location.objects.filter(department__isnull=True, 
+                name__in=[ unicode(_(u'Destroy')), unicode(_(u'Lost'))]))
+    
+    return render_to_response('repair_item.html', data, context_instance=RequestContext(request))
+
 
 class POCartOpenView(CartOpenView):
     model=PurchaseOrder

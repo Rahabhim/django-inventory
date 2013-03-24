@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+{% block title %}{%trans "Repair Asset" %}{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+function receive_items(event, ui) {
+    $(this).find("li.hint").hide();
+    if ($(ui.sender).find("li:not(.hint)").length == 0)
+        $(ui.sender).find("li.hint").show();
+}
+
+$(function() {
+    $( "#sources" ).accordion({ collapsible: true, heightStyle: "content" });
+    $( "#dests" ).accordion({ collapsible: true });
+
+    /* Spare Parts to item incoming direction */
+    $("#item_target ul").sortable({
+                        connectWith: "#sources div.source ul", 
+                        opacity: 0.8, 
+                        cancel:"a,input,button,.hint",
+                        placeholder: "ui-state-highlight",
+                        receive: receive_items,
+                        }).disableSelection();
+    $("#sources div.source ul").sortable({
+                        connectWith: "#item_target ul",
+                        opacity: 0.8,
+                        cancel:"a,input,button,.hint",
+                        placeholder: "ui-state-highlight",
+                        receive: receive_items,
+                        } ).disableSelection();
+
+    /* Item to outgoing direction */
+    $("#parts_in_item ul").sortable({
+                        connectWith: "#dests div.target ul", 
+                        opacity: 0.8, 
+                        cancel:"a,input,button,.hint",
+                        placeholder: "ui-state-highlight",
+                        receive: receive_items,
+                        } ).disableSelection();
+    $("#dests div.target ul").sortable({
+                        connectWith: "#parts_in_item ul",
+                        opacity: 0.8,
+                        cancel:"a,input,button,.hint",
+                        placeholder: "ui-state-highlight",
+                        receive: receive_items,
+                        } ).disableSelection();
+
+    /* events: out(), receive() */
+  });
+</script>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ wizard.form.media }}
+    <!--<link href="{{ STATIC_URL }}css/po_wizard.css" type="text/css" rel="stylesheet">-->
+    <style type="text/css">
+    /*-*/
+    #main {
+        width: 90%;
+    }
+    #sidebar {
+        width: 10%;
+    }
+
+    #three_columns td {
+        vertical-align: top;
+        padding: 4px;
+    }
+
+    div.target {
+        border: solid green 1px;
+    }
+    div.target ul, #parts_in_item ul, #item_target ul {
+        min-height: 100px;
+        min-width: 100px;
+        padding: 6px;
+    }
+
+    ul.ui-sortable li {
+        list-style: none;
+    }
+    ul.ui-sortable .ui-state-highlight {
+        /* the empty space as a drop target */
+        height: 1.2em;
+        line-height: 1.1em;
+    }
+    ul li.hint {
+        list-style: none;
+        color: #b0b0b0;
+        font-style: italic;
+        padding: 10px;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="content" width="90%"  >
+<form action="." method="post">{% csrf_token %}
+<h2>{{ item }}</h2>
+<h3>{% trans 'Repair form' %}</h3>
+<div> Ημερομηνία επισκευής, αρ πρωτοκόλλου κλπ.</div>
+
+<table id="three_columns" width="100%">
+<tr><th width="33%">{% trans 'Spare parts' %}</th>
+    <th width="33%">{% trans 'In Asset' %}</th>
+    <th width="33%">{% trans 'Removed parts' %}</th></tr>
+<tr>
+    <td><div id="sources">
+            {% for src, items in src_locations %}
+                <h3>{{ src }}</h3>
+                <div class="source"><ul>
+                    {% for si in items %}
+                        <li>{{si }}</li>
+                    {% endfor %}
+                </ul></div>
+            {% endfor %}
+        </div>
+    </td>
+    <td>
+        <h3>{% trans 'Contains' %}</h3>
+        <div id="parts_in_item">
+            <ul>
+            {% for part in item.itemgroup.items.all %}
+                <li>{{ part }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        <h3>{% trans 'Add in repair' %}</h3>
+        <div id="item_target" class="target">
+            <ul>
+                <li class="hint">{% trans 'Drag here the parts you want to add to the item.' %}</li>
+            </ul>
+        </div>
+    </td>
+    <td>
+        <div id="dests">
+            {% for trg in dest_locations %}
+                <h3>{{ trg }}</h3>
+                <div>
+                    <div class="target">
+                        <ul>
+                            <li class="hint">{% trans 'Drag here the parts you want to remove.' %}</li>
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </td>
+</tr>
+</table>
+
+</form>
+
+
+</div>
+
+{% endblock %}

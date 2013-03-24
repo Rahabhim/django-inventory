@@ -19,7 +19,7 @@ from movements import purchase_request_state_filter, \
 
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
         PurchaseOrderItemForm_inline, \
-        DestroyItemsForm, LoseItemsForm, MoveItemsForm, RepairGroupForm, \
+        DestroyItemsForm, LoseItemsForm, MoveItemsForm, \
         MovementForm_gu, MovementForm_view, MovementForm_update_po, MoveInternalForm
 
 from procurements.models import Contract
@@ -249,6 +249,9 @@ urlpatterns = patterns('movements.views',
     url(r'^po/wizard/$', PO_Wizard.as_view(), name="purchaseorder_wizard" ),
     url(r'^po/wizard/new/$', PO_Wizard.as_view(), kwargs={'new': True}, name="purchaseorder_wizard_new" ),
     url(r'^po/wizard/(?P<object_id>\d+)/$', PO_Wizard.as_view(), name="purchaseorder_wizard_update" ),
+
+    url(r'^itemgroup/(?P<object_id>\d+)/repair/$', 'repair_itemgroup',
+            name='repair_itemgroup'),
 )
 
 #eof
