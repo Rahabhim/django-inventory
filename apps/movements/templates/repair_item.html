@@ -6,10 +6,49 @@
 
 {% block javascript %}
 <script type="text/javascript">
+var pendingRefreshTO;
+
+function refreshStory(){
+    console.log("Refresh story!");
+    var div_story = $("#story");
+    div_story.find("ul").empty();
+
+    var added = Array();
+//     var added_ids = Array();
+    $("#item_target ul li:not(.hint)").each(function() {
+        added.push($("<li>").text($(this).text()));
+    });
+
+    if (added.length){
+        $("#story_noitems").hide();
+        $("#story_added").show();
+        $("#story_added ul").append(added);
+    }
+    else $("#story_added").hide();
+    
+    // list the items removed
+    var removed = Array();
+    $("#dests div.target ul li:not(.hint)").each(function() {
+        removed.push($("<li>").text($(this).text()));
+        });
+
+    if (removed.length){
+        $("#story_noitems").hide();
+        $("#story_removed").show();
+        $("#story_removed ul").append(removed);
+    }
+    else $("#story_removed").hide();
+
+    if ( (added.length + removed.length) == 0)
+        $("#story_noitems").show();
+}
+
 function receive_items(event, ui) {
+    window.clearTimeout(pendingRefreshTO);
     $(this).find("li.hint").hide();
     if ($(ui.sender).find("li:not(.hint)").length == 0)
         $(ui.sender).find("li.hint").show();
+    pendingRefreshTO = window.setTimeout(refreshStory, 500);
 }
 
 $(function() {
@@ -155,6 +194,19 @@ $(function() {
     </td>
 </tr>
 </table>
+
+<h3>{% trans "Description of movements" %}</h3>
+<div id="story">
+    <p id="story_noitems">{% trans "No parts have changed yet" %}</p>
+    <div style="display: none" id="story_added">
+        <h4>{% trans 'These parts will be added to the bundle' %}</h4>
+        <ul> </ul>
+    </div>
+    <div style="display: none" id="story_removed">
+        <h4>{% trans 'These parts will be removed from the bundle' %}</h4>
+        <ul> </ul>
+    </div>
+</div>
 
 </form>
 
