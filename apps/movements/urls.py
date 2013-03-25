@@ -276,6 +276,10 @@ urlpatterns = patterns('movements.views',
     url(r'^objects/repair/list/$', views.RepairOrderListView.as_view( \
                     list_filters=[],),
             name='repair_order_list'),
+    url(r'^objects/repair/pending_list/$', views.RepairOrderListView.as_view( \
+                    queryset=lambda r: RepairOrder.objects.by_request(r).filter(active=True),
+                    list_filters=[],),
+            name='repair_pending_list'),
     url(r'^objects/repair/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(
                 model=RepairOrder, success_url="repair_order_list",
                 check_object=check_repair_order,
