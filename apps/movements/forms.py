@@ -2,6 +2,7 @@
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import conditional_escape
 from generic_views.forms import DetailForm, InlineModelForm, RModelForm, \
                     ROModelChoiceField, ColumnsDetailWidget, DetailForeignWidget
 from ajax_select import get_lookup
@@ -90,10 +91,13 @@ class PurchaseOrderForm_view(DetailForm):
         model = PurchaseOrder
         fields = ('user_id', 'procurement', 'issue_date', 'status', 'supplier') # , 'notes') later
 
+def _fmt_movement_items(move):
+    return u'<br/>\n\t\t'.join([conditional_escape(unicode(it)) for it in move.items.all()])
+
 class RepairMovesWidget(ColumnsDetailWidget):
     columns = [ {'name': _(u'From'), 'attribute':'location_src' },
             {'name': _(u'To'), 'attribute':'location_dest'},
-            #TODO {'name': _('Parts'), 'attribute': 'items' },
+            {'name': _('Parts'), 'format': _fmt_movement_items },
             ]
     order_by = 'date_act'
     blind_mode = True # we trust the queryset from 'extra_fields' passed to us
