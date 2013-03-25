@@ -8,7 +8,7 @@ from common.api import register_links, register_menu, register_submenu, \
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
                    PurchaseOrderItemStatus, PurchaseOrder, \
-                   PurchaseOrderItem, Movement
+                   PurchaseOrderItem, Movement, RepairOrder
 
 from products import template_list
 import procurements # just to ensure their menu is loaded before this
@@ -141,8 +141,45 @@ action_movements_pending = {'text':_('pending moves'), \
         'condition': has_pending_moves,
         'view':'movements_pending_list', 'famfam':'page_go'}
 
+# Repair Orders
 
-register_links(['home',], [purchase_pending_orders, action_movements_pending ], menu_name='my_pending')
+def iz_itemgroup(item, c):
+    from assets.models import ItemGroup
+    if isinstance(item, ItemGroup):
+        return True
+    try:
+        # if it's a plain item, we'll get an exception
+        if item.itemgroup is not None:
+            return True
+    except ItemGroup.DoesNotExist:
+        return False
+
+action_repair_itemgroup = {'text': _("Repair bundle"), 'view': 'repair_itemgroup', 'args': 'object.id',
+        'famfam': 'wrench_orange', 'condition': (can_edit, has_no_pending_inventories, iz_itemgroup)}
+
+register_links(['group_view',], [action_repair_itemgroup,])
+repair_order_list = {'text':_('repair orders'), 'view':'repair_order_list', 'famfam':'wrench'}
+
+def has_pending_repairs(obj, context):
+    if has_pending_inventories(None, context):
+        return False
+    return RepairOrder.objects.by_request(context['request']).filter(active=True).exists()
+
+action_repairs_pending = {'text':_('pending repairs'), \
+        'condition': has_pending_repairs,
+        'view':'repair_pending_list', 'famfam':'wrench_orange'}
+
+action_repair_validate = {'text':_(u'validate repair'), 'view':'repair_do_close',
+            'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.active and _context_has_perm(c, RepairOrder, '%(app)s.validate_%(model)s') }
+
+action_repair_delete = {'text':_('delete pending repair'), 'view':'repair_order_delete', \
+            'args':'object.id', 'famfam':'table_delete', \
+            'condition': lambda o,c: o and o.active}
+
+register_links(['repair_order_view', ], [ action_repair_delete, action_repair_validate ])
+
+register_links(['home',], [purchase_pending_orders, action_movements_pending, action_repairs_pending ], \
+            menu_name='my_pending')
 
 location_src_assets = {'text': _('assets at that location'), 'view': 'location_assets', \
             'args': dict(loc_id='object.location_src.id'), 'famfam': 'package_link'}

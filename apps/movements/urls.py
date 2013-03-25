@@ -11,7 +11,8 @@ from generic_views.views import GenericDeleteView, generic_list, generic_detail,
 from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseRequestItem, PurchaseOrderStatus, \
                    PurchaseOrderItemStatus, PurchaseOrder, \
-                   PurchaseOrderItem, Movement, Supplier
+                   PurchaseOrderItem, Movement, Supplier, \
+                   RepairOrder
 
 from movements import purchase_request_state_filter, \
                       purchase_order_state_filter
@@ -20,7 +21,8 @@ from movements import purchase_request_state_filter, \
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \
         PurchaseOrderItemForm_inline, \
         DestroyItemsForm, LoseItemsForm, MoveItemsForm, \
-        MovementForm_gu, MovementForm_view, MovementForm_update_po, MoveInternalForm
+        MovementForm_gu, MovementForm_view, MovementForm_update_po, MoveInternalForm, \
+        RepairOrderForm_view
 
 from procurements.models import Contract
 
@@ -68,6 +70,15 @@ def check_movement(move):
     """ Check that it is an open inventory
     """
     return move.date_val is None and move.validate_user is None
+
+def check_repair_order(rep):
+    """ Check that it is an open order
+    """
+    if rep.validate_user is not None:
+        return False
+    if rep.movements.filter(Q(validate_user__isnull=False)|Q(date_val__isnull=False)).exists():
+        return False
+    return True
 
 urlpatterns = patterns('movements.views',
     url(r'^purchase/request/state/list/$', generic_list, dict({'queryset':PurchaseRequestStatus.objects.all()}, extra_context=dict(title =_(u'purchase request states'))), 'purchase_request_state_list'),
@@ -250,8 +261,29 @@ urlpatterns = patterns('movements.views',
     url(r'^po/wizard/new/$', PO_Wizard.as_view(), kwargs={'new': True}, name="purchaseorder_wizard_new" ),
     url(r'^po/wizard/(?P<object_id>\d+)/$', PO_Wizard.as_view(), name="purchaseorder_wizard_update" ),
 
+    # Repair Orders
     url(r'^itemgroup/(?P<object_id>\d+)/repair/$', 'repair_itemgroup',
             name='repair_itemgroup'),
+
+    url(r'^objects/repair/(?P<pk>\d+)/$', GenericDetailView.as_view(
+                form_class=RepairOrderForm_view,
+                template_name='repair_order_form.html',
+                queryset=RepairOrder.objects.by_request,
+                extra_fields= [{'field':'movements.all', 'label':_(u'Movements')}, ],
+                extra_context={'title': _(u'repair order details') },
+                ),
+            name='repair_order_view'),
+    url(r'^objects/repair/list/$', views.RepairOrderListView.as_view( \
+                    list_filters=[],),
+            name='repair_order_list'),
+    url(r'^objects/repair/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(
+                model=RepairOrder, success_url="repair_order_list",
+                check_object=check_repair_order,
+                extra_context=dict(object_name=_(u'Repair Order'))),
+            name='repair_order_delete'),
+    url(r'^objects/repair/(?P<object_id>\d+)/close/$', 'repair_do_close',
+            name='repair_do_close'),
+
 )
 
 #eof

@@ -10,7 +10,7 @@ from inventory.models import Inventory
 
 from django.contrib.auth.models import User
 from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
-                   PurchaseOrderItem, Movement, ItemTemplate
+                   PurchaseOrderItem, Movement, ItemTemplate, RepairOrder
 from common.models import Location
 from common.api import role_from_request
 from assets.models import Item
@@ -89,6 +89,20 @@ class PurchaseOrderForm_view(DetailForm):
     class Meta:
         model = PurchaseOrder
         fields = ('user_id', 'procurement', 'issue_date', 'status', 'supplier') # , 'notes') later
+
+class RepairMovesWidget(ColumnsDetailWidget):
+    columns = [ {'name': _(u'From'), 'attribute':'location_src' },
+            {'name': _(u'To'), 'attribute':'location_dest'},
+            #TODO {'name': _('Parts'), 'attribute': 'items' },
+            ]
+    order_by = 'date_act'
+    blind_mode = True # we trust the queryset from 'extra_fields' passed to us
+    # extra_filter = dict(state='done')
+
+class RepairOrderForm_view(DetailForm):
+    class Meta:
+        model = RepairOrder
+        widgets = {'movements': RepairMovesWidget }
 
 class PurchaseOrderForm_short_view(DetailForm):
     class Meta:
@@ -291,11 +305,6 @@ class MoveItemsForm(_baseMovementForm):
         if not self.instance.create_user_id:
             self.instance.create_user = user
 
-
-class RepairGroupForm(forms.Form):
-    """Used to mark repairs (changes within group) of Items
-    """
-    name = forms.CharField(label=_("Protocol ID"),)
 
 class MoveInternalForm(_baseMovementForm):
     """ Registered whenever equipment moves from one inventory to another

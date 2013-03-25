@@ -159,8 +159,13 @@ $(function() {
 <div class="content" width="90%"  >
 <form action="." method="post">{% csrf_token %}
 <h2>{{ item }}</h2>
+<p class="under-item">{% trans 'Now at:' %} {{ item.location }} </p>
 <h3>{% trans 'Repair form' %}</h3>
-<div> Ημερομηνία επισκευής, αρ πρωτοκόλλου κλπ.</div>
+<div id="rform"><label for="issue_date">{% trans 'Issue date' %}</label>
+    <input name="issue_date" type="text"/><br/>
+    <label for="user_id">{% trans 'User ID' %}</label>
+    <input name="user_id" type="text"/>
+</div>
 
 <table id="three_columns" width="100%">
 <tr><th width="33%">{% trans 'Spare parts' %}</th>

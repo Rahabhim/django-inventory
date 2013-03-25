@@ -609,6 +609,7 @@ class Movement(models.Model):
                 null=True, blank=True, related_name='+')
 
     purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements')
+    repair_order = models.ForeignKey('movements.RepairOrder', blank=True, null=True, related_name='movements')
 
     class Meta:
         verbose_name = _("movement")
@@ -771,6 +772,53 @@ class Movement(models.Model):
         self.save()
         return 'removed'
 
+class RepairOrderManager(models.Manager):
+    def by_request(self, request):
+        Q = models.Q
+        try:
+            if request.user.is_superuser:
+                return self.all()
+            else:
+                active_role = role_from_request(request)
+                if active_role:
+                    q = Q(department=active_role.department)
+                else:
+                    q = Q(create_user=request.user) | Q(validate_user=request.user) \
+                        | Q(department__in=request.user.dept_roles.values_list('department', flat=True))
+                return self.filter(q)
+        except Exception:
+            logger.exception("cannot filter:")
+        return self.none()
+
+class RepairOrder(models.Model):
+    objects = RepairOrderManager()
+    item = models.ForeignKey(ItemGroup, verbose_name=_("Item"))
+    user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))
+    issue_date = models.DateField(verbose_name=_(u'issue date'))
+    active = models.BooleanField(default=True, verbose_name=_(u'active'))
+    notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
+    department = models.ForeignKey(Department, verbose_name=_("corresponding department"), 
+                blank=True, null=True, related_name='+')
+
+    class Meta:
+        verbose_name = _(u'repair order')
+        verbose_name_plural = _(u'repair orders')
+        permissions = ( ('validate_repairorder', 'Can validate a repair order'), )
+
+    def __unicode__(self):
+        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('repair_order_view', [str(self.id)])
+
+    def fmt_active(self):
+        if self.active:
+            return _(u'Open')
+        else:
+            return _(u'Closed')
 
 register(PurchaseRequestStatus, _(u'purchase request status'), ['name'])
 register(PurchaseRequest, _(u'purchase request'), ['user_id', 'id', 'budget', 'required_date', 'status__name', 'originator'])

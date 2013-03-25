@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 import datetime
+from collections import defaultdict
 
+from django import forms
 from django.utils.translation import ugettext_lazy as _
 #from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -19,7 +21,8 @@ from assets.models import ItemTemplate, Item, ItemGroup
 from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
 from main import cart_utils
 
-from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, Movement
+from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
+                    Movement, RepairOrder
 from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
                   PurchaseOrderForm_view, PurchaseOrderItemForm, \
                   PurchaseOrderItem, PurchaseOrderWizardItemForm, \
@@ -581,7 +584,6 @@ def repair_itemgroup(request, object_id):
     active_role = role_from_request(request)
     if not active_role.has_perm('assets.change_itemgroup'):
         raise PermissionDenied
-    print "active_role:", active_role
 
     data = {'title': _("Repair of asset"), }
     # we need data for the three columns:
@@ -613,6 +615,13 @@ def repair_itemgroup(request, object_id):
     
     return render_to_response('repair_item.html', data, context_instance=RequestContext(request))
 
+class RepairOrderListView(GenericBloatedListView):
+    queryset=RepairOrder.objects.by_request
+    title = _(u'list of repair orders')
+    # prefetch_fields = ('procurement', 'supplier')
+    extra_columns = [ {'name': _('Department'), 'attribute': 'department' },
+                    {'name':_(u'Active'), 'attribute': 'fmt_active'},
+                    ]
 
 class POCartOpenView(CartOpenView):
     model=PurchaseOrder
