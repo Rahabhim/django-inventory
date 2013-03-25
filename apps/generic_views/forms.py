@@ -358,6 +358,9 @@ class ColumnsDetailWidget(_ROw_mixin, forms.widgets.Widget):
                     width = ' width="%s"' % c['width']
                 if c.get('attribute', False):
                     val = return_attrib(obj, c['attribute'])
+                elif 'format' in c:
+                    ret.append(cell % (width, c['format'](obj)))
+                    continue
                 else:
                     # no attribute, this must be the unicode(obj)
                     val = obj
