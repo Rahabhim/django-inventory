@@ -113,6 +113,11 @@ class RepairMovesWidget(ColumnsDetailWidget):
     # extra_filter = dict(state='done')
 
 class RepairOrderForm_view(DetailForm):
+    create_user = ROModelChoiceField(User.objects.all(),
+                widget=UserDetailsWidget, label=_('created by'))
+    validate_user = ROModelChoiceField(User.objects.all(),
+                widget=UserDetailsWidget, label=_('validated by'))
+
     class Meta:
         model = RepairOrder
         widgets = {'movements': RepairMovesWidget }
