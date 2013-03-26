@@ -597,23 +597,77 @@ def repair_itemgroup(request, object_id):
     else:
         dept = item.location.department
     
+    if dept is None:
+        # cannot edit bundles not in a department. Reason is, the rest of this algo
+        # will completely bork
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        try:
+            df = forms.DateField()
+            issue_date = df.to_python(request.REQUEST['issue_date'])
+            user_id = request.REQUEST['user_id']
+
+            if not issue_date:
+                raise ValueError(_("Issue date cannot be empty"))
+
+            bundle_location = Location.objects.filter(department__isnull=True, usage='production')[:1][0]
+
+            # TODO: amend an existing order
+            reform = RepairOrder(item=item, create_user=request.user, user_id=user_id,
+                        issue_date=issue_date, department=dept, notes=request.REQUEST['notes'])
+
+            reform.save()
+            # parts_in
+            if 'parts_in' in request.POST:
+                for item in Item.objects.filter(id__in=map(long, request.POST.getlist('parts_in'))):
+                    move, c = Movement.objects.get_or_create(repair_order=reform,
+                                location_src=item.location, location_dest=bundle_location,
+                                defaults={'create_user': request.user,
+                                        'date_act': issue_date, 'name': user_id,
+                                        'stype': 'in'})
+                    move.items.add(item)
+
+            if 'parts_out' in request.POST:
+                # First, group the items per destination location
+                # They have come like ['loc:item-id', ...] in the POST request
+                parts_out = defaultdict(list)
+                for pp in request.POST.getlist('parts_out'):
+                    loc, iid = map(long, pp.split(':', 1))
+                    parts_out[loc].append(iid)
+
+                for loc_id, iids in parts_out.items():
+                    move, c = Movement.objects.get_or_create(repair_order=reform,
+                                location_src=bundle_location, location_dest_id=loc_id,
+                                defaults={'create_user': request.user,
+                                        'date_act': issue_date, 'name': user_id,
+                                        'stype': 'in'})
+                    for item in Item.objects.filter(id__in=iids):
+                        move.items.add(item)
+            # Repair Order and its moves are created, get out of here!
+            return redirect(reform.get_absolute_url())
+        except Exception, e:
+            print "except:", e
+            # continue with our form, ask again.
+
     may_contain = [ mc.category for mc in item.item_template.category.may_contain.all()]
     print "May contain:", may_contain
-    
+
     data['src_locations'] = []
     for loc in Location.objects.filter(department=dept):
         data['src_locations'].append((loc, Item.objects.filter(location=loc, \
                                         item_template__category__in=may_contain)))
-    
+
     # B: the current details of the item
     data['item'] = item
-    
+
     # C: the locations we can send parts to:
     data['dest_locations'] = list(Location.objects.filter(department=dept, usage='internal'))
-    data['dest_locations'] += list(Location.objects.filter(department__isnull=True, 
+    data['dest_locations'] += list(Location.objects.filter(department__isnull=True,
                 name__in=[ unicode(_(u'Destroy')), unicode(_(u'Lost'))]))
-    
+
     return render_to_response('repair_item.html', data, context_instance=RequestContext(request))
+
 
 class RepairOrderListView(GenericBloatedListView):
     queryset=RepairOrder.objects.by_request

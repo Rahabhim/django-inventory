@@ -6,6 +6,9 @@
 
 {% block javascript %}
 <script type="text/javascript">
+var date_fmt1 = /([0-3]?[0-9])\/([0-1]?[0-9])\/([0-9]{4})/; // European DD/MM/YYYY
+var date_fmt2 = /([0-9]{4})-([0-1]?[0-9])-([0-3]?[0-9])/; // ISO YYYY-MM-DD
+
 var pendingRefreshTO;
 
 function refreshStory(){
@@ -105,6 +108,38 @@ $(function() {
 
     /* events: out(), receive() */
   });
+
+function validateDate(dstr) {
+  /* Validate that dstr is a valid date, in European dd/mm/YYYY or YYYY-mm-dd format
+ */
+    var m1 = date_fmt1.exec(dstr);
+    if (m1){
+        var dd = new Date(m1[3],m1[2]-1, m1[1]);
+        if ((dd.getDate() == m1[1]) && (dd.getMonth() + 1 == m1[2]) && (dd.getFullYear() == m[3]))
+            return true;
+        else {
+            console.log("Input date differs: " + dd.toDateString());
+        }
+        return false; // don't attempt fmt2
+    }
+    var m2 = date_fmt2.exec(dstr);
+    if (m2){
+        var dd = new Date(m1[1],m1[2]-1, m1[3]);
+        if ((dd.getDate() == m1[3]) && (dd.getMonth() + 1 == m1[2]) && (dd.getFullYear() == m[1]))
+            return true;
+        else {
+            console.log("Input date differs: " + dd.toDateString());
+        }
+    }
+    return false;
+}
+
+function validateForm(form) {
+    if (!validateDate(form.issue_date.value)){
+        $("#date_invalid").show();
+        return false;
+    }
+}
 </script>
 {% endblock %}
 
@@ -151,21 +186,39 @@ $(function() {
         font-style: italic;
         padding: 10px;
     }
+    #repair_fields td {
+        vertical-align: top;
+    }
     </style>
 {% endblock %}
 
 {% block content %}
 
 <div class="content" width="90%"  >
-<form action="." method="post">{% csrf_token %}
-<h2>{{ item }}</h2>
-<p class="under-item">{% trans 'Now at:' %} {{ item.location }} </p>
-<h3>{% trans 'Repair form' %}</h3>
-<div id="rform"><label for="issue_date">{% trans 'Issue date' %}</label>
-    <input name="issue_date" type="text"/><br/>
-    <label for="user_id">{% trans 'User ID' %}</label>
-    <input name="user_id" type="text"/>
-</div>
+<form action="." method="post" onsubmit="return validateForm(this)" >{% csrf_token %}
+<h2>{% trans 'Repair form:' %} {{ item }}</h2>
+<table id="repair_fields" width="100%">
+<tr><td width="*">
+    <table id="rform">
+        <tr><td>{% trans 'Now at:' %}</td> <td>{{ item.location }}</td> </tr>
+        <tr><td><label for="issue_date">{% trans 'Issue date:' %}</label></td>
+            <td><input name="issue_date" type="text"/>
+                <div id="date_invalid" style="display: none; color: red;">
+                    {% trans 'You have to enter a date in DD/MM/YYY format' %}
+                </div>
+            </td>
+        </tr>
+        <tr><td><label for="user_id">{% trans 'User ID:' %}</label></td>
+            <td><input name="user_id" type="text"/></td>
+        </tr>
+    </table>
+  </td>
+  <td width="*">
+    <label for="notes">{% trans 'Notes' %}</label><br/>
+    <textarea name="notes" style="min-height: 5em; min-width: 70%"></textarea>
+  </td>
+</tr>
+</table>
 
 <table id="three_columns" width="100%">
 <tr><th width="33%">{% trans 'Spare parts' %}</th>
