@@ -17,6 +17,15 @@ from common.api import role_from_request
 from assets.models import Item
 import logging
 
+
+class UserDetailsWidget(ColumnsDetailWidget):
+    show_header = False
+    columns = [{ 'name': _('first name'), 'attribute': 'first_name' },
+                { 'name': _('last name'), 'attribute': 'last_name' },
+                { 'name': _('email'), 'attribute': 'email'},
+                # the username is hidden! We don't want to give it away
+            ]
+
 class PurchaseRequestForm(forms.ModelForm):
     class Meta:
         model = PurchaseRequest
@@ -173,14 +182,6 @@ class SubItemsDetailWidget(ColumnsDetailWidget):
             {'name': _(u'Manufacturer'), 'attribute': 'item_template.manufacturer.name'},
             ]
     order_by = 'item_template__category__name'
-
-class UserDetailsWidget(ColumnsDetailWidget):
-    show_header = False
-    columns = [{ 'name': _('first name'), 'attribute': 'first_name' },
-                { 'name': _('last name'), 'attribute': 'last_name' },
-                { 'name': _('email'), 'attribute': 'email'},
-                # the username is hidden! We don't want to give it away
-            ]
 
 class MovementForm_view(DetailForm):
     items = forms.ModelMultipleChoiceField(Item.objects.all(), required=False,
