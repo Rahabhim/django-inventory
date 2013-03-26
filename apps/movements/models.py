@@ -610,6 +610,34 @@ class RepairOrder(models.Model):
         else:
             return _(u'Closed')
 
+    def do_close(self, user):
+        """ Update the the items bound in the itemgroup
+
+            You *must* call movements[].do_close() before this
+        """
+        bundle_location = Location.objects.filter(department__isnull=True, usage='production')[:1][0]
+
+        itemgroup = self.item.itemgroup
+        for move in self.movements.all():
+            if move.date_val is None:
+                # caller forgot to close it!
+                raise ValueError("Movement is not validated")
+            if move.location_dest == bundle_location:
+                # items added to the bundle
+                for it in move.items.all():
+                    itemgroup.items.add(it)
+            elif move.location_src == bundle_location:
+                # items removed from the bundle
+                for it in move.items.all():
+                    itemgroup.items.remove(it)
+            else:
+                raise ValueError(u"Invalid move #%d %s for a Repair Order" % (move.id, unicode(move)))
+
+        self.validate_user = user
+        self.active = False
+        self.save()
+        return True
+
 class MovementManager(models.Manager):
     def by_request(self, request):
         Q = models.Q

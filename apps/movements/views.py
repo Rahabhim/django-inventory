@@ -668,6 +668,54 @@ def repair_itemgroup(request, object_id):
 
     return render_to_response('repair_item.html', data, context_instance=RequestContext(request))
 
+def repair_do_close(request, object_id):
+    """ Close moves of repair order; then the order itself
+    """
+    repair = get_object_or_404(RepairOrder, pk=object_id)
+    active_role = role_from_request(request)
+    if request.user.is_superuser:
+        pass
+    elif not (active_role and active_role.has_perm('movements.validate_repair')):
+        raise PermissionDenied
+    try:
+        if (active_role.department is not None) \
+                and active_role.department != repair.department:
+            raise Exception(_("You do not have the permission to validate a repair order for %s") % repair.department.name)
+
+        moves_pending = False
+
+        for move in repair.movements.all():
+            if move.state == 'done':
+                continue
+            if move.state != 'draft':
+                moves_pending = True
+                continue
+            if active_role.department is not None \
+                    and move.location_dest.usage == 'internal' \
+                    and active_role.department != move.location_dest.department:
+                moves_pending = True
+                continue
+            elif active_role.department is not None \
+                    and move.location_src.usage == 'internal' \
+                    and active_role.department != move.location_src.department:
+                moves_pending = True
+                continue
+            move.do_close(val_user=request.user)
+            if move.state != 'done':
+                moves_pending = True
+        if not moves_pending:
+            repair.do_close(request.user)
+            messages.success(request, _("Repair order has been confirmed"), fail_silently=True)
+            return redirect(repair.get_absolute_url())
+        else:
+            msg = _(u'Repair order %s cannot be confirmed, because it contains pending moves! Please inspect and close these first.') % repair.user_id
+            messages.error(request, msg, fail_silently=True)
+    except Exception, e:
+        messages.error(request, unicode(e))
+
+
+    return redirect(repair.get_absolute_url())
+
 
 class RepairOrderListView(GenericBloatedListView):
     queryset=RepairOrder.objects.by_request
