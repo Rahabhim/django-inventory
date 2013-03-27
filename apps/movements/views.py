@@ -792,7 +792,7 @@ def repair_do_close(request, object_id):
     active_role = role_from_request(request)
     if request.user.is_superuser:
         pass
-    elif not (active_role and active_role.has_perm('movements.validate_repair')):
+    elif not (active_role and active_role.has_perm('movements.validate_repairorder')):
         raise PermissionDenied
     try:
         if (active_role.department is not None) \
