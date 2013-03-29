@@ -199,6 +199,12 @@ function validateForm(form) {
     #repair_fields td {
         vertical-align: top;
     }
+    #sources h4 {
+        font-size: 9pt;
+        font-weight: bold;
+        text-decoration: underline;
+        margin-bottom: 4px;
+    }
     </style>
 {% endblock %}
 
@@ -236,13 +242,21 @@ function validateForm(form) {
     <th width="33%">{% trans 'Removed parts' %}</th></tr>
 <tr>
     <td><div id="sources">
-            {% for src, items in src_locations %}
+            {% for src, allitems in src_locations %}
+                {% if allitems %}
                 <h3>{{ src }}</h3>
-                <div class="source"><ul>
-                    {% for si in items %}
+                <div class="source">
+                {% regroup allitems by item_template.category as ilist %}
+                {% for items in ilist %}
+                <h4>{{ items.grouper }}</h4>
+                <ul>
+                    {% for si in items.list %}
                         <li id="item-{{si.id}}" title="{%trans 'You can drag this part to the middle column' %}">{{si }}</li>
                     {% endfor %}
-                </ul></div>
+                </ul>
+                {% endfor %}
+                </div>
+                {% endif %}
             {% endfor %}
         </div>
     </td>

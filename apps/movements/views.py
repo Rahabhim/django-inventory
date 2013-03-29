@@ -656,7 +656,8 @@ def repair_itemgroup(request, object_id):
     data['src_locations'] = []
     for loc in Location.objects.filter(department=dept):
         data['src_locations'].append((loc, Item.objects.filter(location=loc, \
-                                        item_template__category__in=may_contain)))
+                                        item_template__category__in=may_contain) \
+                                        .order_by('item_template__category', 'item_template')))
 
     # B: the current details of the item
     data['item'] = item
