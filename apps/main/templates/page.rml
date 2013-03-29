@@ -1,10 +1,27 @@
 <?xml version="1.0"?>
+{% load i18n %}
 <document filename="{{ report_name }}">
   <template pageSize="(595.0,842.0)" title="{{ internal_title }}"
         author="{{ author }}" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="34.0" y1="42.0" width="527" height="758"/>
+      <frame id="first" x1="34.0" y1="42.0" width="527" height="738"/>
       <para> First page template</para>
+      <pageGraphics>
+            <setFont name="DejaVu Sans" size="9"/>
+            <stroke color="black"/>
+            <!-- Header -->
+            {% block headerGraphics %}
+            <lines>1.3cm 27.7cm 20cm 27.7cm</lines>
+            <drawString x="1.3cm" y="27.9cm">{% trans 'Django inventory' %}</drawString>
+            {% endblock %}
+            
+            <!-- Footer -->
+            {% block footerGraphics %}
+            <lines>1.2cm 2.15cm 19.9cm 2.15cm</lines>
+
+            <drawRightString x="19.7cm" y="1.7cm">{% trans 'Printed at:' %} {{ now|date:"d/m/Y H:i" }} {% trans ' - page:' %} <pageNumber/></drawRightString>
+            {% endblock %}
+      </pageGraphics>
     </pageTemplate>
     <pageTemplate id="main">
       <frame id="first" x1="34.0" y1="42.0" width="527" height="758"/>
@@ -14,8 +31,8 @@
   </template>
   <stylesheet>
     <initialize>
-      <paraStyle name="all" alignment="justify"/>
     </initialize>
+    <paraStyle name="all" alignment="justify" fontName="Helvetica"/>
     <paraStyle name="Standard" fontName="Helvetica"/>
     <paraStyle name="Text body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>

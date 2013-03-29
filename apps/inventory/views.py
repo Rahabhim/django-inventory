@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import logging
+import datetime
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -137,6 +138,7 @@ def inventory_printout(request, object_id):
     rml_str = render_to_string('inventory_list.rml.tmpl',
                 dictionary={ 'object': inventory, 'report_name': 'inventory.pdf',
                         'internal_title': "Inventory %d" % inventory.id,
+                        'now': datetime.datetime.now(),
                         'user': request.user,
                         'author': "Django-inventory"  } )
     outPDF = parseString(rml_str, localcontext={})
