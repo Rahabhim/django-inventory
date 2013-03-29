@@ -145,6 +145,8 @@ def FindCustomFonts():
                 log.debug("Found font %s at %s", fname, afn)
                 __foundFonts[fname] = afn
                 break
+        else:
+            log.debug("Not found font for %s: %s", name, font)
 
     # print "Found fonts:", __foundFonts
 
