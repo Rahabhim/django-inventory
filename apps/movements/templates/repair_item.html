@@ -175,10 +175,20 @@ function validateForm(form) {
     ul.ui-sortable li {
         list-style: none;
     }
-    ul.ui-sortable .ui-state-highlight {
+    ul.ui-sortable li:not(.hint)
+    {
+        background: #C0FFFF;
+        border: solid 1px #00C0C0;
+        margin-bottom: 2px;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+    ul.ui-sortable li.ui-state-highlight {
         /* the empty space as a drop target */
         height: 1.2em;
         line-height: 1.1em;
+        background: #FFFFC0;
+        border: solid 1px #FFA858;
     }
     ul li.hint {
         list-style: none;
@@ -230,7 +240,7 @@ function validateForm(form) {
                 <h3>{{ src }}</h3>
                 <div class="source"><ul>
                     {% for si in items %}
-                        <li id="item-{{si.id}}">{{si }}</li>
+                        <li id="item-{{si.id}}" title="{%trans 'You can drag this part to the middle column' %}">{{si }}</li>
                     {% endfor %}
                 </ul></div>
             {% endfor %}
@@ -241,7 +251,7 @@ function validateForm(form) {
         <div id="parts_in_item">
             <ul>
             {% for part in item.itemgroup.items.all %}
-                <li id="item-{{part.id}}">{{ part }}</li>
+                <li id="item-{{part.id}}" title="{%trans 'This part can be dragged to the right column'%}">{{ part }}</li>
             {% endfor %}
             </ul>
         </div>
