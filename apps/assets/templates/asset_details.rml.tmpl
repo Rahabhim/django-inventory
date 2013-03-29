@@ -1,0 +1,102 @@
+{% extends "page.rml" %}
+{% load i18n %}
+{% block title %} :: {% blocktrans %}Details of asset {{ object.property_number }} {{ object.item_template.description }}{% endblocktrans %}{% endblock %}
+
+{% block extrastyles %}
+    <blockTableStyle id="Table_parts">
+        <blockFont name="DejaVu Sans" />
+        <blockAlignment value="LEFT"/>
+        <blockValign value="MIDDLE"/>
+        <blockValign value="BOTTOM" start="0,0" stop="-1,0" />
+        <blockValign value="TOP" start="0,1" stop="2,-1" />
+
+      
+        <lineStyle kind="LINEBELOW" thickness="2.0" colorName="#000000" start="0,0" stop="-1,0"/>
+        <lineStyle kind="INNERGRID" thickness="0.4" colorName="gray" start="0,1" stop="-1,-1"/>
+    </blockTableStyle>
+   <blockTableStyle id="Table_moves">
+        <blockFont name="DejaVu Sans" />
+        <blockAlignment value="CENTER"/>
+        <blockAlignment value="LEFT" start="2,0" stop="-1,-1"/>
+        <blockValign value="MIDDLE"/>
+        <blockValign value="BOTTOM" start="0,0" stop="-1,0" />
+        <blockValign value="TOP" start="0,1" stop="2,-1" />
+
+      
+        <lineStyle kind="LINEBELOW" thickness="2.0" colorName="#000000" start="0,0" stop="-1,0"/>
+        <lineStyle kind="INNERGRID" thickness="0.4" colorName="gray" start="0,1" stop="-1,-1"/>
+    </blockTableStyle>
+
+    <blockTableStyle id="Table_details">
+        <blockFont name="DejaVu Sans" />
+        <blockAlignment value="LEFT"/>
+        <blockValign value="TOP"/>
+    </blockTableStyle>
+    <paraStyle name="Details" fontName="Helvetica" fontSize="10.0" leading="14"
+            spaceBefore="12.0" spaceAfter="26.0"/>
+    <paraStyle name="Table_title" fontName="Helvetica-Bold" fontSize="10.0" leading="11"/>
+    <paraStyle name="cell" fontName="DejaVu Sans" fontSize="10.0" leading="11" />
+{% endblock %}
+
+{% block content %}
+<title>{% blocktrans %}Details of asset {{ object.property_number }} {{ object.item_template.description }}{% endblocktrans %}</title>
+<h2>{% trans 'Asset identity' %}</h2>
+
+<blockTable colWidths="50mm,130mm" style="Table_details">
+    <tr><td>{% trans 'Asset number' %}</td><td>{{ object.property_number|default:'-' }}</td></tr>
+    <tr><td>{% trans 'Serial number' %}</td><td>{{ object.serial_number|default:'-' }}</td></tr>
+    <tr><td>{% trans 'Location' %}</td><td>{% if object.is_bundled %}{% trans 'Contained in a bundle' %}
+        {% else %}{{ object.location }}{% endif %}</td></tr>
+
+</blockTable>
+
+<h2>{% trans 'Product' %}</h2>
+{% with p=object.item_template %}
+<blockTable colWidths="50mm,130mm" style="Table_details">
+    <tr><td>{% trans 'Category' %}</td><td>{{ p.category }}</td></tr>
+    <tr><td>{% trans 'Manufacturer' %}</td><td>{{ p.manufacturer }}</td></tr>
+    <tr><td>{% trans 'Product' %}</td><td>{{ p.description }}</td></tr>
+    <tr><td>{% trans 'Part number' %}</td><td>{{ p.part_number|default:'-' }}</td></tr>
+</blockTable>
+{% endwith %}
+
+{% if object.itemgroup %}
+<h2>{% trans 'Bundle contents' %}</h2>
+<blockTable colWidths="90.0mm,40.0mm,40.0mm" style="Table_parts">
+      <tr>
+        <td><para style="Table_title">{% trans 'Part' %}</para></td>
+        <td><para style="Table_title">{% trans 'Manufacturer' %}</para></td>
+        <td><para style="Table_title">{% trans 'Category' %}</para></td>
+      </tr>
+    {% for part in object.itemgroup.items.all %}
+        <tr><td><para style="cell">{{ part.item_template.description}}</para></td>
+            <td><para style="cell">{{ part.item_template.manufacturer }}</para></td>
+            <td><para style="cell">{{ part.item_template.category.name }}</para></td>
+        </tr>
+    {% endfor %}
+</blockTable>
+{% endif %}
+
+
+<para> </para>
+{% comment %},40.0mm{% endcomment %}
+<h2>{% trans 'Asset trace' %}</h2>
+<blockTable colWidths="26.0mm,23.0mm,60.0mm,60.0mm" style="Table_moves">
+      <tr>
+        <td><para style="Table_title">{% trans 'Date' %}</para></td>
+        <td><para style="Table_title">{% trans 'User ID' %}</para></td>
+        <td><para style="Table_title">{% trans 'From' %}</para></td>
+        <td><para style="Table_title">{% trans 'To' %}</para></td>
+      </tr>
+    {% with ldept=object.location.department %}
+    {% for move in object.movements.all %}
+    <tr>
+        <td>{{ move.date_act|date:"d/m/Y" }}</td>
+        <td>{{ move.user_id }}</td>
+        <td><para style="cell">{% if move.location_src.department == ldept %}{{ move.location_src.name }}{% else %}{{ move.location_src }}{% endif %}</para></td>
+        <td><para style="cell">{% if move.location_dest.department == ldept %}{{ move.location_dest.name }}{% else %}{{ move.location_dest }}{% endif %}</para></td>
+    </tr>
+    {% endfor %}
+    {% endwith %}
+    </blockTable>
+{% endblock %}

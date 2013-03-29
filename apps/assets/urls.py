@@ -63,6 +63,10 @@ urlpatterns = patterns('assets.views',
     
     url(r'^location/(?P<loc_id>\d+)/assets/$', LocationAssetsView.as_view(), name='location_assets'),
     url(r'^department/(?P<dept_id>\d+)/assets/$', DepartmentAssetsView.as_view(), name='department_assets'),
+    
+    # note: we include the id in the last element, so that filename is: "asset-123.pdf"
+    url(r'^asset/asset-(?P<object_id>\d+).pdf$', 'asset_printout', name='asset_printout'),
+
 )
 
 

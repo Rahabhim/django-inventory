@@ -1,6 +1,8 @@
 # -*- encoding: utf-8 -*-
 # from django.http import HttpResponse
-from django.http import HttpResponseRedirect
+import logging
+import datetime
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404 #, redirect
 from django.core.exceptions import PermissionDenied
 from django.template import RequestContext
@@ -14,6 +16,7 @@ from generic_views.views import generic_assign_remove, GenericBloatedListView
 from models import Item, ItemGroup, State, ItemState
 
 from common.models import Location
+from common.api import role_from_request
 from company.models import Department
 from assets import state_filter
 from company import make_mv_location
@@ -172,4 +175,29 @@ class TemplateAssetsView(AssetListView):
         self.title = _(u"Items of template: %s") % template
         self.queryset = self.queryset(request).filter(item_template=template)
         return super(TemplateAssetsView, self).get(request, **kwargs)
+
+def asset_printout(request, object_id):
+    asset = get_object_or_404(Item, pk=object_id)
+    if not request.user.is_staff:
+        # don't allow other roles to see assets of another dept.
+        active_role = role_from_request(request)
+        if active_role and active_role.department != asset.location.department:
+            raise PermissionDenied
+        elif active_role and not active_role.department:
+            raise PermissionDenied
+
+    from django.template.loader import render_to_string
+    from rml2pdf import parseString
+    logger = logging.getLogger('apps.assets')
+    logger.info("Rendering asset #%d %s to HTTP", asset.id, asset.property_number)
+
+    rml_str = render_to_string('asset_details.rml.tmpl',
+                dictionary={ 'object': asset, 'report_name': 'asset-%d.pdf' % asset.id,
+                        'internal_title': "Asset %d" % asset.id,
+                        'now': datetime.datetime.now(),
+                        'user': request.user,
+                        'author': "Django-inventory"  } )
+    outPDF = parseString(rml_str, localcontext={})
+    return HttpResponse(outPDF, content_type='application/pdf')
+
 #eof
