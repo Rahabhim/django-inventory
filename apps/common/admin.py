@@ -5,6 +5,10 @@ from ajax_select.admin import AjaxSelectAdmin
 
 class LocationAdmin(AjaxSelectAdmin):
     form = make_ajax_form(Location, dict(department='department'))
+    
+    class Media:
+        js = ( 'js/ajax_select.js',)
+
 
 admin.site.register(Location, LocationAdmin)
 admin.site.register(LocationTemplate)
