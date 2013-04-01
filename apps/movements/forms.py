@@ -151,6 +151,7 @@ class PurchaseOrderItemTransferForm(forms.Form):
 
 class SubItemsDetailWidget(ColumnsDetailWidget):
     columns = [{'name': _(u'Item'), 'width': '**'},
+            {'name': _('Serial number'), 'attribute': 'serial_number'},
             {'name': _(u'Category'), 'attribute': 'item_template.category.name'},
             {'name': _(u'Manufacturer'), 'attribute': 'item_template.manufacturer.name'},
             ]
