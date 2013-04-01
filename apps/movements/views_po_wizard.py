@@ -394,6 +394,7 @@ class PO_Step4(WizardForm):
                 po_item.in_group = item['in_group']
                 po_item.received_qty = po_item.qty
                 po_item.serial_nos = item['serials']
+                po_item.save()
 
                 bits = {} # arrange all bundled parts in dict
                           # by part.item_template.id
