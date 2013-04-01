@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django import forms
 from django.utils.translation import ugettext_lazy as _
+from django.utils.html import conditional_escape
 
 from generic_views.forms import DetailForm, ColumnsDetailWidget, \
         DetailForeignWidget, ReadOnlyInput, RModelForm
@@ -34,8 +35,19 @@ class ItemGroupForm(ItemForm):
                     'property_number': ReadOnlyInput,
                     }
 
+def _fmt_groupitem(item):
+    href = False
+    try:
+        if item.item_template.category.is_bundle:
+            href = item.itemgroup.get_absolute_url()
+    except Exception, e:
+        href = False
+    if not href:
+        href = item.get_absolute_url()
+    return '<a href="%s">%s</a>' % (href, conditional_escape(unicode(item)))
+
 class SubItemsDetailWidget(ColumnsDetailWidget):
-    columns = [{'name': _(u'Contained Item')}, 
+    columns = [{'name': _(u'Contained Item'), 'format': _fmt_groupitem}, 
             {'name': _(u'Manufacturer'), 'attribute': 'item_template.manufacturer.name'},
             {'name': _(u'Category'), 'attribute': 'item_template.category.name'},
             ]
