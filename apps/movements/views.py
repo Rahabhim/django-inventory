@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-#from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect #, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.contrib import messages
@@ -592,7 +592,21 @@ def repair_itemgroup(request, object_id):
     # A: the locations we can fetch from + their available parts
     if active_role:
         dept = active_role.department
-        if not (request.user.is_staff or (dept and dept == item.location.department)):
+        if request.user.is_staff:
+            pass
+        elif item.location and dept and item.location.department is None:
+            # search for a bundle in bundle
+            parents = item.bundled_in.all()
+            if parents and len(parents) > 1:
+                messages.error(request, _('Internal error: item is contained in %d bundles!') % len(parents))
+                return HttpResponseRedirect(item.get_absolute_url())
+            elif parents and parents[0].location and parents[0].location.department == dept:
+                pass
+            else:
+                raise PermissionDenied
+        elif item.location and dept and dept == item.location.department:
+            pass
+        else:
             raise PermissionDenied
     else:
         dept = item.location.department
