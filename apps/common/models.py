@@ -38,6 +38,26 @@ class Address(models.Model):
         verbose_name = _("address")
         verbose_name_plural = _("addresses")
 
+class LocationTemplate(models.Model):
+    """ A location template is just names of locations to create for each dpt. type
+
+    """
+    name = models.CharField(max_length=32, verbose_name=_("name"))
+    sequence = models.IntegerField(verbose_name=_("sequence"), default=10)
+
+    class Meta:
+        ordering = ['sequence', 'name']
+        verbose_name = _(u"location template")
+        verbose_name_plural = _(u"location templates")
+
+    def __unicode__(self):
+        return self.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('location_template_view', [str(self.id)])
+
+
 class Location(models.Model):
     """
     
@@ -79,25 +99,6 @@ class Location(models.Model):
             return self.department.get_sequence()
         else:
             raise ObjectDoesNotExist("No department for location %s" % self.name)
-
-class LocationTemplate(models.Model):
-    """ A location template is just names of locations to create for each dpt. type
-
-    """
-    name = models.CharField(max_length=32, verbose_name=_("name"))
-    sequence = models.IntegerField(verbose_name=_("sequence"), default=10)
-
-    class Meta:
-        ordering = ['sequence', 'name']
-        verbose_name = _(u"location template")
-        verbose_name_plural = _(u"location templates")
-
-    def __unicode__(self):
-        return self.name
-
-    @models.permalink
-    def get_absolute_url(self):
-        return ('location_template_view', [str(self.id)])
 
 class Supplier(Partner):
     #TODO: Contact, extension
