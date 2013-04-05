@@ -583,6 +583,8 @@ def repair_itemgroup(request, object_id):
             pass
         else:
             raise PermissionDenied
+    elif not item.location:
+        raise PermissionDenied
     else:
         dept = item.location.department
     
