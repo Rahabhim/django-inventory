@@ -157,16 +157,16 @@ class PO_Step3(WizardForm):
                 our_data['parts'] = {}
                 aitems.append(our_data)
         wizard.storage.set_step_data('4', step4_data)
-        if our_data['item_template'].category.is_bundle:
-            step3b_data = MultiValueDict()
-            step3b_data['3b-ig'] = our_data.copy()
-            wizard.storage.set_step_data('3b', step3b_data)
-            return '3b'
-        elif our_data['item_template'].category.is_group:
+        if our_data['item_template'].category.is_group:
             step3s_data = MultiValueDict()
             step3s_data['3s-iset'] = wizard._make_3sdata(our_data, aitems)
             wizard.storage.set_step_data('3s', step3s_data)
             return '3s'
+        elif our_data['item_template'].category.is_bundle:
+            step3b_data = MultiValueDict()
+            step3b_data['3b-ig'] = our_data.copy()
+            wizard.storage.set_step_data('3b', step3b_data)
+            return '3b'
         elif our_data['in_group']:
             # we are a non-bundle item in a group, return to that group
             # find the group from step4 data
@@ -293,7 +293,9 @@ class PO_Step4(WizardForm):
             for p in po_item.bundled_items.all():
                 pbc[p.item_template.category_id].append((p.item_template, p.qty))
 
-            if po_item.item_template.category.is_bundle:
+            if po_item.item_template.category.is_group:
+                pass
+            elif po_item.item_template.category.is_bundle:
                 for mc in po_item.item_template.category.may_contain.all():
                     r['parts'][mc.id] = pbc.pop(mc.category_id, [])
 
