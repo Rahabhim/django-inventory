@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 class DepartmentType(models.Model):
     name = models.CharField(max_length=128)
@@ -81,7 +81,7 @@ def post_save(sender, **kwargs):
         dept = kwargs['instance']
         try:
             for lt in dept.dept_type.location_tmpl.all():
-                dept.location_set.create(name=lt.name, sequence=lt.sequence, usage='internal')
+                dept.location_set.create(name=lt.name, sequence=lt.sequence, usage='internal', template=lt)
         except ObjectDoesNotExist:
             pass
 

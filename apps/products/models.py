@@ -17,6 +17,8 @@ class ItemCategory(models.Model):
     use_serials = models.BooleanField(default=True, verbose_name=_("Items have serials"))
     picture = models.ImageField(verbose_name=_("Picture"), upload_to='categories', 
                 blank=True, null=True)
+    chained_location = models.ForeignKey('common.LocationTemplate', verbose_name=_('Chained location'),
+                blank=True, null=True)
 
     @models.permalink
     def get_absolute_url(self):
