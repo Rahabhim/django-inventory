@@ -147,7 +147,7 @@ class PurchaseOrder(models.Model):
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     status = models.ForeignKey(PurchaseOrderStatus, null=True, blank=True, verbose_name=_(u'status'))
-    department = models.ForeignKey(Department, verbose_name=_("corresponding department"), 
+    department = models.ForeignKey(Department, verbose_name=_("corresponding department"),
                 blank=True, null=True, related_name='+')
 
     class Meta:
@@ -613,7 +613,7 @@ class RepairOrder(models.Model):
     issue_date = models.DateField(verbose_name=_(u'issue date'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
-    department = models.ForeignKey(Department, verbose_name=_("corresponding department"), 
+    department = models.ForeignKey(Department, verbose_name=_("corresponding department"),
                 blank=True, null=True, related_name='+')
 
     class Meta:
