@@ -5,8 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from generic_views.views import GenericDeleteView, GenericUpdateView, GenericCreateView, \
                                 generic_detail, generic_list, GenericBloatedListView
 
-from models import Location, Supplier
-from forms import LocationForm, LocationForm_view, SupplierForm
+from models import Location, Supplier, LocationTemplate
+from forms import LocationForm, LocationForm_view, SupplierForm, LocationTemplateForm_view
 
 from company.models import Department
 from company.lookups import _department_filter_q
@@ -30,6 +30,12 @@ urlpatterns += patterns('',
     url(r'^location/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Location, success_url="location_list", extra_context=dict(object_name=_(u'locations'))), name='location_delete'),
     url(r'^location/(?P<object_id>\d+)/$', generic_detail, dict(form_class=LocationForm_view, queryset=Location.objects.all()), 'location_view'),
 
+    url(r'^location/template/list/$', GenericBloatedListView.as_view(queryset=LocationTemplate.objects.all(),
+                extra_context=dict(title =_(u'location templates'))), name='location_template_list'),
+    url(r'^location/template/(?P<object_id>\d+)/$', generic_detail, \
+                dict(form_class=LocationTemplateForm_view, queryset=LocationTemplate.objects.all()),
+                name='location_template_view'),
+    
     url(r'^supplier/(?P<object_id>\d+)/$', generic_detail, dict(form_class=SupplierForm, queryset=Supplier.objects.all()), 'supplier_view'),
     url(r'^supplier/list/$', generic_list, dict({'queryset':Supplier.objects.all()}, extra_context=dict(title=_(u'suppliers'))), 'supplier_list'),
     url(r'^supplier/create/$', GenericCreateView.as_view(form_class=SupplierForm), name='supplier_create'),

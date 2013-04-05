@@ -3,7 +3,7 @@ from django import forms
 # from django.utils.translation import ugettext_lazy as _
 
 from generic_views.forms import DetailForm
-from models import Location, Supplier
+from models import Location, Supplier, LocationTemplate
 from ajax_select.fields import AutoCompleteSelectField
 
 class LocationForm(forms.ModelForm):
@@ -18,5 +18,9 @@ class LocationForm_view(DetailForm):
 class SupplierForm(forms.ModelForm):
     class Meta:
         model = Supplier
+
+class LocationTemplateForm_view(DetailForm):
+    class Meta:
+        model = LocationTemplate
 
 #eof
