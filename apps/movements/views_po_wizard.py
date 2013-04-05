@@ -466,49 +466,25 @@ class PO_Step5(WizardForm):
         if not po_instance.pk:
             raise RuntimeError("PO instance must be saved by step 5")
         try:
-            items_left = po_instance.calc_unmoved_items()
+            mapped_items = po_instance.map_items()
         except ValueError, ve:
             messages.error(request, unicode(ve), fail_silently=True)
             return '5'
 
         active_role = None
         msg = None
+        print "mapped_items:", mapped_items
         try:
             active_role = role_from_request(request)
         except ObjectDoesNotExist:
             pass
 
-        if items_left:
+        if po_instance.map_has_left(mapped_items):
             if not active_role.has_perm('movements.change_purchaseorder'):
                 raise PermissionDenied
-            lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
-            lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
-            ldests = [self.cleaned_data['location'],]
-            if not lsrcs:
-                msg = _(u'There is no procurement location configured in the system!')
-                messages.error(request, msg, fail_silently=True)
-            elif not ldests:
-                msg = _(u'This is not default department and location for this user, please fix!')
-                messages.error(request, msg, fail_silently=True)
-            elif not lbdls:
-                msg = _(u'This is not bundling location configured in the system!')
-                messages.error(request, msg, fail_silently=True)
-            else:
-                movement = Movement(create_user=request.user, date_act=datetime.date.today(),
-                        stype='in', origin=po_instance.user_id,
-                        location_src=lsrcs[0], location_dest=ldests[0],
-                        purchase_order=po_instance)
-                movement.save()
-                bundled = po_instance.fill_out_movement(items_left, movement)
-                if bundled:
-                    # print "must put a few items in bundle, too"
-                    movement = Movement(create_user=request.user, date_act=datetime.date.today(),
-                        stype='in', origin=po_instance.user_id,
-                        location_src=lsrcs[0], location_dest=lbdls[0],
-                        purchase_order=po_instance)
-                    movement.save()
-                    po_instance.fill_out_bundle_move(bundled, movement)
-
+            po_instance.items_into_moves(mapped_items, request, \
+                        self.cleaned_data['location'].department, \
+                        self.cleaned_data['location'])
         if msg:
             return '5'
 

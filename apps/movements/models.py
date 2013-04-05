@@ -4,8 +4,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
+from django.contrib import messages
 
-from common.models import Supplier, Location
+from common.models import Supplier, Location, LocationTemplate
 from assets.models import Item, ItemTemplate, ItemGroup
 from company.models import Department
 
@@ -113,6 +114,26 @@ class PurchaseOrderManager(models.Manager):
             logger.exception("cannot filter:")
         return self.none()
 
+class _map_item(object):
+    """A data object holding a line from PO.map_items()
+    """
+    def __init__(self, id, parent_id=None, serial=None, item_id=None):
+        self.id = id
+        self.parent_id = parent_id
+        self.serial = serial
+        self.item_id = item_id
+
+    def __repr__(self):
+        ret =  '<%s ' % (self.id,)
+        if self.parent_id:
+            ret += ' in %s' % (self.parent_id,)
+        if self.serial:
+            ret += ' serial=%r' % (self.serial,)
+        if self.item_id:
+            ret += ' mapped to %r' % (self.item_id,)
+        ret += '>'
+        return ret
+
 class PurchaseOrder(models.Model):
     objects = PurchaseOrderManager()
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
@@ -148,16 +169,24 @@ class PurchaseOrder(models.Model):
         else:
             return _(u'Closed')
 
-    def calc_unmoved_items(self):
-        """Calculate items mentioned in this PO, prepare for a movement
+    def map_items(self):
+        """ Map the items mentioned in this PO to real items inside the PO's movements
 
-            @return a dict of item_template.id: (qty, serials) for those left
+            This will also provide the dataset that will fill further movements
+
+              loc_kind: {item_template: [obj( id, parent_id, serial|False, item_id|False),...] }
+
+            where:
+                loc_kind: kind of location: 'bdl' for the bundle location, <tmpl_id>
+                    when the item's category has a chained template or '' for the generic
+                    location
+                id, parent_id: arbitrary addressing of PO item ids
+                item_id: an asset.Item id
         """
-        po_items = {} # sets of serial numbers
-        po_items_qty = {} # counters of quantities
-        po_bundled_qty = {} # counters of quantities for bundled items
         logger = logging.getLogger('apps.movements.PurchaseOrder.calc')
 
+        ret = defaultdict(lambda: defaultdict(list)) # default dict-in-dict
+        logger.debug('map_items(): first stage for %s', self.id)
         # 1st step: fill dicts with the things we've ordered
         for item in self.items.all():
             if not item.received_qty:
@@ -165,11 +194,21 @@ class PurchaseOrder(models.Model):
 
             if not item.item_template_id:
                 raise ValueError(_('Item template for item "%s" has not been assigned. Cannot continue.'), item.item_name)
-            serials = []
 
-            if item.item_template.category.is_group:
+            if item.item_template.category.is_group and not item.item_template.category.is_bundle:
                 # Skip group containers. We never receive them as items
                 continue
+
+            # find appropriate location
+            if item.in_group:
+                loc_kind = 'bdl'
+            elif item.item_template.category.chained_location:
+                loc_kind = item.item_template.category.chained_location_id
+            else:
+                loc_kind = ''
+
+            # build list of new serial numbers
+            serials = []
             for s in item.serial_nos.replace('\n', ',').split(','):
                 s = s.strip()
                 if s:
@@ -178,187 +217,172 @@ class PurchaseOrder(models.Model):
                 raise ValueError(_("You have given %(slen)d serials, but marked only %(received)d received items. Please fix either of those") % \
                         dict(slen=len(serials), received=item.received_qty))
             iid = item.item_template_id
-            old_serials = po_items.setdefault(iid, set())
+
+            # locate the entry in 'ret' about our case
+            oldlist = ret[loc_kind][iid]
+
+            old_serials = set([o.serial for o in oldlist])
+            # This is an error, because we cannot allow different PO lines to repeat
+            # the same serials for the same products.
             assert not old_serials.intersection(serials), \
                     "Some serials are repeated in po: %s "  % \
                         ','.join(old_serials.intersection(serials))
-            old_serials.update(serials)
-            po_items_qty[iid] = po_items_qty.get(iid, 0) + item.received_qty - len(serials)
-            for bid in item.bundled_items.all():
-                biid = bid.item_template_id
-                po_bundled_qty[biid] = po_bundled_qty.get(biid, 0) + item.received_qty
 
-        # 2st step: remove from dicts those items who are already in movements
-        #           linked to this one
-        #for move in self.movements.all(): #.prefetch_related('items'): Django 1.4
-        #    for item in move.items.iterator():
-        if True:
-            for item in Item.objects.filter(movements__purchase_order=self).iterator():
-                if item.qty < 1:
-                    raise ValueError("Zero or negative quantity found for asset #%d" % item.id)
-                iset = po_items.get(item.item_template_id, set())
-                iqty = po_items_qty.get(item.item_template_id, 0)
-                bqty = po_bundled_qty.get(item.item_template_id, 0)
+            rec_qty = item.received_qty
+            idx = 0
+            parent_id = None
+            if item.in_group:
+                parent_id = (item.in_group, 1)  # We expect group.qty == 1, so always map
+                                                # to the first item
+            for idx, s in enumerate(serials):
+                oldlist.append(_map_item((item.id, idx), parent_id=parent_id, serial=s))
+                for bid in item.bundled_items.all():
+                    for i in range(bid.qty):
+                        ret['bdl'][bid.item_template_id].append( \
+                                _map_item((bid.id,idx,i), parent_id=(item.id, idx)) )
+                rec_qty -= 1
 
-                logger.debug("item %s start: %d, %d, %s", item, iqty, bqty, iset)
-                if iset and item.serial_number and item.serial_number in iset:
-                    iset.remove(item.serial_number)
-                elif iqty:
-                    if item.qty > iqty:
-                        iqty = 0
-                    else:
-                        iqty -= item.qty
-                    po_items_qty[item.item_template_id] = iqty
-                elif bqty:
-                    if item.qty > bqty:
-                        bqty = 0
-                    else:
-                        bqty -= item.qty
-                    po_bundled_qty[item.item_template_id] = bqty
-                else:
-                    # Item of movement is not in PO list, iz normal.
-                    logger.debug("item %s not in po %d, %d, %s", item, iqty, bqty, iset)
+            while rec_qty > 0:
+                idx += 1
+                oldlist.append(_map_item((item.id, idx), parent_id=parent_id))
+                for bid in item.bundled_items.all():
+                    for i in range(bid.qty):
+                        ret['bdl'][bid.item_template_id].append( \
+                                _map_item((bid.id,idx,i), parent_id=(item.id, idx)) )
+                rec_qty -= 1
+
+        logger.debug('map_items(): second stage for %s', self.id)
+        def _consume(item, loc_kind):
+            """ given a movement item, find which part of 'ret' it can be mapped to
+            """
+            assert item.qty == 1, item.qty
+            if loc_kind not in ret:
+                return False
+            olist = ret[loc_kind].get(item.item_template_id, [])
+            for mo in olist:
+                if mo.item_id:
+                    # already mapped
                     continue
+                if mo.serial != item.serial_number:
+                    continue
+                mo.item_id = item.id
+                return True
 
-        # 3rd step: prepare output dictionary
-        out = {}
-        for k, v in po_items.items():
-            if not v: continue
-            out[k] = (0, v)
-        for k, v in po_items_qty.items():
-            if not v: continue
-            if k in out:
-                # out[k][0] must be 0, still
-                ks = out[k][1]
+            return False
+
+        for move in self.movements.prefetch_related('items').all(): # requires Django 1.4
+            # Prefetching the items is crucial, it will reduce Queries done
+            if move.location_dest.usage == 'production':
+                loc_kind = 'bdl'
+            elif move.location_dest.template is not None:
+                loc_kind = move.location_dest.template_id
             else:
-                ks = set()
-            out[k] = (v, ks)
+                loc_kind = ''
 
-        for k, v in po_bundled_qty.items():
-            if not v: continue
-            out[(k,1)] = (v, set())
-        logger.debug("Have left: %r", out)
-        return out
-
-    def fill_out_movement(self, cunmoved, new_move):
-        """ fill the supplied movement with [new] items for those of calc_unmoved_items()
-        """
-        assert cunmoved
-        bundled = []
-        for iid, two in cunmoved.items():
-            qty, serials = two
-            if isinstance(iid, tuple):
-                assert iid[1] == 1, "Strange index: %r" % iid
-                assert not serials, "Serials in bundle? %r" % serials
-                bundled.append((iid[0], qty))
-                continue
-            for s in serials:
-                new_item, c = Item.objects.get_or_create(item_template_id=iid, serial_number=s)
-                new_move.items.add(new_item) #FIXME
-            for i in range(qty):
-                # create individual items of item.qty=1
-                new_move.items.create(item_template_id=iid)
-        return bundled
-
-    def fill_out_bundle_move(self, bundled, new_move):
-        """ fill the supplied movement with [new] bundled items, from fill_out_movement()
-        """
-        assert bundled
-        for iid, qty in bundled:
-            for i in range(qty):
-                # create individual items of item.qty=1
-                new_move.items.create(item_template_id=iid, is_bundled=True)
-        return True
-
-    def recalc_bundle_items(self):
-        """Restore the relation of bundled items to their parents of a PO
-        """
-        logger = logging.getLogger('apps.movements.PurchaseOrder.calc')
-        lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
-        if not lbdls:
-            raise RuntimeError(_(u'This is no bundling location configured in the system!'))
-        pending_bundled = defaultdict(list)
-
-        for mm in self.movements.filter(location_dest=lbdls[0]):
-            for bb in mm.items.filter(bundled_in__isnull=True):
-                pending_bundled[bb.item_template_id].append(bb)
-
-        logger.debug("Pending bundled: %d items of %d products", sum(map(len, pending_bundled.values())), len(pending_bundled))
-        for item in self.items.all():
-            if not item.received_qty:
-                continue
-
-            if (not item.item_template_id) or item.item_template.category.is_group:
-                # Skip non-ready lines or group containers.
-                continue
-            if not (item.item_template.category.is_bundle and item.bundled_items.exists()):
-                continue
-
-            serials = []
-            for s in item.serial_nos.split(','):
-                s = s.strip()
-                if s:
-                    serials.append(s)
-
-            rqty = item.received_qty - len(serials)
-            assert rqty >= 0, "serials more than received for line %d %s" %(item.id, item)
-            serials = set(serials)
-
-            for bitem in Item.objects.filter(movements__purchase_order=self, item_template=item.item_template).iterator():
-                if bitem.serial_number:
-                    if bitem.serial_number not in serials:
+            for item in move.items.iterator():
+                if _consume(item, loc_kind):
+                    continue
+                if loc_kind not in ('bdl', ''):
+                    # second attempt, to generic location
+                    if _consume(item, ''):
                         continue
-                    serials.remove(bitem.serial_number)
-                else:
-                    if rqty < 1:
-                        continue
-                    rqty -= 1
-                igroup, c = ItemGroup.objects.get_or_create(item_ptr=bitem,
+                logger.debug("Movement %d, item not consumed in %s: %r", move.id, loc_kind, item)
+
+        return ret
+
+    def map_has_left(self, mapped_items):
+        for tdict in mapped_items.values():
+            for objs in tdict.values():
+                for o in objs:
+                    if not o.item_id:
+                        return True
+        return False
+
+    def items_into_moves(self, mapped_items, request, department, master_location):
+        """ Generate moves for mapped items
+        """
+
+        the_moves = {}
+        def _get_move(loc_kind):
+            if loc_kind in the_moves:
+                return the_moves[loc_kind]
+
+            lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
+            if not lsrcs:
+                msg = _(u'There is no procurement location configured in the system!')
+                messages.error(request, msg, fail_silently=True)
+                raise RuntimeError
+
+            if loc_kind == 'bdl':
+                ldests = Location.objects.filter(department__isnull=True, usage='production')[:1]
+                if not ldests:
+                    msg = _(u'This is not bundling location configured in the system!')
+                    messages.error(request, msg, fail_silently=True)
+                    raise RuntimeError
+            elif loc_kind == '':
+                ldests = [master_location,]
+                if not master_location:
+                    msg = _(u'This is not default department and location for this user, please fix!')
+                    messages.error(request, msg, fail_silently=True)
+                    raise RuntimeError
+            else:
+                # must be a location template_id
+                ldests = Location.objects.filter(department=department, template_id=loc_kind, usage='internal')[:1]
+                if not ldests:
+                    ltmpl = LocationTemplate.objects.get(pk=loc_kind)
+                    msg = _("Department %(dept)s does not have a location for \"%(loc)s\" to store items") % \
+                            { 'dept': unicode(department), 'loc': unicode(ltmpl) }
+                    messages.error(request, msg, fail_silently=True)
+                    raise RuntimeError
+            movement, c = Movement.objects.get_or_create( stype='in', origin=self.user_id,
+                    location_src=lsrcs[0], location_dest=ldests[0],
+                    purchase_order=self,
+                    defaults=dict(create_user=request.user,date_act=self.issue_date, ))
+            movement.save()
+            the_moves[loc_kind] = movement
+            return movement
+
+        id_map = {}
+        for lk, it_tmpls in mapped_items.items():
+            for tmpl_id, objs in it_tmpls.items():
+                for o in objs:
+                    if not o.item_id:
+                        move = _get_move(lk)
+                        if o.serial:
+                            new_item, c = Item.objects.get_or_create(item_template_id=tmpl_id,
+                                        serial_number=o.serial)
+                        else:
+                            new_item = Item(item_template_id=tmpl_id)
+                        new_item.save()
+                        move.items.add(new_item)
+                        o.item_id = new_item.id
+
+                    if o.id in id_map:
+                        # inserted early by parent setdefault()
+                        assert id_map[o.id][0] is False, id_map[o.id]
+                        id_map[o.id] = (o.item_id, id_map[o.id][1])
+                    else:
+                        id_map[o.id] = (o.item_id, [])
+                    if o.parent_id:
+                        id_map.setdefault(o.parent_id, (False, []))[1].append(o.item_id)
+
+        # Restore bundle relations. The id_map should have provided us with concrete
+        # information..
+        for item_id, children in id_map.values():
+            assert item_id is not False
+            if not children:
+                continue
+            bitem = Item.objects.get(pk=item_id)
+            igroup, c = ItemGroup.objects.get_or_create(item_ptr=bitem,
                                 defaults={'item_template': bitem.item_template })
-                bitem.save() # just restore the other fields
-                if c:
-                    logger.debug("Created itemgroup for item %d, to host bundled items", bitem.id)
-                logger.debug("Arrived at bundle #%d %s for line #%d %s: group %d",
-                            bitem.id, bitem, item.id, item, igroup.id)
-
-                # count the items already bundled, by template id
-                acc_bundled = defaultdict(int)
-                for ab in igroup.items.all():
-                    acc_bundled[ab.item_template_id] += ab.qty
-                # we now *repeat* this for every serial/single item created for this
-                # PO line:
-
-                for buli in item.bundled_items.all():
-                    missing = buli.qty - acc_bundled[buli.item_template_id]
-                    if missing < 0: # can happen if we have 2x buli lines for the same template
-                        acc_bundled[buli.item_template_id] -= buli.qty
-                        continue
-                    elif missing > 0:
-                        logger.debug("Need to bundle %d more '%s' in '%s'",
-                                    missing, buli.item_template, bitem)
-                        ub = []
-                        while missing and len(pending_bundled[buli.item_template_id]):
-                            unbundled = pending_bundled[buli.item_template_id].pop(0)
-                            if unbundled.qty > missing:
-                                # Rare case, not currently possible: there is an item
-                                # whose quantity is more than we want to connect here
-                                ub.append(unbundled)
-                                continue
-
-                            unbundled.bundled_in = [igroup, ] # add to our group
-                            missing -= unbundled.qty
-                            unbundled.save()
-
-                        if ub:
-                            pending_bundled[buli.item_template_id] += ub
-
-                        if missing:
-                            logger.debug("Still missing %d items of '%s' for '%s'",
-                                    missing, buli.item_template, bitem)
-            if rqty or len(serials):
-                logger.info("Remaining %d items to process for line %s", rqty + len(serials), item)
-
-        # end of fn
+            if c:
+                bitem.save()
+            for citem in Item.objects.filter(pk__in=children):
+                if list(citem.bundled_in.all()) != [bitem,]:
+                    citem.bundled_in.clear()
+                    citem.bundled_in.add(igroup)
+                    citem.save()
+        return True
 
     def get_cart_name(self):
         """ Returns the "shopping-cart" name of this model

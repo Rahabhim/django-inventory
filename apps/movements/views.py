@@ -330,7 +330,7 @@ def purchase_order_receive(request, object_id):
         raise NotImplementedError
     else:
         try:
-            items_left = purchase_order.calc_unmoved_items()
+            mapped_items = purchase_order.map_items()
         except ValueError, ve:
             messages.error(request, unicode(ve), fail_silently=True)
             return redirect(url_after_this)
@@ -344,40 +344,16 @@ def purchase_order_receive(request, object_id):
         except ObjectDoesNotExist:
             pass
 
+        items_left = purchase_order.map_has_left(mapped_items)
         if items_left and request.GET.get('do_create', False):
             if not active_role.has_perm('movements.receive_purchaseorder'):
                 raise PermissionDenied
-            lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
-            lbdls = Location.objects.filter(department__isnull=True, usage='production')[:1]
-            ldests = None
             if request.GET.get('location_ask', False):
-                ldests = [Location.objects.get(pk=request.GET['location_ask']),]
+                master_loc = Location.objects.get(pk=request.GET['location_ask'])
             elif dept:
-                ldests = Location.objects.filter(department=dept)[:1]
-            if not lsrcs:
-                msg = _(u'There is no procurement location configured in the system!')
-                messages.error(request, msg, fail_silently=True)
-            elif not ldests:
-                msg = _(u'This is not default department and location for this user, please fix!')
-                messages.error(request, msg, fail_silently=True)
-            elif not lbdls:
-                msg = _(u'This is no bundling location configured in the system!')
-                messages.error(request, msg, fail_silently=True)
-            else:
-                movement = Movement(create_user=request.user, date_act=purchase_order.issue_date,
-                        stype='in', origin=purchase_order.user_id,
-                        location_src=lsrcs[0], location_dest=ldests[0],
-                        purchase_order=purchase_order)
-                movement.save()
-                bundled = purchase_order.fill_out_movement(items_left, movement)
-                if bundled:
-                    # print "must put a few items in bundle, too"
-                    movement = Movement(create_user=request.user, date_act=purchase_order.issue_date,
-                        stype='in', origin=purchase_order.user_id,
-                        location_src=lsrcs[0], location_dest=lbdls[0],
-                        purchase_order=purchase_order)
-                    movement.save()
-                    purchase_order.fill_out_bundle_move(bundled, movement)
+                master_loc = Location.objects.filter(department=dept)[:1][0]
+
+            purchase_order.items_into_moves(mapped_items, request, dept, master_loc)
 
             # reload the request in the browser, but get rid of any "action" arguments!
             return redirect(request.path.rstrip('?'), object_id=object_id)
@@ -403,8 +379,6 @@ def purchase_order_receive(request, object_id):
                     if move.state != 'done':
                         moves_pending = True
                 if not moves_pending:
-                    # First, associate bundled items to their container bundles
-                    purchase_order.recalc_bundle_items()
                     for po_item in purchase_order.items.all():
                         po_item.active = False
                         po_item.status = None # TODO
@@ -425,7 +399,7 @@ def purchase_order_receive(request, object_id):
         # we must ask about the remaining items or confirmation:
         form_attrs = {
             'title': _(u'details for purchase order: %s') % purchase_order,
-            'more_items_count': len(items_left),
+            'more_items_count': items_left,
             'object':purchase_order,
             'form':form,
             'subtemplates_dict':[]
@@ -442,7 +416,7 @@ def purchase_order_receive(request, object_id):
                     {'name': _(u'active'), 'attribute': 'fmt_active'}
                     ],
                 })
-        else:
+        elif False:
             items_left2 = [ isinstance(k, tuple) and k[0] or k for k in items_left]
             items_in_moves = purchase_order.items.exclude(item_template__in=items_left2)
             if items_in_moves.exists():
@@ -470,6 +444,7 @@ def purchase_order_receive(request, object_id):
                         {'name': _(u'active'), 'attribute': 'fmt_active'}
                         ],
                     })
+        else:
             if not dept: # rough test
                 # will cause the form to ask for a location
                 form_attrs['ask_location'] = True
