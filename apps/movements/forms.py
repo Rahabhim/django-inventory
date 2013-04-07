@@ -197,6 +197,8 @@ class MovementForm_view(DetailForm):
                 widget=UserDetailsWidget, label=_('created by'))
     validate_user = ROModelChoiceField(User.objects.all(),
                 widget=UserDetailsWidget, label=_('validated by'))
+    src_validate_user = ROModelChoiceField(User.objects.all(),
+                widget=UserDetailsWidget, label=_('source validated by'))
 
     class Meta:
         model = Movement
@@ -213,6 +215,8 @@ class _baseMovementForm(RModelForm):
                 widget=UserDetailsWidget, label=_('created by'))
     validate_user = ROModelChoiceField(User.objects.all(),
                 widget=UserDetailsWidget, label=_('validated by'))
+    src_validate_user = ROModelChoiceField(User.objects.all(),
+                widget=UserDetailsWidget, label=_('source validated by'))
 
 
 class _outboundMovementForm(_baseMovementForm):

@@ -537,18 +537,55 @@ def movement_do_close(request, object_id):
         raise PermissionDenied
     try:
         if active_role.department is not None:
-            if movement.stype in ('in', 'internal', 'other'):
+            if movement.stype in ('in', 'other'):
                 if active_role.department != movement.location_dest.department:
                     raise Exception(_("You do not have the permission to validate an incoming movement to %s") % movement.location_dest.department.name)
+            elif movement.stype == 'internal':
+                # Internal moves may need validation from both source and destination
+                # departments, if those are different
+
+                if active_role.department == movement.location_dest.department:
+                    # We are called by a user on the receiving end
+                    if movement.location_src.department == movement.location_dest.department \
+                            or movement.src_validate_user \
+                            or movement.location_src.department.deprecate \
+                            or movement.location_src.department.merge:
+                            # In these cases, we don't need the sending end, we can proceed
+                        movement.do_close(request.user)
+                        messages.success(request, _(u'The movement has been validated.'))
+                    else:
+                        # here, we need to defer validation until the sending end approves, too
+                        # we only set the 'validate_user', but not 'date_val', so that
+                        # the sending end can validate in one go.
+                        movement._close_check()
+                        movement.validate_user = request.user
+                        movement.save()
+                        messages.warning(request, _('Movement has been validated by you, but is still pending validation from source department'))
+
+                elif active_role.department == movement.location_src.department:
+                    # That's the sending side. Mark our approval, and then perhaps close
+                    # the movement, if receiving side has agreed.
+                    movement._close_check()
+                    movement.src_validate_user = request.user
+                    movement.src_date_val = datetime.date.today()
+                    movement.save()
+                    if movement.validate_user:
+                        movement.do_close(movement.validate_user)
+                        messages.success(request, _(u'The movement has been validated.'))
+                    else:
+                        messages.warning(request, _(u'You have approved the move, and now it is pending validation from the destination department.'))
+
+                else:
+                    raise Exception(_("You do not have the permission to validate an incoming movement to %s") %\
+                                    movement.location_dest.department.name)
+
             elif movement.stype == 'out':
                 if active_role.department != movement.location_src.department:
                     raise Exception(_("You do not have the permission to validate an outgoing movement from %s") % movement.location_src.department.name)
             else:
                 raise Exception(_("Unexpected movement type, you do not have permission to validate"))
 
-        movement.do_close(request.user)
         cart_utils.remove_from_session(request, movement)
-        messages.success(request, _(u'The movement has been validated.'))
     except Exception, e:
         messages.error(request, unicode(e))
 

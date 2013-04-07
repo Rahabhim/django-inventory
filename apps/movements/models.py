@@ -691,6 +691,8 @@ class Movement(models.Model):
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_('created by'))
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('validated by'))
+    src_date_val = models.DateField(verbose_name=_(u'date source validated'), blank=True, null=True)
+    src_validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('source validated by'))
 
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
     state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done'))])
@@ -738,19 +740,10 @@ class Movement(models.Model):
             if chks:
                 self.checkpoint_src = chks[0]
 
-    def do_close(self, val_user, val_date=None):
-        """Check the items and set the movement as 'done'
-
-        This function does the most important processing of a movement. It will
-        check the integrity of all contained data, and then update the inventories
-        accordingly.
-        """
-        if val_date is None:
-            val_date = datetime.date.today()
-
+    def _close_check(self):
         if self.state not in ('draft', 'pending'):
             raise ValueError(_("Cannot close movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
-        if self.validate_user:
+        if self.date_val:
             raise ValueError(_("Cannot close movement because it seems already validated!"))
 
         if self.checkpoint_dest is not None:
@@ -780,6 +773,22 @@ class Movement(models.Model):
 
         if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
             all_items.update(src_contract=self.purchase_order.procurement)
+
+        return True
+
+    def do_close(self, val_user, val_date=None):
+        """Check the items and set the movement as 'done'
+
+        This function does the most important processing of a movement. It will
+        check the integrity of all contained data, and then update the inventories
+        accordingly.
+        """
+        if val_date is None:
+            val_date = datetime.date.today()
+
+        self._close_check()
+
+        all_items = self.items.all()
         # everything seems OK by now...
         all_items.update(location=self.location_dest)
         if self.stype == 'in':
@@ -846,7 +855,8 @@ class Movement(models.Model):
         return state, href
 
     def add_to_cart(self, obj):
-        if self.date_val is not None or self.validate_user is not None:
+        if self.date_val is not None or self.validate_user is not None \
+                    or self.src_validate_user:
             raise ValueError(_("Cannot modify items of a validated move"))
         if obj is None or not isinstance(obj, Item):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
@@ -858,7 +868,8 @@ class Movement(models.Model):
         return 'added'
 
     def remove_from_cart(self, obj):
-        if self.date_val is not None or self.validate_user is not None:
+        if self.date_val is not None or self.validate_user is not None \
+                    or self.src_validate_user:
             raise ValueError(_("Cannot modify items of a validated move"))
         if obj is None or not isinstance(obj, Item):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))

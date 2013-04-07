@@ -32,12 +32,22 @@
         {% field_for date_act %}
     </div>
 
+    {% if object.stype == 'internal' and object.location_dest.department != object.location.src_department %}
+    <div class="group newline">
+        {% field_for src_validate_user %}
+    </div>
+    <div class="group inline">
+        {% field_for src_date_val %}
+    </div>
+    {% endif %}
+
     <div class="group newline">
         {% field_for validate_user %}
     </div>
     <div class="group inline">
         {% field_for date_val %}
     </div>
+
 
     {% comment %}
     <div class="group newline">
