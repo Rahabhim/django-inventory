@@ -771,6 +771,15 @@ class Movement(models.Model):
                 raise ValueError(_("Item %(item)s is at %(location)s, rather than the move source location!") % \
                         dict(item=unicode(item), location=item.location))
 
+            if self.location_dest.department \
+                        and item.item_template.category.chained_location \
+                        and item.item_template.category.chained_location != self.location_dest.template:
+                raise ValueError(_("Item of category %(category)s cannot be moved into a %(template)s location. " \
+                                "\nSuch an item is only allowed in %(allow_tmpl)s locations" ) %\
+                        { 'category': unicode(item.item_template.category.name),
+                          'template': unicode(self.location_dest.template or _('generic')),
+                          'allow_tmpl': unicode(item.item_template.category.chained_location) })
+
         if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
             all_items.update(src_contract=self.purchase_order.procurement)
 
