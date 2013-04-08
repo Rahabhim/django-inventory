@@ -540,6 +540,8 @@ def movement_do_close(request, object_id):
             if movement.stype in ('in', 'other'):
                 if active_role.department != movement.location_dest.department:
                     raise Exception(_("You do not have the permission to validate an incoming movement to %s") % movement.location_dest.department.name)
+                movement.do_close(movement.validate_user)
+                messages.success(request, _(u'The movement has been validated.'))
             elif movement.stype == 'internal':
                 # Internal moves may need validation from both source and destination
                 # departments, if those are different
@@ -582,8 +584,14 @@ def movement_do_close(request, object_id):
             elif movement.stype == 'out':
                 if active_role.department != movement.location_src.department:
                     raise Exception(_("You do not have the permission to validate an outgoing movement from %s") % movement.location_src.department.name)
+                movement.do_close(movement.validate_user)
+                messages.success(request, _(u'The movement has been validated.'))
             else:
                 raise Exception(_("Unexpected movement type, you do not have permission to validate"))
+
+        else:
+            movement.do_close(movement.validate_user)
+            messages.success(request, _(u'The movement has been validated.'))
 
         cart_utils.remove_from_session(request, movement)
     except Exception, e:
