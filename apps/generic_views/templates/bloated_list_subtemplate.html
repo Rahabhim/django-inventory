@@ -35,6 +35,7 @@
           <tr class="bl_group">{% for gf in group_fields %}
                 <th {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}>
                     {% if gf.url %}<a href="{{ gf.url }}" class="{{gf.url_class}}">{% endif %}
+                        {% if gf.superrows %}{% for sr in gf.superrows %}{{ sr.name }} / {% endfor %}{% endif %}
                         {{ gf.name }}{% if gf.url_spanclass %}<span class="{{ gf.url_spanclass }}"></span>{% endif %}
                     {% if gf.url %}</a> {% endif %}
                     {% if forloop.first %}({% trans "count" %}){% endif %}
@@ -84,6 +85,9 @@
             <tr class="bl_group {% cycle 'odd' 'even2' %}">
             {% if group_fields %}{% for gf in group_fields %}
                 <td {% if gf.colspan %}colspan="{{ gf.colspan }}"{% endif %}{% if forloop.first %}class="first_col"{% endif %}>
+                    {% if gf.superrows %}{% for sr in gf.superrows %}
+                        <p>{{ group.group|object_property:sr.attribute }}</p>
+                    {% endfor %}{% endif %}
                     {% if forloop.first %}
                         <a href="{{ group.url }}">
                         <span class="famfam active famfam-{% if not group.items %}add{% else %}database_go{% endif %}"></span>
