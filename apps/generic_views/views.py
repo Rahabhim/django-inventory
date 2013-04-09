@@ -285,6 +285,14 @@ class GenericBloatedListView(django_gv.ListView):
                 new_group_fields = []
                 for col in self.group_fields:
                     col = col.copy()
+                    if 'over' in col:
+                        for n in new_group_fields:
+                            if col['over'] == n.get('attribute', self.group_by):
+                                n.setdefault('superrows', []).insert(0, col)
+                                break
+                        else:
+                            raise IndexError("Column %s requested in 'over' groupping, but no such column exists" % col['over'])
+                        continue
                     new_group_fields.append(col)
                     attr = col.get('order_attribute', col.get('attribute', None))
                     if not attr:

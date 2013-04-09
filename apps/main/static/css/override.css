@@ -58,3 +58,10 @@ input.decimal {
 ul.subtasks {
     padding-left: 2em;
 }
+
+.table tr.bl_group td.first_col p {
+    padding-left: 24px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    line-height: normal;
+}
