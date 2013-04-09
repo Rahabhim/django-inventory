@@ -475,7 +475,6 @@ class PO_Step5(WizardForm):
 
         active_role = None
         msg = None
-        print "mapped_items:", mapped_items
         try:
             active_role = role_from_request(request)
         except ObjectDoesNotExist:
