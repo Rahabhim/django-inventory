@@ -145,7 +145,7 @@ class GenericBloatedListView(django_gv.ListView):
     def _select_prefetch(self, queryset, fields_list):
         if fields_list:
             queryset = queryset.select_related(*(tuple(set(fields_list))))
-        # TODO: in Django 1.4 there is also prefetch_related(), which is more optimal
+        # in Django 1.4 there is also prefetch_related(), which is NOT as optimal
         return queryset
 
     def _calc_columns(self, request):
