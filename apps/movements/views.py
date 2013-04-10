@@ -687,7 +687,6 @@ def repair_itemgroup(request, object_id):
             # continue with our form, ask again.
 
     may_contain = [ mc.category for mc in item.item_template.category.may_contain.all()]
-    print "May contain:", may_contain
 
     data['src_locations'] = []
     for loc in Location.objects.filter(department=dept):
