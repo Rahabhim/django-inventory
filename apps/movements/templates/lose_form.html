@@ -21,18 +21,22 @@
         {% field_for create_user %}
     </div>
 
+    {% if items.data %}
     <div class="group newline">
         {% field_for items %}
     </div>
+    {% endif %}
     <div style="clear: both; width=100%;"> </div>
 
 
+    {% if validate_user.data %}
     <div class="group newline">
         {% field_for validate_user %}
     </div>
     <div class="group inline">
         {% field_for date_val %}
     </div>
+    {% endif %}
 
     {% comment %}
     <div class="group newline">
