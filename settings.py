@@ -297,4 +297,12 @@ if DEVELOPMENT:
             'INTERCEPT_REDIRECTS' : False,
         }
 
+    try:
+        import backfire
+        INSTALLED_APPS.append('backfire')
+        MIDDLEWARE_CLASSES.append("backfire.middleware.BackfireMiddleware")
+    except ImportError:
+        print "Backfire cannot be loaded"
+
+
 #eof
