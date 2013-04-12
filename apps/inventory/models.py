@@ -65,6 +65,11 @@ class Inventory(models.Model):
     location = models.ForeignKey(common.Location, verbose_name=_(u'location'))
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'), default=datetime.date.today)
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
+    state = models.CharField(max_length=16, default='draft',
+                            choices=[('draft', _('Draft')),
+                                    ('pending', _('Pending')),
+                                    ('done', _('Done')),
+                                    ('reject', _('Rejected'))])
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))
     signed_file = models.FileField(verbose_name=_("Signed file"), upload_to='inventories',
@@ -86,7 +91,7 @@ class Inventory(models.Model):
             Checks that the inventory is open and "belongs" to the user
         """
         assert isinstance(obj, cls), repr(obj)
-        if obj.date_val:
+        if obj.state in ('done', 'reject'):
             return False
 
         user = context.get('user', None)
@@ -217,6 +222,8 @@ class Inventory(models.Model):
         Q = models.Q
         # First, check that we are not already closed
         logger.debug("Inventory %d %s do_close()", self.id, self.name)
+        if self.state not in ('draft', 'pending'):
+            raise ValidationError(_("Cannot validate this inventory, it is: %s") % self.get_state_display() )
         if self.date_val or self.validate_user:
             raise ValidationError(_("Inventory already validated"))
 
@@ -232,11 +239,12 @@ class Inventory(models.Model):
 
         # Third, check that no movements are later than this inventory
         if movements.Movement.objects.filter(Q(location_src=self.location)|Q(location_dest=self.location))\
-                .filter(date_act__gt=self.date_act).exists():
+                .filter(date_act__gt=self.date_act, state__in=('pending', 'done')).exists():
             raise ValidationError(_("You cannot validate an inventory for %s, because there is movements to/from that location on a later date") %\
                     self.date_act.strftime(DATE_FMT_FORMAT))
 
         # Mark the inventory as closed
+        self.state = 'done'
         self.validate_user = val_user
         self.save()
 

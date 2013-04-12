@@ -67,16 +67,21 @@ def open_move_as_cart(obj, request):
     return reverse('location_assets', kwargs=dict(loc_id=obj.location_src.id))
 
 def check_movement(move):
-    """ Check that it is an open inventory
+    """ Check that modifications are allowed for this move
     """
-    return move.date_val is None and move.validate_user is None
+    return move.state == 'draft'
+
+def check_movement2(move):
+    """ Check that this move can be deleted/rejected
+    """
+    return move.state in ('draft', 'pending')
 
 def check_repair_order(rep):
     """ Check that it is an open order
     """
     if rep.validate_user is not None:
         return False
-    if rep.movements.filter(Q(validate_user__isnull=False)|Q(date_val__isnull=False)).exists():
+    if rep.movements.filter(state__in=('done', 'reject')).exists():
         return False
     return True
 
@@ -208,7 +213,7 @@ urlpatterns = patterns('movements.views',
                                 location_src_filter, location_dest_filter],),
             name='movements_list'),
     url(r'^objects/moves/pending_list/$', views.MovementListView.as_view( \
-                    queryset=lambda r: Movement.objects.by_request(r).filter(state='draft').exclude(stype='in'),
+                    queryset=lambda r: Movement.objects.by_request(r).filter(state__in=('draft', 'pending')).exclude(stype='in'),
                     list_filters=[ stype_filter, \
                                 location_src_filter, location_dest_filter],),
             name='movements_pending_list'),
@@ -254,7 +259,7 @@ urlpatterns = patterns('movements.views',
             name='movement_item_remove'),
 
     url(r'^objects/moves/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Movement, success_url="movements_pending_list", 
-                check_object=check_movement,
+                check_object=check_movement2,
                 extra_context=dict(object_name=_(u'Movement'))), name='movement_delete'),
 
     url(r'^po/wizard/$', PO_Wizard.as_view(), name="purchaseorder_wizard" ),

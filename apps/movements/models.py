@@ -695,7 +695,7 @@ class Movement(models.Model):
     src_validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('source validated by'))
 
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
-    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done'))])
+    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
     stype = models.CharField(max_length=16, choices=[('in', _('Incoming')),('out', _('Outgoing')),
                 ('internal', _('Internal')), ('other', _('Other'))], verbose_name=_('type'))
     origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
@@ -735,7 +735,7 @@ class Movement(models.Model):
         if locs:
             # find if there is any validated inventory for either location,
             # use it as checkpoint_src
-            chks = Inventory.objects.filter(location__in=locs, date_val__isnull=False). \
+            chks = Inventory.objects.filter(location__in=locs, state='done'). \
                         order_by('-date_act')[:1]
             if chks:
                 self.checkpoint_src = chks[0]
@@ -864,6 +864,8 @@ class Movement(models.Model):
         return state, href
 
     def add_to_cart(self, obj):
+        if self.state != 'draft':
+            raise ValueError(_("Cannot modify items of this move"))
         if self.date_val is not None or self.validate_user is not None \
                     or self.src_validate_user:
             raise ValueError(_("Cannot modify items of a validated move"))
@@ -877,6 +879,8 @@ class Movement(models.Model):
         return 'added'
 
     def remove_from_cart(self, obj):
+        if self.state != 'draft':
+            raise ValueError(_("Cannot modify items of this move"))
         if self.date_val is not None or self.validate_user is not None \
                     or self.src_validate_user:
             raise ValueError(_("Cannot modify items of a validated move"))

@@ -27,7 +27,7 @@ class InventoryForm(RModelForm):
 
     class Meta:
         model = Inventory
-        exclude = ('validate_user', 'date_val', 'signed_file')
+        exclude = ('validate_user', 'date_val', 'signed_file', 'state')
 
     def _pre_save_by_user(self, user):
         if not self.instance.create_user_id:

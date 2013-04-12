@@ -134,7 +134,7 @@ purchase_pending_orders = {'text':_('pending purchase orders'), \
 def has_pending_moves(obj, context):
     if has_pending_inventories(None, context):
         return False
-    return Movement.objects.by_request(context['request']).filter(state='draft') \
+    return Movement.objects.by_request(context['request']).filter(state__in=('draft', 'pending')) \
                 .exclude(stype='in').exists()
 
 action_movements_pending = {'text':_('pending moves'), \
