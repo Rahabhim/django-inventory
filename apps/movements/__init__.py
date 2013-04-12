@@ -112,8 +112,12 @@ register_links([('purchase_order_receive', Movement),],
 movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open', 'args':'object.id', 'famfam':'package_green', 'condition': ((lambda o,c: o.state == 'draft'),  can_edit, has_no_pending_inventories) }
 movement_cart_close = {'text':_(u'End selection'), 'view':'movement_cart_close', 'args':'object.id', 'famfam':'package_red', 'condition': lambda o,c: o.state == 'draft' and _context_has_perm(c, Movement,'%(app)s.change_%(model)s')}
 
-register_links(['movement_view', ], [ {'text':_(u'validate move'), 'view':'movement_do_close',
-            'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.state == 'draft' and _context_has_perm(c, Movement, '%(app)s.validate_%(model)s') },
+movement_validate = {'text':_(u'validate move'), 'view':'movement_do_close',
+            'args':'object.id', 'famfam':'page_go', 
+            'condition': lambda o,c: o.state in ('draft', 'pending') \
+                    and _context_has_perm(c, Movement, '%(app)s.validate_%(model)s') }
+
+register_links(['movement_view', ], [ movement_validate, movement_reject,
             movement_cart_open, movement_cart_close, movement_delete,
             ])
 

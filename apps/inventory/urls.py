@@ -20,12 +20,23 @@ def check_inventory(inventory):
 urlpatterns = patterns('inventory.views',
     url(r'^inventory/list/$', generic_list, dict({'queryset':Inventory.objects.by_request}, 
                 extra_context=dict(title=_(u'inventories'), 
-                extra_columns=[{'name':_(u'location'), 'attribute':'location'}])),
+                extra_columns=[{'name':_(u'location'), 'attribute':'location'},
+                        {'name': _('state'), 'attribute': 'get_state_display'}])),
                 'inventory_list'),
-    url(r'^inventory/pending_list/$', generic_list, dict({'queryset':lambda r: Inventory.objects.by_request(r).filter(date_val__isnull=True)}, 
+    url(r'^inventory/pending_list/$', generic_list, dict({
+                    'queryset': lambda r: Inventory.objects.by_request(r)\
+                            .filter(state__in=('draft', 'pending'))}, 
                 extra_context=dict(title=_(u'pending inventories'), 
-                extra_columns=[{'name':_(u'location'), 'attribute':'location'}])),
+                extra_columns=[{'name':_(u'location'), 'attribute':'location'},
+                        {'name': _('state'), 'attribute': 'get_state_display'}])),
                 'inventories_pending_list'),
+    url(r'^inventory/pending2_list/$', generic_list, dict({
+                    'queryset': lambda r: Inventory.objects.by_request(r)\
+                            .filter(state='pending')}, 
+                extra_context=dict(title=_(u'inventories pending validation'), 
+                extra_columns=[{'name':_(u'location'), 'attribute':'location'},
+                        {'name': _('state'), 'attribute': 'get_state_display'}])),
+                'inventories_pending2_list'),
     url(r'^inventory/create/$', GenericCreateView.as_view(form_class=InventoryForm,
                 template_name="inventory_create.html",
                 extra_context={'title':_(u'open new inventory')}), name='inventory_create'),
