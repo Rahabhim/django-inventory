@@ -73,6 +73,7 @@ urlpatterns = patterns('inventory.views',
             name='inventory_item_remove'),
     url(r'^inventory/(?P<object_id>\d+)/inventory.pdf$', 'inventory_printout', \
             name='inventory_printout'),
+    url(r'^inventory/(?P<object_id>\d+)/reject/$', 'inventory_reject', name='inventory_reject'),
 )
 
 

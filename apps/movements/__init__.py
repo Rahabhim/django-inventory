@@ -117,6 +117,11 @@ movement_validate = {'text':_(u'validate move'), 'view':'movement_do_close',
             'condition': lambda o,c: o.state in ('draft', 'pending') \
                     and _context_has_perm(c, Movement, '%(app)s.validate_%(model)s') }
 
+movement_reject = {'text':_(u'reject move'), 'view':'movement_do_reject',
+            'args':'object.id', 'famfam':'alert', 
+            'condition': lambda o,c: o.state in ('draft', 'pending') \
+                    and _context_has_perm(c, Movement, '%(app)s.validate_%(model)s') }
+
 register_links(['movement_view', ], [ movement_validate, movement_reject,
             movement_cart_open, movement_cart_close, movement_delete,
             ])

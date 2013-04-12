@@ -811,6 +811,26 @@ class Movement(models.Model):
         self.save()
         return True
 
+    def do_reject(self, rej_user):
+        """Mark movement as rejected. No assets will change, move will be locked
+        
+            The rejection should be performed no matter what the state of the
+            contained items are. But we still need to check that this move was
+            really open (and not checkpointed) before.
+        """
+        if self.state not in ('draft', 'pending') or self.date_val:
+            raise ValueError(_("Cannot reject movement %(move)s (id: %(mid)s) because it is not in open state") % dict(move=self.name, mid=self.id))
+
+        if self.checkpoint_dest is not None:
+            raise ValueError(_("Internal error, movement is already checkpointed"))
+
+        self.clean()
+        self.validate_user = rej_user
+        self.date_val = datetime.date.today()
+        self.state = 'reject'
+        self.save()
+        return True
+
     @models.permalink
     def get_absolute_url(self):
         return ('movement_view', [str(self.id)])

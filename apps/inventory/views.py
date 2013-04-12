@@ -144,4 +144,35 @@ def inventory_printout(request, object_id):
     outPDF = parseString(rml_str, localcontext={})
     return HttpResponse(outPDF, content_type='application/pdf')
 
+def inventory_reject(request, object_id):
+    inventory = get_object_or_404(Inventory, pk=object_id)
+
+    data = {
+        'object': inventory,
+        'title':_(u"Are you sure you want to reject inventory: %s?") % inventory,
+    }
+
+    if inventory.state not in ('draft', 'pending'):
+        msg = _(u'This inventory is %s, cannot reject.') % inventory.get_state_display()
+        messages.error(request, msg, fail_silently=True)
+        return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else inventory.get_absolute_url())
+    try:
+        active_role = role_from_request(request)
+        if not (active_role and active_role.has_perm('inventory.validate_inventory')):
+            raise PermissionDenied(_("Your active role does not have permission to reject an inventory"))
+        # check that active_role has the same dept as inventory!
+        if active_role.department != inventory.location.department:
+            raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
+    except PermissionDenied, e:
+        messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
+        return redirect('inventory_view', object_id=object_id)
+
+    if request.method == 'POST':
+        inventory.do_reject(request.user)
+        msg = _(u'The inventory has been marked as rejected, it will no longer be used.')
+        messages.success(request, msg, fail_silently=True)
+        return redirect(inventory.get_absolute_url())
+
+    return render_to_response('generic_confirm.html', data, context_instance=RequestContext(request))
+
 #eof

@@ -254,6 +254,13 @@ class Inventory(models.Model):
                 .update(checkpoint_dest=self)
         logger.info("Inventory %d %s validated and closed", self.id, self.name)
 
+    def do_reject(self, user=None):
+        if self.state not in ('draft', 'pending'):
+            raise ValidationError(_(u'This inventory is %s, cannot reject.') % self.get_state_display())
+        self.state = 'reject'
+        self.validate_user = user
+        self.save()
+
 class InventoryItem(models.Model):
     inventory = models.ForeignKey(Inventory, related_name='items')
     asset = models.ForeignKey(assets.Item, verbose_name=_("asset"), related_name="inventories")
