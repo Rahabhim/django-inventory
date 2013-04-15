@@ -440,6 +440,18 @@ class PurchaseOrder(models.Model):
         self.save()
         return 'removed'
 
+    def do_reject(self, user):
+        """Reject all movements of this PO and mark self as done
+        """
+        if self.movements.filter(state='done').exists():
+            raise ValueError(_("Cannot reject a Purchase Order that contains any moves in done state!"))
+
+        self.movements.exclude(state='reject').update(state='reject', validate_user=user)
+        self.state = 'reject'
+        self.validate_user = user
+        self.save()
+        return True
+
 class PurchaseOrderItemStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
 
@@ -653,6 +665,20 @@ class RepairOrder(models.Model):
 
         self.validate_user = user
         self.state = 'done'
+        self.save()
+        return True
+
+    def do_reject(self, user):
+        """Reject all movements of this RO and mark self as done
+        """
+        for move in self.movements.all():
+            if move.state not in ('draft', 'pending'):
+                raise ValueError(_("Cannot reject a Purchase Order that contains any moves in %s state!") % \
+                    move.get_state_display() )
+
+        self.movements.update(state='reject', validate_user=user)
+        self.state = 'reject'
+        self.validate_user = user
         self.save()
         return True
 

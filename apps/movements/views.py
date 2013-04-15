@@ -467,6 +467,53 @@ def purchase_order_receive(request, object_id):
 
     raise RuntimeError
 
+def purchase_order_reject(request, object_id):
+    """ Reject the purchase order
+
+    """
+    purchase_order = get_object_or_404(PurchaseOrder, pk=object_id)
+
+    msg = None
+    if purchase_order.validate_user:
+        msg = _(u'This purchase order has already been closed.')
+    elif purchase_order.state not in ('draft', 'pending'):
+        msg = _(u'This purchase order has already been closed.')
+
+    if 'HTTP_REFERER' in request.META and request.path.rstrip('?') not in request.META['HTTP_REFERER']:
+        # we go back to previous url, if there was one.
+        url_after_this = request.META['HTTP_REFERER']
+    else:
+        url_after_this = purchase_order.get_absolute_url()
+
+    if msg:
+        messages.error(request, msg, fail_silently=True)
+        return redirect(url_after_this)
+
+    if request.user.is_staff:
+        pass
+    else:
+        try:
+            active_role = role_from_request(request)
+            if not (active_role and active_role.has_perm('movements.validate_purchaseorder') \
+                    and active_role.department):
+                raise PermissionDenied
+            if active_role.department != purchase_order.department:
+                raise PermissionDenied
+        except ObjectDoesNotExist:
+            raise PermissionDenied
+    
+    if request.method == 'POST' and request.REQUEST.get('confirm', False) == '1':
+        try:
+            purchase_order.do_reject(request.user)
+            messages.success(request, _("The purchase order has been marked as rejected"), fail_silently=True)
+        except Exception, e:
+            messages.error(request, e, fail_silently=True)
+        return redirect(url_after_this)
+    else:
+        return render_to_response('po_reject_ask.html', dict(object=purchase_order), context_instance=RequestContext(request))
+
+    raise RuntimeError
+
 
 def purchase_order_item_close(request, object_id):
     purchase_order_item = get_object_or_404(PurchaseOrderItem, pk=object_id)
@@ -592,6 +639,51 @@ def movement_do_close(request, object_id):
         else:
             movement.do_close(movement.validate_user)
             messages.success(request, _(u'The movement has been validated.'))
+
+        cart_utils.remove_from_session(request, movement)
+    except Exception, e:
+        messages.error(request, unicode(e))
+
+    return redirect(movement.get_absolute_url())
+
+def movement_do_reject(request, object_id):
+    movement = get_object_or_404(Movement, pk=object_id)
+    active_role = role_from_request(request)
+    if request.user.is_superuser:
+        pass
+    elif not (active_role and active_role.has_perm('movements.validate_movement')):
+        raise PermissionDenied
+    try:
+        if active_role.department is not None:
+            if movement.stype in ('in', 'other'):
+                if active_role.department != movement.location_dest.department:
+                    raise Exception(_("You do not have the permission to reject an incoming movement to %s") % movement.location_dest.department.name)
+                movement.do_reject(movement.validate_user)
+                messages.success(request, _(u'The movement has been rejected.'))
+            elif movement.stype == 'internal':
+                # Internal moves may need validation from both source and destination
+                # departments, if those are different
+
+                if active_role.department == movement.location_src.department \
+                        or active_role.department == movement.location_dest.department:
+                    # Either end can reject a movement to/from their dept
+                    movement.do_reject(request.user)
+                    messages.success(request, _(u'The movement has been rejected.'))
+                else:
+                    raise Exception(_("You do not have the permission to reject an incoming movement to %s") %\
+                                    movement.location_dest.department.name)
+
+            elif movement.stype == 'out':
+                if active_role.department != movement.location_src.department:
+                    raise Exception(_("You do not have the permission to reject an outgoing movement from %s") % movement.location_src.department.name)
+                movement.do_reject(movement.validate_user)
+                messages.success(request, _(u'The movement has been rejected.'))
+            else:
+                raise Exception(_("Unexpected movement type, you do not have permission to reject"))
+
+        else:
+            movement.do_reject(movement.validate_user)
+            messages.success(request, _(u'The movement has been rejected.'))
 
         cart_utils.remove_from_session(request, movement)
     except Exception, e:

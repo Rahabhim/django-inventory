@@ -58,6 +58,10 @@ purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_li
             'condition': (iz_open, lambda o,c: _context_has_perm(c, PurchaseOrder, '%(app)s.receive_%(model)s'))  }
 purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 'condition': (can_add(PurchaseOrder), has_no_pending_inventories)}
 
+purchase_order_reject = {'text':_('reject order'), 'famfam':'package_red',
+            'view':'purchase_order_reject', 'args':'object.id', 
+            'condition': (iz_open, lambda o,c: _context_has_perm(c, PurchaseOrder, '%(app)s.validate_%(model)s'))  }
+
 purchase_order_item_create = {'text':_('add new item'), 'view':'purchase_order_item_create', 'args':'object.id', 'famfam':'cart_put'}
 purchase_order_item_update = {'text':_('edit item'), 'view':'purchase_order_item_update', 'args':'object.id', 'famfam':'cart_go'}
 purchase_order_item_delete = {'text':_('delete item'), 'view':'purchase_order_item_delete', 'args':'object.id', 'famfam':'cart_remove'}
@@ -86,7 +90,7 @@ register_links(PurchaseOrderItemStatus, [purchase_order_item_state_update, purch
 register_links(['purchase_order_item_state_create', 'purchase_order_item_state_list', 'purchase_order_item_state_update', 'purchase_order_item_state_delete'], [purchase_order_item_state_create], menu_name='sidebar')
 
 register_links(PurchaseOrder, [dict(purchase_order_updwiz, hide_text=True),])
-register_links(['purchase_order_view',], [purchase_order_receive,  purchase_order_delete,], menu_name='sidebar')
+register_links(['purchase_order_view',], [purchase_order_receive, purchase_order_reject,  purchase_order_delete,], menu_name='sidebar')
 # register_links(['purchase_order_list', 'purchase_order_view', 'supplier_purchase_orders'], [purchase_order_create], menu_name='sidebar')
 
 register_links(['purchase_order_item_update'], [purchase_order_item_update, purchase_order_item_delete, jump_to_template])
