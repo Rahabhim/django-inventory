@@ -125,9 +125,9 @@ class AssetListView(GenericBloatedListView):
     url_attribute='get_details_url'
     prefetch_fields=('item_template', 'item_template.category', 'item_template.manufacturer', 'src_contract.name')
     group_by='item_template'
-    group_fields=[ dict(name=_(u'Item Template'), colspan=2),
-                    dict(name=_(u'Category'), attribute='category', order_attribute='category.name', colspan=2),
-                    dict(name=_(u'Manufacturer'), attribute='manufacturer', order_attribute='manufacturer.name'),
+    group_fields=[ dict(name=_(u'Item Template'), colspan=3),
+                    dict(name=_(u'Manufacturer'), attribute='manufacturer', order_attribute='manufacturer.name', over="item_template"),
+                    dict(name=_(u'Category'), attribute='category', order_attribute='category.name', over="item_template"),
                 ]
     extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
                             dict(name=_('Serial number'), attribute='serial_number'),
