@@ -50,13 +50,22 @@
     {% endif %}
 
     <div style="clear: both; width=100%;"> </div>
-</div>
-{% endblock %}
 
-{% block submit_button %}
     <div class="group navform wat-cf">
-        <button class="button" type="submit">
-        {% trans 'Save changes' %}
-        </button>
+        <div class="buttons-line">
+            <div class="form-button">
+                 <button class="buttons graybtn" type="submit">
+                {% trans 'Save changes' %}
+                 </button>
+            </div>
+        </div>
     </div>
+
+</div>
+
+
+
+    
+{% endblock %}
+{% block submit_button %}
 {% endblock %}
