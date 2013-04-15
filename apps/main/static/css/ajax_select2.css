@@ -11,7 +11,13 @@ form .aligned .results_on_deck {
 }
 .results_on_deck > div {
 	margin-bottom: 0.5em;
+	width: 99%;
+        border-top: solid 2px rgb(204, 204, 204);
+        border-left: solid 2px rgb(204, 204, 204);
+        border-right: solid 1px rgb(204, 204, 204);
+        border-bottom: solid 1px rgb(204, 204, 204);
 }
+
 .ui-autocomplete-loading {
 	background:  url('../images/loading-indicator.gif') no-repeat;
         background-origin: content-box;
