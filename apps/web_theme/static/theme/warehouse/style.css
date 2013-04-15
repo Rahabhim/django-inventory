@@ -1,4 +1,4 @@
-a:link, a:visited { color: #07b; text-decoration: none; }
+a:link, a:visited { color: rgb(0, 127, 187); text-decoration: none; }
 a, a:hover, a:active { color: #d30; }
 h1, h2, h3 {color: #444}
 
@@ -320,7 +320,7 @@ input.checkbox {
 
 .form .navform {
   padding:10px;
-  background-color: #eee;
+  background-color: transparent;
   font-size:14px;
   border-bottom:1px solid #ddd;
   border-right:1px solid #ddd;

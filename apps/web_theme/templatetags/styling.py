@@ -38,7 +38,7 @@ class FieldLabel(Node):
         contents = conditional_escape(field.label) # reverse-engineer the field.label_tag()
         if field.field.required and not context.get('read_only', False): # Variable('read_only').resolve(context):
             attrs['class'] += ' required'
-            contents += ' *'
+            #contents += ' *'
         return field.label_tag(contents=contents, attrs=attrs)
 
 
