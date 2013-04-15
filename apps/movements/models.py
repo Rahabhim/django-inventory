@@ -144,7 +144,8 @@ class PurchaseOrder(models.Model):
     supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'))
     issue_date = models.DateField(verbose_name=_(u'issue date'))
     required_date = models.DateField(null=True, blank=True, verbose_name=_(u'date required'))
-    active = models.BooleanField(default=True, verbose_name=_(u'active'))
+    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
+    #active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     status = models.ForeignKey(PurchaseOrderStatus, null=True, blank=True, verbose_name=_(u'status'))
     department = models.ForeignKey(Department, verbose_name=_("corresponding department"),
@@ -162,12 +163,6 @@ class PurchaseOrder(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.id)])
-
-    def fmt_active(self):
-        if self.active:
-            return _(u'Open')
-        else:
-            return _(u'Closed')
 
     def map_items(self):
         """ Map the items mentioned in this PO to real items inside the PO's movements
@@ -420,6 +415,8 @@ class PurchaseOrder(models.Model):
         return state, href
 
     def add_to_cart(self, obj):
+        if self.state != 'draft':
+            raise ValidationError(_("Cannot add items to this Purchase Order"))
         if obj is None or not isinstance(obj, ItemTemplate):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
 
@@ -428,6 +425,8 @@ class PurchaseOrder(models.Model):
 
     def remove_from_cart(self, obj):
         # FIXME: we may want to disable this function entirely
+        if self.state != 'draft':
+            raise ValidationError(_("Cannot add items to this Purchase Order"))
         if obj is None or not isinstance(obj, ItemTemplate):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
 
@@ -611,7 +610,8 @@ class RepairOrder(models.Model):
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))
     issue_date = models.DateField(verbose_name=_(u'issue date'))
-    active = models.BooleanField(default=True, verbose_name=_(u'active'))
+    #active = models.BooleanField(default=True, verbose_name=_(u'active'))
+    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     department = models.ForeignKey(Department, verbose_name=_("corresponding department"),
                 blank=True, null=True, related_name='+')
@@ -628,12 +628,6 @@ class RepairOrder(models.Model):
     def get_absolute_url(self):
         return ('repair_order_view', [str(self.id)])
 
-    def fmt_active(self):
-        if self.active:
-            return _(u'Open')
-        else:
-            return _(u'Closed')
-
     def do_close(self, user):
         """ Update the the items bound in the itemgroup
 
@@ -643,7 +637,7 @@ class RepairOrder(models.Model):
 
         itemgroup = self.item.itemgroup
         for move in self.movements.all():
-            if move.date_val is None:
+            if move.state != 'done':
                 # caller forgot to close it!
                 raise ValueError("Movement is not validated")
             if move.location_dest == bundle_location:
@@ -658,7 +652,7 @@ class RepairOrder(models.Model):
                 raise ValueError(u"Invalid move #%d %s for a Repair Order" % (move.id, unicode(move)))
 
         self.validate_user = user
-        self.active = False
+        self.state = 'done'
         self.save()
         return True
 

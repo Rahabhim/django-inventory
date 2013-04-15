@@ -57,9 +57,7 @@ def supplier_filter_queryset(form, parent, parent_queryset):
 supplier_filter = {'name': 'supplier', 'title':_(u'Supplier'),
             'queryset': supplier_filter_queryset, 'destination': 'supplier'}
 
-po_active_filter = {'name': 'active', 'title': _(u'Active'),
-            'choices': (('', _('(is active?)')), ('1', _('Active')), ('0', _('Closed')) ), 
-            'destination': lambda q: Q(active=bool(q == '1')) }
+po_active_filter = {'name': 'state', 'title': _(u'State'), }
 
 def open_move_as_cart(obj, request):
     cart_utils.close_all_carts(request)
@@ -120,7 +118,7 @@ urlpatterns = patterns('movements.views',
                 list_filters=[po_active_filter, purchase_order_state_filter, contract_filter, supplier_filter]),
             name='purchase_order_list'),
     url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
-                queryset=lambda r: PurchaseOrder.objects.by_request(r).filter(active=True).distinct()), 
+                queryset=lambda r: PurchaseOrder.objects.by_request(r).filter(state__in=('draft', 'pending')).distinct()), 
             name='purchase_order_pending_list'),
 
     url(r'^purchase/order/(?P<object_id>\d+)/$', 'purchase_order_view', (), 'purchase_order_view'),
@@ -285,7 +283,7 @@ urlpatterns = patterns('movements.views',
                     list_filters=[],),
             name='repair_order_list'),
     url(r'^objects/repair/pending_list/$', views.RepairOrderListView.as_view( \
-                    queryset=lambda r: RepairOrder.objects.by_request(r).filter(active=True),
+                    queryset=lambda r: RepairOrder.objects.by_request(r).filter(state__in=('draft', 'pending')),
                     list_filters=[],),
             name='repair_pending_list'),
     url(r'^objects/repair/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(

@@ -13,6 +13,12 @@ from models import PurchaseRequestStatus, PurchaseRequest, \
 from products import template_list
 import procurements # just to ensure their menu is loaded before this
 
+def iz_open(obj, context):
+    return obj.state in ('draft', 'pending')
+
+def iz_open_or_rej(obj, context):
+    return obj.state in ('draft', 'pending', 'reject')
+
 purchase_request_state_list = {'text':_('purchase request states'), 'view':'purchase_request_state_list', 'famfam':'pencil_go'}
 purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add', 'condition': user_is_staff}
 purchase_request_state_update = {'text':_('edit state'), 'view':'purchase_request_state_update', 'args':'object.id', 'famfam':'pencil', 'condition': user_is_staff}
@@ -42,14 +48,14 @@ purchase_order_item_state_delete = {'text':_('delete state'), 'view':'purchase_o
 
 purchase_order_list = {'text':_('purchase orders'), 'view':'purchase_order_list', 'famfam':'cart_go'}
 purchase_order_create = {'text':_('create new order'), 'view':'purchase_order_create', 'famfam':'cart_add', 'condition': can_add(PurchaseOrder)}
-purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.active }
-purchase_order_updwiz = {'text':_('edit order items'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': ((lambda o,c: o.active),  can_edit, has_no_pending_inventories)  }
-purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': ((lambda o,c: o.active), can_delete)  }
+purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.state }
+purchase_order_updwiz = {'text':_('edit order items'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': (iz_open,  can_edit, has_no_pending_inventories)  }
+purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': (iz_open_or_rej, can_delete)  }
 purchase_order_close = {'text':_('close order'), 'view':'purchase_order_close', 'args':'object.id', 'famfam':'cross'}
 purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'args':'object.id', 'famfam':'accept'}
 purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_link',
             'view':'purchase_order_receive', 'args':'object.id', 
-            'condition': lambda o,c: o.active and _context_has_perm(c, PurchaseOrder, '%(app)s.receive_%(model)s')  }
+            'condition': (iz_open, lambda o,c: _context_has_perm(c, PurchaseOrder, '%(app)s.receive_%(model)s'))  }
 purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 'condition': (can_add(PurchaseOrder), has_no_pending_inventories)}
 
 purchase_order_item_create = {'text':_('add new item'), 'view':'purchase_order_item_create', 'args':'object.id', 'famfam':'cart_put'}
@@ -91,7 +97,7 @@ register_submenu( 'menu_procurements', [ purchase_order_list,])
 
 movement_delete = {'text':_('delete pending movement'), 'view':'movement_delete', \
             'args':'object.id', 'famfam':'basket_delete', \
-            'condition': lambda o,c: o and o.state == 'draft'}
+            'condition': iz_open_or_rej }
 
 # register_submenu('menu_assets', .. )
 action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete', condition= (can_add(Movement), has_no_pending_inventories))
@@ -107,7 +113,7 @@ register_links([('purchase_order_receive', Movement),],
         [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',
             'famfam':'page_go', 'condition': ((lambda o,c: o.state == 'done'), has_no_pending_inventories)},
           {'text':_(u'edit'), 'view':'movement_update_po', 'args':'object.id', 'famfam':'page_go',
-           'condition': lambda o,c: o.state in ('draft', 'pending')}])
+           'condition': iz_open }])
 
 movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open', 'args':'object.id', 'famfam':'package_green', 'condition': ((lambda o,c: o.state == 'draft'),  can_edit, has_no_pending_inventories) }
 movement_cart_close = {'text':_(u'End selection'), 'view':'movement_cart_close', 'args':'object.id', 'famfam':'package_red', 'condition': lambda o,c: o.state == 'draft' and _context_has_perm(c, Movement,'%(app)s.change_%(model)s')}
@@ -131,7 +137,7 @@ register_links(['movement_update_po',], [movement_delete,])
 def has_pending_po(obj, context):
     if has_pending_inventories(None, context):
         return False
-    all_pos = PurchaseOrder.objects.by_request(context['request']).filter(active=True)
+    all_pos = PurchaseOrder.objects.by_request(context['request']).filter(state__in=('draft', 'pending'))
     # We should preferrably filter 'all_pos' for those with all movements belonging
     # to our department.
     return all_pos.exists()
@@ -172,18 +178,18 @@ repair_order_list = {'text':_('repair orders'), 'view':'repair_order_list', 'fam
 def has_pending_repairs(obj, context):
     if has_pending_inventories(None, context):
         return False
-    return RepairOrder.objects.by_request(context['request']).filter(active=True).exists()
+    return RepairOrder.objects.by_request(context['request']).filter(state__in=('draft', 'pending')).exists()
 
 action_repairs_pending = {'text':_('pending repairs'), \
         'condition': has_pending_repairs,
         'view':'repair_pending_list', 'famfam':'wrench_orange'}
 
 action_repair_validate = {'text':_(u'validate repair'), 'view':'repair_do_close',
-            'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.active and _context_has_perm(c, RepairOrder, '%(app)s.validate_%(model)s') }
+            'args':'object.id', 'famfam':'page_go', 'condition': lambda o,c: o.state in ('draft', 'pending') and _context_has_perm(c, RepairOrder, '%(app)s.validate_%(model)s') }
 
 action_repair_delete = {'text':_('delete pending repair'), 'view':'repair_order_delete', \
             'args':'object.id', 'famfam':'table_delete', \
-            'condition': lambda o,c: o and o.active}
+            'condition': lambda o,c: o and o.state in ('draft', 'pending') }
 
 register_links(['repair_order_view', ], [ action_repair_delete, action_repair_validate ])
 

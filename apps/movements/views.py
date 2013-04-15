@@ -261,14 +261,14 @@ def purchase_order_close(request, object_id):
         data['message'] = _(u'There are still open items.')
 
 
-    if purchase_order.active == False:
+    if purchase_order.state in ('done', 'reject'):
         msg = _(u'This purchase order has already been closed.')
         messages.error(request, msg, fail_silently=True)
         return redirect(purchase_order.get_absolute_url())
 
 
     if request.method == 'POST':
-        purchase_order.active = False
+        purchase_order.state = 'done'
         items.update(active=False)
         purchase_order.save()
         msg = _(u'The purchase order has been closed successfully.')
@@ -287,13 +287,13 @@ def purchase_order_open(request, object_id):
         'title': _(u"Are you sure you wish to open the purchase order: %s?") % purchase_order,
     }
 
-    if purchase_order.active == True:
+    if purchase_order.state in ('draft',):
         msg = _(u'This purchase order is already open.')
         messages.error(request, msg, fail_silently=True)
         return redirect(request.META['HTTP_REFERER'] if 'HTTP_REFERER' in request.META else purchase_order.get_absolute_url())
 
     if request.method == 'POST':
-        purchase_order.active = True
+        purchase_order.state = 'draft'
         purchase_order.save()
         msg = _(u'The purchase order has been opened successfully.')
         messages.success(request, msg, fail_silently=True)
@@ -313,7 +313,7 @@ def purchase_order_receive(request, object_id):
     msg = None
     if purchase_order.validate_user:
         msg = _(u'This purchase order has already been closed.')
-    elif purchase_order.active == False:
+    elif purchase_order.state not in ('draft', 'pending'):
         msg = _(u'This purchase order has already been closed.')
 
     if 'HTTP_REFERER' in request.META and request.path.rstrip('?') not in request.META['HTTP_REFERER']:
@@ -413,7 +413,7 @@ def purchase_order_receive(request, object_id):
                 'extra_columns':[
                     {'name': _(u'qty received'), 'attribute':'received_qty'},
                     {'name': _(u'status'), 'attribute': 'status'},
-                    {'name': _(u'active'), 'attribute': 'fmt_active'}
+                    {'name': _(u'state'), 'attribute': 'get_state_display'}
                     ],
                 })
         elif False:
@@ -519,7 +519,7 @@ class PurchaseOrderListView(GenericBloatedListView):
                     {'name': _('Supplier'), 'attribute': 'supplier', },
                     {'name': _('Department'), 'attribute': 'department' },
                     # not needed: {'name': _('Issue date'), 'attribute': 'issue_date' },
-                    {'name':_(u'Active'), 'attribute': 'fmt_active'}]
+                    {'name':_(u'state'), 'attribute': 'get_state_display'}]
 
 class MovementListView(GenericBloatedListView):
     queryset=Movement.objects.by_request
@@ -758,7 +758,7 @@ class RepairOrderListView(GenericBloatedListView):
     title = _(u'list of repair orders')
     # prefetch_fields = ('procurement', 'supplier')
     extra_columns = [ {'name': _('Department'), 'attribute': 'department' },
-                    {'name':_(u'Active'), 'attribute': 'fmt_active'},
+                    {'name':_(u'State'), 'attribute': 'get_state_display'},
                     ]
 
 class POCartOpenView(CartOpenView):
