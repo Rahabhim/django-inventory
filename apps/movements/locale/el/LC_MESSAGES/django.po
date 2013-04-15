@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 01:38+0200\n"
-"PO-Revision-Date: 2013-02-26 01:49+0200\n"
+"POT-Creation-Date: 2013-03-29 10:23+0200\n"
+"PO-Revision-Date: 2013-03-29 10:29+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -184,7 +184,7 @@ msgstr "Σύμβαση Προμήθειας"
 
 #: forms.py:37 forms.py:123 models.py:499
 msgid "Notes"
-msgstr "Σημειώσεις"
+msgstr "Παρατηρήσεις"
 
 #: forms.py:69
 msgid "Order item form"
