@@ -14,17 +14,20 @@
         {% field_for location_src %}
     </div>
     <div class="group newline">
+        {% field_for date_act %}
+    </div>
+    <div class="group newline">
         {% field_for name %}
     </div>
     <!-- <div class="group inline">
         {% field_for origin %}
     </div> -->
-    <div class="group newline">
-        {% field_for date_act %}
-    </div>
+    
+    {% comment %}
     <div class="group inline">
         {% field_for create_user %}
     </div>
+    {% endcomment %}
 
     {% if items.data %}
     <div class="group newline">
@@ -38,6 +41,7 @@
     <div class="group newline">
         {% field_for validate_user %}
     </div>
+
     <div class="group inline">
         {% field_for date_val %}
     </div>
@@ -49,13 +53,17 @@
     </div>
     {% endcomment %}
 
+    {% comment %}
     <div class="group newline">
         {% field_for state %}
     </div>
+    {% endcomment %}
 
+    
     <div class="group newline">
         {% field_for note %}
     </div>
+
 
     {% comment %}
     <div class="group newline">
