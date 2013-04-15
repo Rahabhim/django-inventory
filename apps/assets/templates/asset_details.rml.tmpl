@@ -55,7 +55,7 @@
 <blockTable colWidths="50mm,130mm" style="Table_details">
     <tr><td>{% trans 'Category' %}</td><td>{{ p.category }}</td></tr>
     <tr><td>{% trans 'Manufacturer' %}</td><td>{{ p.manufacturer }}</td></tr>
-    <tr><td>{% trans 'Product' %}</td><td>{{ p.description }}</td></tr>
+    <tr><td>{% trans 'Product' %}</td><td><para>{{ p.description }}</para></td></tr>
     <tr><td>{% trans 'Part number' %}</td><td>{{ p.part_number|default:'-' }}</td></tr>
 </blockTable>
 {% endwith %}
