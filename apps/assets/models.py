@@ -54,7 +54,7 @@ class ItemState(models.Model):
 class ItemManager(models.Manager):
     def by_request(self, request):
         try:
-            if request.user.is_superuser:
+            if request.user.is_staff:
                 return self.all()
             else:
                 role = role_from_request(request)
