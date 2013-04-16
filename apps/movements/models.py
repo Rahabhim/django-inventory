@@ -372,6 +372,7 @@ class PurchaseOrder(models.Model):
                 for citem in Item.objects.filter(pk__in=children):
                     if list(citem.bundled_in.exists()):
                         citem.bundled_in.clear()
+                        citem.is_bundled = False
 
             bitem = Item.objects.get(pk=item_id)
             igroup, c = ItemGroup.objects.get_or_create(item_ptr=bitem,
@@ -382,6 +383,7 @@ class PurchaseOrder(models.Model):
                 if list(citem.bundled_in.all()) != [bitem,]:
                     citem.bundled_in.clear()
                     citem.bundled_in.add(igroup)
+                    citem.is_bundled = True
                     citem.save()
         return True
 
@@ -662,10 +664,12 @@ class RepairOrder(models.Model):
                 # items added to the bundle
                 for it in move.items.all():
                     itemgroup.items.add(it)
+                move.items.update(is_bundled=True)
             elif move.location_src == bundle_location:
                 # items removed from the bundle
                 for it in move.items.all():
                     itemgroup.items.remove(it)
+                move.items.update(is_bundled=False)
             else:
                 raise ValueError(u"Invalid move #%d %s for a Repair Order" % (move.id, unicode(move)))
 
