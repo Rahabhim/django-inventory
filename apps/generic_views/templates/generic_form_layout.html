@@ -50,7 +50,9 @@ $(function() {
 {% block content %}
 
     <div class="content">
+    {% block form_title %}
     <h2 class="title"> {% include "calculate_form_title.html" %} </h2>
+    {% endblock %}
     <div class="inner">
 
     {% if form.is_multipart %}
