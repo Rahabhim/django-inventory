@@ -364,9 +364,15 @@ class PurchaseOrder(models.Model):
         # Restore bundle relations. The id_map should have provided us with concrete
         # information..
         for item_id, children in id_map.values():
-            assert item_id is not False
             if not children:
                 continue
+            if item_id is False:
+                # the case where is_group == True, is_bundle == False
+                # then, we want the child to be standalone
+                for citem in Item.objects.filter(pk__in=children):
+                    if list(citem.bundled_in.exists()):
+                        citem.bundled_in.clear()
+
             bitem = Item.objects.get(pk=item_id)
             igroup, c = ItemGroup.objects.get_or_create(item_ptr=bitem,
                                 defaults={'item_template': bitem.item_template })
