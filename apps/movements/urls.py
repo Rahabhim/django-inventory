@@ -220,14 +220,12 @@ urlpatterns = patterns('movements.views',
                 form_class=MovementForm_view,
                 template_name='movement_form.html',
                 queryset=Movement.objects.all(),
-                extra_context={'title': _(u'movement details') },
                 ),
             name='movement_view'),
     url(r'^objects/moves/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
                 template_name="movement_form_gu.html",
                 check_object=check_movement,
                 form_class=MovementForm_gu,
-                extra_context={'title':_(u'edit movement')}
             ),
             name='movement_update_generic'),
     url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
@@ -235,7 +233,6 @@ urlpatterns = patterns('movements.views',
                 check_object=check_movement,
                 form_class=MovementForm_update_po,
                 success_url=lambda obj, *a: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
-                extra_context={'title':_(u'edit movement')}
             ),
             name='movement_update_po'),
 
