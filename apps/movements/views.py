@@ -352,6 +352,9 @@ def purchase_order_receive(request, object_id):
                 master_loc = Location.objects.get(pk=request.GET['location_ask'])
             elif dept:
                 master_loc = Location.objects.filter(department=dept)[:1][0]
+            else:
+                messages.error(request,_('You must select a location!'), fail_silently=True)
+                return redirect(request.path.rstrip('?'), object_id=object_id)
 
             purchase_order.items_into_moves(mapped_items, request, dept, master_loc)
 
