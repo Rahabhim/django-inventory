@@ -416,7 +416,7 @@ def purchase_order_receive(request, object_id):
                 'extra_columns':[
                     {'name': _(u'qty received'), 'attribute':'received_qty'},
                     {'name': _(u'status'), 'attribute': 'status'},
-                    {'name': _(u'state'), 'attribute': 'get_state_display'}
+                    {'name': _(u'active'), 'attribute': 'fmt_active'}
                     ],
                 })
         elif False:
