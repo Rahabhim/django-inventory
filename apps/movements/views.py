@@ -387,7 +387,7 @@ def purchase_order_receive(request, object_id):
                         po_item.status = None # TODO
                         po_item.save()
                     purchase_order.validate_user = request.user
-                    purchase_order.active = False
+                    purchase_order.state = 'done'
                     purchase_order.status = None # TODO
                     purchase_order.save()
                     messages.success(request, _("Purchase order has been confirmed"), fail_silently=True)

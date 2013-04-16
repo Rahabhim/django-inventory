@@ -91,7 +91,7 @@ jQuery(document).ready(function($){
 	</form>
 	</div>
     {% else %} {# no pending items, we may confirm #}
-        {% if object.active %}
+        {% if object.state == 'draft' or object.state == 'pending' %}
         <div id="confirm_form">
         <form method="GET" >
           <p>{% blocktrans %}Do you want to mark all movements as done and close this Purchase Order? {% endblocktrans %}</p>
