@@ -73,7 +73,7 @@ def check_movement(move):
 def check_movement2(move):
     """ Check that this move can be deleted/rejected
     """
-    return move.state in ('draft', 'pending')
+    return move.state in ('draft', 'pending', 'reject')
 
 def check_repair_order(rep):
     """ Check that it is an open order
