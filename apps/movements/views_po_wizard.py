@@ -464,7 +464,7 @@ class PO_Step5(WizardForm):
             dept = data['5-department']
         else:
             dept = Department.objects.filter(deprecate=False, location__isnull=False)[:1][0]
-            logger.warning("Using an arbitrary department: #%s %s !", dept.id, dept.name)
+            logger.debug("Using an arbitrary department: #%s %s !", dept.id, dept.name)
         self.fields['location'].queryset = Location.objects.filter(department=dept)
 
     def save_data(self, wizard):
