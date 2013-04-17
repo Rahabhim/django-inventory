@@ -293,8 +293,9 @@ class PO_Step4(WizardForm):
             for p in po_item.bundled_items.all():
                 pbc[p.item_template.category_id].append((p.item_template, p.qty))
 
+            is_group = False
             if po_item.item_template.category.is_group:
-                pass
+                is_group = True
             elif po_item.item_template.category.is_bundle:
                 for mc in po_item.item_template.category.may_contain.all():
                     r['parts'][mc.id] = pbc.pop(mc.category_id, [])
@@ -302,7 +303,8 @@ class PO_Step4(WizardForm):
             if pbc:
                 logger.warning("Stray parts found for template %s: %r", po_item.item_template, pbc)
 
-            ItemsGroupField.post_validate(r)
+            if not is_group:
+                ItemsGroupField.post_validate(r)
             items.append(r)
 
         ret = MultiValueDict()
@@ -336,6 +338,8 @@ class PO_Step4(WizardForm):
             logger.warning("No equipment selected for step 4")
             messages.error(wizard.request, _("You must select some equipment into the purchase order"))
             return '4a'
+
+        # First iteration: trivial check that template, quantity are non-zero
         for item in self.cleaned_data['items']:
             # check that line is a sensible entry:
             if not item.get('item_template', False):
@@ -346,17 +350,19 @@ class PO_Step4(WizardForm):
                 logger.debug("Line %s does not have quantity", item.get('line_num', 0))
                 errors = True
                 break
-            ItemsGroupField.post_validate(item)
-            if item['state'] != 'ok':
-                logger.debug("Line %s:%s is %s", item.get('line_num', 0), item['item_template'], item['state'])
-                errors = True
-                break
-            if item['in_group'] and item.get('item_template'):
+            if item['item_template'].category.is_group == False:
+                ItemsGroupField.post_validate(item)
+                if item['state'] != 'ok':
+                    logger.debug("Line %s:%s is %s", item.get('line_num', 0), item['item_template'], item['state'])
+                    errors = True
+                    break
+            if item['in_group']:
                 line_groups[item['in_group']].append((item['item_template'].category_id, item['quantity']))
-        
+
         if not errors:
+            # Second iteration: check that contained group items are valid
             for item in self.cleaned_data['items']:
-                if item['item_template'].validate_bundle(line_groups[item['line_num']], flat=True, group_mode=True):
+                if item['item_template'].validate_bundle(line_groups.get(item['line_num'],[]), flat=True, group_mode=True):
                     # validate returned some errors
                     logger.debug("Line %s:%s failed group validation", item.get('line_num', 0), item['item_template'])
                     errors = True
