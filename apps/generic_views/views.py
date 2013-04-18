@@ -340,8 +340,35 @@ class GenericBloatedListView(django_gv.ListView):
                     items = self._select_prefetch(base_queryset.filter(**{group:grp}), relations)
                     if self.order_by and not self.group_order:
                         items = self.apply_order(items)
-                    if page_size:
-                        items = items[:page_size] # no way, so far, to display more!
+
+                    if page_size and items.count() > page_size:
+                        sub_offset = int(self.kwargs.get('sub_offset') \
+                                    or self.request.GET.get('sub_offset') or 0)
+                        if sub_offset <= 0:
+                            sub_offset = 0
+                        else:
+                            # make it a string, so that '0' evaluates to True
+                            context['sub_offset_prev'] = str(max(sub_offset-page_size, 0))
+                        # always define that, a sign that we need pagination to the tmpl.:
+                        context['sub_offset'] = sub_offset
+                        page_end = sub_offset + page_size
+                        if page_end >= items.count():
+                            page_end = items.count()
+                        else:
+                            # tell the template we need more pages
+                            context['sub_offset_next'] = page_end
+
+                        items = items[sub_offset:page_end]
+
+                        getvars = self.request.GET.copy()
+                        if 'sub_offset' in getvars:
+                            del getvars['sub_offset']
+                        if len(getvars.keys()) > 0:
+                            context['sub_getvars'] = getvars.urlencode() + '&'
+                        else:
+                            context['sub_getvars'] = ''
+                    else:
+                        context['sub_offset'] = -1
                 else:
                     get_params['grp_expand'] = grp.id
                 grp_url = '?' + get_params.urlencode()

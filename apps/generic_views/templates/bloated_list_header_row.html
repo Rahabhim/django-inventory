@@ -10,6 +10,18 @@
         {% endfor %}{%endif %}
         </th>
         {% endfor %}
+    {% if sub_offset >= 0 %}
+        <th class="pagination">
+            {% if sub_offset_prev %}
+                <a href="?{{sub_getvars}}sub_offset={{sub_offset_prev}}">Prev</a>
+            {% else %}<span> Prev</span>{% endif %}
+            <span>{{ sub_offset }}</span>
+            {% if sub_offset_next %}
+                <a href="?{{sub_getvars}}sub_offset={{sub_offset_next}}">Next</a>
+            {% else %}<span> Next </span>{% endif %}
+        </th>
+    {% else %}
         {% if not hide_links %}<th class="">&nbsp;</th>{% endif %}
         {% if request.session.carts %}<th class="">&nbsp;</th>{% endif %}
+    {% endif %}
 </tr>
