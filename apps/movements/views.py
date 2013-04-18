@@ -575,6 +575,7 @@ class PurchaseOrderListView(GenericBloatedListView):
 class MovementListView(GenericBloatedListView):
     queryset=Movement.objects.by_request
     title =_(u'movements')
+    order_by = '-date_act'
     extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
                     {'name':_(u'state'), 'attribute': 'get_state_display'},
                     {'name':_(u'type'), 'attribute': 'get_stype_display'}]
