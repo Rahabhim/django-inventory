@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import datetime
+import logging
 from collections import defaultdict
 
 from django import forms
@@ -697,40 +698,50 @@ def movement_do_reject(request, object_id):
 def repair_itemgroup(request, object_id):
     item = get_object_or_404(ItemGroup, pk=object_id)
     active_role = role_from_request(request)
-    if not active_role.has_perm('assets.change_itemgroup'):
+    logger = logging.getLogger('apps.movements.repair')
+    if not (request.user.is_superuser or active_role.has_perm('assets.change_itemgroup')):
+        logger.warning("User %s is not allowed to repair item", request.user)
         raise PermissionDenied
 
     data = {'title': _("Repair of asset"), }
     # we need data for the three columns:
     # TODO: load pending movements and pre-populate our data
 
+    item_location = item.location
+    if not item_location:
+        logger.warning("Item %d %s does not belong to any location, cannot repair", item.id, item)
+        raise PermissionDenied
+    elif not item_location.department:
+        # search for a bundle in bundle
+        parents = item.bundled_in.all()
+        if parents and len(parents) > 1:
+            messages.error(request, _('Internal error: item is contained in %d bundles!') % len(parents))
+            return HttpResponseRedirect(item.get_absolute_url())
+        elif parents and parents[0].location and parents[0].location.department:
+            item_location = parents[0].location
+        else:
+            logger.warning("Item %d %s, nor its parent belong to any location", item.id, item)
+            raise PermissionDenied
+
     # A: the locations we can fetch from + their available parts
     if active_role:
         dept = active_role.department
         if request.user.is_staff:
             pass
-        elif item.location and dept and item.location.department is None:
-            # search for a bundle in bundle
-            parents = item.bundled_in.all()
-            if parents and len(parents) > 1:
-                messages.error(request, _('Internal error: item is contained in %d bundles!') % len(parents))
-                return HttpResponseRedirect(item.get_absolute_url())
-            elif parents and parents[0].location and parents[0].location.department == dept:
-                pass
-            else:
-                raise PermissionDenied
-        elif item.location and dept and dept == item.location.department:
+        elif item_location and dept and dept == item_location.department:
             pass
         else:
+            logger.warning("User %s does not have active_role for dept %s to edit item %d %s",
+                        request.user, item_location.department, item.id, item)
             raise PermissionDenied
-    elif not item.location:
-        raise PermissionDenied
     else:
-        dept = item.location.department
+        dept = item_location.department
     
     if dept is None:
         # cannot edit bundles not in a department. Reason is, the rest of this algo
         # will completely bork
+        logger.warning("Department for item %d %s is not specified, cannot allow repair",
+                    item.id, item)
         raise PermissionDenied
 
     if request.method == 'POST':
@@ -778,7 +789,7 @@ def repair_itemgroup(request, object_id):
             # Repair Order and its moves are created, get out of here!
             return redirect(reform.get_absolute_url())
         except Exception, e:
-            print "except:", e
+            logger.warning("Exception at repair:", exc_info=True)
             # continue with our form, ask again.
 
     may_contain = [ mc.category for mc in item.item_template.category.may_contain.all()]
