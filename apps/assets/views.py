@@ -119,13 +119,14 @@ class AssetListView(GenericBloatedListView):
     
         It is merely a BloatedListView, configured with all settings about assets
     """
+    template_name = 'assets_list.html'
     queryset=Item.objects.by_request
     list_filters=[ product_filter, manufacturer_filter, category_filter,
                             location_filter, state_filter, contract_filter]
     url_attribute='get_details_url'
     prefetch_fields=('item_template', 'item_template.category', 'item_template.manufacturer', 'src_contract.name')
     group_by='item_template'
-    group_fields=[ dict(name=_(u'Item Template'), colspan=3),
+    group_fields=[ dict(name=_(u'Item Template'), colspan=4),
                     dict(name=_(u'Manufacturer'), attribute='manufacturer', order_attribute='manufacturer.name', over="item_template"),
                     dict(name=_(u'Category'), attribute='category', order_attribute='category.name', over="item_template"),
                 ]
