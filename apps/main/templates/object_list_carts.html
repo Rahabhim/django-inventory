@@ -2,15 +2,13 @@
 {% if has_cart %}
 <div class="content" style="padding: 10px;">
  {% for cart in carts %}
-    
-
     <div class="buttons-line">
         <div class="form-button">
         <a href="{{ cart.href }}" class="buttons graybtn">
             <img src="{{ STATIC_URL }}theme/images/tick.png" />
             {% blocktrans %}Return to {% endblocktrans %} {{ cart.title }}
         </a>
-        <div>
+        </div>
     </div>
  {% endfor %}
 </div>
