@@ -25,10 +25,8 @@
         </tr><tr><th>&nbsp;</th>
         {% endif %}
         <td class="wf_middle"></td><td class="wf_field">
-            {% for choice in field|slice:":25" %}
-                {{ choice }}<br/>
-            {% endfor %}
-            </td>
+            {{ field }}
+        </td>
     </tr>
     {% endwith %}
     </table>

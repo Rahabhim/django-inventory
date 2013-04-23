@@ -1,0 +1,29 @@
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+{% if misc_items %}
+<div><p>{% trans 'These items will be received standalone' %}</p>
+    <ul>{% for it in misc_items|slice:":5" %}<li>{{it}}</li>
+        {% endfor %}
+        {% if misc_items|length > 5 %}<li>...</li>{% endif %}
+    </ul>
+    <label for="{{ name}}">{% trans 'Please select the location where these items will be received into' %}</label>
+    {% for choice in choices_iter|slice:":25" %}
+        <br/>{{ choice }}
+    {% endfor %}
+</div>
+{% else %}
+    <input type="hidden" name="{{name}}" value="{{default_choice}}" />
+{% endif %}
+{% if auto_items %}
+<div><p>{% trans 'These locations will automatically receive the displayed items' %}</p>
+    {% for loc, items in auto_items %}
+    <h4>{{ loc.0 }}</h4>
+    <ul>{% for it in items|slice:":5" %}<li>{{it}}</li>
+        {% endfor %}
+        {% if items|length > 5 %}<li>...</li>{% endif %}
+    </ul>
+    {% endfor %}
+</div>
+{% endif %}

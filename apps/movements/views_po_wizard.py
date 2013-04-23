@@ -24,7 +24,7 @@ from django.forms.util import ErrorDict
 from django.utils.datastructures import MultiValueDict
 
 from models import PurchaseOrder, Movement
-from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField
+from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField, Step5ChoiceField
 
 logger = logging.getLogger('apps.movements.po_wizard')
 
@@ -461,8 +461,7 @@ class PO_Step4a(WizardForm):
 class PO_Step5(WizardForm):
     title = _("Successful Entry - Finish")
     department = forms.ModelChoiceField(queryset=Department.objects.all(), widget=forms.widgets.HiddenInput, required=False)
-    location = forms.ModelChoiceField(label=_("location"), widget=forms.widgets.RadioSelect,
-                    empty_label=None,
+    location = Step5ChoiceField(label=_("location"), empty_label=None, required=False,
                     queryset=Location.objects.none())
 
     def __init__(self, data=None, files=None, **kwargs):
@@ -492,6 +491,9 @@ class PO_Step5(WizardForm):
             active_role = role_from_request(request)
         except ObjectDoesNotExist:
             pass
+
+        if not self.cleaned_data.get('location', False):
+            self.cleaned_data['location'] = Location.objects.filter(department=self.cleaned_data['department']).all()[0]
 
         if po_instance.map_has_left(mapped_items):
             if not active_role.has_perm('movements.change_purchaseorder'):
@@ -643,6 +645,12 @@ class PO_Wizard(SessionWizardView):
         if step == '4':
             # hack: for step 4, data always comes from the session
             data = self.storage.get_step_data(step)
+        elif step == '5':
+            if data:
+                data = data.copy()
+            else:
+                data = {}
+            data['5-locations'] = self._make_5data()
         return super(PO_Wizard, self).get_form(step=step, data=data, files=files)
 
     def render_next_step(self, form, **kwargs):
@@ -707,4 +715,27 @@ class PO_Wizard(SessionWizardView):
             if it.get('in_group', None) == line_num:
                 ret['contents'].append(it)
         return ret
+
+    def _make_5data(self, aitems=False):
+        """Prepare the data structure for step 5
+
+            We need to sort the items into the locations they can be received
+            into. Then, feed all that as a struct to the form.
+        """
+        if not aitems:
+            step4_data = self.storage.get_step_data('4')
+            if step4_data is None:
+                step4_data = MultiValueDict()
+            aitems = step4_data.setdefault('4-items',[])
+        rdict = defaultdict(list)
+        for it in aitems:
+            if it.get('in_group', False):
+                continue
+            if not it.get('item_template', False):
+                continue
+            itc = it['item_template'].category
+            rdict[itc.chained_location_id or '*'].append(it['item_template'])
+
+        return rdict
+
 #eof

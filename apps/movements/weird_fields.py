@@ -351,5 +351,54 @@ class GroupTreeWidget(forms.widgets.Widget):
 class GroupGroupField(forms.Field):
     widget = GroupTreeWidget
 
+class Step5ChoiceWidget(forms.widgets.RadioSelect):
+    def render(self, name, value, attrs=None):
+        """ Expand locations according to our queryset and then render by template
+        """
+        if not value:
+            return mark_safe(u'<!-- no value for Step5ChoiceWidget -->')
+
+        final_attrs = self.build_attrs(attrs)
+        self.html_id = final_attrs.pop('id', name)
+        value, rdict = value
+
+        context = {'name': name,
+                'html_id': self.html_id,
+                'extra_attrs': mark_safe(flatatt(final_attrs)),
+                'func_slug': self.html_id.replace("-",""),
+                'auto_items': [],
+                'choices': self.choices,
+                }
+
+        for ltmpl_id, items in rdict.items():
+            if ltmpl_id == '*':
+                context['choices_iter'] = self.subwidgets(name, value)
+                context['misc_items'] = items
+            else:
+                loc = self.choices.queryset.filter(template_id=ltmpl_id).all()[:1]
+                context['auto_items'].append((loc, items))
+
+        if 'misc_items' not in context:
+            for d in self.choices:
+                context['default_choice'] = d[0]
+                break
+
+        return mark_safe(render_to_string('po_wizard_step5_locations.html', context))
+
+    def value_from_datadict(self, data, files, name):
+        value = data.get(name, None)
+        rdict = data.get(name+'s', None)
+        return value, rdict
+
+class Step5ChoiceField(forms.ModelChoiceField):
+    widget = Step5ChoiceWidget
+
+    def valid_value(self, value):
+        return True
+
+    def to_python(self, value):
+        if isinstance(value, tuple):
+            value = value[0]
+        return super(Step5ChoiceField,self).to_python(value)
 
 # eof
