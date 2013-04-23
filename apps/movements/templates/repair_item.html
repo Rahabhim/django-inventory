@@ -158,9 +158,34 @@ function validateForm(form) {
         width: 10%;
     }
 
+    #repair_fields {
+        border: solid 1px gray;
+        border-radius: 5px;
+        background: rgb(240,255,255);
+    }
+
+    #three_columns {
+        margin-top: 2em;
+    }
+
     #three_columns td {
         vertical-align: top;
         padding: 4px;
+        margin: 4px;
+        background: rgb(255,240,255);
+        border: solid gray 1px;
+        border-radius: 5px;
+        width: 33%;
+    }
+
+    #three_columns th {
+        vertical-align: top;
+        padding: 4px;
+        background: rgb(255,230,255);
+        border: solid gray 1px;
+        border-radius: 5px;
+        font-size: 120%;
+        color: rgb(32,32,32);
     }
 
     div.target {
@@ -245,7 +270,11 @@ function validateForm(form) {
     <th width="33%">{% trans 'In Asset' %}</th>
     <th width="33%">{% trans 'Removed parts' %}</th></tr>
 <tr>
-    <td><div id="sources">
+    <td><div class="hint">{% blocktrans %}Spare parts are those that are currently in some other location, but could added into this bundle.<br/>
+    You can drag them into the lower box of the asset.
+    {% endblocktrans %}
+        </div>
+        <div id="sources">
             {% for src, allitems in src_locations %}
                 {% if allitems %}
                 <h3>{{ src }}</h3>
@@ -293,6 +322,11 @@ function validateForm(form) {
                 </div>
             {% endfor %}
         </div>
+        <div class="hint">{% blocktrans %}These are the locations where current components of the bundle can be moved into.
+    Please open the corresponding location and drag items into it.<br/>
+    You can only select items from the top-middle column, items that had been in the bundle.
+        {% endblocktrans %}
+    </div>
     </td>
 </tr>
 </table>
