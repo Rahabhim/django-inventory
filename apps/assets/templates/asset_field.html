@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load styling %}
 
+{% if field %}
 <div class="group">
 	{% if field.errors %}<div class="fieldWithErrors">{% endif %}
 	{% field_label_tag field %}
@@ -8,3 +9,4 @@
 	{{ field }}
 	{% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
 </div>
+{% endif %}
