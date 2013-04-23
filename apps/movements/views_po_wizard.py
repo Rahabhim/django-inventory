@@ -355,6 +355,9 @@ class PO_Step4(WizardForm):
                 if item['state'] != 'ok':
                     logger.debug("Line %s:%s is %s", item.get('line_num', 0), item['item_template'], item['state'])
                     errors = True
+                    if 'errors' in item:
+                        for err in reduce( lambda a,b: a+b, item['errors'].values()):
+                            messages.warning(wizard.request, err, fail_silently=True)
                     break
             if item['in_group']:
                 line_groups[item['in_group']].append((item['item_template'].category_id, item['quantity']))
@@ -362,11 +365,15 @@ class PO_Step4(WizardForm):
         if not errors:
             # Second iteration: check that contained group items are valid
             for item in self.cleaned_data['items']:
-                if item['item_template'].validate_bundle(line_groups.get(item['line_num'],[]), flat=True, group_mode=True):
+                errors = item['item_template'].validate_bundle(line_groups.get(item['line_num'],[]), flat=True, group_mode=True)
+                if errors:
                     # validate returned some errors
                     logger.debug("Line %s:%s failed group validation", item.get('line_num', 0), item['item_template'])
-                    errors = True
                     break
+            if errors:
+                # make them messages
+                for err in errors: # they are flat, a list
+                    messages.warning(wizard.request, err, fail_silently=True)
         if errors:
             return '4a'
         else:
