@@ -30,7 +30,7 @@
 {% endblock %}
 
 {% block web_theme_user_navigation %}
-    {% session_carts %}
+    {% prepare_session_carts %}
     <li><strong>{% trans 'User' %}:</strong>
         {% if user.is_anonymous %}
             {% trans 'Anonymous' %}
@@ -97,7 +97,8 @@
                 {% endwith %}
             </ul>
         </div>
-    {% endif %}
+        {% endif %}
+        {% session_carts %}
 
     {% block sidebar %}{% endblock %}
 {% endblock %}

@@ -1,4 +1,11 @@
-
+{% load i18n %}
+{% if carts %}
+<div class="block session_carts">
+    <h3>{% trans 'Actions you are editing' %}</h3>
+    <ul class="navigation">
 {% for cart in carts %}
-	<li><a href="{{ cart.href}}">{{ cart.title }}</a>{% if cart.qty %}({{ cart.qty }}){% endif %}</li>
+	<li><a href="{{ cart.href}}">{{ cart.title }}{% if cart.qty %}({{ cart.qty }}){% endif %}</a></li>
 {% endfor %}
+    </ul>
+</div>
+{% endif %}
