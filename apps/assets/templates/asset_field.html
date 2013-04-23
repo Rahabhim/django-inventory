@@ -2,6 +2,7 @@
 {% load styling %}
 
 {% if field %}
+{% if field.value or not read_only %}
 <div class="group">
 	{% if field.errors %}<div class="fieldWithErrors">{% endif %}
 	{% field_label_tag field %}
@@ -9,4 +10,5 @@
 	{{ field }}
 	{% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
 </div>
+{% endif %}
 {% endif %}

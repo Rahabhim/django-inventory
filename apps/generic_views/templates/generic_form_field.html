@@ -1,7 +1,9 @@
 {% load styling %}
 {% if form_mode == 'details' %}
     {% with "true" as read_only %}
+        {% if field.value %}
         {% field_label_tag field %}{{ field }}
+        {% endif %}
     {% endwith %}
     {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
 {% else %} {%if form_mode == 'update' or form_mode == 'create' %}
