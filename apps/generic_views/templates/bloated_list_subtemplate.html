@@ -126,7 +126,9 @@
                 {% object_navigation_template %}
                 </td>
             {% endif %}
-            {% object_carts object %}
+            {% if request.session.carts %}
+                {% object_carts object %}
+            {% endif %}
             </tr>
             {% endfor %}{% endif %}
         {% empty %}
