@@ -4,7 +4,7 @@
   <template pageSize="(595.0,842.0)" title="{{ internal_title }}"
         author="{{ author }}" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="34.0" y1="42.0" width="527" height="738"/>
+      <frame id="first" x1="12.0mm" y1="15.8mm" width="185.9mm" height="252.0mm"/>
       <para> First page template</para>
       <pageGraphics>
             <setFont name="DejaVu Sans" size="9"/>
@@ -24,7 +24,7 @@
       </pageGraphics>
     </pageTemplate>
     <pageTemplate id="main">
-      <frame id="first" x1="34.0" y1="42.0" width="527" height="758"/>
+      <frame id="first" x1="12.0mm" y1="15.8mm" width="185.9mm" height="252.0mm"/>
       <para>Main page template</para>
     </pageTemplate>
 
