@@ -52,4 +52,10 @@ register_menu([
         'famfam':'computer', 'position':2},
     ])
 
+asset_list_printout = {'text':_('print assets list'), 'view':'asset_list_printout2', 'famfam':'printer'}
+register_links(['item_list',], [asset_list_printout,], menu_name='sidebar')
+
+register_links(['department_assets',], [ {'text':_('print assets list'), \
+            'view':'asset_list_printout','args':'department.id', 'famfam':'printer'} ], \
+        menu_name='sidebar')
 #eof

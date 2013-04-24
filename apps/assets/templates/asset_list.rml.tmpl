@@ -1,0 +1,50 @@
+{% extends "page.rml" %}
+{% load i18n %}
+{% block title %} :: {{ object.name }}{% endblock %}
+
+{% block extrastyles %}
+    <blockTableStyle id="Table_1">
+        <blockAlignment value="CENTER"/>
+        <blockAlignment value="LEFT" start="1,0" stop="1,-1"/>
+        <blockAlignment value="LEFT" start="4,0" stop="3,-1"/>
+        <blockValign value="MIDDLE"/>
+        <blockValign value="BOTTOM" start="0,0" stop="-1,0" />
+        <blockValign value="TOP" start="0,1" stop="2,-1" />
+
+      
+        <lineStyle kind="LINEBELOW" thickness="2.0" colorName="#000000" start="0,0" stop="-1,0"/>
+        <lineStyle kind="INNERGRID" thickness="0.4" colorName="gray" start="0,1" stop="-1,-1"/>
+    </blockTableStyle>
+    <paraStyle name="Details" fontName="Helvetica" fontSize="10.0" leading="14"
+            spaceBefore="12.0" spaceAfter="26.0"/>
+    <paraStyle name="Table_title" fontName="Helvetica-Bold" fontSize="11.0" leading="12"/>
+{% endblock %}
+
+{% block content %}
+<title>{% trans 'Department assets list:' %} {{ object.name }}</title>
+<para style="Details">{% trans 'At' %}: {{ now|date:"d/m/Y" }} </para>
+
+<para> </para>
+
+{% for loc, items in locations %}
+<h2>{{ loc.name }}</h2>
+<blockTable colWidths="20.0mm,80.0mm,30.0mm,40.0mm" style="Table_1">
+      <tr>
+        <td><para style="Table_title">{% trans 'ID' %}</para></td>
+        <td><para style="Table_title">{% trans 'Item' %}</para></td>
+        
+        <td><para style="Table_title">{% trans 'State' %}</para></td>
+        <td><para style="Table_title">{% trans 'Notes' %}</para></td>
+      </tr>
+    {% for line in items.all %}
+    <tr>
+        <td>{{ line.property_number }}</td>
+        <td><para>{{ line.item_template }} {{ line.serial_number|default:'' }}</para></td>
+        <td>{{ line.state|default:'' }}</td>
+        <td>{{ line.notes|default:''}}</td>
+    </tr>
+    {% endfor %}
+    </blockTable>
+{% endfor %}
+
+{% endblock %}

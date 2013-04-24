@@ -158,7 +158,13 @@ class DepartmentAssetsView(AssetListView):
         department = get_object_or_404(Department, pk=dept_id)
         self.title = _(u"department assets: %s") % department
         self.queryset = Item.objects.filter(location__department=department)
+        self.dept_id = dept_id
         return super(DepartmentAssetsView, self).get(request, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super(DepartmentAssetsView, self).get_context_data(**kwargs)
+        ctx['department'] = Department.objects.get(pk=self.dept_id)
+        return ctx
 
 class TemplateAssetsView(AssetListView):
     list_filters=[ location_filter, state_filter, contract_filter]
@@ -201,4 +207,41 @@ def asset_printout(request, object_id):
     outPDF = parseString(rml_str, localcontext={})
     return HttpResponse(outPDF, content_type='application/pdf')
 
+def asset_list_printout(request, dept_id):
+    dept = get_object_or_404(Department, pk=dept_id)
+    if not request.user.is_staff:
+        # don't allow other roles to see assets of another dept.
+        active_role = role_from_request(request)
+        if active_role and active_role.department != dept:
+            raise PermissionDenied
+        elif active_role and not active_role.department:
+            raise PermissionDenied
+
+    from django.template.loader import render_to_string
+    from rml2pdf import parseString
+    logger = logging.getLogger('apps.assets')
+    logger.info("Rendering department #%d %s asset list to HTTP", dept.id, dept.name)
+
+    def locations():
+        for loc in Location.objects.filter(department=dept).all():
+            assets = Item.objects.filter(location=loc, active=True)
+            yield loc, assets
+
+    rml_str = render_to_string('asset_list.rml.tmpl',
+                dictionary={ 'object': dept, 'report_name': 'department-%d-assets.pdf' % dept.id,
+                        'internal_title': "Department %d" % dept.id,
+                        'now': datetime.datetime.now(),
+                        'user': request.user,
+                        'author': "Django-inventory",
+                        'locations': locations,
+                        } )
+    outPDF = parseString(rml_str, localcontext={})
+    return HttpResponse(outPDF, content_type='application/pdf')
+
+def asset_list_printout2(request):
+    active_role = role_from_request(request)
+    if active_role.department:
+        return HttpResponseRedirect(reverse("asset_list_printout", args=[active_role.department.id]))
+    else:
+        raise PermissionDenied
 #eof
