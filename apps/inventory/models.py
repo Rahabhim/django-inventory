@@ -62,7 +62,7 @@ class Inventory(models.Model):
     """
     objects = InventoryManager()
     name = models.CharField(max_length=32, verbose_name=_(u'inventory number'), blank=True, null=True)
-    location = models.ForeignKey(common.Location, verbose_name=_(u'location'))
+    location = models.ForeignKey(common.Location, verbose_name=_(u'location'), on_delete=models.PROTECT)
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'), default=datetime.date.today)
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
     state = models.CharField(max_length=16, default='draft',
@@ -70,8 +70,8 @@ class Inventory(models.Model):
                                     ('pending', _('Pending')),
                                     ('done', _('Done')),
                                     ('reject', _('Rejected'))])
-    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
-    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"), on_delete=models.PROTECT)
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"), on_delete=models.PROTECT)
     signed_file = models.FileField(verbose_name=_("Signed file"), upload_to='inventories',
                 blank=True, null=True)
 

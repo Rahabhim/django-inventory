@@ -68,18 +68,18 @@ class ItemManager(models.Manager):
 
 class Item(models.Model):
     objects = ItemManager()
-    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u"item template"), related_name="item")
+    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u"item template"), related_name="item", on_delete=models.PROTECT)
     property_number = models.CharField(verbose_name=_(u"asset number"), max_length=48)
     notes = models.TextField(verbose_name=_(u"notes"), null=True, blank=True)
     serial_number = models.CharField(verbose_name=_(u"serial number"), max_length=64, null=True, blank=True)
-    location = models.ForeignKey(Location, verbose_name=_(u"current location"), null=True, blank=True)
+    location = models.ForeignKey(Location, verbose_name=_(u"current location"), null=True, blank=True, on_delete=models.PROTECT)
     active = models.BooleanField(default=True, verbose_name=_("active"))
     qty = models.PositiveIntegerField(default=1, verbose_name=_('quantity'),
             help_text=_("Allows a batch of identical items to be referenced as one entity") )
     is_bundled = models.BooleanField(default=False,
             help_text=_("If true, this item is bundled in a group, and therefore has no location"))
     src_contract = models.ForeignKey('procurements.Contract', verbose_name=_('Source Contract'),
-            null=True, blank=True,
+            null=True, blank=True, on_delete=models.PROTECT,
             help_text=_("The procurement at which this item was initially obtained"))
 
     # δυναμικό πεδίο: attributes και τύπος

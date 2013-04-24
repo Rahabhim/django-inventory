@@ -31,11 +31,11 @@ class Department(models.Model):
     deprecate = models.BooleanField(verbose_name=_("deprecated"))
     dept_type = models.ForeignKey(DepartmentType, verbose_name=_('Department Type'))
     merge = models.ForeignKey('Department', verbose_name=_('Merged in'), 
-            related_name='dept_merge_id', blank=True, null=True)
+            related_name='dept_merge_id', blank=True, null=True, on_delete=models.PROTECT)
     nom_name = models.CharField(max_length=128, verbose_name=_('Nom Name'), blank=True, null=True)
     note = models.TextField(verbose_name=_('Note'), blank=True)
     ota_name = models.CharField(max_length=128, verbose_name=_('OTA Name'), blank=True, null=True)
-    parent = models.ForeignKey('self', verbose_name=_('Parent Department'), related_name='dept_parent_id', blank=True, null=True)
+    parent = models.ForeignKey('self', verbose_name=_('Parent Department'), related_name='dept_parent_id', blank=True, null=True, on_delete=models.PROTECT)
     section_name = models.CharField(max_length=128, verbose_name=_('Section'), blank=True, null=True)
     serviced_by = models.ForeignKey('self', verbose_name=_("Serviced By"),
            related_name='dept_service_id', blank=True, null=True)

@@ -66,7 +66,7 @@ class Location(models.Model):
     """
     name = models.CharField(max_length=32, verbose_name=_("name"), db_index=True)
     sequence = models.IntegerField(verbose_name=_("sequence"), default=10)
-    department = models.ForeignKey('company.Department', null=True, blank=True, verbose_name=_("department"))
+    department = models.ForeignKey('company.Department', null=True, blank=True, verbose_name=_("department"), on_delete=models.PROTECT)
     template = models.ForeignKey(LocationTemplate, verbose_name=_('From template'), null=True, blank=True)
 
     usage = models.CharField(max_length=32, verbose_name=_("location type"),

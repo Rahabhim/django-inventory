@@ -10,7 +10,7 @@ class ItemCategory(models.Model):
     name = models.CharField(max_length=64, verbose_name=_("Name"))
     sequence = models.IntegerField(default=10, verbose_name=_("sequence"))
     parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True,
-                verbose_name=_("parent category"))
+                verbose_name=_("parent category"), on_delete=models.PROTECT)
     approved = models.BooleanField(default=False, verbose_name=_("approved"))
     is_bundle = models.BooleanField(default=False, verbose_name=_("Is bundle"))
     is_group = models.BooleanField(default=False, verbose_name=_("Is set"))
@@ -103,11 +103,11 @@ class Manufacturer(Partner):
 
 class ItemTemplate(models.Model):
     description = models.CharField(verbose_name=_(u"description"), max_length=256)
-    category = models.ForeignKey(ItemCategory, verbose_name=_("category"))
+    category = models.ForeignKey(ItemCategory, verbose_name=_("category"), on_delete=models.PROTECT)
     approved = models.BooleanField(default=False, verbose_name=_("approved"))
     brand = models.CharField(verbose_name=_(u"brand"), max_length=32, null=True, blank=True, 
         help_text=_("Brand name, if different from manufacturer"))
-    manufacturer = models.ForeignKey(Manufacturer, related_name="products", verbose_name=_("manufacturer"))
+    manufacturer = models.ForeignKey(Manufacturer, related_name="products", verbose_name=_("manufacturer"), on_delete=models.PROTECT)
     model = models.CharField(verbose_name=_(u"model"), max_length=32, null=True, blank=True)
     part_number = models.CharField(verbose_name=_(u"part number"), max_length=32, null=True, blank=True)
     url = models.URLField(verbose_name=_("URL"), max_length=256, null=True, blank=True)

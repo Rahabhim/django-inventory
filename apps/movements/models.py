@@ -137,19 +137,19 @@ class _map_item(object):
 class PurchaseOrder(models.Model):
     objects = PurchaseOrderManager()
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
-    purchase_request = models.ForeignKey(PurchaseRequest, null=True, blank=True, verbose_name=_(u'purchase request'))
-    procurement = models.ForeignKey('procurements.Contract', null=True, blank=True, verbose_name=_("procurement contract"))
-    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
-    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))
-    supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'))
+    purchase_request = models.ForeignKey(PurchaseRequest, null=True, blank=True, verbose_name=_(u'purchase request'), on_delete=models.PROTECT)
+    procurement = models.ForeignKey('procurements.Contract', null=True, blank=True, verbose_name=_("procurement contract"), on_delete=models.PROTECT)
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"), on_delete=models.PROTECT)
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"), on_delete=models.PROTECT)
+    supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'), on_delete=models.PROTECT)
     issue_date = models.DateField(verbose_name=_(u'issue date'))
     required_date = models.DateField(null=True, blank=True, verbose_name=_(u'date required'))
     state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
     #active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
-    status = models.ForeignKey(PurchaseOrderStatus, null=True, blank=True, verbose_name=_(u'status'))
+    status = models.ForeignKey(PurchaseOrderStatus, null=True, blank=True, verbose_name=_(u'status'), on_delete=models.PROTECT)
     department = models.ForeignKey(Department, verbose_name=_("corresponding department"),
-                blank=True, null=True, related_name='+')
+                blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _(u'purchase order')
@@ -478,7 +478,7 @@ class PurchaseOrderItem(models.Model):
     purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_(u'purchase order'), related_name='items')
     item_name = models.CharField(max_length=128, null=True, blank=True,
                 verbose_name=_(u"Item description"), ) # help_text=_("Fill this in before the product can be assigned")
-    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'), null=True, blank=True)
+    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'), null=True, blank=True, on_delete=models.PROTECT)
     agreed_price = models.DecimalField(max_digits=12, decimal_places=4, null=True, blank=True, verbose_name=_(u'agreed price'))
     active = models.BooleanField(default=True, verbose_name=_(u'active'))
     status = models.ForeignKey(PurchaseOrderItemStatus, null=True, blank=True, verbose_name=_(u'status'))
@@ -595,7 +595,7 @@ class PurchaseOrderItem(models.Model):
 
 class PurchaseOrderBundledItem(models.Model):
     parent_item = models.ForeignKey(PurchaseOrderItem, verbose_name=_("bundled items"), related_name="bundled_items")
-    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'), null=True, blank=True)
+    item_template = models.ForeignKey(ItemTemplate, verbose_name=_(u'item template'), null=True, blank=True, on_delete=models.PROTECT)
     qty = models.PositiveIntegerField(default=1, verbose_name=_(u'quantity'))
 
     class Meta:
@@ -625,16 +625,16 @@ class RepairOrderManager(models.Manager):
 
 class RepairOrder(models.Model):
     objects = RepairOrderManager()
-    item = models.ForeignKey(ItemGroup, verbose_name=_("Item"))
+    item = models.ForeignKey(ItemGroup, verbose_name=_("Item"), on_delete=models.PROTECT)
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
-    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"))
-    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"))
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"), on_delete=models.PROTECT)
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"), on_delete=models.PROTECT)
     issue_date = models.DateField(verbose_name=_(u'issue date'))
     #active = models.BooleanField(default=True, verbose_name=_(u'active'))
     state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     department = models.ForeignKey(Department, verbose_name=_("corresponding department"),
-                blank=True, null=True, related_name='+')
+                blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _(u'repair order')
@@ -719,10 +719,10 @@ class Movement(models.Model):
             default=datetime.date.today,
             help_text=_("Format: 23/04/2010"))
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
-    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_('created by'))
-    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('validated by'))
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_('created by'), on_delete=models.PROTECT)
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('validated by'), on_delete=models.PROTECT)
     src_date_val = models.DateField(verbose_name=_(u'date source validated'), blank=True, null=True)
-    src_validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('source validated by'))
+    src_validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('source validated by'), on_delete=models.PROTECT)
 
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
     state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
@@ -730,18 +730,18 @@ class Movement(models.Model):
                 ('internal', _('Internal')), ('other', _('Other'))], verbose_name=_('type'))
     origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
     note = models.TextField(verbose_name=_('Notes'), blank=True)
-    location_src = models.ForeignKey(Location, related_name='location_src', verbose_name=_("source location"))
-    location_dest = models.ForeignKey(Location, related_name='location_dest', verbose_name=_("destination location"))
+    location_src = models.ForeignKey(Location, related_name='location_src', verbose_name=_("source location"), on_delete=models.PROTECT)
+    location_dest = models.ForeignKey(Location, related_name='location_dest', verbose_name=_("destination location"), on_delete=models.PROTECT)
     items = models.ManyToManyField(Item, verbose_name=_('items'), related_name='movements', blank=True)
     # limit_choices_to these at location_src
 
     checkpoint_src = models.ForeignKey('inventory.Inventory', verbose_name=_('Source checkpoint'),
-                null=True, blank=True, related_name='+')
+                null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
     checkpoint_dest = models.ForeignKey('inventory.Inventory', verbose_name=_('Destination checkpoint'),
-                null=True, blank=True, related_name='+')
+                null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
 
-    purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements')
-    repair_order = models.ForeignKey(RepairOrder, blank=True, null=True, related_name='movements')
+    purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements', on_delete=models.SET_NULL)
+    repair_order = models.ForeignKey(RepairOrder, blank=True, null=True, related_name='movements', on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _("movement")
