@@ -3,6 +3,23 @@
 {% load i18n %}
 {% load navigation %}
 
+{% block stylesheets %}
+    {{ block.super }}
+    <style type="text/css">
+    #wrapper {
+        width:95%;
+
+    }
+    #main {
+        width:85%;
+        margin-left:auto;
+        margin-right:auto;
+        float:none;
+        overflow:auto;
+    }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class="content">
         <div class="welcome-text">
