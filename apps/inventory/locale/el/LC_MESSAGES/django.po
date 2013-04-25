@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 01:38+0200\n"
-"PO-Revision-Date: 2013-02-26 01:53+0200\n"
+"POT-Creation-Date: 2013-03-29 10:23+0200\n"
+"PO-Revision-Date: 2013-03-14 17:31+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -88,11 +88,11 @@ msgstr "όνομα"
 
 #: models.py:63 urls.py:23 urls.py:27
 msgid "location"
-msgstr "τοποθεσία"
+msgstr "Τοποθεσία"
 
 #: models.py:64
 msgid "date performed"
-msgstr "ημερομηνία εκτέλεσης"
+msgstr "Ημερομηνία εκτέλεσης"
 
 #: models.py:65
 msgid "date validated"
@@ -154,8 +154,7 @@ msgid ""
 "that location on a later date"
 msgstr ""
 "Δεν μπορείτε να επικυρώσετε απογραφή για τις %s, γιατί υπάρχουν οριστικές "
-"κινήσεις "
-"από/προς την τοποθεσία αυτή σε μεταγενέστερες ημερομηνίες."
+"κινήσεις από/προς την τοποθεσία αυτή σε μεταγενέστερες ημερομηνίες."
 
 #: models.py:220
 msgid "asset"
@@ -203,7 +202,8 @@ msgstr "Δεν έχετε την ίδια Μονάδα με αυτή της απ
 #: views.py:112
 msgid "The inventory has been validated and all movements fixated"
 msgstr ""
-"Η απογραφή επικυρώθηκε, και όλες οι κινήσεις της τοποθεσίας οριστικοποιήθηκαν."
+"Η απογραφή επικυρώθηκε, και όλες οι κινήσεις της τοποθεσίας "
+"οριστικοποιήθηκαν."
 
 #: views.py:119
 #, python-format
