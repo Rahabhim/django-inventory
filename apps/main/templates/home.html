@@ -9,6 +9,25 @@
         {% blocktrans %}Welcome to the Django Inventory application, where you can keep track of your equipment.{% endblocktrans %}
         </div>
 
+        {% if user_roles %}
+        <div id="dept-selection">
+            <div class="tc"> {% trans 'Select department and role:' %}</div>
+            <div class="block">
+            <form method="POST" action="{% url select_user_role %}">
+            {% csrf_token %}
+            <div id="wait_for_user_role" style="display: none;">{% trans 'Updating, please wait'%}</div>
+                <select id="select_user_role" name="role_id" onchange="this.form.submit()">
+                    <option value="x">--------</option>
+                    {% for r in user_roles %}
+                    <option value="{{ r.id }}" {% if r.id == current_user_role %} selected="1" {% endif %}>
+                    {{ r.department.name }} - {{ r.role.name }} </option>
+                    {% endfor %}
+                </select></form>
+            </div>
+        </div>
+        {% endif %}
+
+
         <div class="tc"><h1>{{ user_profile.department.name }}</h1></div>
 
         <div class="block">
@@ -34,26 +53,9 @@
             </ul>
         </div>
         {% endif %}
-        </div>
     </div>
 
-        {% if user_roles %}
-        <div class="content" style="float: right;">
-            <div class="tc"> {% trans 'Select department and role:' %}</div>
-            <div class="block">
-            <form method="POST" action="{% url select_user_role %}">
-            {% csrf_token %}
-            <div id="wait_for_user_role" style="display: none;">{% trans 'Updating, please wait'%}</div>
-            <select id="select_user_role" name="role_id" onchange="this.form.submit()">
-                <option value="x">--------</option>
-            {% for r in user_roles %}
-                <option value="{{ r.id }}" {% if r.id == current_user_role %} selected="1" {% endif %}>
-                    {{ r.department.name }} - {{ r.role.name }} </option>
-            {% endfor %}
-            </select></form>
-            </div>
-        </div>
-        {% endif %}
+
 {% comment %}
 <script type="text/javascript">
 function change_user_role(){
