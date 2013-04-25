@@ -374,7 +374,9 @@ input.checkbox {
   width:99%;
 }
 
-.form input.text_field, .form textarea.text_area, .form input {
+.form input.text_field, .form textarea.text_area, .form input,
+    .results_on_deck > div
+{
   border-style: solid;
   border-width: 2px 1px 1px 2px;
   width: 40%;
@@ -389,7 +391,9 @@ input.checkbox {
   transition: border 0.15s linear 0s, box-shadow 0.15s linear 0s, color 0.15s linear 0s;
   padding: 5px 0;
 }
-.form input.text_field:focus, .form textarea.text_area:focus, .form input:focus {
+.form input.text_field:focus, .form textarea.text_area:focus, .form input:focus,
+    .results_on_deck > div:hover
+{
   color: #333;
   border-color: rgba(41, 92, 161, 0.4);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) inset, 0 0 8px rgba(41, 92, 161, 0.1);
