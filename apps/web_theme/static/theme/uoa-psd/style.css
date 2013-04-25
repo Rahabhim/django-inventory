@@ -384,7 +384,6 @@ input.checkbox {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) inset;
   color: #777777;
   display: block;
-  float: left;
   font-family: "Helvetica Neue",Arial,sans-serif;
   margin: 5px 0 0;
   transition: border 0.15s linear 0s, box-shadow 0.15s linear 0s, color 0.15s linear 0s;
