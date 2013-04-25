@@ -243,7 +243,7 @@ if AUTH_BACKEND == 'auth_passwd':
 #--------- Pagination ------------------
 PAGINATION_DEFAULT_PAGINATION = 20
 #--------- Web theme app ---------------
-WEB_THEME = 'warehouse'
+WEB_THEME = 'uoa-psd'
 
 STATIC_URL= '/static/'
 # Place to copy static files into: Do not commit this, it is generated!
