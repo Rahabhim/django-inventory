@@ -435,18 +435,14 @@ input.checkbox {
 }
 
 .form div.group.newline {
-  clear: left;
-  float: none;
+  clear: both;
   margin: 15px 0;
   width: 90%;
- /*overflow:auto;*/
-
 }
 
 .form div.group.inline {
-  float:none;
+  clear: both;
   margin-right: 10px;
-  /*overflow:auto;*/ /*-*/
   width: 90%;
   margin-bottom: 20px;
 }
