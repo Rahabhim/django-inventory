@@ -20,7 +20,8 @@ table.filter_form td select {
 }
 
 .table th a {
-   color: white;
+   color: rgb(167, 180, 124);
+   margin-left: 0.5em;
 }
 
 .table tr.bl_group th {
