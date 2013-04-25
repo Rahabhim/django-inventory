@@ -375,7 +375,7 @@ input.checkbox {
 }
 
 .form input.text_field, .form textarea.text_area, .form input,
-    .results_on_deck > div
+    .form .results_on_deck > div
 {
   border-style: solid;
   border-width: 2px 1px 1px 2px;
@@ -392,7 +392,7 @@ input.checkbox {
   padding: 5px 0;
 }
 .form input.text_field:focus, .form textarea.text_area:focus, .form input:focus,
-    .results_on_deck > div:hover
+    .form .results_on_deck > div:hover
 {
   color: #333;
   border-color: rgba(41, 92, 161, 0.4);
@@ -402,6 +402,15 @@ input.checkbox {
   outline: 0 none; 
 
 }
+
+/* override for filter forms */
+.form .filter_form input.text_field, .form .filter_form textarea.text_area,
+    .form .filter_form input, .form .filter_form .results_on_deck > div
+{
+    min-width: 7em;
+    width: 99%; /* or auto? */
+}
+
 .form textarea.text_area {
     height: 55px;
 }
@@ -613,6 +622,7 @@ ul.list li .left  {
   padding: 10px;
   width: 30%;
 }
+
 
 /* search button in fiter forms */
 form.form table.filter_form button.button {
