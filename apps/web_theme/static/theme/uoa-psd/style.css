@@ -619,7 +619,7 @@ ul.list li .left  {
   margin-right: auto;
   /*overflow: auto;*/
   padding: 10px;
-  width: 30%;
+  min-width: 30%;
 }
 
 
@@ -645,3 +645,89 @@ form.form table.filter_form button.button {
   word-wrap: normal;
 }
 
+/* submit buttons */
+.form div.submit_button{
+  margin-top: 25px;
+  width: 100%;
+  text-align: center;
+  float: center;
+  clear: both;
+}
+
+.form div.submit_button > div {
+  clear: both;
+  display: block;
+  margin: 0 auto;
+}
+
+.form div.submit_button button {
+  text-align: center;
+  background-color: #F0F0F0;
+  display: block;
+  float: none;
+  border: 1px solid;
+  outline: 0;
+  font-size: 1.2em;
+  background-image: -moz-linear-gradient(center top , #FFFFFF 2%, #F0F0F0 2%, #DEDEDE 100%);
+  border: 1px solid #969696;
+  border-radius: 2px 2px 2px 2px;
+  box-shadow: 0 1px 2px rgba(144, 144, 144, 0.4);
+  color: #515151;
+  cursor: pointer;
+  outline: 0 none;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: normal;
+  padding:5px 20px;
+}
+.form div.submit_button button:hover,
+.form div.submit_button button:active,
+form.form table.filter_form button.button:hover,
+form.form table.filter_form button.button:active
+{
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); 
+  color: #818181;
+  background-color: #fff;
+  background-image: -moz-linear-gradient(top,  rgb(255,255,255) 2%, rgb(244,244,244) 2%, rgb(229,229,229) 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(2%,rgb(255,255,255)), color-stop(2%,rgb(244,244,244)), color-stop(100%,rgb(229,229,229)));
+  background-image: -webkit-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%);background-image: -o-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); background-image: -ms-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); background-image: linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); 
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 );
+  border: 1px solid #666;
+  box-shadow: inset 0 1px 0 rgba(256,256,256,0.4),0 1px 3px rgba(0,0,0,0.5);
+}
+
+.form div.submit_button a.button {
+  text-align: center;
+  background-color: #F0F0F0;
+  display: block;
+  float: none;
+  border: 1px solid;
+  outline: 0;
+  font-size: 1.2em;
+  background-image: -moz-linear-gradient(center top , #FFFFFF 2%, #F0F0F0 2%, #DEDEDE 100%);
+  border: 1px solid #969696;
+  border-radius: 2px 2px 2px 2px;
+  box-shadow: 0 1px 2px rgba(144, 144, 144, 0.4);
+  color: #515151;
+  cursor: pointer;
+  outline: 0 none;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+
+.form div.submit_button a.button:hover, .form div.submit_button a.button:active{
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); 
+  color: #818181;
+  background-color: #fff;
+  background-image: -moz-linear-gradient(top,  rgb(255,255,255) 2%, rgb(244,244,244) 2%, rgb(229,229,229) 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(2%,rgb(255,255,255)), color-stop(2%,rgb(244,244,244)), color-stop(100%,rgb(229,229,229)));
+  background-image: -webkit-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%);background-image: -o-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); background-image: -ms-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); background-image: linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); 
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 );
+  border: 1px solid #666;
+  box-shadow: inset 0 1px 0 rgba(256,256,256,0.4),0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* eof */

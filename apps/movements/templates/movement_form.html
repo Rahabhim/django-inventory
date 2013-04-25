@@ -85,19 +85,18 @@
     {% endif %}
 
     <div style="clear: both; width=100%;"> </div>
-</div>
-{% endblock %}
 
-{% block submit_button %}
-    <div class="group navform wat-cf">
+    <div class="group navform wat-cf submit_button">
         <button class="button" type="submit">
         {% if object %}
-            <img src="{{ STATIC_URL }}theme/images/tick.png" />
             {% trans 'Save changes' %}
         {% else %}
-            <img src="{{ STATIC_URL }}theme/images/tick.png" />
             {% trans 'Select Items' %}
         {% endif %}
         </button>
     </div>
+</div>
+{% endblock %}
+
+{% block submit_button %}
 {% endblock %}
