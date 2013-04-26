@@ -43,7 +43,7 @@
     {% endfor %}
 
     {% for subtemplate in subtemplates_dict %}
-    {% with title=subtemplate.title extra_columns=subtemplate.extra_columns object_list=subtemplate.object_list main_object=subtemplate.main_object hide_object=subtemplate.hide_object  %}
+    {% with title=subtemplate.title extra_columns=subtemplate.extra_columns object_list=subtemplate.object_list main_object=subtemplate.main_object hide_object=subtemplate.hide_object hide_link=subtemplate.hide_link  %}
         {% include subtemplate.name %}
     {% endwith %}
     {% endfor %}

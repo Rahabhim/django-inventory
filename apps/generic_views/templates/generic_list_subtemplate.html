@@ -82,7 +82,9 @@
     {% with subform.title as title %}
     {% with subform.extra_columns as extra_columns %}
     {% with subform.form as form %}
+    {% with subform.hide_link as hide_link %}
         {% include subform.name %}
+    {% endwith %}
     {% endwith %}
     {% endwith %}
     {% endwith %}
