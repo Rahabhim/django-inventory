@@ -6,7 +6,6 @@ from django.utils.html import conditional_escape
 from generic_views.forms import DetailForm, InlineModelForm, RModelForm, \
                     ROModelChoiceField, ColumnsDetailWidget, DetailForeignWidget, \
                     UnAutoCompleteField
-from ajax_select import get_lookup
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from inventory.models import Inventory
 
