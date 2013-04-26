@@ -130,14 +130,14 @@ class AssetListView(GenericBloatedListView):
                     dict(name=_(u'Manufacturer'), attribute='manufacturer', order_attribute='manufacturer.name', over="item_template"),
                     dict(name=_(u'Category'), attribute='category', order_attribute='category.name', over="item_template"),
                 ]
-    extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
+    extra_columns=[ # dict(attribute='get_specs', name=_(u'specifications'), under='id'),
                             dict(name=_('Serial number'), attribute='serial_number'),
                             dict(name=_('Location'), attribute='location'),
                             dict(name=_('Source Contract'), attribute='src_contract'),
                             ]
 
 class LocationAssetsView(AssetListView):
-    extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
+    extra_columns=[ # dict(attribute='get_specs', name=_(u'specifications'), under='id'),
                             dict(name=_('Serial number'), attribute='serial_number'),
                             dict(name=_('Source Contract'), attribute='src_contract'),
                   ]
@@ -172,7 +172,7 @@ class TemplateAssetsView(AssetListView):
     group_by='src_contract'
     # problem: if there is no source contract, entries will be hidden :(
     group_fields=[ dict(name=_(u'Source Contract'), colspan=2), ]
-    extra_columns=[ dict(attribute='get_specs', name=_(u'specifications'), under='id'),
+    extra_columns=[ # dict(attribute='get_specs', name=_(u'specifications'), under='id'),
                             dict(name=_('Serial number'), attribute='serial_number'),
                             dict(name=_('Location'), attribute='location'),
                             ]
