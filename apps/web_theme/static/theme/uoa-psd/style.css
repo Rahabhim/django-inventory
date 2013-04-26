@@ -418,6 +418,10 @@ input.checkbox {
   font-size: 1.1em;
 }
 
+.form .table.filter_form th {
+    border-bottom: none;
+}
+
 .form .navform {
   background-color: transparent;
   font-size: 1em;
