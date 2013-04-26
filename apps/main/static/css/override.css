@@ -20,7 +20,7 @@ table.filter_form td select {
 }
 
 .table th a {
-   color: rgb(167, 180, 124);
+   color: inherit;
    margin-left: 0.5em;
 }
 
