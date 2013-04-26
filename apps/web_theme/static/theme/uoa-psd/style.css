@@ -618,6 +618,7 @@ ul.list li .left  {
 
 .form div.group .button {
   font-size: 0.9em;
+  font-weight: normal;
   margin-left: auto;
   margin-right: auto;
   /*overflow: auto;*/
