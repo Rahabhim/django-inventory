@@ -170,18 +170,18 @@ tr.bl_group td.first_col div
     vertical-align: middle;
     text-align: right;
 }
-.equipment-list tbody th.inner-pagination-bottom { /*top items of table*/
-  /*-* remove */
-  background-color: #F5F5F5;
-  border-top: 1px solid #d6d6d6;
+
+.equipment-list tbody tr.bl_inner_pagination td a {
+    display: inline-block;
+    vertical-align: middle;
 }
 
-.equipment-list tbody tr.bl_inner_pagination td span {
+.equipment-list tbody tr.bl_inner_pagination td div {
     /* the text of pagination */
-   font-size: 0.8em;
-   font-weight: normal;
-   /*float:left;*/
-   margin-top:3px;
+    font-size: 0.8em;
+    font-weight: normal;
+    display: inline-block;
+    vertical-align: middle;
 }
 .equipment-list tbody tr.bl_inner_pagination td a:hover {
     background-color: #E5E6E6;
@@ -283,7 +283,7 @@ tr.bl_group td.first_col div
                     {% else %}<img src="{{ STATIC_URL}}images/double_arrow_left.png" width="16px" height="16px"/>
                               <img src="{{ STATIC_URL}}images/arrow_left.png" width="16px" height="16px"/>
                     {% endif %}
-                    <span>{{ sub_offset }}</span>
+                    <div>{{ sub_offset }}</div>
                     {% if sub_offset_next %}
                         <a href="?{{sub_getvars}}sub_offset={{sub_offset_next}}" title="{% trans 'Next page' %}"><img src="{{ STATIC_URL}}images/arrow_right.png" width="16px" height="16px"/></a>
                         <a href="?{{sub_getvars}}sub_offset={{sub_offset_last}}" title="{% trans 'Last page' %}"><img src="{{ STATIC_URL}}images/double_arrow_right.png" width="16px" height="16px"/></a>
