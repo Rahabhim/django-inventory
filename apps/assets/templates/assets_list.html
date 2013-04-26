@@ -216,7 +216,7 @@ tr.bl_group td.first_col div
     </h3>
 
 <div class="inner">
-
+{% with 1 as hide_links %}
   <form action="#" class="form" id="bl_list_form" method="POST">
     {% csrf_token %}
     {% paginate %}
@@ -232,7 +232,7 @@ tr.bl_group td.first_col div
         {% endfor %}{%endif %}
         </th>
         {% endfor %}
-        {% if not hide_links %}<th class="">{% trans 'Actions' %}</th>{% endif %}
+        {% if not hide_links %}<th class=""></th>{% endif %}
         {% if request.session.carts %}<th class="">{% trans 'Select' %}</th>{% endif %}
 </tr>
     </thead>
@@ -320,6 +320,7 @@ tr.bl_group td.first_col div
     {% paginate %}
     {% object_list_carts object_list %}
   </form>
+{% endwith %}
 </div>
 </div>
 
