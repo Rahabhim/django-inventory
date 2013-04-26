@@ -219,18 +219,6 @@ tr.bl_group td.first_col div
 
   <form action="#" class="form" id="bl_list_form" method="POST">
     {% csrf_token %}
-    {% comment %}
-    <div class="list-tools">
-        <div class="list-tools-right">
-            <div class="print">
-                <a class="graylink" href="#" title="Εκτύπωση">Εκτύπωση</a>
-            </div>
-            <div class="list-pagination">
-            </div>
-        </div>
-    </div>
-    {% endcomment %}
-
     {% paginate %}
     <table class="equipment-list">
     <thead>
