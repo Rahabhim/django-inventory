@@ -7,12 +7,14 @@ from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 from django.db import models
 from ajax_select.fields import AutoCompleteSelectField
+from ajax_select import get_lookup
 
 import types
 
 import settings
 from tree_field import ModelTreeChoiceField
 import datetime
+import logging
 
 def return_attrib(obj, attrib, arguments=None):
     try:
@@ -195,6 +197,44 @@ class RModelForm(forms.ModelForm):
                     del self.cleaned_data[name]
 
         super(RModelForm, self)._post_clean()
+
+def UnAutoCompleteField(fields, name, request, use_radio=False, choice_limit=10):
+    """Converts an AutoCompleteSelectField back to a ModelChoiceField, if possible
+
+        There is chances that an auto-complete field will have too little choices
+        to make sense for AJAX (or the UI experience of it). So, find if that's
+        the case and convert back to a simple selection.
+
+        For that, we need the request object, because the queryset of the lookup
+        may depend on the logged-in user etc.
+
+        @param fields the dictionary of fields for a form. We need all of it because
+                we will update the dict in-place
+        @param name the name of the field in the dict
+        @param use_radio if true, a RadioSelect will be used
+        @param choice_limit count() of items below which we trigger the conversion
+    """
+    try:
+        field = fields[name]
+        assert isinstance(field, AutoCompleteSelectField), repr(field)
+        lookup = get_lookup(field.channel)
+        qry = lookup.get_query('', request)
+        if not qry.query.can_filter():
+            # if there is any limits (slicing) in the query, remove them
+            # in order to get the real count
+            qry = qry._clone()
+            qry.query.clear_limits()
+        if qry.count() < choice_limit:
+            widget = None
+            if use_radio:
+                widget = forms.widgets.RadioSelect
+            new_field = forms.ModelChoiceField(queryset=qry,
+                    label=field.label, widget=widget,
+                    required=field.required, help_text=field.help_text,
+                    initial=field.initial)
+            fields[name] = new_field
+    except Exception:
+        logging.getLogger('apps.generic_views').warning("Could not resolve autocomplete %s:", name, exc_info=True)
 
 class GenericConfirmForm(forms.Form):
     pass

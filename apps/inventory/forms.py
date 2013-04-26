@@ -8,10 +8,11 @@ from django.contrib.auth.models import User
 from common.api import role_from_request
 from common.models import Location
 from generic_views.forms import DetailForm, InlineModelForm, \
-        ReadOnlyInput, ROModelChoiceField, RModelForm, ReadOnlyDateInput
+        ReadOnlyInput, ROModelChoiceField, RModelForm, ReadOnlyDateInput, \
+        UnAutoCompleteField
 
 from models import Log, Inventory, InventoryItem
-from movements.forms import UserDetailsWidget, UnAutoCompleteField
+from movements.forms import UserDetailsWidget
 import datetime
 
 class LogForm(forms.ModelForm):
