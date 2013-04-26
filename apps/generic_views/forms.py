@@ -303,6 +303,11 @@ class FilterForm(forms.Form):
             else:
                 self.fields[list_filter['name']] = forms.CharField(label=label, required=False)
 
+    def _init_by_request(self, request):
+        for fname in self.fields:
+            if isinstance(self.fields[fname], AutoCompleteSelectField):
+                UnAutoCompleteField(self.fields, fname, request)
+
 class InlineModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(InlineModelForm, self).__init__(*args, **kwargs)
