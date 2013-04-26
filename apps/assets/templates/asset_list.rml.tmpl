@@ -18,6 +18,11 @@
     <paraStyle name="Details" fontName="Helvetica" fontSize="10.0" leading="14"
             spaceBefore="12.0" spaceAfter="26.0"/>
     <paraStyle name="Table_title" fontName="Helvetica-Bold" fontSize="11.0" leading="12"/>
+    <paraStyle name="Bundled_li1" fontSize="9.0" fontName="Helvetica" leading="9.0" leftIndent="6.0"/>
+    <paraStyle name="Bundled_li2" fontSize="9.0" fontName="Helvetica" leading="9.0" leftIndent="12.0"/>
+    <paraStyle name="Bundled_li3" fontSize="9.0" fontName="Helvetica" leading="9.0" leftIndent="18.0"/>
+    <paraStyle name="Bundled_li4" fontSize="9.0" fontName="Helvetica" leading="9.0" leftIndent="22.0"/>
+
 {% endblock %}
 
 {% block content %}
@@ -25,7 +30,6 @@
 <para style="Details">{% trans 'At' %}: {{ now|date:"d/m/Y" }} </para>
 
 <para> </para>
-
 {% for loc, items in locations %}
 <h2>{{ loc.name }}</h2>
 <blockTable colWidths="20.0mm,80.0mm,30.0mm,40.0mm" style="Table_1">
@@ -38,13 +42,23 @@
       </tr>
     {% for line in items.all %}
     <tr>
-        <td>{{ line.property_number }}</td>
-        <td><para>{{ line.item_template }} {{ line.serial_number|default:'' }}</para></td>
+        <td><para>{{ line.property_number }}</para></td>
+        <td><para>{{ line.item_template }} {{ line.serial_number|default:'' }}</para>
+            {% if line.item_template.category.is_bundle and line.itemgroup %}
+            {% for line in line.itemgroup.items.all  %}
+                <para style="Bundled_li1">- {{ line }}{% if line.qty > 1 %} x{{line.qty}}{%endif %}</para>
+                {% if line.item_template.category.is_bundle and line.itemgroup and line.itemgroup.items.count %}
+                    {% for line in line.itemgroup.items.all  %}
+                        <para style="Bundled_li2">+ {{ line }}{% if line.qty > 1 %} x{{line.qty}}{%endif %}</para>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            {% endif %}
+        </td>
         <td>{{ line.state|default:'' }}</td>
         <td>{{ line.notes|default:''}}</td>
     </tr>
     {% endfor %}
     </blockTable>
 {% endfor %}
-
 {% endblock %}
