@@ -1095,6 +1095,11 @@ msgstr "Ενέργειες"
 msgid "Set is empty!"
 msgstr ""
 
+msgid "<div>Please fill in the details of the incident</div>\n <div>After that, click on Select Items to fill the form with items</div>\n"
+msgstr "       <div>Παρακαλούμε συμπληρώστε τις πληροφορίες του εξοπλισμού που αφορούν το συμβάν.</div>\n"
+"       <div>Στη συνέχεια επιλέξτε Επιλογή Εξοπλισμού για να βρείτε το συγκεκριμένο εξοπλισμό που σας ενδιαφέρει.</div>\n"
+"       "
+
 #~ msgid "first step"
 #~ msgstr "Πρώτο βήμα"
 
