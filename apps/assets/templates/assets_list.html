@@ -96,10 +96,14 @@
   word-wrap: break-word;
 }
 
-.equipment-list tbody tr:nth-child(even) {
-  background-color: #eef0f2;
+.equipment-list tbody tr.bl_inrow {
+    border-bottom: 1px solid #eef0f2;
 }
-.equipment-list tbody tr:nth-child(odd) {
+.equipment-list tbody tr.bl_inrow:nth-child(even) {
+  background-color: #eef0f2;
+
+}
+.equipment-list tbody tr.bl_inrow:nth-child(odd) {
   background-color: #FFF;
 }
 .equipment-list tr, .equipment-list td {
