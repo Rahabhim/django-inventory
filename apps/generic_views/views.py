@@ -42,6 +42,8 @@ def add_filter(request, list_filters, **kwargs):
     filter_dict = dict([(f['name'], f) for f in list_filters])
     if request.method == 'GET':
         filter_form = FilterForm(list_filters, request.GET, qargs=kwargs)
+        if hasattr(filter_form, '_init_by_request'):
+            filter_form._init_by_request(request)
         if filter_form.is_valid():
             for name, data in filter_form.cleaned_data.items():
                 if not data:
@@ -68,6 +70,8 @@ def add_filter(request, list_filters, **kwargs):
 
     else:
         filter_form = FilterForm(list_filters, qargs=kwargs)
+        if hasattr(filter_form, '_init_by_request'):
+            filter_form._init_by_request(request)
             
     return filter_form, filters
 
