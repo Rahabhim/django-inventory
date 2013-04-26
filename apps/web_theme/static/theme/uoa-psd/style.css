@@ -389,6 +389,18 @@ input.checkbox {
   transition: border 0.15s linear 0s, box-shadow 0.15s linear 0s, color 0.15s linear 0s;
   padding: 5px 0;
 }
+
+.form table tr.form-row input.text_field,
+.form table tr.form-row textarea.text_area,
+.form table tr.form-row input,
+.form table tr.form-row .results_on_deck > div {
+    width: 20em;
+}
+
+.form table tr.form-row input.integer {
+    width: 8em;
+}
+
 .form input.text_field:focus, .form textarea.text_area:focus, .form input:focus,
     .form .results_on_deck > div:hover
 {
@@ -416,6 +428,17 @@ input.checkbox {
 .form div.group label {
   font-style: normal;
   font-size: 1.1em;
+}
+
+.form .filter_form .group {
+  margin-bottom: 0px;
+}
+
+.form .filter_form input,
+.form .filter_form input.text_area,
+.form .filter_form  input.text_field
+{
+    margin-top: 0px;
 }
 
 .form .table.filter_form th {
