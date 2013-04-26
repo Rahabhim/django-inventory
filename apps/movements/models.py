@@ -874,7 +874,13 @@ class Movement(models.Model):
         except Exception:
             location_src = '?'
             location_dest = '?'
-        return _(u'%(name)s from %(src)s to %(dest)s') % {'name': self.name or self.origin or _('Move'), \
+        if self.name:
+            name = '(%s)' % self.name
+        elif self.origin:
+            name = '(%s)' % self.origin
+        else:
+            name = ''
+        return _(u'Move from %(src)s to %(dest)s %(name)s') % {'name': name, \
                     'src': location_src, 'dest': location_dest }
 
     def get_cart_name(self):
