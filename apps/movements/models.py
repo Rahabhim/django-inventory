@@ -494,9 +494,11 @@ class PurchaseOrderItem(models.Model):
     def __unicode__(self):
         return unicode(self.item_template)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('purchase_order_view', [str(self.purchase_order_id)])
+        if self.item_template:
+            return self.item_template.get_absolute_url()
+        else:
+            return self.purchase_order.get_absolute_url()
 
     def fmt_agreed_price(self):
         if self.agreed_price:

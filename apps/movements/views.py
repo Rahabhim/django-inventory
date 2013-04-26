@@ -221,6 +221,7 @@ def purchase_order_view(request, object_id):
             'name':'generic_list_subtemplate.html',
             'title': _(u'purchase order items'),
             'object_list':purchase_order.items.all(),
+            'hide_link': True,
             'extra_columns':[
                 {'name': _(u'qty'), 'attribute':'qty'},
                 {'name': _(u'qty received'), 'attribute':'received_qty'},
