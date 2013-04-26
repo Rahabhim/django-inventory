@@ -19,7 +19,7 @@ import logging
 
 
 class UserDetailsWidget(ColumnsDetailWidget):
-    show_header = False
+    show_header = True
     columns = [{ 'name': _('first name'), 'attribute': 'first_name' },
                 { 'name': _('last name'), 'attribute': 'last_name' },
                 { 'name': _('email'), 'attribute': 'email'},
