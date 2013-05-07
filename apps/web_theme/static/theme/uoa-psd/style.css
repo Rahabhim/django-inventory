@@ -690,7 +690,7 @@ form.form table.filter_form button.button {
 .form div.submit_button button {
   text-align: center;
   background-color: #F0F0F0;
-  display: block;
+  display: inline-block;
   float: none;
   border: 1px solid;
   outline: 0;
@@ -707,6 +707,7 @@ form.form table.filter_form button.button {
   white-space: nowrap;
   word-wrap: normal;
   padding:5px 20px;
+  margin-right: 10px;
 }
 .form div.submit_button button:hover,
 .form div.submit_button button:active,

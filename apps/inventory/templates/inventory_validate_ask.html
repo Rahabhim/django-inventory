@@ -12,23 +12,45 @@
         <div class="content login">
           <form action="" method="post" enctype="multipart/form-data" class="form login">{% csrf_token %}
                 <h3>{% blocktrans %}Are you sure you wish to validate: {{ object }}?{% endblocktrans %}</h3>
-            <div>{% trans 'Location:' %} {{ object.location }}</div>
-            <div>{% trans 'Date performed:' %} {{ object.date_act }}</div>
-            <div>{{form.name.label}}* {{form.name}}</div>
-            <div>{% blocktrans %}Please also upload the signed PDF of the inventory {% endblocktrans %}
-                <br/> {{ form.signed_file }}
-            </div>
-            {% if message %}<h4>{{ message }}</h4>{% endif %}
 
-            <div class="group navform wat-cf">
-              <button class="button" type="submit">
-                <img src="{{ STATIC_URL }}theme/images/tick.png" alt="{% trans 'Validate' %}" /> {% trans 'Validate' %}
-              </button>
-              <a href="#" onclick='history.go(-2);' class="button">
-                <img src="{{ STATIC_URL }}theme/images/cross.png"  alt="{% trans 'Abort' %}"/> {% trans 'Abort' %}
-              </a>
+            <div class="group newline">
+              <div class="label">
+                {% trans 'Location:' %}
+              </div>
+              {{ object.location }}
             </div>
 
+            <div class="group newline">
+              <div class="label">
+                {% trans 'Date performed:' %}
+              </div>
+              {{ object.date_act }}
+            </div>
+
+            <div class="group newline">
+              <div class="label">
+                {{form.name.label}}*
+              </div>
+              {{form.name}}
+            </div>
+
+            <div class="group newline">
+              <div class="label">
+                {% blocktrans %}Please also upload the signed PDF of the inventory {% endblocktrans %}
+              </div>
+              {{ form.signed_file }}
+            </div>
+
+
+            <div style="clear: both; width=100%;"> </div>
+            <div class="group navform wat-cf submit_button">
+                <button class="button" type="submit">
+                    {% trans 'Abort' %}
+                </button>
+                <button class="button" type="submit">
+                    {% trans 'Validate' %}
+                </button>
+            </div>
           </form>
         </div>
       </div>
