@@ -28,7 +28,7 @@ def cart2dict(cart):
                 href=cart.get_cart_url(), cart_id=hex(id(cart))[-7:-1])
 
 @register.inclusion_tag('session_carts.html', takes_context=True)
-def session_carts(context):
+def session_carts(context, is_home=False):
     """Opened carts for a user session
 
         They should appear at the top of the menu or so.
@@ -37,7 +37,7 @@ def session_carts(context):
     prepare_session_carts(context)
     try:
         rcarts = context['carts']
-        return {'carts': map(cart2dict, rcarts) }
+        return {'carts': map(cart2dict, rcarts), 'is_home': is_home }
 
     except Exception:
         logger.warning("Cannot resolve session carts:", exc_info=True)

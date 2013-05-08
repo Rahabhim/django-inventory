@@ -2,6 +2,7 @@
 {% load project_tags %}
 {% load i18n %}
 {% load navigation %}
+{% load carts %}
 
 {% block stylesheets %}
     {{ block.super }}
@@ -91,6 +92,10 @@ a:hover {
     </style>
 {% endblock %}
 
+{% block web_theme_sidebar %}
+{# override, keep it empty #}
+{% endblock %}
+
 {% block content %}
     <div class="content">
         <div class="welcome-text">
@@ -141,6 +146,7 @@ a:hover {
             </ul>
         </div>
         {% endif %}
+        {% session_carts 1 %}
     </div>
 
 
