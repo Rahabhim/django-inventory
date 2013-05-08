@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-29 10:23+0200\n"
+"POT-Creation-Date: 2013-05-08 12:39+0300\n"
 "PO-Revision-Date: 2013-03-27 09:02+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -29,11 +29,18 @@ msgstr "ρύθμιση"
 msgid "About this program"
 msgstr "Σχετικά με την εφαρμογή"
 
-#: templates/about.html:10
-msgid "A Django based inventory and asset management system"
-msgstr "Ένα σύστημα κτηματολογίου και διαχείρισης παγίων, σε Django."
+#: templates/about.html:11
+msgid ""
+" A Django based inventory and asset management system <br /><br />\n"
+"        This project was originally written by \n"
+"        <a href=\"http://www.github.com/rosarior/django-inventory/\">Roberto "
+"Rosario, Copyright &copy; 2007</a><br />\n"
+"        The current version is being developed by <a href=\"http://www.uoa.gr"
+"\">UoA</a><br />\n"
+"    "
+msgstr ""
 
-#: templates/about.html:22
+#: templates/about.html:26
 msgid "Go"
 msgstr "Πήγαινε"
 
@@ -75,25 +82,54 @@ msgstr "Ενέργειες"
 msgid "Other available actions"
 msgstr "Άλλες διαθέσιμες ενέργειες"
 
-#: templates/home.html:13
-msgid "My pending actions "
-msgstr "Ενέργειες σε εκκρεμότητα"
+#: templates/base.html:116
+msgid "Based on Django-inventory"
+msgstr ""
 
-#: templates/home.html:22
-msgid "Available actions"
-msgstr "Διαθέσιμες ενέργειες"
+#: templates/home.html:102
+msgid ""
+"Welcome to the Django Inventory application, where you can keep track of "
+"your equipment."
+msgstr ""
 
-#: templates/home.html:34
+#: templates/home.html:107
 msgid "Select department and role:"
 msgstr "Επιλέξτε μονάδα και ρόλο:"
 
-#: templates/home.html:38
+#: templates/home.html:111
 msgid "Updating, please wait"
 msgstr ""
 
-#: templates/object_list_carts.html:5
+#: templates/home.html:130
+msgid "Available actions"
+msgstr "Διαθέσιμες ενέργειες"
+
+#: templates/home.html:141
+msgid "My pending actions "
+msgstr "Ενέργειες σε εκκρεμότητα"
+
+#: templates/object_list_carts.html:8
 msgid "Return to "
 msgstr "Επιλογή Εξοπλισμού"
+
+#: templates/page.rml:15
+msgid "Django inventory"
+msgstr ""
+
+#: templates/page.rml:22
+msgid "Printed at:"
+msgstr ""
+
+#: templates/page.rml:22
+msgid " - page:"
+msgstr ""
+
+#: templates/session_carts.html:5 templates/session_carts.html.py:9
+msgid "Actions you are editing"
+msgstr ""
+
+#~ msgid "A Django based inventory and asset management system"
+#~ msgstr "Ένα σύστημα κτηματολογίου και διαχείρισης παγίων, σε Django."
 
 #~ msgid "New password"
 #~ msgstr "Νέος κωδικός"

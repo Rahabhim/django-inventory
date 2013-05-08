@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-26 01:38+0200\n"
+"POT-Creation-Date: 2013-05-08 12:39+0300\n"
 "PO-Revision-Date: 2013-01-16 16:18+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,58 +17,58 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: forms.py:62
+#: forms.py:66
 msgid "None"
 msgstr "Κανένα"
 
-#: views.py:131
+#: views.py:135
 #, python-format
 msgid "List of %s"
 msgstr "Λίστα %s"
 
-#: views.py:133
+#: views.py:137
 msgid "List"
 msgstr "Λίστα"
 
-#: views.py:356
+#: views.py:395
 #, python-format
 msgid "Empty list and '%(class_name)s.allow_empty' is False."
 msgstr ""
 "Άδεια λίστα και η μεταβλητή '%(class_name)s.allow_empty' είναι Αρνητική"
 
-#: views.py:415
+#: views.py:454
 #, python-format
 msgid "The selected %s were added."
 msgstr "Προστέθηκαν %s"
 
-#: views.py:421
+#: views.py:460
 #, python-format
 msgid "The selected %s were removed."
 msgstr "Αφαιρέθηκαν %s"
 
-#: views.py:709
+#: views.py:748
 msgid "The cart is already open."
 msgstr ""
 
-#: views.py:722
+#: views.py:761
 msgid "The cart is not open."
 msgstr ""
 
-#: views.py:785
+#: views.py:824
 #, python-format
 msgid "Item %s could not be found."
 msgstr ""
 
-#: views.py:796
+#: views.py:835
 msgid "Could not alter item"
 msgstr ""
 
-#: views.py:804
+#: views.py:843
 #, python-format
 msgid "%(item)s added to %(cart)s"
 msgstr ""
 
-#: views.py:810
+#: views.py:849
 #, python-format
 msgid "%(item)s removed from %(cart)s"
 msgstr ""
@@ -78,12 +78,17 @@ msgstr ""
 msgid "%(title)s"
 msgstr "%(title)s"
 
-#: templates/bloated_list_subtemplate.html:41
+#: templates/bloated_list_subtemplate.html:21
+#, fuzzy, python-format
+msgid "%(title)s (%(start)s - %(end)s out of %(total)s)"
+msgstr "%(title)s (%(start)s - %(end)s από %(total)s)"
+
+#: templates/bloated_list_subtemplate.html:42
 msgid "count"
 msgstr "πλήθος"
 
-#: templates/bloated_list_subtemplate.html:81
-#: templates/bloated_list_subtemplate.html:129
+#: templates/bloated_list_subtemplate.html:82
+#: templates/bloated_list_subtemplate.html:135
 #: templates/generic_list_subtemplate.html:69
 #, python-format
 msgid "There are no %(title)s"
@@ -117,8 +122,7 @@ msgstr "Δημιουργία νέου %(object_name)s"
 msgid "Create"
 msgstr "Δημιουργία"
 
-#: templates/filter_form_subtemplate.html:45
-#: templates/filter_form_subtemplate.html:46
+#: templates/filter_form_subtemplate.html:44
 msgid "Search"
 msgstr "Αναζήτηση"
 
@@ -208,13 +212,13 @@ msgstr "Ναι"
 msgid "No"
 msgstr "Όχι"
 
-#: templates/generic_form_layout.html:90
+#: templates/generic_form_layout.html:92
 #: templates/generic_form_subtemplate.html:71
 #: templates/generic_form_subtemplate_fs.html:83
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: templates/generic_form_layout.html:90
+#: templates/generic_form_layout.html:92
 #: templates/generic_form_subtemplate.html:71
 #: templates/generic_form_subtemplate_fs.html:83
 msgid "Submit"
