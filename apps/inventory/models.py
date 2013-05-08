@@ -76,6 +76,7 @@ class Inventory(models.Model):
                 blank=True, null=True)
 
     class Meta:
+        ordering = ('-date_act',)
         verbose_name = _(u'inventory')
         verbose_name_plural = _(u'inventories')
         permissions = ( ('validate_inventory', 'Can validate an inventory'), )
