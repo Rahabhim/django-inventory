@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012.
+# P. Christeas <xrg@linux.gr>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-01-16 16:18+0200\n"
+"PO-Revision-Date: 2013-05-08 14:33+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -79,7 +79,7 @@ msgid "%(title)s"
 msgstr "%(title)s"
 
 #: templates/bloated_list_subtemplate.html:21
-#, fuzzy, python-format
+#, python-format
 msgid "%(title)s (%(start)s - %(end)s out of %(total)s)"
 msgstr "%(title)s (%(start)s - %(end)s από %(total)s)"
 

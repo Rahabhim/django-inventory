@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-05-08 12:44+0300\n"
+"PO-Revision-Date: 2013-05-08 14:25+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -122,9 +122,8 @@ msgid "receive entire order"
 msgstr "Διαδικασία παραλαβής"
 
 #: __init__.py:61
-#, fuzzy
 msgid "reject order"
-msgstr "διαγραφή εντολής"
+msgstr "απόρριψη εντολής"
 
 #: __init__.py:68
 msgid "close item"
@@ -201,7 +200,7 @@ msgstr "φόρμες τροποποίησης"
 
 #: __init__.py:187
 msgid "pending repairs"
-msgstr "Εκκρεμείς φόρμες τροποποίησης"
+msgstr "Εκκρεμείς τροποποιήσεις εξοπλισμού"
 
 #: __init__.py:191
 msgid "validate repair"
@@ -306,9 +305,8 @@ msgid "Items"
 msgstr "Εξοπλισμός"
 
 #: forms.py:164 forms.py:182 models.py:727
-#, fuzzy
 msgid "source validated by"
-msgstr "επικύρωση από"
+msgstr "επικύρωση προέλευσης από"
 
 #: forms.py:172
 msgid ""
@@ -484,9 +482,8 @@ msgid "Purchase Order: %s"
 msgstr "Παραλαβή: %s"
 
 #: models.py:427 models.py:437
-#, fuzzy
 msgid "Cannot add items to this Purchase Order"
-msgstr "μετακινήσεις για αυτή την παραλαβή"
+msgstr "Δεν μπορούν να προστεθούν γραμμές σε αυτή την εντολή παραλαβής"
 
 #: models.py:429 models.py:439 models.py:564 models.py:572 models.py:592
 #: models.py:931 models.py:946
@@ -502,6 +499,8 @@ msgstr "Το προϊόν %s δεν ανήκει στη μετακίνηση!"
 #: models.py:455
 msgid "Cannot reject a Purchase Order that contains any moves in done state!"
 msgstr ""
+"Μία εντολή παραλαβής που περιέχει ολοκληρωμένες μετακινήσεις δεν μπορεί να "
+"απορριφθεί!"
 
 #: models.py:467 models.py:468 models.py:962 urls.py:162
 msgid "purchase order item status"
@@ -561,6 +560,8 @@ msgstr "φόρμα τροποποίησης"
 #, python-format
 msgid "Cannot reject a Purchase Order that contains any moves in %s state!"
 msgstr ""
+"Μία εντολή παραλαβής που περιέχει μετακινήσεις σε κατάσταση \"%s\" δεν μπορεί "
+"να απορριφθεί!"
 
 #: models.py:720
 msgid "date performed"
@@ -575,9 +576,8 @@ msgid "date validated"
 msgstr "ημερομηνία επικύρωσης"
 
 #: models.py:726
-#, fuzzy
 msgid "date source validated"
-msgstr "ημερομηνία επικύρωσης"
+msgstr "ημερομηνία επικύρωσης προέλευσης"
 
 #: models.py:729
 msgid "reference"
@@ -695,21 +695,24 @@ msgid ""
 "location. \n"
 "Such an item is only allowed in %(allow_tmpl)s locations"
 msgstr ""
+"Εξοπλισμός από την κατηγορία %(category)s δεν μπορεί να μετακινηθεί προς την "
+"τοποθεσία %(template)s.\n"
+"Τέτοιος εξοπλισμός επιτρέπεται μόνο στην τοποθεσία: %(allow_tmpl)s"
 
 #: models.py:812
 msgid "generic"
 msgstr "γενικό"
 
 #: models.py:854
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Cannot reject movement %(move)s (id: %(mid)s) because it is not in open state"
 msgstr ""
-"Δεν γίνεται να επικυρωθεί η κίνηση %(move)s (id: %(mid)s) γιατί δεν είναι "
+"Δεν γίνεται να απορριφθεί η κίνηση %(move)s (id: %(mid)s) γιατί δεν είναι "
 "πρόχειρη."
 
 #: models.py:883
-#, fuzzy, python-format
+#, python-format
 msgid "Move from %(src)s to %(dest)s %(name)s"
 msgstr "%(name)s από %(src)s προς %(dest)s"
 
@@ -720,7 +723,7 @@ msgstr "Μετακίνηση: %s"
 
 #: models.py:926 models.py:941
 msgid "Cannot modify items of this move"
-msgstr ""
+msgstr "Δεν επιτρέπονται αλλαγές σε αυτή τη μετακίνηση"
 
 #: models.py:929 models.py:944
 msgid "Cannot modify items of a validated move"
@@ -922,9 +925,8 @@ msgid "The purchase order has been opened successfully."
 msgstr "Η εντολή παραλαβής άνοιξε με επιτυχία."
 
 #: views.py:358
-#, fuzzy
 msgid "You must select a location!"
-msgstr "εξοπλισμός στην τοποθεσία"
+msgstr "Πρέπει να επιλέξετε τοποθεσία!"
 
 #: views.py:395
 msgid "Purchase order has been confirmed"
@@ -960,9 +962,8 @@ msgid "destination"
 msgstr "προορισμός"
 
 #: views.py:514
-#, fuzzy
 msgid "The purchase order has been marked as rejected"
-msgstr "Η εντολή αγοράς έκλεισε με επιτυχία."
+msgstr "Η εντολή παραλαβής απορρίφθηκε"
 
 #: views.py:528
 #, python-format
@@ -1007,12 +1008,16 @@ msgid ""
 "Movement has been validated by you, but is still pending validation from "
 "source department"
 msgstr ""
+"Η μετακίνηση έχει επικυρωθεί από εσάς, αλλά εκκρεμεί και επικύρωση από την "
+"μονάδα προέλευσης."
 
 #: views.py:632
 msgid ""
 "You have approved the move, and now it is pending validation from the "
 "destination department."
 msgstr ""
+"Έχετε επικυρώσει τη μετακίνηση, και τώρα εκκρεμεί επικύρωση και από τη μονάδα "
+"προορισμού."
 
 #: views.py:640
 #, python-format
@@ -1024,24 +1029,22 @@ msgid "Unexpected movement type, you do not have permission to validate"
 msgstr "Δεν έχετε το δικαίωμα να επικυρώσετε μετακίνηση αυτού του τύπου."
 
 #: views.py:667 views.py:680
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have the permission to reject an incoming movement to %s"
-msgstr "Δεν έχετε δικαίωμα να επικυρώσετε εισερχόμενη κίνηση στο %s"
+msgstr "Δεν έχετε δικαίωμα να απορρίψετε εισερχόμενη κίνηση στο %s"
 
 #: views.py:669 views.py:678 views.py:687 views.py:693
-#, fuzzy
 msgid "The movement has been rejected."
-msgstr "Η κίνηση επιβεβαιώθηκε"
+msgstr "Η κίνηση ακυρώθηκε"
 
 #: views.py:685
-#, fuzzy, python-format
+#, python-format
 msgid "You do not have the permission to reject an outgoing movement from %s"
-msgstr "Δεν έχετε δικαίωμα να επικυρώσετε εξερχόμενη κίνηση από το %s"
+msgstr "Δεν έχετε δικαίωμα να απορρίψετε εξερχόμενη κίνηση από το %s"
 
 #: views.py:689
-#, fuzzy
 msgid "Unexpected movement type, you do not have permission to reject"
-msgstr "Δεν έχετε το δικαίωμα να επικυρώσετε μετακίνηση αυτού του τύπου."
+msgstr "Δεν έχετε το δικαίωμα να απορρίψετε μετακίνηση αυτού του τύπου."
 
 #: views.py:709
 msgid "Repair of asset"
@@ -1204,7 +1207,6 @@ msgid "No permission to save data"
 msgstr "Δεν επιτρέπεται η αποθήκευση"
 
 #: templates/destroy_form.html:10 templates/lose_form.html:9
-#, fuzzy
 msgid ""
 "\n"
 "        <div>Please fill in the details of the incident</div>\n"
@@ -1212,6 +1214,7 @@ msgid ""
 "div>\n"
 "        "
 msgstr ""
+"\n"
 "       <div>Παρακαλούμε συμπληρώστε τις πληροφορίες του εξοπλισμού που "
 "αφορούν το συμβάν.</div>\n"
 "       <div>Στη συνέχεια επιλέξτε Επιλογή Εξοπλισμού για να βρείτε το "
@@ -1229,16 +1232,17 @@ msgid "Select Items"
 msgstr "Επιλογή Εξοπλισμού"
 
 #: templates/po_reject_ask.html:3 templates/po_reject_ask.html.py:14
-#, fuzzy
 msgid "Confirm reject of purchase order"
-msgstr "Λίστα από εντολές αγοράς"
+msgstr "Ερώτηση απόρριψης της εντολής αγοράς"
 
 #: templates/po_reject_ask.html:23
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Are you sure you wish to reject purchase order %(user_id)s for "
 "%(department)s?"
-msgstr "Θέλετε σίγουρα να κλείσετε την εντολή αγοράς: %s?"
+msgstr ""
+"Θέλετε σίγουρα να απορρίψετε την εντολή παραλαβής του %(user_id)s για το %"
+"(department)s ;"
 
 #: templates/po_reject_ask.html:29
 msgid "Yes"
@@ -1390,17 +1394,18 @@ msgid "Finish"
 msgstr "Τέλος"
 
 #: templates/po_wizard_step5_locations.html:6
-#, fuzzy
 msgid "These items will be received standalone"
-msgstr "παραληφθέντα και υπολογισμένα αντικείμενα"
+msgstr " "
 
 #: templates/po_wizard_step5_locations.html:11
 msgid "Please select the location where these items will be received into"
 msgstr ""
+"Παρακαλώ επιλέξτε την τοποθεσία που θα παραλάβει τον εξοπλισμό που μόλις "
+"προσθέσατε."
 
 #: templates/po_wizard_step5_locations.html:20
 msgid "These locations will automatically receive the displayed items"
-msgstr ""
+msgstr "Ορισμένες τοποθεσίες θα λάβουν αυτόματα τον εξοπλισμό, όπως παρακάτω:"
 
 #: templates/po_wizard_treeitems.html:7
 msgid "Actions"
@@ -1428,7 +1433,7 @@ msgstr "Ημερομηνία τροποποίησης:"
 
 #: templates/repair_item.html:255
 msgid "You have to enter a date in DD/MM/YYY format"
-msgstr ""
+msgstr "Η ημερομηνία πρέπει να έχει τη μορφή: 19/03/2004"
 
 #: templates/repair_item.html:259
 msgid "User ID:"

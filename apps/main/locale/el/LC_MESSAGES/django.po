@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-03-27 09:02+0200\n"
+"PO-Revision-Date: 2013-05-08 13:19+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -39,6 +39,13 @@ msgid ""
 "\">UoA</a><br />\n"
 "    "
 msgstr ""
+" Σύστημα Κτηματολογίου βασισμένο στο Django <br /><br />\n"
+"        Το έργο αυτό βασίζεται στη δουλειά του: \n"
+"        <a href=\"http://www.github.com/rosarior/django-inventory/\">Roberto "
+"Rosario, Copyright &copy; 2007</a><br />\n"
+"        Η παρούσα έκδοση αναπτύχθηκε από το <a href=\"http://www.uoa.gr"
+"\">ΕΚΠΑ</a> στα πλαίσια του έργου ΣΤΗΡΙΖΩ<br />\n"
+"    "
 
 #: templates/about.html:26
 msgid "Go"
@@ -84,13 +91,15 @@ msgstr "Άλλες διαθέσιμες ενέργειες"
 
 #: templates/base.html:116
 msgid "Based on Django-inventory"
-msgstr ""
+msgstr "Βασισμένο στο Django-inventory"
 
 #: templates/home.html:102
 msgid ""
 "Welcome to the Django Inventory application, where you can keep track of "
 "your equipment."
 msgstr ""
+"Καλωσήλθατε στην Υπηρεσία αποτύπωσης υπολογιστικού και δικτυακού Εξοπλισμού "
+"Εκπαιδευτικών και Διοικητικών Μονάδων του Υπουργείου Παιδείας."
 
 #: templates/home.html:107
 msgid "Select department and role:"
@@ -98,7 +107,7 @@ msgstr "Επιλέξτε μονάδα και ρόλο:"
 
 #: templates/home.html:111
 msgid "Updating, please wait"
-msgstr ""
+msgstr "Παρακαλώ περιμένετε"
 
 #: templates/home.html:130
 msgid "Available actions"
@@ -118,15 +127,15 @@ msgstr ""
 
 #: templates/page.rml:22
 msgid "Printed at:"
-msgstr ""
+msgstr "Εκτυπωμένο στίς:"
 
 #: templates/page.rml:22
 msgid " - page:"
-msgstr ""
+msgstr " - σελίδα:"
 
 #: templates/session_carts.html:5 templates/session_carts.html.py:9
 msgid "Actions you are editing"
-msgstr ""
+msgstr "Κινήσεις που επεξεργάζεστε"
 
 #~ msgid "A Django based inventory and asset management system"
 #~ msgstr "Ένα σύστημα κτηματολογίου και διαχείρισης παγίων, σε Django."

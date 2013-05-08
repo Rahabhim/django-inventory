@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-02-26 01:41+0200\n"
+"PO-Revision-Date: 2013-05-08 13:03+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -171,7 +171,7 @@ msgstr "Εικόνα"
 
 #: models.py:20
 msgid "Chained location"
-msgstr ""
+msgstr "Συνδεδεμένη Τοποθεσία"
 
 #: models.py:31 urls.py:102 urls.py:108 urls.py:112 urls.py:121
 msgid "item category"
