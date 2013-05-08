@@ -48,8 +48,8 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
     supplier_name_or_vat = forms.ChoiceField(label=_('Find by'), widget=forms.widgets.RadioSelect,
             initial='name',
             choices=[('vat', _('VAT (exact)')), ('name', _('Company Name'))], )
-    supplier_name = AutoCompleteSelectField('supplier_name', label=_("Company Name"), required=False)
-    supplier_vat = AutoCompleteSelectField('supplier_vat', label=_("VAT number"), required=False)
+    supplier_name = AutoCompleteSelectField('supplier_name', label=_("Company Name"), required=False,  show_help_text=False)
+    supplier_vat = AutoCompleteSelectField('supplier_vat', label=_("VAT number"), required=False,  show_help_text=False)
 
     supplier = forms.ModelChoiceField(queryset=Supplier.objects.filter(active=True), widget=DummySupplierWidget)
 
