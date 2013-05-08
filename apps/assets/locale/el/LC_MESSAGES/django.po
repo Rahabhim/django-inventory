@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-01-23 14:04+0200\n"
+"PO-Revision-Date: 2013-05-08 12:43+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -51,11 +51,11 @@ msgstr "προϊόν"
 
 #: __init__.py:21
 msgid "trace"
-msgstr ""
+msgstr "Ιστορικό μεταφορών"
 
 #: __init__.py:22
 msgid "printout"
-msgstr ""
+msgstr "Εκτύπωση"
 
 #: __init__.py:25
 msgid "list all groups"
@@ -70,9 +70,8 @@ msgid "assets"
 msgstr "εξοπλισμός"
 
 #: __init__.py:55 __init__.py:58
-#, fuzzy
 msgid "print assets list"
-msgstr "εξοπλισμός μονάδας: %s"
+msgstr "εκτύπωση εξοπλισμού μονάδας"
 
 #: forms.py:50
 msgid "Contained Item"
@@ -90,23 +89,23 @@ msgstr "Είδος"
 
 #: forms.py:73 templates/asset_details.rml.tmpl:87
 msgid "Date"
-msgstr ""
+msgstr "Ημερομηνία"
 
 #: forms.py:74
 msgid "Reference"
-msgstr ""
+msgstr "Αρ. πρωτοκόλλου"
 
 #: forms.py:75 templates/asset_details.rml.tmpl:89
 msgid "From"
-msgstr ""
+msgstr "Από"
 
 #: forms.py:76 templates/asset_details.rml.tmpl:90
 msgid "To"
-msgstr ""
+msgstr "Προς"
 
 #: forms.py:78
 msgid "Type"
-msgstr ""
+msgstr "Tύπος"
 
 #: models.py:16
 msgid "name"
@@ -215,12 +214,11 @@ msgstr "λίστα εξοπλισμού"
 
 #: urls.py:38
 msgid "Movements"
-msgstr ""
+msgstr "Μετακινήσεις"
 
 #: urls.py:39
-#, fuzzy
 msgid "asset trace"
-msgstr "καταστάσεις εξοπλισμού"
+msgstr "Ιστορικό Εξοπλισμού"
 
 #: urls.py:47 views.py:135 views.py:177 templates/asset_details.rml.tmpl:48
 msgid "Location"
@@ -343,110 +341,102 @@ msgid ""
 "Details of asset %(object.property_number)s "
 "%(object.item_template.description)s"
 msgstr ""
+"Λεπτομέρειες εξοπλισμού %(object.property_number)s "
+"%(object.item_template.description)s"
 
 #: templates/asset_details.rml.tmpl:43
-#, fuzzy
 msgid "Asset identity"
-msgstr "Λεπτομέρειες εξοπλισμού"
+msgstr "Ταυτότητα εξοπλισμού"
 
 #: templates/asset_details.rml.tmpl:46
-#, fuzzy
 msgid "Asset number"
-msgstr "αριθμός παγίου"
+msgstr "Αριθμός κτηματολογίου"
 
 #: templates/asset_details.rml.tmpl:48
-#, fuzzy
 msgid "Contained in a bundle"
-msgstr "Περιεχόμενο αντικείμενο"
+msgstr "Περιέχεται σε σύνθεση"
 
 #: templates/asset_details.rml.tmpl:53 templates/asset_details.rml.tmpl:58
-#, fuzzy
 msgid "Product"
-msgstr "προϊόν"
+msgstr "Προϊόν"
 
 #: templates/asset_details.rml.tmpl:59
-#, fuzzy
 msgid "Part number"
-msgstr "αριθμός παγίου"
+msgstr "Κωδικός εξαρτήματος"
 
 #: templates/asset_details.rml.tmpl:64
-#, fuzzy
 msgid "Bundle contents"
-msgstr "περιεχόμενα εξαρτήματα"
+msgstr "Περιεχόμενα εξαρτήματα"
 
 #: templates/asset_details.rml.tmpl:67
 msgid "Part"
-msgstr ""
+msgstr "Εξάρτημα"
 
 #: templates/asset_details.rml.tmpl:84
-#, fuzzy
 msgid "Asset trace"
-msgstr "Λεπτομέρειες εξοπλισμού"
+msgstr "Ιστορικό Εξοπλισμού"
 
 #: templates/asset_details.rml.tmpl:88
 msgid "User ID"
-msgstr ""
+msgstr "Αρ. πρωτοκόλλου:"
 
 #: templates/asset_list.rml.tmpl:29
-#, fuzzy
 msgid "Department assets list:"
-msgstr "εξοπλισμός μονάδας: %s"
+msgstr "Εξοπλισμός μονάδας:"
 
 #: templates/asset_list.rml.tmpl:30
 msgid "At"
-msgstr ""
+msgstr "Στις"
 
 #: templates/asset_list.rml.tmpl:37
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: templates/asset_list.rml.tmpl:38
 msgid "Item"
-msgstr ""
+msgstr "Εξοπλισμός"
 
 #: templates/asset_list.rml.tmpl:40
-#, fuzzy
 msgid "State"
-msgstr "κατάσταση"
+msgstr "Κατάσταση"
 
 #: templates/asset_list.rml.tmpl:41
-#, fuzzy
 msgid "Notes"
-msgstr "σημειώσεις"
+msgstr "Σημειώσεις"
 
 #: templates/asset_trace.html:5
 msgid "Asset Trace"
-msgstr ""
+msgstr "Ιστορικό Εξοπλισμού"
 
 #: templates/assets_list.html:7
 #, python-format
 msgid "%(title)s"
-msgstr ""
+msgstr "%(title)s"
 
 #: templates/assets_list.html:242
 msgid "Select"
-msgstr ""
+msgstr "Επιλογή"
 
 #: templates/assets_list.html:276
 msgid "First page"
-msgstr ""
+msgstr "Πρώτη σελίδα"
 
 #: templates/assets_list.html:277
 msgid "Previous page"
-msgstr ""
+msgstr "Προηγούμενη σελίδα"
 
 #: templates/assets_list.html:283
 msgid "Next page"
-msgstr ""
+msgstr "Επόμενη σελίδα"
 
 #: templates/assets_list.html:284
 msgid "Last page"
-msgstr ""
+msgstr "Τελευταία σελίδα"
 
 #: templates/assets_list.html:322
-#, fuzzy, python-format
+#, python-format
 msgid "There are no %(title)s"
-msgstr "Δεν έχουν οριστεί καταστάσεις"
+msgstr "Δεν υπάρχουν %(title)s"
 
 #: templates/item_group_form.html:22
 msgid "The location can only be changed through movements of this asset"

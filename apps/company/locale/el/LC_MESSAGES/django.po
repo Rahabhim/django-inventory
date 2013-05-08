@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-01-23 14:04+0200\n"
+"PO-Revision-Date: 2013-05-08 12:43+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -26,9 +26,8 @@ msgid "assets"
 msgstr "εξοπλισμός"
 
 #: __init__.py:16
-#, fuzzy
 msgid "edit department"
-msgstr "μονάδα"
+msgstr "διόρθωση μονάδας"
 
 #: __init__.py:28 models.py:49
 msgid "departments"
@@ -59,18 +58,16 @@ msgid "name"
 msgstr "όνομα"
 
 #: models.py:29 urls.py:17 urls.py:24
-#, fuzzy
 msgid "code"
-msgstr "ΥπΔΒΜΘ id"
+msgstr "Κωδ. Μονάδας"
 
 #: models.py:30 urls.py:25
-#, fuzzy
 msgid "code 2"
-msgstr "κωδικός 2"
+msgstr "κωδικός ΠΣΔ"
 
 #: models.py:31
 msgid "deprecated"
-msgstr ""
+msgstr "Σε αναστολή"
 
 #: models.py:32
 msgid "Department Type"
@@ -114,7 +111,7 @@ msgstr "μονάδα"
 
 #: models.py:60
 msgid "The department cannot have itself as a parent"
-msgstr ""
+msgstr "Η μονάδα δεν μπορεί να έχει τον εαυτό της ως γονική"
 
 #: models.py:72
 #, python-format
@@ -131,26 +128,21 @@ msgid "List of %(title)s"
 msgstr "Λίστα %(title)s"
 
 #: templates/department_list.html:23
-#, fuzzy, python-format
+#, python-format
 msgid "List of %(title)s (%(start)s - %(end)s out of %(total)s)"
-msgstr ""
-"#-#-#-#-#  .merge_file_mMeAto  #-#-#-#-#\n"
-"#-#-#-#-#  .merge_file_z3XvAv  #-#-#-#-#\n"
-"Λίστα από %(title)s (%(start)s - %(end)s out of %(total)s)"
+msgstr "Λίστα από %(title)s (%(start)s - %(end)s από %(total)s)"
 
 #: templates/department_list.html:25
-#, fuzzy, python-format
+#, python-format
 msgid "List of %(title)s (%(total)s)"
-msgstr ""
-"#-#-#-#-#  .merge_file_mMeAto  #-#-#-#-#\n"
-"#-#-#-#-#  .merge_file_z3XvAv  #-#-#-#-#\n"
-"Λίστα από %(title)s (%(total)s)"
+msgstr "Λίστα από %(title)s (%(total)s)"
 
 #: templates/department_list.html:38
 msgid "Identifier"
 msgstr "Όνομα"
 
 #: templates/department_list.html:69
-#, fuzzy, python-format
+#, python-format
 msgid "There are no %(title)s"
 msgstr "Δεν υπάρχουν %(title)s"
+

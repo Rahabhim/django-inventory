@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-01-23 14:05+0200\n"
+"PO-Revision-Date: 2013-05-08 12:44+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -110,9 +110,8 @@ msgid "department"
 msgstr "μονάδα"
 
 #: models.py:70
-#, fuzzy
 msgid "From template"
-msgstr "πρότυπο τοποθεσίας"
+msgstr "Από πρότυπο"
 
 #: models.py:72
 msgid "location type"
@@ -173,3 +172,4 @@ msgstr "Συμπλήρωση αριθμών"
 #: models.py:135
 msgid "sequences"
 msgstr "Ακολουθίες"
+

@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-03-14 17:31+0200\n"
+"PO-Revision-Date: 2013-05-08 12:42+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -50,13 +50,12 @@ msgid "compare"
 msgstr "Σύγκριση"
 
 #: __init__.py:24
-#, fuzzy
 msgid "validate"
-msgstr "επικύρωση από"
+msgstr "επικύρωση"
 
 #: __init__.py:28
 msgid "reject"
-msgstr ""
+msgstr "Απόρριψη"
 
 #: __init__.py:32
 msgid "template"
@@ -79,7 +78,6 @@ msgid "created by"
 msgstr "δημιουργήθηκε από"
 
 #: forms.py:25
-#, fuzzy
 msgid "Location"
 msgstr "τοποθεσία"
 
@@ -104,9 +102,8 @@ msgid "description"
 msgstr "περιγραφή"
 
 #: models.py:64
-#, fuzzy
 msgid "inventory number"
-msgstr "Απογραφές"
+msgstr "Αρ. πρωτοκόλλου"
 
 #: models.py:65 urls.py:23 urls.py:30 urls.py:37
 msgid "location"
@@ -118,19 +115,19 @@ msgstr "ημερομηνία επικύρωσης"
 
 #: models.py:69
 msgid "Draft"
-msgstr ""
+msgstr "Μη επικυρωμένη"
 
 #: models.py:70
 msgid "Pending"
-msgstr ""
+msgstr "Εκκρεμής"
 
 #: models.py:71
 msgid "Done"
-msgstr ""
+msgstr "Επικυρωμένη"
 
 #: models.py:72
 msgid "Rejected"
-msgstr ""
+msgstr "Ακυρωμένη"
 
 #: models.py:75
 msgid "Signed file"
@@ -144,7 +141,7 @@ msgstr "απογραφή"
 #: models.py:112
 #, python-format
 msgid "%(name)s on %(date)s"
-msgstr ""
+msgstr "%(name)s στις %(date)s"
 
 #: models.py:119
 #, python-format
@@ -172,7 +169,7 @@ msgstr "Ο εξοπλισμός %s δεν είναι στην απογραφή!"
 #: models.py:226
 #, python-format
 msgid "Cannot validate this inventory, it is: %s"
-msgstr ""
+msgstr "Η απογραφή δεν μπορεί να επικυρωθεί γιατί είναι %s"
 
 #: models.py:228
 msgid "Inventory already validated"
@@ -182,10 +179,15 @@ msgstr "Η απογραφή έχει επικυρωθεί ήδη"
 msgid ""
 "Inventory has pending items that don't match computed state. Cannot close"
 msgstr ""
+"Η απογραφή έχει εκκρεμή εξοπλισμό που δεν ταιριάζει με τις υπολογισμένες "
+"κινήσεις γι' αυτήν "
+"την τοποθεσία. Δεν μπορεί να επικυρωθεί."
 
 #: models.py:238
 msgid "The active date cannot be after the validation date"
 msgstr ""
+"Η ημερομηνία εκτέλεσης δεν μπορεί να είναι μεγαλύτερη από την ημερομηνία "
+"επικύρωσης"
 
 #: models.py:243
 #, python-format
@@ -199,7 +201,7 @@ msgstr ""
 #: models.py:259 views.py:158
 #, python-format
 msgid "This inventory is %s, cannot reject."
-msgstr ""
+msgstr "Η απογραφή είναι %s, δεν μπορεί να ακυρωθεί."
 
 #: models.py:266
 msgid "asset"
@@ -218,38 +220,32 @@ msgid "notes"
 msgstr "σημειώσεις"
 
 #: models.py:273 urls.py:64
-#, fuzzy
 msgid "inventory item"
-msgstr "Απογραφές"
+msgstr "Εξοπλισμός"
 
 #: models.py:274
-#, fuzzy
 msgid "inventory items"
-msgstr "Απογραφές"
+msgstr "Εξοπλισμός"
 
 #: urls.py:24 urls.py:31 urls.py:38
-#, fuzzy
 msgid "state"
 msgstr "κατάσταση"
 
 #: urls.py:36
-#, fuzzy
 msgid "inventories pending validation"
-msgstr "Απογραφές"
+msgstr "Απογραφές προς επικύρωση"
 
 #: urls.py:42
-#, fuzzy
 msgid "open new inventory"
-msgstr "Νέα Απογραφή"
+msgstr "Δημιουργία νέας Απογραφής"
 
 #: urls.py:60
 msgid "items"
 msgstr "εξοπλισμός"
 
 #: views.py:44
-#, fuzzy
 msgid "current balances for inventory"
-msgstr "Νέα Απογραφή"
+msgstr "Απογεγραμμένος εξοπλισμός"
 
 #: views.py:62
 msgid "purchase orders from supplier"
@@ -257,7 +253,7 @@ msgstr "εντολές προμήθειας από προμηθευτή"
 
 #: views.py:107
 msgid "Your active role does not have permission to validate an inventory"
-msgstr ""
+msgstr "Ο ενεργός σας ρόλος δεν έχει δικαίωμα επικύρωσης της απογραφής"
 
 #: views.py:110 views.py:167
 msgid "You are not currently signed at the same Department as this Inventory"
@@ -277,23 +273,22 @@ msgstr "Μη επιτρεπτή ενέργεια: %s"
 #: views.py:126
 #, python-format
 msgid "Incorrect role or department to validate inventory: %s"
-msgstr ""
+msgstr "Λάθος ρόλος ή Μονάδα για την επικύρωση της απογραφής: %s"
 
 #: views.py:154
 #, python-format
 msgid "Are you sure you want to reject inventory: %s?"
-msgstr ""
+msgstr "Θέλετε σίγουρα να ακυρώσετε την απογραφή: %s;"
 
 #: views.py:164
 msgid "Your active role does not have permission to reject an inventory"
-msgstr ""
+msgstr "Ο ενεργός σας ρόλος δεν έχει δικαίωμα απόρριψης της απογραφής"
 
 #: views.py:174
-#, fuzzy
 msgid "The inventory has been marked as rejected, it will no longer be used."
 msgstr ""
-"Η απογραφή επικυρώθηκε, και όλες οι κινήσεις της τοποθεσίας "
-"οριστικοποιήθηκαν."
+"Η απογραφή ακυρώθηκε, θα μείνει στη βάση αλλά δεν θα υπολογίζεται σε καμία "
+"ενέργεια."
 
 #: templates/inventory_compare_have_more.html:6
 #, python-format
@@ -308,6 +303,15 @@ msgid ""
 "page again</a> .\n"
 "    "
 msgstr ""
+"Σύμφωνα με τους υπολογισμούς, ο απογεγραμμένος εξοπλισμός δεν συμφωνεί "
+"με τις κινήσεις που έχουν γίνει γι' αυτή την τοποθεσία. Θα χρειαστεί να "
+"κάνετε "
+"διορθωτικές κινήσεις για τον εξοπλισμό, ή να επαναλάβετε την απογραφή.<br/>\n"
+"    \n"
+"    Μπορείτε να ξαναδείτε τις διαφορές από \n"
+"    <a href=\"%(url_for('inventory_items_compare'))s?pending_only=1\">αυτή τη "
+"σελίδα</a> .\n"
+"    "
 
 #: templates/inventory_compare_success.html:8
 #, python-format
@@ -319,6 +323,14 @@ msgid ""
 "    then digitally sign it and proceed to <a href=\"%(validate_url)s"
 "\">validate it</a>"
 msgstr ""
+"Η απογραφή αυτή συμφωνεί με τις υπολογισμένες ποσότητες γι' αυτή την "
+"τοποθεσία<br/>\n"
+"    Άρα, τώρα μπορείτε πρώτα να <a href=\"%(printout_url)s\" target=\"_new\" "
+"title="
+"\"Inventory PDF\">εκτυπώσετε το δελτίο απογραφής</a>,\n"
+"    και ύστερα να υπογράψετε ψηφιακά το αρχείο και να δηλώσετε στο σύστημα "
+"την <a href=\"%(validate_url)s"
+"\">επικύρωση της απογραφής</a>."
 
 #: templates/inventory_items_compare.html:9
 msgid "At location"
@@ -331,7 +343,7 @@ msgstr "Στην απογραφή"
 
 #: templates/inventory_items_compare.html:19
 msgid "not accounted"
-msgstr ""
+msgstr "δεν προκύπτει από παραλαβή"
 
 #: templates/inventory_items_compare.html:22
 msgid "missing!"
@@ -340,71 +352,64 @@ msgstr "Ελλειπής!"
 #: templates/inventory_list.rml.tmpl:3
 #, python-format
 msgid "Inventory %(object.name)s of %(object.date_act)s"
-msgstr ""
+msgstr "Απογραφή %(object.name)s στις %(object.date_act)s"
 
 #: templates/inventory_validate_ask.html:3
 msgid "Confirm inventory validation "
-msgstr ""
+msgstr "Επιβεβαίωση - επικύρωση απογραφής"
 
 #: templates/inventory_validate_ask.html:11
-#, fuzzy
 msgid "Inventory validation"
-msgstr "Απογραφές"
+msgstr "Επικύρωση απογραφής"
 
 #: templates/inventory_validate_ask.html:14
 #, python-format
 msgid "Are you sure you wish to validate: %(object)s?"
-msgstr ""
+msgstr "Θέλετε σίγουρα να επικυρώσετε την απογραφή: %(object)s;"
 
 #: templates/inventory_validate_ask.html:18
-#, fuzzy
 msgid "Location:"
-msgstr "τοποθεσία"
+msgstr "Τοποθεσία:"
 
 #: templates/inventory_validate_ask.html:25
-#, fuzzy
 msgid "Date performed:"
-msgstr "ημερομηνία εκτέλεσης"
+msgstr "Ημερομηνία εκτέλεσης:"
 
 #: templates/inventory_validate_ask.html:39
 msgid "Please also upload the signed PDF of the inventory "
-msgstr ""
+msgstr "Παρακαλώ ανεβάστε επίσης το υπογεγραμμένο PDF του δελτίου απογραφής"
 
 #: templates/inventory_validate_ask.html:48
 msgid "Abort"
 msgstr "Εγκατάλειψη"
 
 #: templates/inventory_validate_ask.html:51
-#, fuzzy
 msgid "Validate"
-msgstr "επικύρωση από"
+msgstr "Επικύρωση"
 
 #: templates/report-items_per_person.html:14
 msgid "User assets report"
-msgstr ""
+msgstr "Αναφορά εξοπλισμού χρήστη"
 
 #: templates/report-items_per_person.html:21
-#, fuzzy
 msgid "ASSET NUMBER"
-msgstr "αριθμός παγίου"
+msgstr "ΑΡΙΘΜΟΣ ΠΑΓΙΟΥ"
 
 #: templates/report-items_per_person.html:22
 msgid "DESCRIPTION"
 msgstr "ΠΕΡΙΓΡΑΦΗ"
 
 #: templates/report-items_per_person.html:23
-#, fuzzy
 msgid "LOCATION"
-msgstr "τοποθεσία"
+msgstr "ΤΟΠΟΘΕΣΙΑ"
 
 #: templates/report-items_per_person.html:24
 msgid "ASSIGNED TO"
-msgstr ""
+msgstr "ΑΝΑΤΕΘΗΚΕ ΣΕ"
 
 #: templates/report-items_per_person.html:25
-#, fuzzy
 msgid "NOTES"
-msgstr "σημειώσεις"
+msgstr "ΣΗΜΕΙΩΣΕΙΣ"
 
 #~ msgid "name"
 #~ msgstr "όνομα"
