@@ -113,6 +113,12 @@ class Inventory(models.Model):
         else:
             return self.date_act.strftime(date_fmt)
 
+    def clean(self):
+        super(Inventory,self).clean()
+        if self.state in ('draft', 'pending'):
+            if Inventory.objects.filter(location=self.location, state__in=('draft','pending')).exists():
+                raise ValidationError(_("You cannot open more than one inventory for the same location (%s) !") % self.location)
+
     def get_cart_name(self):
         """ Returns the "shopping-cart" name of this model
         """
