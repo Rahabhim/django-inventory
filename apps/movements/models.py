@@ -152,6 +152,7 @@ class PurchaseOrder(models.Model):
                 blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
 
     class Meta:
+        ordering = ('-issue_date',)
         verbose_name = _(u'purchase order')
         verbose_name_plural = _(u'purchase orders')
         permissions = ( ('receive_purchaseorder', 'Can receive a purchase order'),
@@ -639,6 +640,7 @@ class RepairOrder(models.Model):
                 blank=True, null=True, related_name='+', on_delete=models.SET_NULL)
 
     class Meta:
+        ordering = ('-issue_date',)
         verbose_name = _(u'repair order')
         verbose_name_plural = _(u'repair orders')
         permissions = ( ('validate_repairorder', 'Can validate a repair order'), )
@@ -746,6 +748,7 @@ class Movement(models.Model):
     repair_order = models.ForeignKey(RepairOrder, blank=True, null=True, related_name='movements', on_delete=models.SET_NULL)
 
     class Meta:
+        ordering = ('date_act', )
         verbose_name = _("movement")
         verbose_name_plural = _("movements")
         permissions = (('validate_movement', 'Can validate a movement'), )

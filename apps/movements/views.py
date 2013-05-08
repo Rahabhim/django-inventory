@@ -571,15 +571,15 @@ class PurchaseOrderListView(GenericBloatedListView):
                     {'name': _('Supplier'), 'attribute': 'supplier', },
                     {'name': _('Department'), 'attribute': 'department' },
                     # not needed: {'name': _('Issue date'), 'attribute': 'issue_date' },
-                    {'name':_(u'state'), 'attribute': 'get_state_display'}]
+                    {'name':_(u'state'), 'attribute': 'get_state_display', 'order_attribute': 'state'}]
 
 class MovementListView(GenericBloatedListView):
     queryset=Movement.objects.by_request
     title =_(u'movements')
     order_by = '-date_act'
     extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
-                    {'name':_(u'state'), 'attribute': 'get_state_display'},
-                    {'name':_(u'type'), 'attribute': 'get_stype_display'}]
+                    {'name':_(u'state'), 'attribute': 'get_state_display', 'order_attribute': 'state'},
+                    {'name':_(u'type'), 'attribute': 'get_stype_display', 'order_attribute': 'stype'}]
 
 def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
@@ -866,7 +866,7 @@ class RepairOrderListView(GenericBloatedListView):
     title = _(u'list of repair orders')
     # prefetch_fields = ('procurement', 'supplier')
     extra_columns = [ {'name': _('Department'), 'attribute': 'department' },
-                    {'name':_(u'State'), 'attribute': 'get_state_display'},
+                    {'name':_(u'State'), 'attribute': 'get_state_display', 'order_attribute': 'state'},
                     ]
 
 class POCartOpenView(CartOpenView):
