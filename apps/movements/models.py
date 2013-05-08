@@ -727,7 +727,7 @@ class Movement(models.Model):
     src_validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_('source validated by'), on_delete=models.PROTECT)
 
     name = models.CharField(max_length=32, blank=True, verbose_name=_(u'reference'))
-    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
+    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))], verbose_name=_("state"))
     stype = models.CharField(max_length=16, choices=[('in', _('Incoming')),('out', _('Outgoing')),
                 ('internal', _('Internal')), ('other', _('Other'))], verbose_name=_('type'))
     origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
