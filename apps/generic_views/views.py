@@ -164,7 +164,10 @@ class GenericBloatedListView(django_gv.ListView):
         ctx_columns = [ {'name': object_model_meta.verbose_name }, ]
         if object_model_meta.ordering:
             # the model ordering will be the one used when clicking the first column
-            ctx_columns[0]['order_attribute'] = object_model_meta.ordering[0]
+            oat = object_model_meta.ordering[0]
+            if oat.startswith('-'):
+                oat = oat[1:]
+            ctx_columns[0]['order_attribute'] = oat
 
         extra_columns = self.extra_columns
         if (not extra_columns) and self.extra_context \
