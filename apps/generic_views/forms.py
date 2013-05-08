@@ -276,12 +276,12 @@ class FilterForm(forms.Form):
                     self.fields[list_filter['name']] = ModelTreeChoiceField( \
                         parent_name= list_filter['tree_by_parent'], \
                         queryset=queryset, label=label, \
-                        empty_label= "(%s)" % unicode(queryset.model._meta.verbose_name),
+                        empty_label= "*",
                         required=False)
                 else:
                     self.fields[list_filter['name']] = forms.ModelChoiceField( \
                         queryset=queryset, label=label, \
-                        empty_label= "(%s)" % unicode(queryset.model._meta.verbose_name),
+                        empty_label= "*",
                         required=False)
             elif 'choices' in list_filter:
                 if isinstance(list_filter['choices'], tuple):
@@ -296,7 +296,7 @@ class FilterForm(forms.Form):
                     choices = mfield.choices
                     assert choices, "Model %s.%s does not have choices" %(amodel.afield)
                     # don't do insert, but copy the list!
-                    choices = [('','(%s)' % unicode(mfield.verbose_name))] + choices
+                    choices = [('','*' )] + choices
                 else:
                     raise TypeError("Invalid type for list_filters.choices: %s" % type(list_filter['choices']))
                 self.fields[list_filter['name']] = forms.ChoiceField(choices=choices, label=label, required=False)
