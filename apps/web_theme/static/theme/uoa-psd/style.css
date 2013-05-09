@@ -687,7 +687,7 @@ form.form table.filter_form button.button {
   margin: 0 auto;
 }
 
-.form div.submit_button button {
+.form div.submit_button button, .form div.submit_button button.button{
   text-align: center;
   background-color: #F0F0F0;
   display: inline-block;
@@ -706,7 +706,7 @@ form.form table.filter_form button.button {
   vertical-align: middle;
   white-space: nowrap;
   word-wrap: normal;
-  padding:5px 20px;
+  padding: 10px;
   margin-right: 10px;
 }
 .form div.submit_button button:hover,
