@@ -47,16 +47,22 @@
 }
 
 .equipment-list tbody tr.bl_group th a {
-    background: url({{ STATIC_URL}}css/images/arrow_right2.png) no-repeat;
     min-height: 18px;
-    background-position: 0px 0px;
-    padding-left: 18px;
+    padding-left: 36px; /* double the indent, for second line */
+    text-indent: -36px;
     display: block;
 }
+.equipment-list tbody tr.bl_group th a span {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    width: 16px; height: 16px;
+    background: url({{ STATIC_URL}}images/arrows-16.png) no-repeat;
+    background-position: -32px 0px;
+}
 
-.equipment-list tbody tr.bl_group th a.expanded {
-    background: url({{ STATIC_URL}}css/images/tabletree-arrow.gif) no-repeat;
-    background-position: 4px 4px;
+.equipment-list tbody tr.bl_group th a.expanded span {
+    background-position: -16px 0px;
 }
 
 .equipment-list tbody tr.bl_group td { /*top -right cells of table*/
@@ -200,6 +206,27 @@ tr.bl_group td.first_col div
     background-position: -22px 0px;
 }
 
+tr.bl_inner_pagination span.parrow {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    width: 16px; height: 16px;
+    background: url({{ STATIC_URL}}images/arrows-16.png) no-repeat;
+    background-position: 0px 0px;
+}
+tr.bl_inner_pagination span.parrow.first {
+    background-position: -32px -16px;
+}
+tr.bl_inner_pagination span.parrow.left {
+    background-position: 0px -16px;
+}
+tr.bl_inner_pagination span.parrow.right {
+    background-position: -16px -16px;
+}
+tr.bl_inner_pagination span.parrow.last {
+    background-position: -48px -16px;
+}
+
     </style>
 {% endblock %}
 
@@ -246,11 +273,13 @@ tr.bl_group td.first_col div
                     {% if gf.superrows %}{% for sr in gf.superrows %}
                         <p>{{ group.group|object_property:sr.attribute }}</p>
                     {% endfor %}{% endif %}
+                    {% spaceless %}
                     {% if forloop.first %}
-                        <a href="{{ group.url }}" class="{% if not group.items %}normal{% else %}expanded{% endif %}">
+                        <a href="{{ group.url }}" class="{% if not group.items %}normal{% else %}expanded{% endif %}"><span>&nbsp;</span>
                     {% endif %}
                     {% if gf.attribute %}{{ group.group|object_property:gf.attribute }}{% else %}{{ group.group }}{% endif %}
-                    {% if forloop.first %}({{group.items_count}}) </a>{% endif %}
+                    {% if forloop.first %}({{group.items_count}})</a>{% endif %}
+                    {% endspaceless %}
                 </th>
             {% endfor %}{% else %}
                 <td colspan="{{ columns|length}}"><a href="{{ group.url }}"> {{ group.group }} ({{group.items_count }}) </a>
@@ -266,17 +295,17 @@ tr.bl_group td.first_col div
                     <td class="first_col"></td>
                     <td colspan="8">
                     {% if sub_offset_prev %}
-                        <a href="?{{sub_getvars}}sub_offset=0" title="{% trans 'First page' %}"><img src="{{ STATIC_URL}}images/double_arrow_left.png" width="16px" height="16px"/></a>
-                        <a href="?{{sub_getvars}}sub_offset={{sub_offset_prev}}" title="{% trans 'Previous page' %}"><img src="{{ STATIC_URL}}images/arrow_left.png" width="16px" height="16px"/></a>
-                    {% else %}<img src="{{ STATIC_URL}}images/double_arrow_left.png" width="16px" height="16px"/>
-                              <img src="{{ STATIC_URL}}images/arrow_left.png" width="16px" height="16px"/>
+                        <a href="?{{sub_getvars}}sub_offset=0" title="{% trans 'First page' %}"><span class="parrow first"></span></a>
+                        <a href="?{{sub_getvars}}sub_offset={{sub_offset_prev}}" title="{% trans 'Previous page' %}"><span class="parrow left"></span></a>
+                    {% else %}<span class="parrow first"></span>
+                              <span class="parrow left"></span>
                     {% endif %}
                     <div>{{ sub_offset }}</div>
                     {% if sub_offset_next %}
-                        <a href="?{{sub_getvars}}sub_offset={{sub_offset_next}}" title="{% trans 'Next page' %}"><img src="{{ STATIC_URL}}images/arrow_right.png" width="16px" height="16px"/></a>
-                        <a href="?{{sub_getvars}}sub_offset={{sub_offset_last}}" title="{% trans 'Last page' %}"><img src="{{ STATIC_URL}}images/double_arrow_right.png" width="16px" height="16px"/></a>
-                    {% else %}<img src="{{ STATIC_URL}}images/arrow_right.png" width="16px" height="16px"/>
-                        <img src="{{ STATIC_URL}}images/double_arrow_right.png" width="16px" height="16px"/>
+                        <a href="?{{sub_getvars}}sub_offset={{sub_offset_next}}" title="{% trans 'Next page' %}"><span class="parrow right"></span></a>
+                        <a href="?{{sub_getvars}}sub_offset={{sub_offset_last}}" title="{% trans 'Last page' %}"><span class="parrow last"></span></a>
+                    {% else %}<span class="parrow right"></span>
+                        <span class="parrow last"></span>
                     {% endif %}
                     </td>
                 </tr>
