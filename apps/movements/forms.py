@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.html import conditional_escape
 from generic_views.forms import DetailForm, InlineModelForm, RModelForm, \
                     ROModelChoiceField, ColumnsDetailWidget, DetailForeignWidget, \
-                    UnAutoCompleteField
+                    DetailPlainForeignWidget, UnAutoCompleteField
 from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
 from inventory.models import Inventory
 
@@ -153,6 +153,11 @@ class SubItemsDetailWidget(ColumnsDetailWidget):
     order_by = 'item_template__category__name'
 
 class MovementForm_view(DetailForm):
+    location_src = forms.ModelChoiceField(queryset=Location.objects.all(),
+                widget=DetailPlainForeignWidget, label=_("Source location"))
+    location_dest = forms.ModelChoiceField(queryset=Location.objects.all(),
+                widget=DetailPlainForeignWidget, label=_("Destination location"))
+
     items = forms.ModelMultipleChoiceField(Item.objects.all(), required=False,
                 widget=SubItemsDetailWidget, label=_("Items"))
 
