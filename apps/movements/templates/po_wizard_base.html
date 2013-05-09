@@ -30,6 +30,9 @@
 {{ wizard.management_form }}
 
 <!-- wizard steps -->
+    <!-- this catches the "Enter" early -->
+    <input type="submit" id="submit_early" style="position: absolute; left: -100%;" />
+
     <table id="wizard_steps_indicator">
     <tr>{% for wkey, wform in wiz_steps %}
         {% if wkey == wizard.steps.current or not wform.step_is_hidden %}
