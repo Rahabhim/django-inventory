@@ -16,6 +16,7 @@ from common.models import Location
 from common.api import role_from_request
 from assets.models import Item
 import logging
+import datetime
 
 
 class UserDetailsWidget(ColumnsDetailWidget):
@@ -246,6 +247,8 @@ class DestroyItemsForm(_outboundMovementForm):
 class LoseItemsForm(_outboundMovementForm):
     """ This form is completed whenever equipment is missing (lost/stolen)
     """
+    date_act = forms.DateField(label=_(u'date of event'), required=True, initial=datetime.date.today,
+                    help_text=_("Format: 23/04/2010"))
     class Meta:
         model = Movement
         fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
