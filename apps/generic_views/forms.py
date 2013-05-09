@@ -114,6 +114,10 @@ class DetailForeignWidget(_ROw_mixin, forms.widgets.Widget):
         else:
             objs = []
 
+        ret = self._render_ret(objs)
+        return mark_safe(u'<span%s>%s</span>' % (flatatt(final_attrs), ret))
+
+    def _render_ret(self, objs):
         ret = ''
         for obj in objs:
             href = None
@@ -128,8 +132,16 @@ class DetailForeignWidget(_ROw_mixin, forms.widgets.Widget):
             ret += conditional_escape(unicode(obj))
             if href is not None:
                 ret += '</a>'
+        return ret
 
-        return mark_safe(u'<span%s>%s</span>' % (flatatt(final_attrs), ret))
+class DetailPlainForeignWidget(DetailForeignWidget):
+    def _render_ret(self, objs):
+        ret = ''
+        for obj in objs:
+            if ret:
+                ret += '<br/>'
+            ret += conditional_escape(unicode(obj))
+        return ret
 
 class DetailForm(forms.ModelForm):
     def __init__(self, extra_fields=None, *args, **kwargs):
