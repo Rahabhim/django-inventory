@@ -413,7 +413,12 @@ msgstr "Ιστορικό Εξοπλισμού"
 msgid "%(title)s"
 msgstr "%(title)s"
 
-#: templates/assets_list.html:242
+#: templates/assets_list.html:245
+#, python-format
+msgid "%(title)s (%(start)s - %(end)s out of %(total)s)"
+msgstr "%(title)s (%(start)s - %(end)s από %(total)s)"
+
+#: templates/assets_list.html:269
 msgid "Select"
 msgstr "Επιλογή"
 
