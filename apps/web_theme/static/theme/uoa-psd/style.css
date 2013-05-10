@@ -758,4 +758,17 @@ form.form table.filter_form button.button:active
   box-shadow: inset 0 1px 0 rgba(256,256,256,0.4),0 1px 3px rgba(0,0,0,0.5);
 }
 
+input[type="radio"] {
+  width:5%;
+  display: inline-block;
+}
+#main .block h2.title {
+  padding: 5px 5px 5px 0;
+}
+
+input[type="checkbox"] {
+  width:5%;
+  display: inline-block;
+}
+
 /* eof */
