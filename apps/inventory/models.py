@@ -66,6 +66,7 @@ class Inventory(models.Model):
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'), default=datetime.date.today)
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
     state = models.CharField(max_length=16, default='draft',
+                            verbose_name=_("state"),
                             choices=[('draft', _('Draft')),
                                     ('pending', _('Pending')),
                                     ('done', _('Done')),
