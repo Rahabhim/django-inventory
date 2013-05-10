@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from common.api import register_links, register_menu
+from common.api import register_links, register_menu, role_from_request
 
 from models import State, Item, ItemGroup
 import models
@@ -55,8 +55,13 @@ register_menu([
         'famfam':'computer', 'position':2},
     ])
 
-asset_list_printout = {'text':_('print assets list'), 'view':'asset_list_printout2', 'famfam':'printer' }
+def _has_active_role(obj, context):
+    return bool(role_from_request(context['request']))
+
+asset_list_printout = {'text':_('print assets list'), 'view':'asset_list_printout2',
+            'famfam':'printer', 'condition': _has_active_role }
 register_links(['item_list',], [asset_list_printout,], menu_name='sidebar')
+
 
 register_links(['department_assets',], [ {'text':_('print assets list'), \
             'view':'asset_list_printout','args':'department.id', 'famfam':'printer'} ], \
