@@ -53,8 +53,12 @@ class LocationLookup(LookupChannel):
     model = Location
 
     def get_query(self, q, request):
-        return Location.objects.filter(models.Q(department__in=_departments_by_q(q))| \
+        if request.user.is_staff:
+            return Location.objects.filter(models.Q(department__in=_departments_by_q(q))| \
                     models.Q(department=None, name__icontains=q)).\
+                order_by('department__name', 'name')[:20]
+        else:
+            return Location.objects.filter(department__in=_departments_by_q(q)).\
                 order_by('department__name', 'name')[:20]
 
 class RoleLocationLookup(LookupChannel):
