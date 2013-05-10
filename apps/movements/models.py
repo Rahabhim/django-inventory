@@ -751,7 +751,8 @@ class Movement(models.Model):
         ordering = ('date_act', )
         verbose_name = _("movement")
         verbose_name_plural = _("movements")
-        permissions = (('validate_movement', 'Can validate a movement'), )
+        permissions = (('validate_movement', 'Can validate a movement'),
+                        ('delete_in_movement', 'Can delete incoming movement'))
 
     def clean(self):
         """Before saving the Movement, update checkpoint_src to the last validated one

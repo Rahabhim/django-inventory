@@ -99,9 +99,19 @@ register_links(['purchase_order_item_update'], [purchase_order_item_update, purc
 
 register_submenu( 'menu_procurements', [ purchase_order_list,])
 
+def can_delete_movement(obj, context):
+    if not Movement.objects.by_request(context['request']).filter(id=obj.id).exists():
+        return False
+    if _context_has_perm(context, obj, '%(app)s.delete_%(model)s'):
+        return True
+    elif obj.stype == 'in' and _context_has_perm(context, obj, '%(app)s.delete_in_%(model)s'):
+        return True
+    else:
+        return False
+
 movement_delete = {'text':_('delete pending movement'), 'view':'movement_delete', \
             'args':'object.id', 'famfam':'basket_delete', \
-            'condition': iz_open_or_rej }
+            'condition': (iz_open_or_rej, can_delete_movement) }
 
 # register_submenu('menu_assets', .. )
 action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete', condition= (can_add(Movement), has_no_pending_inventories))
