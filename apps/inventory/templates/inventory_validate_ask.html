@@ -31,20 +31,21 @@
               <div class="label">
                 {{form.name.label}}*
               </div>
-              {{form.name}}
+                {{form.name}}
+                {{ form.name.errors }}
             </div>
 
             <div class="group newline">
               <div class="label">
                 {% blocktrans %}Please also upload the signed PDF of the inventory {% endblocktrans %}
               </div>
-              {{ form.signed_file }}
+                {{ form.signed_file }}
+                {{ form.signed_file.errors }}
             </div>
 
-
-            <div style="clear: both; width=100%;"> </div>
+            <div style="clear: both; width=100%;">{{ form.non_field_errors }}</div>
             <div class="group navform wat-cf submit_button">
-                <button class="button" type="submit">
+                <button class="button" type="submit" onclick="history.go(-2);">
                     {% trans 'Abort' %}
                 </button>
                 <button class="button" type="submit">

@@ -114,6 +114,9 @@ def inventory_validate(request, object_id):
             messages.success(request, _("The inventory has been validated and all movements fixated"), fail_silently=True)
 
             return redirect('inventory_view', object_id=object_id)
+        elif request.method == 'POST':
+            messages.warning(request, _("You must fill the name and upload a signed file to proceed"))
+
     except ValidationError, e:
         for msg in e.messages:
             messages.error(request, msg, fail_silently=True)
