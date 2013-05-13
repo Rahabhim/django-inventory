@@ -28,7 +28,7 @@ div {
 }
 
 .u0_normal {
-    background-image: url('{{ STATIC_URL }}images/u0_normal.png');
+    background-image: url('../images/u0_normal.png');
 }
 
 .u0_container {
@@ -40,35 +40,27 @@ div {
 }
 
 .u1 {
-    
     left:2px;
     top:374px;
     width:782px;
     height:16px;
-    ;
-    ;
-    ;
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u2 {
-    
     left:36px;
     top:142px;
     width:484px;
     height:19px;
-    ;
-    ;
-    ;
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u3_normal {
-    background-image: url('{{ STATIC_URL }}images/u3_normal.png');
+    background-image: url('../images/u3_normal.png');
 }
 
 .u3_container {
@@ -80,7 +72,6 @@ div {
 }
 
 #u3_img {
-/*      */
     left:-3px;
     top:-3px;
     width:34px;
@@ -88,39 +79,31 @@ div {
 }
 
 .u4 {
-/*      */
     left:2px;
     top:6px;
     width:24px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u5 {
-/*      */
     left:63px;
     top:67px;
     width:109px;
     height:42px;
-    ;
-    ;
-    ;
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u6_normal {
-    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
+    background-image: url('../images/u6_normal.png');
 }
 
 .u6_container {
-/*      */
     left:200px;
     top:64px;
     width:28px;
@@ -128,7 +111,6 @@ div {
 }
 
 #u6_img {
-/*      */
     left:-3px;
     top:-3px;
     width:34px;
@@ -136,35 +118,29 @@ div {
 }
 
 .u7 {
-/*      */
     left:2px;
     top:6px;
     width:24px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u8 {
-    
     left:237px;
     top:68px;
     width:80px;
     height:28px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u9_normal {
-    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
+    background-image: url('../images/u6_normal.png');
 }
 
 .u9_container {
@@ -176,7 +152,6 @@ div {
 }
 
 #u9_img {
-/*      */
     left:-3px;
     top:-3px;
     width:34px;
@@ -184,35 +159,29 @@ div {
 }
 
 .u10 {
-/*      */
     left:2px;
     top:6px;
     width:24px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u11 {
-/*      */
     left:397px;
     top:66px;
     width:65px;
     height:42px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u12_normal {
-    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
+    background-image: url('../images/u6_normal.png');
 }
 
 .u12_container {
@@ -237,9 +206,7 @@ div {
     top:6px;
     width:24px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -251,16 +218,14 @@ div {
     top:66px;
     width:86px;
     height:14px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u15_normal {
-    background-image: url('{{ STATIC_URL }}images/u15_normal.png');
+    background-image: url('../images/u15_normal.png');
 }
 
 .u15_container {
@@ -285,9 +250,7 @@ div {
     top:242px;
     width:714px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -315,8 +278,7 @@ div {
     top:265px;
     width:180px;
     height:25px;
-    ;
-    ;
+
     text-align: left;;
     font-family:'Arial';
     font-size: 13px;
@@ -351,8 +313,7 @@ div {
     top:0px;
     width:180px;
     height:25px;
-    ;
-    ;
+
     text-align: left;;
     font-family:'Arial';
     font-size: 13px;
@@ -364,7 +325,7 @@ div {
 }
 
 .u21_normal {
-    background-image: url('{{ STATIC_URL }}images/u21_normal.png');
+    background-image: url('../images/u21_normal.png');
 }
 
 .u21_container {
@@ -387,9 +348,7 @@ div {
     top:4px;
     width:96px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -401,9 +360,7 @@ div {
     top:30px;
     width:48px;
     height:15px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -415,9 +372,7 @@ div {
     top:201px;
     width:136px;
     height:32px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -429,9 +384,7 @@ div {
     top:269px;
     width:136px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -443,9 +396,7 @@ div {
     top:332px;
     width:65px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -457,16 +408,14 @@ div {
     top:476px;
     width:99px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u28_normal {
-    background-image: url('{{ STATIC_URL }}images/u28_normal.png');
+    background-image: url('../images/u28_normal.png');
 }
 
 .u28_container {
@@ -491,16 +440,14 @@ div {
     top:4px;
     width:21px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u30_normal {
-    background-image: url('{{ STATIC_URL }}images/u28_normal.png');
+    background-image: url('../images/u28_normal.png');
 }
 
 .u30_container {
@@ -525,9 +472,7 @@ div {
     top:4px;
     width:21px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -539,9 +484,7 @@ div {
     top:333px;
     width:180px;
     height:22px;
-    ;
-    ;
-    ;
+
     font-family:'Arial';
     font-size: 13px;
     color:#000000;
@@ -557,9 +500,7 @@ div {
     top:400px;
     width:180px;
     height:22px;
-    ;
-    ;
-    ;
+
     font-family:'Arial';
     font-size: 13px;
     color:#000000;
@@ -575,9 +516,7 @@ div {
     top:336px;
     width:65px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -589,9 +528,7 @@ div {
     top:400px;
     width:65px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -603,9 +540,7 @@ div {
     top:0px;
     width:135px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -617,9 +552,7 @@ div {
     top:476px;
     width:138px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -631,9 +564,7 @@ div {
     top:526px;
     width:29px;
     height:22px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -645,9 +576,7 @@ div {
     top:0px;
     width:215px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -677,8 +606,7 @@ div {
     top:0px;
     width:180px;
     height:25px;
-    ;
-    ;
+
     text-align: left;;
     font-family:'Arial';
     font-size: 13px;
@@ -690,7 +618,7 @@ div {
 }
 
 .u44_normal {
-    background-image: url('{{ STATIC_URL }}images/u44_normal.png');
+    background-image: url('../images/u44_normal.png');
 }
 
 .u44_container {
@@ -715,9 +643,7 @@ div {
     top:4px;
     width:161px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -729,9 +655,7 @@ div {
     top:30px;
     width:48px;
     height:15px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -743,20 +667,17 @@ div {
     top:30px;
     width:168px;
     height:15px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
 }
 
 .u48_normal {
-    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
+    background-image: url('../images/u6_normal.png');
 }
 
 .u48_container {
-    
     left:676px;
     top:64px;
     width:28px;
@@ -764,7 +685,6 @@ div {
 }
 
 #u48_img {
-    
     left:-3px;
     top:-3px;
     width:34px;
@@ -777,9 +697,7 @@ div {
     top:6px;
     width:24px;
     height:16px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -791,9 +709,7 @@ div {
     top:68px;
     width:69px;
     height:42px;
-    ;
-    ;
-    ;
+
     font-family:Arial;
     text-align:left;
     word-wrap:break-word;
@@ -814,7 +730,7 @@ table.wiz_step_cell td.wiz_number {
     font-size:13px;
     text-decoration:none;
     text-align: center;
-    background-image: url('{{ STATIC_URL }}images/u6_normal.png');
+    background-image: url('../images/u6_normal.png');
     background-repeat:no-repeat;
     background-position: center;
     width: 34px;
@@ -835,7 +751,7 @@ table.wiz_step_cell_active td.wiz_number {
     font-size:13px;
     text-decoration:none;
     text-align: center;
-    background-image: url('{{ STATIC_URL }}images/u3_normal.png');
+    background-image: url('../images/u3_normal.png');
     background-repeat:no-repeat;
     background-position: center;
     width: 34px;
@@ -898,7 +814,7 @@ table.wiz_form th {
 }
 
 #submit0 {
-    background-image: url('{{ STATIC_URL }}images/u21_normal.png');
+    background-image: url('../images/u21_normal.png');
     width:106px;
     height:31px;
 
