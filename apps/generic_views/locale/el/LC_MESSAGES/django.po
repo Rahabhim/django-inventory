@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-05-08 14:33+0300\n"
+"PO-Revision-Date: 2013-05-13 13:59+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -48,30 +48,30 @@ msgstr "Αφαιρέθηκαν %s"
 
 #: views.py:748
 msgid "The cart is already open."
-msgstr ""
+msgstr "Γίνεται ήδη επιλογή εξοπλισμού."
 
 #: views.py:761
 msgid "The cart is not open."
-msgstr ""
+msgstr "Δεν βρίσκεστε σε κατάσταση επιλογής εξοπλισμού."
 
 #: views.py:824
 #, python-format
 msgid "Item %s could not be found."
-msgstr ""
+msgstr "Δεν βρίσκεται ο εξοπλισμός %s."
 
 #: views.py:835
 msgid "Could not alter item"
-msgstr ""
+msgstr "Δεν γίνεται να τροποποιηθεί το αντικείμενο"
 
 #: views.py:843
 #, python-format
 msgid "%(item)s added to %(cart)s"
-msgstr ""
+msgstr "%(item)s προστέθηκε στη μετακίνηση %(cart)s"
 
 #: views.py:849
 #, python-format
 msgid "%(item)s removed from %(cart)s"
-msgstr ""
+msgstr "%(item)s αφαιρέθηκε από τη μετακίνηση %(cart)s"
 
 #: templates/bloated_list.html:3
 #, python-format
@@ -138,7 +138,7 @@ msgstr "Δημιουργία νέου %(object_name)s"
 
 #: templates/generic_cart_close.html:11
 msgid "Closed cart"
-msgstr ""
+msgstr " "
 
 #: templates/generic_cart_close.html:12
 #, python-format
@@ -146,10 +146,12 @@ msgid ""
 "The cart %(object)s is now closed.\n"
 "        "
 msgstr ""
+"Τέλος επιλογής εξοπλισμού για τη μετακίνηση %(object)s \n"
+"    "
 
 #: templates/generic_cart_close.html:17
 msgid " The cart could not be closed."
-msgstr ""
+msgstr "Υπήρξε πρόβλημα στην έξοδο από επιλογή εξοπλισμού"
 
 #: templates/generic_cart_close.html:22
 #, fuzzy, python-format
@@ -158,22 +160,22 @@ msgstr "Επεξεργασία %(object_name)s"
 
 #: templates/generic_cart_open.html:12
 msgid "Opened cart"
-msgstr ""
+msgstr " "
 
 #: templates/generic_cart_open.html:13
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "You have selected %(object)s for further processing.\n"
 "            Now you can go to any of the pages below and add items to it.\n"
 "        "
 msgstr ""
-"Έχετε επιλέξει την %(object)s για περαιτέρω επεξεργασία.\n"
-"\tΤώρα, από τις παρακάτω σελίδες, μπορείτε να της προσθέσετε αντικείμενα.\n"
+"Έχετε επιλέξει τη μετακίνηση %(object)s για περαιτέρω επεξεργασία.\n"
+"\t Τώρα, από τις παρακάτω σελίδες, μπορείτε να της προσθέσετε αντικείμενα.\n"
 "  "
 
 #: templates/generic_cart_open.html:17
 msgid "Open cart"
-msgstr ""
+msgstr "Επιλογή εξοπλισμού"
 
 #: templates/generic_cart_open.html:18
 #, python-format
@@ -181,6 +183,8 @@ msgid ""
 " The cart could not be opened. %(action_failed)s\n"
 "        "
 msgstr ""
+" Η επιλογή εξοπλισμού δεν μπορεί να ενεργοποιηθεί. %(action_failed)s\n"
+"    "
 
 #: templates/generic_confirm.html:3 templates/generic_confirm.html.py:15
 msgid "Confirm delete"
