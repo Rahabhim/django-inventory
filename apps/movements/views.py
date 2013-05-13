@@ -603,6 +603,7 @@ def movement_do_close(request, object_id):
                     # We are called by a user on the receiving end
                     if movement.location_src.department == movement.location_dest.department \
                             or movement.src_validate_user \
+                            or movement.location_src.department is None \
                             or movement.location_src.department.deprecate \
                             or movement.location_src.department.merge:
                             # In these cases, we don't need the sending end, we can proceed
