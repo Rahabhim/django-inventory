@@ -118,7 +118,10 @@ class Inventory(models.Model):
     def clean(self):
         super(Inventory,self).clean()
         if self.state in ('draft', 'pending'):
-            if Inventory.objects.filter(location=self.location, state__in=('draft','pending')).exists():
+            iofilt = Inventory.objects.filter(location=self.location, state__in=('draft','pending'))
+            if self.id:
+                iofilt = iofilt.exclude(id=self.id)
+            if iofilt.exists():
                 raise ValidationError(_("You cannot open more than one inventory for the same location (%s) !") % self.location)
 
     def get_cart_name(self):
