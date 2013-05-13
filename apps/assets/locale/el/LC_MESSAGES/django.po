@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-05-08 12:43+0300\n"
+"PO-Revision-Date: 2013-05-13 10:39+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -87,9 +87,13 @@ msgstr "Κατασκευαστής"
 msgid "Category"
 msgstr "Είδος"
 
-#: forms.py:73 templates/asset_details.rml.tmpl:87
+#: forms.py:73
 msgid "Date"
 msgstr "Ημερομηνία"
+
+#: templates/asset_details.rml.tmpl:87
+msgid "Move Date"
+msgstr "Ημ/νία"
 
 #: forms.py:74
 msgid "Reference"
@@ -378,7 +382,7 @@ msgstr "Ιστορικό Εξοπλισμού"
 
 #: templates/asset_details.rml.tmpl:88
 msgid "User ID"
-msgstr "Αρ. πρωτοκόλλου:"
+msgstr "Αρ. πρωτ.:"
 
 #: templates/asset_list.rml.tmpl:29
 msgid "Department assets list:"
