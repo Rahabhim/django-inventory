@@ -60,10 +60,10 @@
 	<table width="100%">
 	<tr><td colspan="2" width="100%">{% with form.item_template as field %}{% include "asset_field.html" %}{% endwith %}</td>
 	</tr>
+        <tr><td colspan="2">{% with form.location as field %}{% include "asset_field.html" %}{% endwith %}</td>
 	<tr><td width="50%">{% with form.serial_number as field %}{% include "asset_field.html" %}{% endwith %}</td>
 	    <td width="50%">{% with form.property_number as field %}{% include "asset_field.html" %}{% endwith %}</td>
 	</tr>
-	<tr><td colspan="2">{% with form.location as field %}{% include "asset_field.html" %}{% endwith %}</td>
 	</tr>
 	{% if form.items %}{% with form.items as field %}
 	<tr><td colspan="2">{% include "asset_field.html" %}</td>
