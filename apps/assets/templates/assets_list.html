@@ -74,7 +74,10 @@
             {% if sub_offset >= 0 %}
                 <tr class="bl_inner_pagination">
                     <td class="first_col"></td>
-                    <td colspan="8">
+                    {% if request.session.carts %}
+                    <td></td>
+                    {% endif %}
+                    <td colspan="3">
                     {% if sub_offset_prev %}
                         <a href="?{{sub_getvars}}sub_offset=0" title="{% trans 'First page' %}"><span class="parrow first"></span></a>
                         <a href="?{{sub_getvars}}sub_offset={{sub_offset_prev}}" title="{% trans 'Previous page' %}"><span class="parrow left"></span></a>
