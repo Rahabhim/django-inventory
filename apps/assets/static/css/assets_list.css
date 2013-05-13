@@ -178,7 +178,7 @@ tr.bl_group td.first_col div
 }
 
 .bl_inrow td a.cart_action span {
-    background: url({{ STATIC_URL}}/images/checkbox2.png);
+    background: url(../images/checkbox2.png);
     overflow: hidden;
     background-repeat: no-repeat;
     display: inline-block; 
