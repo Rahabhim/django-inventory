@@ -2,6 +2,10 @@
 
   Taken from: https://bitbucket.org/etienned/django-autocomplete/changeset/0ec7260445d8
 */
+
+/* define the 'console', because IE doesn't! */
+if (!window.console)  console = {log: function() {}};
+
 // Activate autocomplete on dynamically added row in inlines in admin.
 $(window).load(function() {
     // Get all the inlines

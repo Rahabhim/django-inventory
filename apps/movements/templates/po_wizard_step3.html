@@ -5,6 +5,7 @@
 
 {% block javascript %}
 <script type="text/javascript">
+    if (!window.console)  console = {log: function() {}};
     $(function() {
         $( "#step3_tabs" ).tabs();
     });
@@ -56,7 +57,7 @@
         pcombo.empty();
         pcombo.append($('<option>', {value: ''}).text('-----'));
 
-        console.log("Data came! " + data.length);
+        /* console.log("Data came! " + data.length); */
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
         }
