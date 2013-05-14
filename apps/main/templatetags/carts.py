@@ -11,7 +11,7 @@ logger = logging.getLogger('main.carts')
 @register.simple_tag(takes_context=True)
 def prepare_session_carts(context):
     try:
-        logger.warning("Prepare session carts for context %x", id(context))
+        logger.debug("Prepare session carts for context %x", id(context))
         context['carts'].load_all()
 
     except Exception:
