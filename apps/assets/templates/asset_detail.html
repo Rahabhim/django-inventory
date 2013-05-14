@@ -74,9 +74,7 @@
 	</tr>
 	</table>
 
-{# ----------------#}
-
-        {% if not read_only %}
+        {% if not read_only and form_mode != 'details' %}
         <div class="group navform wat-cf submit_button">
             <button class="button" type="submit">
                 {% if object %}{% trans 'Save' %}{% else %}{% trans 'Submit' %}{% endif %}

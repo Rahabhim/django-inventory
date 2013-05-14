@@ -86,6 +86,7 @@
 
     <div style="clear: both; width=100%;"> </div>
 
+    {% if not read_only and form_mode != 'details' %}
     <div class="group navform wat-cf submit_button">
         <button class="button" type="submit">
         {% if object %}
@@ -95,6 +96,7 @@
         {% endif %}
         </button>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 
