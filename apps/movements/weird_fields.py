@@ -90,6 +90,11 @@ class ItemsTreeWidget(forms.widgets.Widget):
         if value:
             for kv in value:
                 in_group = kv.get('in_group', None)
+                if kv['item_template'].category.is_group:
+                    # reset the errors, because the earlier stage couldn't
+                    # have computed the contects correctly
+                    kv['errors'] = defaultdict(list)
+                    kv['state'] = 'ok'
                 if in_group:
                     contained[in_group].append(ItemsTreeItem(**kv))
                     continue
