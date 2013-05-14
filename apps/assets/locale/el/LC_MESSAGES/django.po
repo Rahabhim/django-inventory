@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 12:39+0300\n"
+"POT-Creation-Date: 2013-05-14 14:08+0300\n"
 "PO-Revision-Date: 2013-05-13 10:39+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,59 +17,59 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:9
+#: __init__.py:12
 msgid "assets states"
 msgstr "καταστάσεις εξοπλισμού"
 
-#: __init__.py:10
+#: __init__.py:13
 msgid "create new asset state"
 msgstr "δημιουργία κατάστασης εξοπλισμού"
 
-#: __init__.py:11
+#: __init__.py:14
 msgid "edit asset state"
 msgstr "επεξεργασία κατάστασης εξοπλισμού"
 
-#: __init__.py:12
+#: __init__.py:15
 msgid "delete asset state"
 msgstr "διαγραφή κατάστασης εξοπλισμού"
 
-#: __init__.py:15
+#: __init__.py:18
 msgid "list all assets"
 msgstr "λίστα εξοπλισμού μονάδας"
 
-#: __init__.py:17 __init__.py:26
+#: __init__.py:20 __init__.py:29
 msgid "edit serials"
 msgstr "Αλλαγή Σειριακών αριθμών"
 
-#: __init__.py:19
+#: __init__.py:22
 msgid "add / remove photos"
 msgstr "προσθήκη / αφαίρεση φωτογραφιών"
 
-#: __init__.py:20
+#: __init__.py:23
 msgid "template"
 msgstr "προϊόν"
 
-#: __init__.py:21
+#: __init__.py:24
 msgid "trace"
 msgstr "Ιστορικό μεταφορών"
 
-#: __init__.py:22
+#: __init__.py:25
 msgid "printout"
 msgstr "Εκτύπωση"
 
-#: __init__.py:25
+#: __init__.py:28
 msgid "list all groups"
 msgstr "λίστα συνθέσεων"
 
-#: __init__.py:32 models.py:20 models.py:38
+#: __init__.py:35 models.py:20 models.py:38
 msgid "state"
 msgstr "κατάσταση"
 
-#: __init__.py:49 models.py:89 models.py:170
+#: __init__.py:52 models.py:89 models.py:170
 msgid "assets"
 msgstr "εξοπλισμός"
 
-#: __init__.py:55 __init__.py:58
+#: __init__.py:61 __init__.py:66
 msgid "print assets list"
 msgstr "εκτύπωση εξοπλισμού μονάδας"
 
@@ -90,10 +90,6 @@ msgstr "Είδος"
 #: forms.py:73
 msgid "Date"
 msgstr "Ημερομηνία"
-
-#: templates/asset_details.rml.tmpl:87
-msgid "Move Date"
-msgstr "Ημ/νία"
 
 #: forms.py:74
 msgid "Reference"
@@ -331,11 +327,11 @@ msgstr "Εξοπλισμός από προϊόν: %s"
 msgid "Asset Details"
 msgstr "Λεπτομέρειες εξοπλισμού"
 
-#: templates/asset_detail.html:82
+#: templates/asset_detail.html:80
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: templates/asset_detail.html:82
+#: templates/asset_detail.html:80
 msgid "Submit"
 msgstr "Υποβολή"
 
@@ -380,6 +376,10 @@ msgstr "Εξάρτημα"
 msgid "Asset trace"
 msgstr "Ιστορικό Εξοπλισμού"
 
+#: templates/asset_details.rml.tmpl:87
+msgid "Move Date"
+msgstr "Ημ/νία"
+
 #: templates/asset_details.rml.tmpl:88
 msgid "User ID"
 msgstr "Αρ. πρωτ.:"
@@ -417,32 +417,32 @@ msgstr "Ιστορικό Εξοπλισμού"
 msgid "%(title)s"
 msgstr "%(title)s"
 
-#: templates/assets_list.html:245
+#: templates/assets_list.html:20
 #, python-format
 msgid "%(title)s (%(start)s - %(end)s out of %(total)s)"
 msgstr "%(title)s (%(start)s - %(end)s από %(total)s)"
 
-#: templates/assets_list.html:269
+#: templates/assets_list.html:44
 msgid "Select"
 msgstr "Επιλογή"
 
-#: templates/assets_list.html:276
+#: templates/assets_list.html:82
 msgid "First page"
 msgstr "Πρώτη σελίδα"
 
-#: templates/assets_list.html:277
+#: templates/assets_list.html:83
 msgid "Previous page"
 msgstr "Προηγούμενη σελίδα"
 
-#: templates/assets_list.html:283
+#: templates/assets_list.html:89
 msgid "Next page"
 msgstr "Επόμενη σελίδα"
 
-#: templates/assets_list.html:284
+#: templates/assets_list.html:90
 msgid "Last page"
 msgstr "Τελευταία σελίδα"
 
-#: templates/assets_list.html:322
+#: templates/assets_list.html:128
 #, python-format
 msgid "There are no %(title)s"
 msgstr "Δεν υπάρχουν %(title)s"
