@@ -421,39 +421,11 @@ def purchase_order_receive(request, object_id):
                     {'name': _(u'active'), 'attribute': 'fmt_active'}
                     ],
                 })
-        elif False:
-            items_left2 = [ isinstance(k, tuple) and k[0] or k for k in items_left]
-            items_in_moves = purchase_order.items.exclude(item_template__in=items_left2)
-            if items_in_moves.exists():
-                form_attrs['subtemplates_dict'].append({
-                    'name':'generic_list_subtemplate.html',
-                    'title': _(u'order items received and accounted'),
-                    'object_list': items_in_moves,
-                    'hide_links': True,
-                    'extra_columns':[
-                        {'name': _(u'qty received'), 'attribute':'received_qty'},
-                        {'name': _(u'status'), 'attribute': 'status'},
-                        {'name': _(u'active'), 'attribute': 'fmt_active'}
-                        ],
-                    })
-            items_wo_moves = purchase_order.items.filter(item_template__in=items_left2)
-            if items_wo_moves.exists():
-                form_attrs['subtemplates_dict'].append({
-                    'name':'generic_list_subtemplate.html',
-                    'title': _(u'order items received but NOT accounted'),
-                    'object_list': items_wo_moves,
-                    'hide_links': True,
-                    'extra_columns':[
-                        {'name': _(u'qty pending'), 'attribute':'received_qty'},
-                        {'name': _(u'status'), 'attribute': 'status'},
-                        {'name': _(u'active'), 'attribute': 'fmt_active'}
-                        ],
-                    })
         else:
             if not dept: # rough test
                 # will cause the form to ask for a location
                 form_attrs['ask_location'] = True
-            
+
         moves_list = purchase_order.movements.all()
         if moves_list:
             # add the pending movements as links
