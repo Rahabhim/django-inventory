@@ -728,7 +728,7 @@ form.form table.filter_form button.button:active
 .form div.submit_button a.button {
   text-align: center;
   background-color: #F0F0F0;
-  display: block;
+  display: inline-block;
   float: none;
   border: 1px solid;
   outline: 0;
