@@ -11,7 +11,7 @@
 {% block content %}
     <div id="box">
       <div class="block" id="block-login">
-        {% if delete_view %}      
+        {% if delete_view %}
             <h2>{% trans 'Confirm delete' %}</h2>
         {% else %}
             <h2>{% trans 'Confirm' %}</h2>
@@ -20,8 +20,8 @@
           <form action="" method="post" class="form login">{% csrf_token %}
             {% if next %}
                 <input name='next' type='hidden' value='{{ next }}' />
-            {% endif %}          
-            
+            {% endif %}
+
             {% if title %}
                 <h3>{{ title }}</h3>
             {% else %}
@@ -33,7 +33,7 @@
                     {% endif %}
                 {% else %}
                     <h4>{% trans 'Are you sure you wish to proceed?' %}</h4>
-                {% endif %}                
+                {% endif %}
             {% endif %}
             {% if message %}<h4>{{ message }}</h4>{% endif %}
 
