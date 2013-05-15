@@ -2,7 +2,7 @@
 {% load styling %}
 
 {% if field %}
-{% if field.value or not read_only %}
+{% if always_visible or field.value or not read_only %}
 <div class="group">
 	{% if field.errors %}<div class="fieldWithErrors">{% endif %}
 	{% field_label_tag field %}

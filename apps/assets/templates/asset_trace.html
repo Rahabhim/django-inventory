@@ -57,7 +57,7 @@
 	</tr>
 	<tr><td colspan="2">{% with form.location as field %}{% include "asset_field.html" %}{% endwith %}</td>
 	</tr>
-        <tr><td colspan="2">{% with form.movements as field %}{% include "asset_field.html" %}{% endwith %}</td>
+        <tr><td colspan="2">{% with form.movements as field and 1 as always_visible %}{% include "asset_field.html" %}{% endwith %}</td>
 	<tr> <td colspan="2">{% with form.notes as field %}{% include "asset_field.html" %}{% endwith %}</td>
 	</tr>
 	</table>
