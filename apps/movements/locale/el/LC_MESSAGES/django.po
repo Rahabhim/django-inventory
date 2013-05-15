@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-14 14:09+0300\n"
-"PO-Revision-Date: 2013-05-14 14:12+0300\n"
+"PO-Revision-Date: 2013-05-15 12:48+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -184,11 +184,11 @@ msgstr "Απόρριψη μετακίνησης"
 
 #: __init__.py:159
 msgid "pending purchase orders"
-msgstr "Εκκρεμείς παραλαβές εξοπλισμού"
+msgstr "Παραλαβή νέου εξοπλισμού"
 
 #: __init__.py:169
 msgid "pending moves"
-msgstr "Εκκρεμείς κινήσεις εξοπλισμού"
+msgstr "Μεταβολές κατάστασης εξοπλισμού"
 
 #: __init__.py:186
 msgid "Repair bundle"
@@ -200,7 +200,7 @@ msgstr "φόρμες τροποποίησης"
 
 #: __init__.py:197
 msgid "pending repairs"
-msgstr "Εκκρεμείς τροποποιήσεις εξοπλισμού"
+msgstr "Μεταβολή σύνθεσης εξοπλισμού"
 
 #: __init__.py:201
 msgid "validate repair"
