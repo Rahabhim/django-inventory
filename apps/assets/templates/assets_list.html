@@ -15,13 +15,13 @@
 
 <div class="block">
     <div class="content">
-    <h3 class="title">
+    <h2 class="title">
         {% ifnotequal page_obj.paginator.num_pages 1 %}
             {% with title|title as title and page_obj.start_index as start and page_obj.end_index as end and page_obj.paginator.count as total %}{% blocktrans %}{{ title }} ({{ start }} - {{ end }} out of {{ total }}){% endblocktrans %}{% endwith %}
         {% else %}
             {% with page_obj.paginator.count as total %}{{ title }} ({{ total }}){% endwith %}
         {% endifnotequal %}
-    </h3>
+    </h2>
 
 <div class="inner">
 {% with 1 as hide_links %}
