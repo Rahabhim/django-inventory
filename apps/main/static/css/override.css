@@ -17,6 +17,7 @@
 table.filter_form td select {
   width: 10em;
   /* konqueror ? */
+  margin-top: 0px;
 }
 
 .table th a {
