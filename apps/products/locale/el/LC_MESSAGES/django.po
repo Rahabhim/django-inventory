@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-05-08 13:03+0300\n"
+"PO-Revision-Date: 2013-05-20 14:25+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -362,12 +362,11 @@ msgstr "Εγκεκριμένο"
 
 #: urls.py:93
 msgid "list of item categories"
-msgstr "λίστα ειδών εξοπλισμού"
+msgstr "Λίστα ειδών εξοπλισμού"
 
 #: urls.py:99
-#, fuzzy
 msgid "list of pending item categories"
-msgstr "λίστα ειδών εξοπλισμού"
+msgstr "Λίστα ειδών σε εκκρεμότητα έγκρισης"
 
 #: urls.py:148
 msgid "Required"
