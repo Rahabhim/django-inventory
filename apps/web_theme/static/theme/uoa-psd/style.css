@@ -632,6 +632,10 @@ ul.list li .left  {
   padding:10px;
 }
 
+a.button:link, a.button:visited, a.button:hover, a.button:active, button.button {
+    font-weight: normal;
+}
+
 .group button.button {
   clear: both;
   display: block;
