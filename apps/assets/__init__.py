@@ -39,7 +39,7 @@ state_filter = {'name':'state', 'title':_(u'state'), 'queryset':State.objects.al
         #'item_update_serials', 'item_delete', 'item_photos',
         #'template_items_list'], [asset_create], menu_name='sidebar')
 
-register_links(Item, [asset_edit, asset_template, asset_history, asset_printout], menu_name='sidebar')
+register_links(Item, [asset_edit, asset_history, asset_printout], menu_name='sidebar')
 
 register_links(ItemGroup, [group_edit, asset_template, asset_history, asset_printout])
 
