@@ -18,7 +18,7 @@
         {% ifnotequal page_obj.paginator.num_pages 1 %}
             {% blocktrans with page_obj.start_index as start and page_obj.end_index as end and page_obj.paginator.count as total %}List of {{ title }} ({{ start }} - {{ end }} out of {{ total }}){% endblocktrans %}
         {% else %}
-            {% blocktrans with page_obj.paginator.count as total %}List of {{ title }} ({{ total }}){% endblocktrans %}
+            {{ title|title }} ({{ page_obj.paginator.count }})
         {% endifnotequal %}
     </h2>
 
