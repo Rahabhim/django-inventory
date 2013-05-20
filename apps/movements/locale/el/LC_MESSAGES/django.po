@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-14 14:09+0300\n"
-"PO-Revision-Date: 2013-05-15 12:48+0300\n"
+"PO-Revision-Date: 2013-05-20 13:42+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -718,7 +718,7 @@ msgstr ""
 #: models.py:887
 #, python-format
 msgid "Move from %(src)s to %(dest)s %(name)s"
-msgstr "%(name)s από %(src)s προς %(dest)s"
+msgstr "Μετακίνηση %(name)s από %(src)s προς %(dest)s"
 
 #: models.py:894
 #, python-format
