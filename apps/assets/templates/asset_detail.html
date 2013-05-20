@@ -14,9 +14,7 @@
 		<div class="content">
 		<h2 class="title">
 	    {% endif %}
-
-{% include "calculate_form_title.html" %}
-
+        {% trans 'Asset details' %}
 {% if side_bar %}
     </h3>
     <div class="content">
@@ -57,22 +55,25 @@
 	</div>
 	{% endif %}
 
-	<table width="100%">
-	<tr><td colspan="2" width="100%">{% with form.item_template as field %}{% include "asset_field.html" %}{% endwith %}</td>
-	</tr>
-        <tr><td colspan="2">{% with form.location as field %}{% include "asset_field.html" %}{% endwith %}</td>
-	<tr><td width="50%">{% with form.serial_number as field %}{% include "asset_field.html" %}{% endwith %}</td>
-	    <td width="50%">{% with form.property_number as field %}{% include "asset_field.html" %}{% endwith %}</td>
-	</tr>
-	</tr>
-	{% if form.items %}{% with form.items as field %}
-	<tr><td colspan="2">{% include "asset_field.html" %}</td>
-	</tr>
-	{% endwith %}{% endif %}
-	<tr><td>{% with form.active as field %}{% include "asset_field.html" %}{% endwith %}</td><td></td></tr>
-	<tr> <td colspan="2">{% with form.notes as field %}{% include "asset_field.html" %}{% endwith %}</td>
-	</tr>
-	</table>
+        <div class="group newline">{% with form.property_number as field %}{% include "asset_field.html" %}{% endwith %}
+        </div>
+        <div class="group newline">{% with form.serial_number as field %}{% include "asset_field.html" %}{% endwith %}
+        </div>
+        <div class="group newline">
+            {% with form.item_template as field %}{% include "asset_field.html" %}{% endwith %}
+        </div>
+        <div class="group newline">
+            {% with form.location as field %}{% include "asset_field.html" %}{% endwith %}
+        </div>
+
+        <div class="group newline">{% if form.items %}{% with form.items as field %}
+                {% include "asset_field.html" %}
+                {% endwith %}{% endif %}
+        </div>
+        <div class="group newline">{% with form.active as field %}{% include "asset_field.html" %}{% endwith %}
+        </div>
+        <div class="group newline">{% with form.notes as field %}{% include "asset_field.html" %}{% endwith %}
+        </div>
 
         {% if not read_only and form_mode != 'details' %}
         <div class="group navform wat-cf submit_button">
