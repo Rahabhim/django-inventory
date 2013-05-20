@@ -288,12 +288,10 @@ class FilterForm(forms.Form):
                     self.fields[list_filter['name']] = ModelTreeChoiceField( \
                         parent_name= list_filter['tree_by_parent'], \
                         queryset=queryset, label=label, \
-                        empty_label= "*",
                         required=False)
                 else:
                     self.fields[list_filter['name']] = forms.ModelChoiceField( \
                         queryset=queryset, label=label, \
-                        empty_label= "*",
                         required=False)
             elif 'choices' in list_filter:
                 if isinstance(list_filter['choices'], tuple):
