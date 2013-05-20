@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-14 14:08+0300\n"
-"PO-Revision-Date: 2013-05-14 14:14+0300\n"
+"PO-Revision-Date: 2013-05-20 20:11+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -79,7 +79,7 @@ msgstr "δημιουργήθηκε από"
 
 #: forms.py:25
 msgid "Location"
-msgstr "τοποθεσία"
+msgstr "Τοποθεσία"
 
 #: forms.py:26 models.py:66
 msgid "date performed"
