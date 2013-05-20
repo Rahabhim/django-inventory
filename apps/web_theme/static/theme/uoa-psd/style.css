@@ -709,7 +709,7 @@ form.form table.filter_form button.button {
   vertical-align: middle;
   white-space: nowrap;
   word-wrap: normal;
-  padding: 10px;
+  padding: 5px;
   margin-right: 10px;
 }
 .form div.submit_button button:hover,
