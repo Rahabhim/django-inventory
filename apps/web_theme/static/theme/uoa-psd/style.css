@@ -100,6 +100,11 @@ input.checkbox {
   border:none;
 }
 
+
+#main .content .content .inner {
+    padding: 0px;
+}
+
 #main .block h2.title {
   margin: 10px 0 5px 0;
   background-color: none;
