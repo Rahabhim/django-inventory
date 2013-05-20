@@ -3,7 +3,7 @@
 {% load styling %}
 
 {% block form_title %}
-<h2 class="title"> {{ object }}</h2>
+<h2 class="title">{% if object.id %}{{ object }}{% else %}{% trans 'Move of assets' %}{% endif %}</h2>
 {% endblock %}
 
 {% block form_layout %}
@@ -61,9 +61,6 @@
 
 </div>
 
-
-
-    
 {% endblock %}
 {% block submit_button %}
 {% endblock %}
