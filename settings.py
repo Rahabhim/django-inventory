@@ -241,7 +241,7 @@ if AUTH_BACKEND == 'auth_passwd':
 #ASSETS_MAX_ASSET_PHOTOS = 5
 #ASSETS_MAX_PERSON_PHOTOS = 5
 #--------- Pagination ------------------
-PAGINATION_DEFAULT_PAGINATION = 20
+PAGINATION_DEFAULT_PAGINATION = 10
 #--------- Web theme app ---------------
 WEB_THEME = 'uoa-psd'
 
