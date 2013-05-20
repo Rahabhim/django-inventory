@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-14 14:08+0300\n"
-"PO-Revision-Date: 2013-05-14 14:12+0300\n"
+"PO-Revision-Date: 2013-05-17 12:29+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -254,7 +254,7 @@ msgstr "Όνομα"
 
 #: templatetags/generic_views_tags.py:14
 msgid "Filter"
-msgstr "Φίλτρο"
+msgstr "Φίλτρα"
 
 #~ msgid "Selected %(object_name)s"
 #~ msgstr "Επιλεγμένα %(object_name)s"
