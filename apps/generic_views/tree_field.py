@@ -4,6 +4,7 @@
 
 
 from django import forms
+from operator import itemgetter
 
 class Node(object):
     @classmethod
@@ -19,8 +20,8 @@ class Node(object):
     def children(self):
         return self._children
 
-    def add(self, child):
-        inod = ItemNode(child)
+    def add(self, child, selectable):
+        inod = ItemNode(child, selectable=selectable)
         ck = self._key(inod)
         for i in xrange(len(self._children)):
             if self._key(self._children[i]) > ck:
@@ -56,12 +57,13 @@ class RootNode(Node):
     def __init__(self, name):
         self._children = []
         self.name = name
+        self.selectable = False
 
     def __eq__(self, other):
         return other is None
 
     def consume_queryset(self, queryset, parent_name='parent'):
-        pending_nodes = list(queryset)
+        pending_nodes = [ (q, 1) for q in queryset]
         niter = 0
         nread = 0
 
@@ -70,21 +72,24 @@ class RootNode(Node):
             pending_nodes = []
 
             niter += 1
-            for ic in qlist:
+            for ic, iv in qlist:
                 nread += 1
                 ic_parent = getattr(ic, parent_name)
                 if ic_parent is None:
-                    self.add(ic)
-                elif ic_parent in pending_nodes:
-                    pending_nodes.append(ic)
+                    self.add(ic, iv)
+                elif ic_parent in map(itemgetter(0), pending_nodes):
+                    pending_nodes.append((ic, iv))
                 else:
                     parent = self.find(ic_parent, parent_name=parent_name)
                     if parent:
-                        parent.add(ic)
+                        parent.add(ic, iv)
                     else:
-                        pending_nodes.append(ic)
-                        if ic.parent not in qlist:
-                            pending_nodes.insert(0, ic_parent)
+                        pending_nodes.append((ic, iv))
+                        for qc, qv in qlist:
+                            if qc == ic_parent:
+                                break
+                        else:
+                            pending_nodes.insert(0, (ic_parent, 0))
             if niter > 10:
                 break
 
@@ -93,15 +98,18 @@ class RootNode(Node):
         return True
 
 class ItemNode(Node):
-    def __init__(self, obj, parent=None):
+    def __init__(self, obj, parent=None, selectable=False):
         super(ItemNode, self).__init__()
         self._obj = obj
+        self.selectable = selectable
         #self._parent = parent
 
     def do_choices(self, field):
         ret = (field.prepare_value(self._obj), field.label_from_instance(self._obj))
         if self._children:
-            ret = [ ret[1], [ (ret[0], ret[1]), ]]
+            ret = [ ret[1], [ ]]
+            if self.selectable:
+                ret[1].append((ret[0], ret[1]))
             for cc in self._children:
                 ret[1].append(cc.do_choices(field))
         return ret
@@ -146,7 +154,5 @@ class ModelTreeChoiceField(forms.ModelChoiceField):
         return ModelTreeIterator(self)
 
     choices = property(_get_choices, forms.ChoiceField._set_choices)
-
-    #forms.ModelChoiceField
 
 #eof
