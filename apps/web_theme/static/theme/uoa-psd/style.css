@@ -577,15 +577,28 @@ ul.list li .left  {
   font-size: 1.1em;
   background-color: #FFF;
   text-align: left;
-  width:25%;
+  min-width: 15%;
   color:inherit;
   font-weight:bold;
 }
 
 .columns-detail td, .table td {
-  width:20%;
-  word-wrap:break-word;
+  /*width:20%;*/
+  word-wrap: break-word;
 }
+
+.table .form-row.inline.attributes input.text_field,
+.table .form-row.inline.attributes input,
+.table .form-row.inline.attributes .results_on_deck > div {
+    width: auto;
+}
+
+.table .form-row.inline.attributes input[type="checkbox"] {
+    text-align: center;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
 .columns-detail tr:nth-child(even), .table tr:nth-child(even) {
   background-color: #eef0f2;
 }
@@ -681,6 +694,7 @@ form.form table.filter_form button.button {
   vertical-align: middle;
   white-space: nowrap;
   word-wrap: normal;
+
 }
 
 /* submit buttons */
