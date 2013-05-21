@@ -100,6 +100,9 @@ input.checkbox {
   border:none;
 }
 
+#main .block .content .content {
+    padding: 0px;
+}
 
 #main .content .content .inner {
     padding: 0px;
