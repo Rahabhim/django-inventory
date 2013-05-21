@@ -9,8 +9,9 @@ from django.dispatch import receiver
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 class DepartmentType(models.Model):
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, verbose_name=_('name'))
     location_tmpl = models.ManyToManyField('common.LocationTemplate', blank=True, related_name='location_tmpl',
+            verbose_name=_('location templates'),
             help_text=_(u"These will automatically be setup as locations, for each new department of this type") )
 
     class Meta:
