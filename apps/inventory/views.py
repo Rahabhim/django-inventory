@@ -35,7 +35,7 @@ def inventory_view(request, object_id):
     supplies_list = [{'item_template':x, 'qty':y} for x,y in asset_qty.items()]
 
     return render_to_response('generic_detail.html', {
-        'object_name':_(u'inventory'),
+        'title':_(u'Inventory details'),
         'object':inventory,
         'form':form,
         'subtemplates_dict':[
