@@ -49,7 +49,7 @@ urlpatterns = patterns('procurements.views',
             name='contract_delete' ),
     url(r'^contracts/(?P<pk>\d+)/$', GenericDetailView.as_view(form_class=ContractForm_view,
                     queryset=Contract.objects.all(),
-                    extra_context={'object_name':_(u'contract'),}),
+                    extra_context={'title':_(u'Contract details'),}),
             name='contract_view'),
 
     url(r'^projects/list/$', GenericBloatedListView.as_view(queryset=Project.objects.all(),

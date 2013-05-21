@@ -138,7 +138,7 @@ urlpatterns = patterns('products.views',
             name='manufacturer_delete' ),
     url(r'^manufacturers/(?P<object_id>\d+)/$', generic_detail, dict(form_class=ManufacturerForm_view,
                     queryset=Manufacturer.objects.all(),
-                    extra_context={'object_name':_(u'manufacturer'),}),
+                    extra_context={'title':_(u'Manufacturer details'),}),
             'manufacturer_view'),
 
     url(r'^attributes/list/$', GenericBloatedListView.as_view(queryset=ProductAttribute.objects.all(),
