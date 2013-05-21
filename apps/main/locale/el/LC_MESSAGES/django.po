@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-05-08 13:19+0300\n"
+"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"PO-Revision-Date: 2013-05-21 09:13+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -93,7 +93,7 @@ msgstr "Άλλες διαθέσιμες ενέργειες"
 msgid "Based on Django-inventory"
 msgstr "Βασισμένο στο Django-inventory"
 
-#: templates/home.html:102
+#: templates/home.html:110
 msgid ""
 "Welcome to the Django Inventory application, where you can keep track of "
 "your equipment."
@@ -101,19 +101,19 @@ msgstr ""
 "Καλωσήλθατε στην Υπηρεσία αποτύπωσης υπολογιστικού και δικτυακού Εξοπλισμού "
 "Εκπαιδευτικών και Διοικητικών Μονάδων του Υπουργείου Παιδείας."
 
-#: templates/home.html:107
+#: templates/home.html:115
 msgid "Select department and role:"
 msgstr "Επιλέξτε μονάδα και ρόλο:"
 
-#: templates/home.html:111
+#: templates/home.html:119
 msgid "Updating, please wait"
 msgstr "Παρακαλώ περιμένετε"
 
-#: templates/home.html:130
+#: templates/home.html:138
 msgid "Available actions"
 msgstr "Διαθέσιμες ενέργειες"
 
-#: templates/home.html:141
+#: templates/home.html:149
 msgid "My pending actions "
 msgstr "Ενέργειες σε εκκρεμότητα"
 
@@ -123,7 +123,7 @@ msgstr "Επιλογή Εξοπλισμού"
 
 #: templates/page.rml:15
 msgid "Django inventory"
-msgstr ""
+msgstr "Django inventory"
 
 #: templates/page.rml:22
 msgid "Printed at:"

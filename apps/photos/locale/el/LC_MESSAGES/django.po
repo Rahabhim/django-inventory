@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-01-23 14:08+0200\n"
+"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"PO-Revision-Date: 2013-05-21 09:23+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -23,7 +23,7 @@ msgstr "Διαγραφή φωτογραφίας"
 
 #: __init__.py:8
 msgid "mark photo as main"
-msgstr ""
+msgstr "Μαρκάρισμα ως κύρια"
 
 #: models.py:20
 msgid "Title"
@@ -43,11 +43,11 @@ msgstr "φωτογραφίες"
 
 #: views.py:25
 msgid "The photo is too big."
-msgstr ""
+msgstr "Η φωτογραφία είναι πολύ μεγάλη"
 
 #: views.py:45
 msgid "The photo was added successfully."
-msgstr ""
+msgstr "Η φωτογραφία προστέθηκε με επιτυχία"
 
 #: views.py:51
 #, python-format
@@ -69,29 +69,29 @@ msgstr "τίτλος"
 
 #: views.py:71
 msgid "Upload new photo"
-msgstr ""
+msgstr "Ανέβασμα νέας φωτογραφίας"
 
 #: views.py:93
 msgid "The main photo has been changed."
-msgstr ""
+msgstr "Η κύρια φωτογραφία άλλαξε."
 
 #: views.py:115
 msgid ""
 "The main photo was deleted successfully.  The another photo has been "
 "selected as the main photo."
-msgstr ""
+msgstr "Η κύρια φωτογραφία διαγράφηκε επιτυχώς. Μία άλλη επελέγη ως κύρια."
 
 #: views.py:117
 msgid "The main photo was deleted successfully."
-msgstr ""
+msgstr "Η κύρια φωτογραφία διαγράφηκε επιτυχώς"
 
 #: views.py:119
 msgid "The photo was deleted successfully."
-msgstr ""
+msgstr "Η φωτογραφία διαγράφηκε επιτυχώς"
 
 #: views.py:126
 msgid "Are you sure you wish to delete this photo?"
-msgstr ""
+msgstr "Θέλετε σίγουρα να διαγράψετε τη φωτογραφία;"
 
 #: templates/generic_photos_subtemplate.html:15
 msgid "Photos"
@@ -113,3 +113,4 @@ msgstr "Παρακαλώ περιμένετε..."
 #: templates/photos.html:20
 msgid "Add / remove photos"
 msgstr "Προσθήκη / αφαίρεση φωτογραφιών"
+

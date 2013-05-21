@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-14 14:08+0300\n"
-"PO-Revision-Date: 2013-05-17 12:29+0300\n"
+"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"PO-Revision-Date: 2013-05-21 09:10+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -154,9 +154,9 @@ msgid " The cart could not be closed."
 msgstr "Υπήρξε πρόβλημα στην έξοδο από επιλογή εξοπλισμού"
 
 #: templates/generic_cart_close.html:22
-#, fuzzy, python-format
+#, python-format
 msgid "Back to %(object_name)s"
-msgstr "Επεξεργασία %(object_name)s"
+msgstr "Πίσω στη %(object_name)s"
 
 #: templates/generic_cart_open.html:12
 msgid "Opened cart"
@@ -209,12 +209,12 @@ msgid "Are you sure you wish to proceed?"
 msgstr "Θέλετε σίγουρα να προχωρήσετε;"
 
 #: templates/generic_confirm.html:42
-msgid "Yes"
-msgstr "Ναι"
-
-#: templates/generic_confirm.html:45
 msgid "No"
 msgstr "Όχι"
+
+#: templates/generic_confirm.html:45
+msgid "Yes"
+msgstr "Ναι"
 
 #: templates/generic_form_layout.html:92
 #: templates/generic_form_subtemplate.html:71
@@ -243,11 +243,6 @@ msgstr "Λίστα %(title)s"
 msgid "List of %(title)s (%(start)s - %(end)s out of %(total)s)"
 msgstr "%(title)s (%(start)s - %(end)s από %(total)s)"
 
-#: templates/generic_list_subtemplate.html:21
-#, python-format
-msgid "List of %(title)s (%(total)s)"
-msgstr "%(title)s (%(total)s)"
-
 #: templates/generic_list_subtemplate.html:34
 msgid "Identifier"
 msgstr "Όνομα"
@@ -255,6 +250,9 @@ msgstr "Όνομα"
 #: templatetags/generic_views_tags.py:14
 msgid "Filter"
 msgstr "Φίλτρα"
+
+#~ msgid "List of %(title)s (%(total)s)"
+#~ msgstr "%(title)s (%(total)s)"
 
 #~ msgid "Selected %(object_name)s"
 #~ msgstr "Επιλεγμένα %(object_name)s"

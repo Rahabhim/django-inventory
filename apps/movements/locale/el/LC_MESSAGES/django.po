@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-14 14:09+0300\n"
-"PO-Revision-Date: 2013-05-20 13:42+0300\n"
+"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"PO-Revision-Date: 2013-05-21 09:25+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -829,41 +829,41 @@ msgstr "Ποσ."
 
 #: views.py:72
 msgid "The purchase request item was created successfully."
-msgstr ""
+msgstr "Το αίτημα προμήθειας δημιουργήθηκε επιτυχώς."
 
 #: views.py:80
 msgid "add new purchase request item"
-msgstr ""
+msgstr "Προσθήκη γραμμής στο αίτημα αγοράς"
 
 #: views.py:90
 #, python-format
 msgid "Are you sure you wish to close the purchase request: %s?"
-msgstr ""
+msgstr "Θέλετε σίγουρα να κλείσετε το αίτημα προμήθειας: %s;"
 
 #: views.py:94
 msgid "This purchase request has already been closed."
-msgstr ""
+msgstr "Το αίτημα προμήθειας είναι ήδη κλειστό."
 
 #: views.py:101
 msgid "The purchase request has been closed successfully."
-msgstr ""
+msgstr "Το αίτημα προμήθειας έκλεισε με επιτυχία."
 
 #: views.py:114
 #, python-format
 msgid "Are you sure you wish to open the purchase request: %s?"
-msgstr ""
+msgstr "Θέλετε σίγουρα να ανοίξετε το αίτημα προμήθειας: %s;"
 
 #: views.py:118
 msgid "This purchase request is already open."
-msgstr ""
+msgstr "Το αίτημα προμήθειας είναι ήδη ανοιχτό."
 
 #: views.py:125
 msgid "The purchase request has been opened successfully."
-msgstr ""
+msgstr "Το αίτημα προμήθειας άνοιξε με επιτυχία."
 
 #: views.py:145
 msgid "This purchase request is closed."
-msgstr ""
+msgstr "Το αίτημα προμήθειας έκλεισε."
 
 #: views.py:150
 msgid "This purchase request is empty, add items before using the wizard."
@@ -893,10 +893,9 @@ msgstr "μετακινήσεις για αυτή την παραλαβή"
 msgid "date"
 msgstr "ημερομηνία"
 
-#: views.py:246 views.py:406
-#, python-format
-msgid "details for purchase order: %s"
-msgstr "λεπτομέρειες της εντολής: %s"
+#: views.py:246
+msgid "details for purchase order"
+msgstr "Λεπτομέρειες παραλαβής"
 
 #: views.py:260
 #, python-format
@@ -944,6 +943,11 @@ msgid ""
 msgstr ""
 "Η εντολή %s δεν μπορεί να επιβεβαιωθεί, γιατί περιέχει εκκρεμείς κινήσεις! "
 "Παρακαλώ εξετάστε τις κινήσεις και κλείστε αυτές πρώτα."
+
+#: views.py:406
+#, python-format
+msgid "details for purchase order: %s"
+msgstr "λεπτομέρειες της εντολής: %s"
 
 #: views.py:415
 msgid "order items received"
@@ -1219,6 +1223,10 @@ msgstr "Αποθήκευση αλλαγών"
 #: templates/movement_form.html:96
 msgid "Select Items"
 msgstr "Επιλογή Εξοπλισμού"
+
+#: templates/movement_form.html:6 templates/movement_form_gu.html:6
+msgid "Move of assets"
+msgstr "Μετακίνηση εξοπλισμού"
 
 #: templates/po_reject_ask.html:3 templates/po_reject_ask.html.py:14
 msgid "Confirm reject of purchase order"

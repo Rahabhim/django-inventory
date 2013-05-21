@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-05-20 14:25+0300\n"
+"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"PO-Revision-Date: 2013-05-21 09:20+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -22,9 +22,8 @@ msgid "item templates"
 msgstr "προϊόντα"
 
 #: __init__.py:9
-#, fuzzy
 msgid "pending item templates"
-msgstr "προϊόντα"
+msgstr "προϊόντα σε αναμονή έγκρισης"
 
 #: __init__.py:11
 msgid "create new template"
@@ -63,9 +62,8 @@ msgid "categories"
 msgstr "είδη"
 
 #: __init__.py:22
-#, fuzzy
 msgid "pending categories"
-msgstr "είδη"
+msgstr "Είδη σε εκκρεμότητα"
 
 #: __init__.py:24
 msgid "create new category"
@@ -233,8 +231,7 @@ msgstr "Τιμές χαρακτηριστικού"
 msgid "country of origin"
 msgstr "χώρα προέλευσης"
 
-#: models.py:95 models.py:110 urls.py:28 urls.py:126 urls.py:129 urls.py:133
-#: urls.py:137 urls.py:141
+#: models.py:95 models.py:110 urls.py:28 urls.py:129 urls.py:133 urls.py:137
 msgid "manufacturer"
 msgstr "κατασκευαστής"
 
@@ -312,10 +309,10 @@ msgstr ""
 "Εξοπλισμός %(self_cat)s δεν μπορεί να περιέχει εξαρτήματα: %(sub_cat)s ."
 
 #: models.py:173
-#, fuzzy, python-format
+#, python-format
 msgid "An item of %s is not a group, cannot have contained items"
 msgstr ""
-"Το αντικείμενο κατηγορίας: %s δεν είναι σύνθεση, δεν επιτρέπεται να περιέχει "
+"Ο εξοπλισμός κατηγορίας: %s δεν είναι σύνθεση, δεν επιτρέπεται να περιέχει "
 "εξαρτήματα."
 
 #: models.py:175
@@ -334,19 +331,20 @@ msgid "Category"
 msgstr "Είδος"
 
 #: urls.py:52
-#, fuzzy
 msgid "pending item template"
-msgstr "προϊόν"
+msgstr "προϊόν σε εκκρεμότητα"
 
 #: urls.py:67
 msgid ""
 "Will be deleted from any user that may have it assigned and from any item "
 "group."
 msgstr ""
+"Θα αφαιρεθεί από οποιονδήποτε χρήστη το έχει συνδεδεμένο και από οποιαδήποτε "
+"σύνθεση."
 
 #: urls.py:70
 msgid "orphan templates"
-msgstr ""
+msgstr "ορφανά προϊόντα"
 
 #: urls.py:89 urls.py:146
 msgid "Sequence"
@@ -368,6 +366,14 @@ msgstr "Λίστα ειδών εξοπλισμού"
 msgid "list of pending item categories"
 msgstr "Λίστα ειδών σε εκκρεμότητα έγκρισης"
 
+#: urls.py:126
+msgid "Manufacturers"
+msgstr "Κατασκευαστές"
+
+#: urls.py:141
+msgid "Manufacturer details"
+msgstr "Λεπτομέρειες Κατασκευαστή"
+
 #: urls.py:148
 msgid "Required"
 msgstr "Απαιτείται"
@@ -377,9 +383,8 @@ msgid "list of attributes"
 msgstr "Λίστα χαρακτηριστικών"
 
 #: urls.py:151
-#, fuzzy
 msgid "Create attribute"
-msgstr "χαρακτηριστικό"
+msgstr "Δημιουργία χαρακτηριστικού"
 
 #: views.py:16
 #, python-format
@@ -401,24 +406,24 @@ msgstr "Υπαγωγή εξαρτήματος σε προϊόν:  <a href=\"%(ur
 
 #: views.py:38
 msgid "Unassigned supplies"
-msgstr ""
+msgstr "Ασύνδετες προμήθειες"
 
 #: views.py:39
 msgid "Assigned supplies"
-msgstr ""
+msgstr "Συνδεδεμένες προμήθειες"
 
 #: views.py:48
 #, python-format
 msgid "Assign suppliers to the template: <a href=\"%(url)s\">%(obj)s</a>"
-msgstr ""
+msgstr "Σύνδεση προμηθευτών με προϊόν: <a href=\"%(url)s\">%(obj)s</a>"
 
 #: views.py:54
 msgid "Unassigned suppliers"
-msgstr ""
+msgstr "Ασύνδετοι προμηθευτές"
 
 #: views.py:55
 msgid "Assigned suppliers"
-msgstr ""
+msgstr "Συνδεδεμένοι προμηθευτές"
 
 #~ msgid "view all"
 #~ msgstr "Προβολή όλων"

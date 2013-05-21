@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-14 14:08+0300\n"
-"PO-Revision-Date: 2013-05-13 10:39+0300\n"
+"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"PO-Revision-Date: 2013-05-21 09:10+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -77,12 +77,12 @@ msgstr "εκτύπωση εξοπλισμού μονάδας"
 msgid "Contained Item"
 msgstr "Περιεχόμενο αντικείμενο"
 
-#: forms.py:51 urls.py:48 views.py:130 templates/asset_details.rml.tmpl:57
+#: forms.py:51 urls.py:49 views.py:130 templates/asset_details.rml.tmpl:57
 #: templates/asset_details.rml.tmpl:68
 msgid "Manufacturer"
 msgstr "Κατασκευαστής"
 
-#: forms.py:52 urls.py:49 views.py:131 templates/asset_details.rml.tmpl:56
+#: forms.py:52 urls.py:50 views.py:131 templates/asset_details.rml.tmpl:56
 #: templates/asset_details.rml.tmpl:69
 msgid "Category"
 msgstr "Είδος"
@@ -115,7 +115,7 @@ msgstr "όνομα"
 msgid "exclusive"
 msgstr "αποκλειστική"
 
-#: models.py:21 models.py:169 urls.py:59 urls.py:62
+#: models.py:21 models.py:169 urls.py:60 urls.py:63
 msgid "states"
 msgstr "καταστάσεις"
 
@@ -192,7 +192,7 @@ msgstr "Σύμβαση Παραλαβής"
 msgid "The procurement at which this item was initially obtained"
 msgstr "Η σύμβαση προμήθειας με την οποία παρελήφθη αρχικά ο εξοπλισμός."
 
-#: models.py:88 urls.py:24 urls.py:30 urls.py:41
+#: models.py:88 urls.py:24 urls.py:30 urls.py:42
 msgid "asset"
 msgstr "εξοπλισμός"
 
@@ -204,7 +204,7 @@ msgstr "περιεχόμενα εξαρτήματα"
 msgid "item group"
 msgstr "σύνθεση"
 
-#: models.py:162 models.py:171 urls.py:46
+#: models.py:162 models.py:171 urls.py:47
 msgid "item groups"
 msgstr "συνθέσεις"
 
@@ -212,19 +212,23 @@ msgstr "συνθέσεις"
 msgid "list of assets"
 msgstr "λίστα εξοπλισμού"
 
-#: urls.py:38
+#: urls.py:31
+msgid "asset details"
+msgstr "Λεπτομέρειες εξοπλισμού"
+
+#: urls.py:39
 msgid "Movements"
 msgstr "Μετακινήσεις"
 
-#: urls.py:39
+#: urls.py:40
 msgid "asset trace"
 msgstr "Ιστορικό Εξοπλισμού"
 
-#: urls.py:47 views.py:135 views.py:177 templates/asset_details.rml.tmpl:48
+#: urls.py:48 views.py:135 views.py:177 templates/asset_details.rml.tmpl:48
 msgid "Location"
 msgstr "τοποθεσία"
 
-#: urls.py:57
+#: urls.py:58
 msgid "Edit item group"
 msgstr "Επεξεργασία σύνθεσης"
 
@@ -327,11 +331,15 @@ msgstr "Εξοπλισμός από προϊόν: %s"
 msgid "Asset Details"
 msgstr "Λεπτομέρειες εξοπλισμού"
 
-#: templates/asset_detail.html:80
+#: templates/asset_detail.html:17
+msgid "Asset details"
+msgstr "Λεπτομέρειες εξοπλισμού"
+
+#: templates/asset_detail.html:81
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: templates/asset_detail.html:80
+#: templates/asset_detail.html:81
 msgid "Submit"
 msgstr "Υποβολή"
 
@@ -400,11 +408,7 @@ msgstr "ID"
 msgid "Item"
 msgstr "Εξοπλισμός"
 
-#: templates/asset_list.rml.tmpl:40
-msgid "State"
-msgstr "Κατάσταση"
-
-#: templates/asset_list.rml.tmpl:41
+#: templates/asset_list.rml.tmpl:39
 msgid "Notes"
 msgstr "Σημειώσεις"
 
@@ -468,6 +472,9 @@ msgstr "Επιλογή  %(state)s"
 #: templates/state_subtemplate.html:18
 msgid "There are no states defined."
 msgstr "Δεν έχουν οριστεί καταστάσεις"
+
+#~ msgid "State"
+#~ msgstr "Κατάσταση"
 
 #~ msgid "Assigned to:"
 #~ msgstr "Ανατέθηκε σε:"

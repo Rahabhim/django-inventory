@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 12:39+0300\n"
-"PO-Revision-Date: 2013-05-08 12:44+0300\n"
+"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"PO-Revision-Date: 2013-05-21 09:10+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10 models.py:111 urls.py:40
+#: __init__.py:10 models.py:111
 msgid "suppliers"
 msgstr "προμηθευτές"
 
@@ -145,7 +145,7 @@ msgstr "Σε Σύνθεση"
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:110 models.py:150 urls.py:43
+#: models.py:110 models.py:150 urls.py:46
 msgid "supplier"
 msgstr "προμηθευτής"
 
@@ -172,4 +172,12 @@ msgstr "Συμπλήρωση αριθμών"
 #: models.py:135
 msgid "sequences"
 msgstr "Ακολουθίες"
+
+#: urls.py:40
+msgid "Supplier details"
+msgstr "Λεπτομέρειες προμηθευτή"
+
+#: urls.py:43
+msgid "Suppliers"
+msgstr "Προμηθευτές"
 
