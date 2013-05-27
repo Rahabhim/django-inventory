@@ -6,32 +6,57 @@
 {% block pow_content %}
 <style>
     p.product {
-        background: #72C9dF;
         border: solid black 1px;
         margin: 20px;
-        padding: 16px;
+        padding: 12px;
         font-weight: bold;
+
+        background: rgb(240,249,255); /* Old browsers */
+        background: -moz-linear-gradient(top,  rgba(240,249,255,1) 0%, rgba(203,235,255,1) 47%, rgba(161,219,255,1) 100%); /* FF3.6+ */
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(240,249,255,1)), color-stop(47%,rgba(203,235,255,1)), color-stop(100%,rgba(161,219,255,1))); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* IE10+ */
+        background: linear-gradient(to bottom,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f9ff', endColorstr='#a1dbff',GradientType=0 ); /* IE6-9 */
     }
 
     table.two_cols td {
         /*width: 50%;*/
     }
+    table.two_cols td#groups_mandatory {
+        /*width: 30%;*/
+        max-width:350px;
+        width:350px;
+        vertical-align:top;
+    }
+    table.two_cols td#fill_in_pane {
+        /*width: 70%;*/
+        max-width:400px;
+        width:400px;
+    }
+
     table.two_cols th {
         /*width: 50%;*/
         font-weight: normal;
         text-decoration: underline;
         text-align: left;
         font-size: 120%;
+        margin-bottom:12px;
     }
 
-    #groups_mandatory > div {
-        border-bottom: gray 1px solid;
-        margin-left: 20px;
-        margin-right: 20px;
+    #groups_mandatory > div, 
+    #groups_optional > div{
+        border-bottom: 1px solid #D9D9D9;
+        padding:5px;
+        margin-left:0;
+        width:95%;
     }
 
-    #groups_mandatory > div.selected {
-        background: #d0d0d0;
+    #groups_mandatory > div.selected, #groups_optional > div.selected {
+        background: #FFFFFF;
+        border:1px solid #72C9FF;
+        border-radius:5px;
     }
 
     #groups_mandatory div.gname {
@@ -39,16 +64,6 @@
         font-weight: bold;
         margin-left: 0.4em;
     }
-    #groups_optional > div {
-        border-bottom: gray 1px solid;
-        margin-left: 20px;
-        margin-right: 20px;
-    }
-
-    #groups_optional > div.selected {
-        background: #d0d0d0;
-    }
-
     #groups_optional div.gname {
         font-size: 120%;
         font-weight: bold;
@@ -70,26 +85,64 @@
     }
 
     #fill_in_pane > div {
-        width: 100%;
-        border: 1px solid #72C9FF;
+        width: 98%;
+        background: #FFFFFF;
+        border:1px solid #72C9FF;
+        border-radius:5px;
+        padding:5px;
         display: none; /* initial value, must be activated in js */
     }
-    div.product_search > div {
+    div.product_search > div { /* Product search box style */
+
+        background: none repeat scroll 0 0 #F8F8F8;
+        border: 2px solid #A7A7A7;
         margin: 20px;
-        border: solid 2px #0f0f0f;
-        background: #e0e0e0;
         padding: 10px;
     }
 
     div.add_more > a {
-        color: blue;
+        color: #32ADFF;
         text-decoration: underline;
+        cursor:pointer;
     }
 
     div.on_deck a.part_delete {
-        /*background-image: ;*/
+        background-image: url("/static/images/famfamfam-silk-sprites/famfam-active.png");
+        background-position: -260px -140px;
         float: right;
+        height: 20px;
+        overflow: hidden;
+        text-indent: -9999px;
+        width: 20px;
     }
+    div.on_deck a.part_delete:hover {
+        cursor:pointer;
+    }
+
+    table.two_cols {
+        width:100%;
+    }
+    table.two_cols thead {
+        height:50px;
+    }
+    a.cont_part{
+        color:#1e6799;
+        cursor:pointer;
+        display:inline-block;
+        width:90%;
+        margin-left: 0.4em;
+    }
+     a.cont_part:hover{
+        color:#32ADFF;
+    }
+    div#cont_parts-20 {
+        margin:10px 0;
+    }
+    .product_search label {
+        display: inline-block;
+        width: 15em;
+    }
+
 </style>
 
 <script>
