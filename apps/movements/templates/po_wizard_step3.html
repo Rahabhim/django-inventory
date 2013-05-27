@@ -106,6 +106,18 @@
         {{ form.serials.label}}: <br/> {{ form.serials }}
         {% if form.serials.errors %}<div class="wf_error">{% for error in form.serials.errors %}<div class="error">{{ error }}</div>{%endfor %}</div>{% endif %}
     </div>
+
+<script>
+    $("#{{form.item_template.auto_id}}_on_deck").bind('added', function() {
+        $("#label_not_found").hide();
+        $("#note_not_found").hide();
+        });
+
+    $("#{{form.item_template.auto_id}}_on_deck").bind('killed', function() {
+        $("#label_not_found").show();
+        $("#note_not_found").show();
+        });
+</script>
 {% endwith %}
 </div>
 
