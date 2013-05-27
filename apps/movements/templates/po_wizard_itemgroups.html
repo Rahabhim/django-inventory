@@ -55,7 +55,7 @@
 
                         <div> <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία: </p>
             
-                            Κατασκευαστής:
+                            <label>Κατασκευαστής:</label>
                             <select id="{{mand.did}}_manuf_combo">
                                 <option value="">------</option>
                                 {% for manuf in mand.manufs  %}
@@ -65,11 +65,11 @@
                             <br/>
                             <div id="{{mand.did }}_attribs">
                             {% for attrib in mand.attribs %}
-                                {{ attrib|safe }}
+                                <div class="product_attrib">{{ attrib|safe }}</div>
                             {% endfor %}
                             </div>
                             <br/>
-                            Προϊόν: <select id="{{mand.did}}_combo" ><option value="">-----</option></select>
+                            <label>Προϊόν:</label> <select id="{{mand.did}}_combo" ><option value="">-----</option></select>
                         </div>
                         <div id="{{ mand.did }}_on_deck">Δεν βρέθηκε</div>
                     </div>
