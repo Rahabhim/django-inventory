@@ -31,12 +31,9 @@ div {
     background-image: url('../images/u0_normal.png');
 }
 
-.u0_container {
-    /*
-    left:14px;
-    top:15px;
-    width:786px;
-    height:763px;*/
+.u0_container { /* change background color of the container */
+    background-color: #FAFAFA;
+    padding: 12px;
 }
 
 .u1 {
@@ -279,7 +276,7 @@ div {
     width:180px;
     height:25px;
 
-    text-align: left;;
+    text-align: left;
     font-family:'Arial';
     font-size: 13px;
     color:#000000;
@@ -607,7 +604,7 @@ div {
     width:180px;
     height:25px;
 
-    text-align: left;;
+    text-align: left;
     font-family:'Arial';
     font-size: 13px;
     color:#000000;
@@ -758,28 +755,51 @@ table.wiz_step_cell_active td.wiz_number {
     height: 33px;
 }
 
+
 button.wiz_button {
-    background: none;
-    appearance: normal;
-    -webkit-appearance: listitem;
-    -moz-appearance: normal;
-}
-div.cat_box div {
-    width: 160px;
-    height: 80px;
-    vertical-align: top;
-    display: inline-block;
-    border: 2px outset;
-    margin: 2px;
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    margin-right: 15%;
 }
 
-div.cat_box button {
+div.cat_box div { /*step 2 epilogi eksoplismou */
+    background-color: #FFFFFF;
+    border-right: 1px solid #D4D4D4;
+    display: inline-block;
+    height: 80px;
+    margin: 2px 2px 30px;
+    vertical-align: top;
+    width: 166px;
+
+}
+
+div.cat_box div:hover { /*step 2 epilogi eksoplismou boxes */
+    /*
+    background-color: #e9ecde;
+    */
+    cursor:pointer;
+    box-shadow: 0 1px 5px #999999;
+    background: rgb(240,249,255); /* Old browsers */
+    background: -moz-linear-gradient(top,  rgba(240,249,255,1) 0%, rgba(203,235,255,1) 47%, rgba(161,219,255,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(240,249,255,1)), color-stop(47%,rgba(203,235,255,1)), color-stop(100%,rgba(161,219,255,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f9ff', endColorstr='#a1dbff',GradientType=0 ); /* IE6-9 */
+
+
+}
+
+div.cat_box button { /*step 2 epilogi eksoplismou text style */
     vertical-align: middle;
     background: none;
     appearance: normal;
     border: none;
     -webkit-appearance: listitem;
     -moz-appearance: normal;
+    font-size: 12px;
+    text-align: left;
 }
 
 div.cat_box button img {
@@ -788,52 +808,51 @@ div.cat_box button img {
 }
 
 /* title */
-div.u2_title p {
+div.u2_title p { /*color of title*/
     text-align:left;
     font-family:Arial;
     font-size:16px;
-    font-weight:bold;
-    font-style:normal;
-    text-decoration:none;
-    color:#333333;
-}
-
-div.u2_form {
-    color: black;
-    background: white;
-    width: 100%;
-    padding: 1em;
-    border: 1px ;
-    border-color: #2AA7FB;
-}
-
-table.wiz_form th {
-    text-align: left;
-    width: 20em;
-    padding-bottom: 16px;
-}
-
-#submit0 {
-    background-image: url('../images/u21_normal.png');
-    width:106px;
-    height:31px;
-
-}
-
-div.u_or {
-    width: 100px;
-    text-align: center;
-    font-family:Arial;
-    font-size:18px;
     font-weight:normal;
     font-style:normal;
     text-decoration:none;
-    color:#333333;
+    color:#A7B47C;
+}
+
+div.u2_form { /*step 1 width:95%; instead of 100% for the content form box, change border color*/
+    color: black;
+    background: white;
+    padding: 1em;
+    border: 1px solid #EBEBEB;
+    width: 95%;
+    margin-bottom:10px;
+}
+
+table.wiz_form th, table.wiz_form td { /*vertical-align:top; Corrects the alignment problem with Promitheytis field*/
+    text-align: left;
+    width: 16em;
+    vertical-align: top;
+    padding-bottom: 16px;
+}
+table.wiz_form tr { /*vertical-align:top; Corrects the alignment problem with Promitheytis field*/
+ 
+    margin-bottom: 16px;
+}
+
+
+div.u_or { /*Small styling changes for "or"*/
+    color: #333333;
+    font-family: Arial;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: bold;
+    margin: 16px;
+    text-align: center;
+    text-decoration: none;
+    width: 100px;
 }
 
 /* from jQuery-UI example, vertical tabs: */
 .ui-tabs-vertical { width: 55em; }
-.ui-tabs-vertical .ui-tabs-nav { padding: .2em .1em .2em .2em; float: left; width: 12em; }
 .ui-tabs-vertical .ui-tabs-nav li {
         clear: left;
         width: 100%;
@@ -842,9 +861,28 @@ div.u_or {
         margin: 0 -1px .2em 0;
         white-space: normal;
 }
+.ui-tabs-vertical .ui-tabs-nav { /* step 2 left tabs: change width:12em to width:13em, margin-top:0, border-bottom:0*/
+    border-bottom: 0 none;
+    float: left;
+    margin-top: 0;
+    padding-bottom: 0.2em;
+    padding-left: 0.2em;
+    padding-right: 0.1em;
+    padding-top: 0;
+    width: 13em;
+}
 .ui-tabs-vertical .ui-tabs-nav li a { display:block; }
-.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { padding-bottom: 0; padding-right: .1em; border-right-width: 1px; border-right-width: 1px; }
-.ui-tabs-vertical .ui-tabs-panel { padding: 1em; float: right; width: 40em;}
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active { /* Step 2: vertical navigation style*/;
+    padding-bottom: 0; 
+    padding-right: .1em; 
+    border-right-width: 1px; 
+    border-right-width: 1px; 
+    border-bottom: 3px solid #99CCFF;
+    border-left: 3px solid #99CCFF;
+    border-top: 3px solid #99CCFF;
+    margin-bottom: 3px;
+}
+.ui-tabs-vertical .ui-tabs-panel { padding: 0 1em 1em 5px; float: left; width: 40em; } /* step 2 main box change float:right to float:left;*/
 
 table.wiz_treeitems {
     padding: 10px;
@@ -890,25 +928,24 @@ table.wiz_treeitems tr.subrow td.left {
     padding-left: 2em;
 }
 
-/* Styles for step 3s
- */
+/* Styles for step 3s */
 table.group_3s_t1 {
     margin-left: 2em;
     width: 80%;
 }
 
-table.group_3s_t1 button {
-    background: none;
-    appearance: normal;
-    color: blue;
+table.group_3s_t1 button { /* Button - Add link */
+    color: #32ADFF;
+    cursor: pointer;
     text-decoration: underline;
-    -webkit-appearance: listitem;
-    -moz-appearance: normal;
+    border:none;
+    font-size:1em;
+    background: none;
 }
 
 table.group_3s_t1 td.left {
     width: 50%;
-    color: blue;
+    color: #0066CC;
     font-weight: bold;
 }
 
@@ -918,7 +955,6 @@ table.group_3s_t2 {
 }
 
 table.group_3s_t2 td.left {
-    /*width: 80%;*/
 }
 
 table.group_3s_t2 tr.cat td.left {
@@ -928,11 +964,176 @@ table.group_3s_t2 tr.cat td.left {
 
 a.like-button {
     appearance: button;
-    /*text-decoration: underline;*/
     -webkit-appearance: button;
     -moz-appearance: button;
     vertical-align: top;
     padding: 4px;
 }
 
+/* eof */
+
+.wiz_form input[type="text"]{ /*step 1 input*/
+    margin-top:8px;
+    padding:5px;
+}
+.wiz_form select{ /*step 1 select*/
+    margin-top:8px;
+    padding:5px;
+}
+
+#submit0, table.two_cols button, #ss3s-1 > div#note_not_found button, .u0_container div.submit_button button, .u0_container table#wizard_goto_step div.submit_button button, .u0_container table#wizard_goto_step div.submit_button a.like-button, .u0_container div.submit_button button{
+    background-color: #F0F0F0;
+    background-image: -moz-linear-gradient(center top , #FFFFFF 2%, #F0F0F0 2%, #DEDEDE 100%);
+    border: 1px solid #969696;
+    border-radius: 2px 2px 2px 2px;
+    box-shadow: 0 1px 2px rgba(144, 144, 144, 0.4);
+    color: #515151;
+    cursor: pointer;
+    display: block;
+    font-size: 1.1em;
+    outline: 0 none;
+    padding: 5px 10px;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    vertical-align: middle;
+    white-space: nowrap;
+    word-wrap: normal;
+    display: inline-block;
+}
+
+#submit0:hover, #submit0:active, table.two_cols button:hover, table.two_cols button:active, #ss3s-1 > div#note_not_found button:hover, #ss3s-1 > div#note_not_found button:active, .u0_container div.submit_button button:hover, .u0_container div.submit_button button:active, .u0_container table#wizard_goto_step div.submit_button button:hover, .u0_container table#wizard_goto_step div.submit_button a.like-button:hover{
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); 
+    color: #818181;
+    background-color: #fff;
+    background-image: -moz-linear-gradient(top,  rgb(255,255,255) 2%, rgb(244,244,244) 2%, rgb(229,229,229) 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(2%,rgb(255,255,255)), color-stop(2%,rgb(244,244,244)), color-stop(100%,rgb(229,229,229)));
+    background-image: -webkit-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%);background-image: -o-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); background-image: -ms-linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); background-image: linear-gradient(top,  rgb(255,255,255) 2%,rgb(244,244,244) 2%,rgb(229,229,229) 100%); 
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=0 );
+    border: 1px solid #666;
+    box-shadow: inset 0 1px 0 rgba(256,256,256,0.4),0 1px 3px rgba(0,0,0,0.5);
+}
+.u0_container {
+    background-color: #FAFAFA;
+    padding: 12px;
+}
+.u2_form input[type="text"], .u2_form select {
+    margin-top:8px;
+    padding:5px;
+    max-width:95%;
+}
+div#ss3s-2 { /*insert some margin to unstick the 2 sections of the page*/
+    margin-top: 30px;
+}
+
+table#wizard_steps_indicator td {
+    text-align: left;
+}
+table#wizard_steps_indicator td.wiz_number {
+    text-align:center;
+}
+
+#ss3s-1 > div.found_product { /*Style for search results*/
+    border:none;
+    background-color: #FFF;
+    margin-top:12px;
+}
+#ss3s-1 > div#note_not_found { /*style for Note in step 3*/
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: #99CCFF;
+    background-color: #FFFFFF;
+    border: medium none;
+    border-color: #394865 -moz-use-text-color -moz-use-text-color;
+    border-image: none;
+    border-right: medium none;
+    border-style: solid none none;
+    border-width: 1px medium medium;
+    font-style: italic;
+    margin-top: 22px;
+}
+#ss3s-2 > div {
+    margin-left: 36px;
+}
+
+.ui-tabs .ui-tabs-panel { /*Step 2 Products*/
+    background: #FFF;
+    border: 3px solid #99CCFF;
+}
+
+
+.error { /* Style for error message*/
+    color:red;
+    font-style: italic;
+}
+
+.ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active a#ui-id-1, .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active a#ui-id-2, .ui-tabs-vertical .ui-tabs-nav li.ui-tabs-active a#ui-id-3 { /*Step 2 border-bottom*/
+    border-bottom: 2px solid #99CCFF;
+}
+/*Step 4 Table of Equipment*/
+table.wiz_treeitems button {
+    background:none;
+    border:none;
+}
+table.wiz_treeitems button:hover {
+    cursor:pointer;
+}
+table.wiz_treeitems tbody td {
+    vertical-align: top;
+    text-align:center;
+}
+table.wiz_treeitems td.left {
+    width: 80%;
+    text-align: left;
+}
+
+.state_ok {
+    color:green;
+    text-align:center;
+}
+.state_missing {
+    color:#ff704d;
+    text-align:center;
+}
+.state_bad {
+    color:red;
+    text-align:center;
+    font-size:0.8em;
+}
+
+table.wiz_treeitems td span.category { 
+    color: #0066CC;
+    font-weight: bold;
+}
+table.wiz_treeitems td ul.item_parts span.category{
+    color: #3284d6;
+    font-weight: normal;
+}
+table.wiz_treeitems td ul.item_parts span.category:before{
+    content:"- ";
+}
+table.wiz_treeitems tr {
+    margin:12px 0px;
+    border-bottom: 1px solid #D9D9D9;
+}
+table.wiz_treeitems tr.igroup td:first-child {
+    text-align:left;
+    font-size:1em;
+}
+
+/*Step 5*/
+table.wiz_form td.wf_field div.wf_misc h4, table.wiz_form td.wf_field div.wf_auto h4 {
+    font-size:1em;
+    font-weight:bold;
+    margin-bottom:3px;
+}
+table.wiz_form td.wf_field div.wf_auto {
+    background-color:#f8f8f8;
+    margin-bottom:15px;
+    padding:3px;
+    margin-bottom:15px;
+}
+table.wiz_form td.wf_field div.wf_auto p{
+    margin:3px 0;
+}
 /* eof */
