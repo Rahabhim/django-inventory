@@ -162,7 +162,7 @@ class ItemTemplate(models.Model):
 
                 if err_msg:
                     errors[subcat.category_id].append(err_msg % {'self_cat': self_cat.name, 'sub_cat': subcat.category.name, \
-                            'min_count': subcat.min_count, 'max_count': subcat.max_count})
+                            'count': haz, 'min_count': subcat.min_count, 'max_count': subcat.max_count})
             if haz_it:
                 err_msg = _("An item of %(self_cat)s cannot contain any items of %(sub_cat)s.")
                 for subcat in ItemCategory.objects.filter(pk__in=haz_it.keys()):
