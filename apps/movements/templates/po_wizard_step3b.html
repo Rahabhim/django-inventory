@@ -80,7 +80,11 @@
     }
     #groups_mandatory div.on_deck {
     }
+    div.on_deck > div {
+        clear: both;
+    }
     div.add_more {
+        clear: both;
         text-align: right;
     }
 
@@ -104,6 +108,7 @@
         color: #32ADFF;
         text-decoration: underline;
         cursor:pointer;
+        padding-right: 22px; /* for the delete icon */
     }
 
     div.on_deck a.part_delete {
