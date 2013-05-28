@@ -49,7 +49,7 @@
             
         <label>Κατασκευαστής: </label>{{ form.manufacturer }}<br/>
         {{ form.product_attributes }} <br/>
-        {{form.item_template2.label}}: {{ form.item_template2 }}
+        <label>{{form.item_template2.label}}:</label> {{ form.item_template2 }}
         </div>
         <script>
     function update_product3(data, status, xhr){
@@ -89,7 +89,7 @@
 
         </script>
         <div class="found_product">
-           Προϊόν: {{ form.item_template }}
+           <label>Προϊόν:</label> {{ form.item_template }}
             <span id="label_not_found">Δεν βρέθηκε προϊόν. </span>
         </div>
         <div id="note_not_found">Σημείωση: Σε περίπτωση που δεν βρήκατε τον εξοπλισμό που επιθυμείτε μπορείτε να επιλέξετε "Άλλο" και στο παράθυρο που θα εμφανιστεί να μας στείλετε το στοιχείο αυτό.
