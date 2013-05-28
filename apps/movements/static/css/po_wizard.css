@@ -960,7 +960,7 @@ table.group_3s_t2 td.left {
 }
 
 table.group_3s_t2 tr.cat td.left {
-    color: blue;
+    color: rgb(0, 102, 204);
     font-weight: bold;
 }
 
