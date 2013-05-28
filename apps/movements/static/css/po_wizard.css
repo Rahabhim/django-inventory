@@ -966,13 +966,11 @@ table.group_3s_t2 tr.cat td.left {
 
 a.like-button {
     appearance: button;
-    -webkit-appearance: button;
     -moz-appearance: button;
     vertical-align: top;
     padding: 4px;
 }
 
-/* eof */
 
 .wiz_form input[type="text"]{ /*step 1 input*/
     margin-top:8px;
@@ -983,7 +981,13 @@ a.like-button {
     padding:5px;
 }
 
-#submit0, table.two_cols button, #ss3s-1 > div#note_not_found button, .u0_container div.submit_button button, .u0_container table#wizard_goto_step div.submit_button button, .u0_container table#wizard_goto_step div.submit_button a.like-button, .u0_container div.submit_button button{
+#submit0, table.two_cols button,
+        #ss3s-1 > div#note_not_found button,
+        .u0_container div.submit_button button,
+        .u0_container div.submit_button button,
+        .u0_container div.submit_button a.like-button,
+        .u0_container div.submit_button button
+{
     background-color: #F0F0F0;
     background-image: -moz-linear-gradient(center top , #FFFFFF 2%, #F0F0F0 2%, #DEDEDE 100%);
     border: 1px solid #969696;
@@ -1003,8 +1007,17 @@ a.like-button {
     display: inline-block;
 }
 
-#submit0:hover, #submit0:active, table.two_cols button:hover, table.two_cols button:active, #ss3s-1 > div#note_not_found button:hover, #ss3s-1 > div#note_not_found button:active, .u0_container div.submit_button button:hover, .u0_container div.submit_button button:active, .u0_container table#wizard_goto_step div.submit_button button:hover, .u0_container table#wizard_goto_step div.submit_button a.like-button:hover{
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); 
+#submit0:hover, #submit0:active,
+        table.two_cols button:hover,
+        table.two_cols button:active,
+        #ss3s-1 > div#note_not_found button:hover,
+        #ss3s-1 > div#note_not_found button:active,
+        .u0_container div.submit_button button:hover,
+        .u0_container div.submit_button button:active,
+        .u0_container div.submit_button button:hover,
+        .u0_container div.submit_button a.like-button:hover
+{
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
     color: #818181;
     background-color: #fff;
     background-image: -moz-linear-gradient(top,  rgb(255,255,255) 2%, rgb(244,244,244) 2%, rgb(229,229,229) 100%);
