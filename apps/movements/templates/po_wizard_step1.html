@@ -21,7 +21,7 @@
     {% endwith %}
 
     {% with form.issue_date as field %}
-    <tr><th>{{ field.label }}</th>
+    <tr><th>{{ field.label }} <font color="red">*</font></th>
         <td class="wf_middle"></td><td class="wf_field">{{field }}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
@@ -30,7 +30,7 @@
     {% endwith %}
 
     {% with form.procurement as field %}
-    <tr><th>{{ field.label }}</th>
+    <tr><th>{{ field.label }} <font color="red">*</font></th>
         <td class="wf_middle">&nbsp;</td><td class="wf_field">{{field }}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
@@ -40,7 +40,7 @@
 
     {% if user.is_staff %}
     {% with form.department as field %}
-    <tr><th>{{ field.label }}</th>
+    <tr><th>{{ field.label }} <font color="red">*</font></th>
         <td class="wf_middle">&nbsp;</td><td class="wf_field">{{field }}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
@@ -49,7 +49,7 @@
     {% endwith %}
     {% endif %}
 
-    <tr><th>{%trans "Supplier" %}</th>
+    <tr><th>{%trans "Supplier" %} <font color="red">*</font></th>
         <td class="wf_middle">{{ form.supplier_name_or_vat.label }}</td>
         <td class="wf_field">
             {% with form.supplier_name_or_vat.0 as radio %}{% with form.supplier_vat as field %}
