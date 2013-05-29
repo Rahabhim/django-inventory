@@ -41,7 +41,7 @@ class WizardForm(_WizardFormMixin, forms.Form):
 class PO_Step1(_WizardFormMixin, forms.ModelForm):
     title = _("Purchase Order Header Data")
     user_id = forms.CharField(max_length=32, required=False, label=_(u'purchase order number'))
-    issue_date = forms.DateField(label=_(u'issue date'), required=True)
+    issue_date = forms.DateField(label=_(u'issue date'), required=True,help_text=_("Format: 23/04/2010"))
 
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.all())
     department = AutoCompleteSelectField('department', label=_("Department"), required=False, show_help_text=False)

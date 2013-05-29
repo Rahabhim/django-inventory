@@ -13,6 +13,7 @@
     {% with form.user_id as field %}
     <tr><th>{{ field.label }}</th>
         <td class="wf_middle"></td><td class="wf_field">{{field }}
+        {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
         {% endif %}
@@ -23,6 +24,7 @@
     {% with form.issue_date as field %}
     <tr><th>{{ field.label }} <font color="red">*</font></th>
         <td class="wf_middle"></td><td class="wf_field">{{field }}
+        {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
         {% endif %}</td>
@@ -32,6 +34,7 @@
     {% with form.procurement as field %}
     <tr><th>{{ field.label }} <font color="red">*</font></th>
         <td class="wf_middle">&nbsp;</td><td class="wf_field">{{field }}
+        {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
         {% endif %}</td>
@@ -42,6 +45,7 @@
     {% with form.department as field %}
     <tr><th>{{ field.label }} <font color="red">*</font></th>
         <td class="wf_middle">&nbsp;</td><td class="wf_field">{{field }}
+        {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
         {% endif %}</td>
