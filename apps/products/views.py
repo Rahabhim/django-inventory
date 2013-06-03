@@ -27,11 +27,14 @@ def supplier_assign_remove_itemtemplates(request, object_id):
 def template_assign_remove_supply(request, object_id):
     obj = get_object_or_404(ItemTemplate, pk=object_id)
 
+
     return generic_assign_remove(
         request,
         title=_(u'Assign supplies to the template: <a href="%(url)s">%(obj)s</a>' % {'url':obj.get_absolute_url(), 'obj':obj}),
         obj=obj,
-        left_list_qryset=ItemTemplate.objects.exclude(supplies=obj).exclude(pk=obj.pk),
+        left_list_qryset=ItemTemplate.objects.filter(category__in= \
+                    [mc.category for mc in obj.category.may_contain.all()])
+                .exclude(supplies=obj).exclude(pk=obj.pk),
         right_list_qryset=obj.supplies.all(),
         add_method=obj.supplies.add,
         remove_method=obj.supplies.remove,

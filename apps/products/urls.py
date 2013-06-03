@@ -17,6 +17,7 @@ from models import ItemTemplate, ItemCategory, Manufacturer, \
         ProductAttribute #, ProductAttributeValue
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
         ItemCategoryForm, ItemCategoryForm_view, ItemCategoryContainForm, \
+        ItemPartsForm_inline, ItemPartsFormD_inline, \
         ItemCategoryContainForm_view, \
         ManufacturerForm, ManufacturerForm_view, \
         ProductAttributeForm, ProductAttributeForm_view, \
@@ -59,6 +60,7 @@ urlpatterns = patterns('products.views',
     url(r'^template/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
             form_class=ItemTemplateForm,
             # template_name= 'product_form.html',
+            inline_fields={'parts': ItemPartsForm_inline},
             extra_context={'object_name':_(u'item template')}),
             name='template_update' ),
     url(r'^template/(?P<pk>\d+)/delete/$', GenericDeleteView.\
@@ -72,7 +74,8 @@ urlpatterns = patterns('products.views',
     url(r'^template/(?P<object_id>\d+)/photos/$', generic_photos, {'model':ItemTemplate, 'max_photos':inventory_settings.MAX_TEMPLATE_PHOTOS, 'extra_context':{'object_name':_(u'item template')}}, 'template_photos'),
     url(r'^template/(?P<pk>\d+)/$', GenericDetailView.as_view(form_class=ItemTemplateForm_view,
                     template_name= 'product_form.html',
-                    inline_fields={'attributes': ItemTemplateAttributesForm },
+                    inline_fields={'attributes': ItemTemplateAttributesForm,
+                                'parts': ItemPartsFormD_inline},
                     queryset=ItemTemplate.objects.all(),
                     extra_context={'object_name':_(u'item template'), \
                         'sidebar_subtemplates':['generic_photos_subtemplate.html']}),

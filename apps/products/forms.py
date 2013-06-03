@@ -1,10 +1,14 @@
 # -*- encoding: utf-8 -*-
 from django import forms
-from generic_views.forms import DetailForm, InlineModelForm, ColumnsDetailWidget
+from generic_views.forms import DetailForm, InlineModelForm, ColumnsDetailWidget, \
+            ROModelChoiceField, DetailPlainForeignWidget
 from models import ItemTemplate, Manufacturer, ItemCategory, ItemCategoryContain, \
-            ProductAttribute, ProductAttributeValue, ItemTemplateAttributes
+            ProductAttribute, ProductAttributeValue, ItemTemplateAttributes, \
+            ItemTemplatePart
 from django.utils.translation import ugettext_lazy as _
 from form_fields import CategoriesAttributesField
+from ajax_select.fields import AutoCompleteSelectField
+
 
 class ItemTemplateForm(forms.ModelForm):
     attributes = CategoriesAttributesField(label=_("attributes"))
@@ -51,7 +55,23 @@ class ItemTemplateForm(forms.ModelForm):
         model = ItemTemplate
         exclude = ('photos', 'supplies', 'suppliers')
 
+class ItemPartsForm_inline(InlineModelForm):
+    item_template = AutoCompleteSelectField('product', show_help_text=False, required=False,
+            label=_("Template"))
+
+    class Meta:
+        model = ItemTemplatePart
+        verbose_name=_("Standard Parts")
+
+class ItemPartsFormD_inline(InlineModelForm):
+    item_template = ROModelChoiceField(ItemTemplate.objects.all(),
+                widget=DetailPlainForeignWidget, label=_('Template'))
+    class Meta:
+        model = ItemTemplatePart
+        verbose_name=_("Standard Parts")
+
 class ItemTemplateForm_view(DetailForm):
+
     class Meta:
         model = ItemTemplate
         exclude = ('photos',)
