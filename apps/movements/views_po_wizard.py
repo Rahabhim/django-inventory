@@ -146,6 +146,7 @@ class PO_Step3(WizardForm):
             our_data['line_num'] = lnmax + 1
             our_data['parts'] = {}
             aitems.append(our_data)
+            self._fill_std_items(our_data, aitems, {'l': lnmax })
         else:
             for it in aitems:
                 if it.get('line_num', False) == our_data['line_num']:
@@ -182,6 +183,44 @@ class PO_Step3(WizardForm):
             # note: this must also happen after step 3b!
             wizard.storage.set_step_data('3', {self.add_prefix('quantity'): '1'}) # reset this form
         return '4'
+
+    def _fill_std_items(self, our_data, aitems, clnmax):
+        """Read the preset `parts` of `our_data[item_template]` and populate tables
+
+            @param clnmax a mutable dict containing the max line
+
+            If the template is a bundle, `our_data[parts]` will be populate. If it
+            is a group, then `aitems` will receive new `in_group` lines.
+
+            The function is recursive, for all new lines it creates.
+        """
+
+        std_parts = defaultdict(list)
+        for sp in our_data['item_template'].parts.all():
+            std_parts[sp.item_template.category_id].append((sp.item_template, sp.qty))
+
+        if our_data['item_template'].category.is_group:
+            # we create separate lines for each standard part
+            for lst in std_parts.values():
+                for it, qty in lst:
+                    clnmax['l'] = clnmax['l'] + 1
+                    od = { 'line_num': clnmax['l'],
+                            'in_group': our_data['line_num'],
+                            'item_template': it,
+                            'quantity': qty,
+                            'serials': None, 'parts': {} }
+                    aitems.append(od)
+                    self._fill_std_items(od, aitems, clnmax)
+
+        elif our_data['item_template'].category.is_bundle:
+            # just put them in "parts"
+            for mc in our_data['item_template'].category.may_contain.all():
+                our_data['parts'][mc.id] = std_parts.pop(mc.category_id, [])
+
+        if std_parts:
+            logger.warning("Stray standard parts found for template %s: %r", our_data['item_template'], std_parts)
+
+        return
 
 class PO_Step3_allo(_WizardFormMixin, forms.ModelForm):
     title = _("New Product Request")
