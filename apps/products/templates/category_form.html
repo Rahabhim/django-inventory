@@ -8,6 +8,7 @@
     <div class="group newline">
         {% field_for name %}
     </div>
+    {% if user.is_staff %}
     <div class="group inline">
         {% field_for approved%}
     </div>
@@ -17,18 +18,21 @@
     <div class="group newline">
         {% field_for parent %}
     </div>
+    {% endif %}
     <div class="group inline">
         {% field_for is_bundle %}
     </div>
     <div class="group inline">
         {% field_for is_group %}
     </div>
+    {% if user.is_staff %}
     <div class="group inline">
         {% field_for chained_location %}
     </div>
     <div class="group inline">
         {% field_for use_serials %}
     </div>
+    {% endif %}
 
     <div class="group newline">
         {% field_for picture %}
