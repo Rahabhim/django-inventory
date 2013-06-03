@@ -182,6 +182,15 @@ class ItemTemplate(models.Model):
         else:
             return errors
 
+class ItemTemplatePart(models.Model):
+    parent = models.ForeignKey(ItemTemplate, verbose_name=_("parent"), related_name="parts", on_delete=models.CASCADE)
+    item_template = models.ForeignKey(ItemTemplate, verbose_name=_("template"), on_delete=models.PROTECT)
+    qty = models.IntegerField(verbose_name=_("Quantity"))
+
+    class Meta:
+        verbose_name = _("part")
+        verbose_name_plural = _("standard parts")
+
 class ItemTemplateAttributes(models.Model):
     template = models.ForeignKey(ItemTemplate, related_name="attributes")
     value = models.ForeignKey(ProductAttributeValue, verbose_name=_("value"))
