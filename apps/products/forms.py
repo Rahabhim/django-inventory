@@ -29,7 +29,7 @@ class ItemsPartsGroupField(forms.Field):
 
 class ItemTemplateForm(forms.ModelForm):
     attributes = CategoriesAttributesField(label=_("attributes"))
-    parts = ItemsPartsGroupField(label=_("standard parts"))
+    parts = ItemsPartsGroupField(label=_("standard parts"), required=False)
 
     def __init__(self, data=None, files=None, **kwargs):
         super(ItemTemplateForm, self).__init__(data, files, **kwargs)
