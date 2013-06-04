@@ -203,6 +203,7 @@ class ItemsGroupWidget(forms.widgets.Widget):
                 parts: { may_contain.id: list[ tuple(object, quantity), ...] }
             }
     """
+    _template_name = 'po_wizard_itemgroups.html'
 
     def value_from_datadict(self, data, files, name):
         if name in data:
@@ -260,7 +261,7 @@ class ItemsGroupWidget(forms.widgets.Widget):
             'igroups': igroups,
         }
 
-        return mark_safe(render_to_string('po_wizard_itemgroups.html', context))
+        return mark_safe(render_to_string(self._template_name, context))
 
 class ItemsGroupField(forms.Field):
     widget = ItemsGroupWidget
