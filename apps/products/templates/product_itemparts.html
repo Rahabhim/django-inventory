@@ -1,0 +1,111 @@
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+
+<p class="hint">{% blocktrans %}Please fill in the parts this bundle/set shall contain
+by default. Note that <b>NO</b> parts are mandatory here, the user will be asked to
+fill them in at the wizard.
+{% endblocktrans %}
+</p>
+<input type="hidden" name="{{html_id}}_item_template" value="{{item_template.id}}" />
+
+<table class="two_cols">
+    <thead><tr><th>{% blocktrans %}Needed parts{% endblocktrans %}</th>
+        <th>{% trans 'Part selection area' %}</th></tr>
+    </thead>
+    
+    <tbody><tr><td id="groups_mandatory" width="40%">
+            {% for mand in igroups %}{% if mand.mandatory %}
+                <div id="{{ mand.did }}_menu"><div class="gname">{{ mand.name }}</div>
+                    <div class="on_deck" id="{{mand.did}}_on_deck1">
+                    {% for part, qty in mand.parts %}
+                        <div id="cont_parts-{{part.id}}">
+                            <input type="hidden" name="{{mand.did }}_parts" value="{{part.id}}"><input type="hidden" name="{{mand.did }}_part_qty" value="{{qty}}"><a class="cont_part" onclick="part_update('{{part.id}}', '#{{mand.did}}');">{{part.description}}</a>
+                        <span class="qty">{% if qty > 1%}x{{qty}}{% endif %}</span>
+                        <a class="part_delete" onclick="part_delete('{{part.id}}');">X</a>
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <div class="add_more"><a onClick="add_to('#{{mand.did}}')">{% trans 'Add' %}</a></div>
+                </div>
+            {% endif %}{% endfor %}
+            </td>
+        <td id="fill_in_pane" rowspan="4" width="60%">
+            {% for mand in igroups %}
+                <div id="{{mand.did}}">
+                    <input type="hidden" id="{{mand.did}}_part" value="" />
+                    <div class="gname">{{ mand.name }}</div>
+                    <div class="product_search">
+                        <!-- like step 3 -->
+                        <div>
+                            <p>{% trans 'Product number:' %}
+                                <input type="text" id="{{mand.did}}_code" value="" width="7em" />
+                            </p>
+                        </div>
+                        <p align="center"> ή </p>
+
+                        <div> <p>{% blocktrans %}Search based on criteria: {% endblocktrans %}</p>
+            
+                            <label>{% trans 'Manufacturer:' %}</label>
+                            <select id="{{mand.did}}_manuf_combo">
+                                <option value="">------</option>
+                                {% for manuf in mand.manufs  %}
+                                <option value="{{manuf.id}}">{{ manuf.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <br/>
+                            <div id="{{mand.did }}_attribs">
+                            {% for attrib in mand.attribs %}
+                                <div class="product_attrib">{{ attrib|safe }}</div>
+                            {% endfor %}
+                            </div>
+                            <br/>
+                            <label>{% trans 'Product:' %}</label> <select id="{{mand.did}}_combo" ><option value="">-----</option></select>
+                        </div>
+                        <div id="{{ mand.did }}_on_deck">{% trans 'Not found' %}</div>
+                    </div>
+                    <div class="line_vals">
+                        <label for="{{mand.did}}_qty">{% trans 'Quantity' %}</label><input type="text" id="{{mand.did}}_qty" value="1" />
+                    </div>
+                </div>
+            {% endfor %}
+        </td>
+        </tr>
+        <tr><th id="title_optional">{% trans 'Less needed parts' %}</th></tr>
+        <tr><td id="groups_optional">
+            {% for mand in igroups %}{% if not mand.mandatory %}
+                <div id="{{ mand.did }}_menu" {% if not mand.parts %} style="display: none;" {% endif %}><div class="gname">{{ mand.name }}</div>
+                    <div class="on_deck" id="{{mand.did}}_on_deck1">
+                    {% for part, qty in mand.parts %}
+                        <div id="cont_parts-{{part.id}}">
+                            <input type="hidden" name="{{mand.did }}_parts" value="{{part.id}}"><input type="hidden" name="{{mand.did }}_part_qty" value="{{qty}}"><a class="cont_part" onclick="part_update('{{part.id}}', '#{{mand.did}}');">{{part.description}}</a>
+                        <span class="qty">{% if qty > 1%}x{{qty}}{% endif %}</span>
+                        <a class="part_delete" onclick="part_delete('{{part.id}}');">X</a>
+                        </div>
+                    {% endfor %}
+                    </div>
+                    <div class="add_more"><a onClick="add_to('#{{mand.did}}')">{% trans 'Add' %}</a></div>
+                </div>
+            {% endif %}{% endfor %}
+
+
+            <select id="{{ html_id }}_add_more">
+                <option value="">-----</option>
+            {% for opt in igroups %}{% if opt.mandatory or opt.parts %}
+                {% else %}
+                <option value="{{opt.did}}">{{ opt.name }}</option>
+            {% endif %}{% endfor %}
+            </select>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+$(function () {
+    {% for mand in igroups %}
+        setup_category('#{{mand.did}}', '{{ mand.cat_id }}'); {% endfor %}
+    $("#{{ html_id }}_add_more").change(function() { add_more("#{{ html_id }}_add_more");});
+ });
+</script>

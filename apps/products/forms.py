@@ -9,9 +9,27 @@ from django.utils.translation import ugettext_lazy as _
 from form_fields import CategoriesAttributesField
 from ajax_select.fields import AutoCompleteSelectField
 
+from movements.weird_fields import ItemsGroupWidget
+from collections import defaultdict
+import logging
+
+logger = logging.getLogger('apps.products.forms')
+
+
+class ItemsPartsGroupWidget(ItemsGroupWidget):
+    _template_name = 'product_itemparts.html'
+
+class ItemsPartsGroupField(forms.Field):
+    """ value = {
+                item_template: the main product, in which we add parts
+                parts: { may_contain.id: list[ tuple(object, quantity), ...] }
+            }
+    """
+    widget = ItemsPartsGroupWidget
 
 class ItemTemplateForm(forms.ModelForm):
     attributes = CategoriesAttributesField(label=_("attributes"))
+    parts = ItemsPartsGroupField(label=_("standard parts"))
 
     def __init__(self, data=None, files=None, **kwargs):
         super(ItemTemplateForm, self).__init__(data, files, **kwargs)
@@ -20,8 +38,25 @@ class ItemTemplateForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             self.initial['attributes'] = {'from_category': self.instance.category,
                 'all': self.instance.attributes.values_list('value_id', flat=True) }
+
+            if self.instance.category.is_group or self.instance.category.is_bundle:
+                std_parts = defaultdict(list)
+                for sp in self.instance.parts.all():
+                    std_parts[sp.item_template.category_id].\
+                                append((sp.item_template, sp.qty))
+
+                parts_parts = {}
+                for mc in self.instance.category.may_contain.all():
+                    parts_parts[mc.id] = std_parts.pop(mc.category_id, [])
+
+                if std_parts:
+                    logger.warning("Stray standard parts found for template %s: %r",
+                                self.instance, std_parts)
+                self.initial['parts'] = { 'item_template': self.instance,
+                            'parts': parts_parts }
         else:
             self.initial['attributes'] = {}
+            self.initial['parts'] = None
 
     def save(self, commit=True):
         ret = super(ItemTemplateForm, self).save(commit=commit)
@@ -37,6 +72,24 @@ class ItemTemplateForm(forms.ModelForm):
             if len(attrs):
                 for attr in attrs:
                     self.instance.attributes.create(value_id=attr)
+        if 'parts' in self.cleaned_data:
+            bits = {} # arrange all bundled parts in dict
+                          # by part.item_template.id
+            item = self.cleaned_data['parts']
+            for pcats in item.get('parts',{}).values():
+                for p, q in pcats:
+                    n = bits.get(p.id, (p, 0))[1]
+                    bits[p.id] = (p, n + q)
+            for bitem in self.instance.parts.all():
+                if bitem.item_template_id not in bits:
+                    bitem.delete()
+                else:
+                    p, q = bits.pop(bitem.item_template_id)
+                    if bitem.qty != q:
+                        bitem.qty = q
+                        bitem.save()
+            for p, q in bits.values():
+                self.instance.parts.create(item_template=p, qty=q)
         return ret
 
     def _post_clean(self):
@@ -71,7 +124,6 @@ class ItemPartsFormD_inline(InlineModelForm):
         verbose_name=_("Standard Parts")
 
 class ItemTemplateForm_view(DetailForm):
-
     class Meta:
         model = ItemTemplate
         exclude = ('photos',)

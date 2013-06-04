@@ -3,7 +3,299 @@
 {% load styling %}
 
 {% block form_layout %}
+{% if form.parts.value %}
+<style>
+    table.two_cols td {
+        /*width: 50%;*/
+    }
+    table.two_cols td#groups_mandatory {
+        /*width: 30%;*/
+        max-width:350px;
+        width:350px;
+        vertical-align:top;
+    }
+    table.two_cols td#fill_in_pane {
+        /*width: 70%;*/
+        max-width:400px;
+        width:400px;
+    }
 
+    table.two_cols th {
+        /*width: 50%;*/
+        font-weight: normal;
+        text-decoration: underline;
+        text-align: left;
+        font-size: 120%;
+        margin-bottom:12px;
+    }
+
+    #groups_mandatory > div, 
+    #groups_optional > div{
+        border-bottom: 1px solid #D9D9D9;
+        padding:5px;
+        margin-left:0;
+        width:95%;
+    }
+
+    #groups_mandatory > div.selected, #groups_optional > div.selected {
+        background: #FFFFFF;
+        border:1px solid #72C9FF;
+        border-radius:5px;
+    }
+
+    #groups_mandatory div.gname {
+        font-size: 120%;
+        font-weight: bold;
+        margin-left: 0.4em;
+    }
+    #groups_optional div.gname {
+        font-size: 120%;
+        font-weight: bold;
+        margin-left: 0.4em;
+    }
+
+    #fill_in_pane div.gname {
+        font-size: 120%;
+        font-weight: bold;
+    }
+    #groups_mandatory div.gname :before {
+        content: '*';
+        color: red;
+    }
+    #groups_mandatory div.on_deck {
+    }
+    div.on_deck > div {
+        clear: both;
+    }
+    div.add_more {
+        clear: both;
+        text-align: right;
+    }
+
+    #fill_in_pane > div {
+        width: 98%;
+        background: #FFFFFF;
+        border:1px solid #72C9FF;
+        border-radius:5px;
+        padding:5px;
+        display: none; /* initial value, must be activated in js */
+    }
+    div.product_search > div { /* Product search box style */
+
+        background: none repeat scroll 0 0 #F8F8F8;
+        border: 2px solid #A7A7A7;
+        margin: 20px;
+        padding: 10px;
+    }
+
+    div.add_more > a {
+        color: #32ADFF;
+        text-decoration: underline;
+        cursor:pointer;
+        padding-right: 22px; /* for the delete icon */
+    }
+
+    div.on_deck a.part_delete {
+        background-image: url("/static/images/famfamfam-silk-sprites/famfam-active.png");
+        background-position: -260px -140px;
+        float: right;
+        height: 20px;
+        overflow: hidden;
+        text-indent: -9999px;
+        width: 20px;
+    }
+    div.on_deck a.part_delete:hover {
+        cursor:pointer;
+    }
+
+    table.two_cols {
+        width:100%;
+    }
+    table.two_cols thead {
+        height:50px;
+    }
+    a.cont_part{
+        color:#1e6799;
+        cursor:pointer;
+        display:inline-block;
+        width:90%;
+        margin-left: 0.4em;
+    }
+     a.cont_part:hover{
+        color:#32ADFF;
+    }
+    div#cont_parts-20 {
+        margin:10px 0;
+    }
+    .product_search label {
+        display: inline-block;
+        width: 15em;
+    }
+
+</style>
+
+<script>
+
+    /** Show the right pane for some category
+    */
+    function add_to(field_id){
+        $('#groups_mandatory > div').removeClass('selected');
+        $('#groups_optional > div').removeClass('selected');
+        $(field_id +'_menu').addClass('selected');
+        $('#fill_in_pane > div').hide();
+        $(field_id).show('fast');
+        $(field_id+"_part").val('');
+    }
+
+    /** Add an optional category, display in left menu and activate on right
+    */
+    function add_more(html_id){
+        var selected = $(html_id).val();
+        if (! selected)
+            return;
+        $("#"+selected+"_menu").show('fast');
+        add_to("#"+ selected);
+    }
+
+    /** edit part
+
+        Will bring that part to the right pane for editing
+    */
+    function part_update(part_id, field_id) {
+        $('#groups_mandatory > div').removeClass('selected');
+        $('#groups_optional > div').removeClass('selected');
+        $('#cont_parts-'+ part_id).addClass('selected');
+        $('#fill_in_pane > div').hide();
+        $(field_id).show('fast');
+        var part_qty = $('#cont_parts-'+ part_id +' input[name="'+ field_id.substr(1)+'_part_qty"]').val();
+        /* Cleanup the right pane and display our part on deck */
+        $(field_id + "_manuf_combo option:selected").prop("selected", false);
+        $(field_id + "_combo option:selected").prop("selected", false);
+        $(field_id + "_attribs option:selected").prop("selected", false);
+        $(field_id + "_part").val(part_id);
+        $(field_id + "_on_deck").text($('#cont_parts-' + part_id + ' > a.cont_part').text());
+        $(field_id + "_qty").val(part_qty);
+    }
+
+    /** Remove part
+        If we remove the <input> element, the part will not be submitted
+        with the form
+    */
+    function part_delete(part_id){
+        $("#cont_parts-"+part_id).remove();
+    }
+
+    function update_product3(data, field_id){
+        var pcombo = $(field_id + "_combo");
+        pcombo.empty();
+        pcombo.append($('<option>', {value: ''}).text('-----'));
+
+        for(i=0;i<data.length;i++){
+            pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
+        }
+    }
+
+    function update_product2(field_id, cat_id){
+        var attribs = new Array();
+        $(field_id + "_attribs > select").each(function() { attribs.push(this.value)});
+        $.ajax("{% url ajax_lookup 'product_specs' %}", {
+                'dataType': 'json',
+                'data': {'term': 'foo', 'attributes': attribs,
+                        'category': cat_id,
+                        'manufacturer': $(field_id + "_manuf_combo")[0].value },
+                'success': function(data,status, xhr) { update_product3(data, field_id);},
+            });
+    }
+
+    /** Read the field_combo (when changed) and update the selection
+    */
+    function select_some_part(field_id){
+        var $selected = $(field_id +"_combo option:selected");
+        if (! $selected) {
+            $(field_id + '_on_deck').text('---');
+            return false; 
+        }
+        select_part2(field_id, $selected.text(), $selected.val());
+    }
+
+    /** Update the selected part at both the left menu and right pane
+    */
+    function select_part2(field_id, sel_text, sel_val){
+        // Here, we just display the text:
+        $(field_id + '_on_deck').text(sel_text);
+        var part_val = $(field_id+ '_part').val();
+        if (part_val){
+            if (part_val != sel_val){
+                $("#cont_parts-"+part_val).remove();
+            }
+            else {
+                // no need to do anything, or is there?
+                return;
+            }
+        }
+        else { // new part
+        }
+
+        // But then, we store the real value in the left pane
+        var newdiv = $("<div>", {id: "cont_parts-" + sel_val});
+        var newqty = $(field_id+'_qty').val();
+        var str_qty = ' ';
+        if (newqty != 1)
+            str_qty = 'x' + newqty.toString();
+
+        newdiv.append($("<input>", {'type': 'hidden', 
+                                    name: field_id.substr(1) +'_parts',
+                                    value: sel_val } ));
+        newdiv.append($("<input>", {'type': 'hidden', 
+                                    name: field_id.substr(1) +'_part_qty',
+                                    value: newqty } ));
+        newdiv.append($("<a>", {'class': 'cont_part',
+                                'onclick': "part_update('" +sel_val+"', '"+ field_id+"');",
+                                }).text(sel_text));
+        
+        newdiv.append($("<span>", {'class': 'qty'}).text(str_qty));
+
+        newdiv.append($("<a>", {'class': 'part_delete', 'onclick': "part_delete('" +sel_val+"');"}).text('X'));
+
+        $(field_id + '_on_deck1').append(newdiv);
+        $(field_id+ '_part').val(sel_val); // update this, so that 2nd selection replaces the first
+    }
+
+    function upd_quantity(field_id) {
+        var part_id = $(field_id+ '_part').val();
+        var newqty = $(field_id + "_qty").val();
+        $('#cont_parts-'+ part_id +' input[name="'+ field_id.substr(1)+'_part_qty"]').val(newqty);
+        if (newqty != 1)
+            $('#cont_parts-'+ part_id +' span.qty').text('x' + newqty.toString());
+        else
+            $('#cont_parts-'+ part_id +' span.qty').text('');
+    }
+    /** Setup some field to provide search for category
+
+        @param field_id the html id of the field (and sub-elements)
+        @param cat_id   the database id of the category
+    */
+    function setup_category(field_id, cat_id){
+        function upd_product2() {
+            update_product2(field_id, cat_id);
+        }
+        $(field_id + "_manuf_combo").change(upd_product2);
+        $(field_id + "_attribs > select").change(upd_product2);
+        $(field_id + "_combo").change(function() { select_some_part(field_id); } );
+        $(field_id + "_qty").change(function() { upd_quantity(field_id); });
+        $(field_id + "_code").autocomplete({
+                source: "{% url ajax_lookup 'product_part' %}?category="+cat_id,
+                minLength: 2,
+                select: function( event, ui ) {
+                    $(field_id + "_combo option:selected").prop("selected", false);
+                    select_part2(field_id, ui.item.repr, ui.item.pk);
+                    return false; /* Don't update the _code text */
+                    }
+                });
+    }
+</script>
+
+{% endif %}
 <div class="content">
     <div class="group newline">
         {% field_for description %}
@@ -35,6 +327,12 @@
     {% for formset in formsets %}
         {% include 'category_contained_formset.html' %}
     {% endfor %}
+
+    {% if form.parts.value %}
+    <div class="group newline">
+        {% field_for parts %}
+    </div>
+    {% endif %}
 
     <div class="group newline">
         {% field_for supplies %}
