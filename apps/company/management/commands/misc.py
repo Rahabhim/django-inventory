@@ -31,8 +31,6 @@ class SyncCommand(BaseCommand):
         pgroup.add_option("--interactive", action="store_true", default=False,
                     help="Interactive ask about each change")
         parser.add_option_group(pgroup)
-        #pgroup.add_option('--slice', type=int,
-        #            help="Slice of records to process at a time"),
         return parser
 
     def _pre_handle(self, *args, **options):
