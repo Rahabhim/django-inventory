@@ -143,7 +143,7 @@ class PO_Step3(WizardForm):
                 if it.get('line_num', 0) > lnmax:
                     lnmax = it['line_num']
             assert isinstance(lnmax, int), "Not an int, %s: %r" %( type(lnmax), lnmax)
-            our_data['line_num'] = lnmax + 1
+            our_data['line_num'] = lnmax = lnmax + 1
             our_data['parts'] = {}
             aitems.append(our_data)
             self._fill_std_items(our_data, aitems, {'l': lnmax })
@@ -430,7 +430,8 @@ class PO_Step4(WizardForm):
         assert po_instance and po_instance.pk
         items_dict = {}
         for item in (self.cleaned_data['items'] or []):
-            assert item['line_num'] not in items_dict, "duplicate line!"
+            assert item['line_num'] not in items_dict, "duplicate line!: %r (%r, %r)" % \
+                    (item['line_num'], item, items_dict[item['line_num']])
             items_dict[item['line_num']] = item
 
         line_map = {} # map of db.id => "line_num"
