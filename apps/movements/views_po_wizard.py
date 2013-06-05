@@ -208,7 +208,7 @@ class PO_Step3(WizardForm):
                             'in_group': our_data['line_num'],
                             'item_template': it,
                             'quantity': qty,
-                            'serials': None, 'parts': {} }
+                            'serials': '', 'parts': {} }
                     aitems.append(od)
                     self._fill_std_items(od, aitems, clnmax)
 
