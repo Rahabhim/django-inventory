@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-21 09:06+0300\n"
-"PO-Revision-Date: 2013-05-21 09:13+0300\n"
+"PO-Revision-Date: 2013-06-07 09:35+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -103,7 +103,7 @@ msgstr ""
 
 #: templates/home.html:115
 msgid "Select department and role:"
-msgstr "Επιλέξτε μονάδα και ρόλο:"
+msgstr "Μονάδα και ρόλος:"
 
 #: templates/home.html:119
 msgid "Updating, please wait"
