@@ -5,7 +5,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 from inventory.models import Inventory
-import sys
 import logging
 
 class Command(BaseCommand):
@@ -36,7 +35,8 @@ class Command(BaseCommand):
                                 'internal_title': "Inventory %d" % inventory.id,
                                 'author': "Django-inventory"  } )
                 out = parseString(rml_str, localcontext={}, fout=fname)
-            except Exception, e:
+                # print out
+            except Exception:
                 logger.exception("Cannot render inventory %s", inv_id)
 
 
