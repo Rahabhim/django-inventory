@@ -84,9 +84,9 @@ def _context_has_perm(context, obj, pattern):
         if 'request' in context:
             role = role_from_request(context['request'])
         if role is False:
-            role = user
+            role = context['request'].user
         return role.has_perm(pattern % npd)
-    except Exception, e:
+    except Exception:
         return False
 
 def can_add(model):
