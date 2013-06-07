@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 #import urllib
 
-from django.core.urlresolvers import reverse, NoReverseMatch
+from django.core.urlresolvers import reverse #, NoReverseMatch
 from django.contrib import messages
 from django.db.models import Q, Count, get_model
 from django.db.models.query import QuerySet
@@ -13,7 +13,6 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
 from django.views.generic.list_detail import object_detail, object_list
-from django.views.generic.create_update import delete_object # create_object, update_object, 
 import django.views.generic as django_gv
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.forms.models import inlineformset_factory #, ModelForm

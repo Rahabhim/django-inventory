@@ -2,9 +2,9 @@
 # Copyright P. Christeas <xrg@hellug.gr> 2013
 # Only a few rights reserved
 
-from django.db import models
+#from django.db import models
 
-from django.http import HttpResponse
+#from django.http import HttpResponse
 from models import Supplier
 from django.utils.html import escape
 from common.api import LookupChannel

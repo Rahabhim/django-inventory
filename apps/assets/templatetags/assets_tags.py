@@ -1,7 +1,7 @@
-from django.template.defaultfilters import stringfilter
-from django.template import Library, Node, Variable
-from django.core.urlresolvers import reverse
-
+# -*- encoding: utf-8 -*-
+#from django.template.defaultfilters import stringfilter
+from django.template import Library, Node, TemplateSyntaxError
+#from django.core.urlresolvers import reverse
 from assets.models import State
 
 register = Library()

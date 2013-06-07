@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 import logging
 from collections import defaultdict
-from django.utils.translation import ugettext_lazy as _
+# from django.utils.translation import ugettext_lazy as _
 
 from django import forms
 from django.template.loader import render_to_string
-from django.utils.encoding import StrAndUnicode, force_unicode
+from django.utils.encoding import StrAndUnicode
 from django.utils.safestring import mark_safe
 from django.db.models import Count
 from generic_views.forms import DetailForeignWidget

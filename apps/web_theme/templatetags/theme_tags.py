@@ -1,11 +1,5 @@
-import types
 
-from django.conf import settings
-from django.core.urlresolvers import reverse, NoReverseMatch
-from django.core.urlresolvers import RegexURLResolver, RegexURLPattern, Resolver404, get_resolver
-from django.template import TemplateSyntaxError, Library, \
-                            VariableDoesNotExist, Node, Variable
-from django.utils.text import unescape_string_literal
+from django.template import Library, Node, TemplateSyntaxError
 
 #from common.api import object_navigation
 from web_theme.conf import settings as web_theme_settings
@@ -30,12 +24,12 @@ def get_theme(parser, token):
         # Splitting by None == splitting by spaces.
         tag_name, arg = token.contents.split(None, 1)
     except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires arguments" % token.contents.split()[0]
+        raise TemplateSyntaxError, "%r tag requires arguments" % token.contents.split()[0]
 
     #m = re.search(r'(.*?) as (\w+)', arg)
     m = re.search(r'as (\w+)', arg)
     if not m:
-        raise template.TemplateSyntaxError, "%r tag had invalid arguments" % tag_name
+        raise TemplateSyntaxError, "%r tag had invalid arguments" % tag_name
     #format_string, var_name = m.groups()
     var_name = m.groups()
 

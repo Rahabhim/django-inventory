@@ -4,7 +4,7 @@ from django.utils import formats
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
 from django.utils.translation import ugettext as _
-from django.utils.encoding import force_unicode
+# from django.utils.encoding import force_unicode
 from django.db import models
 from ajax_select.fields import AutoCompleteSelectField
 from ajax_select import get_lookup

@@ -4,9 +4,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import conditional_escape
 from generic_views.forms import DetailForm, InlineModelForm, RModelForm, \
-                    ROModelChoiceField, ColumnsDetailWidget, DetailForeignWidget, \
+                    ROModelChoiceField, ColumnsDetailWidget, \
                     DetailPlainForeignWidget, UnAutoCompleteField
-from ajax_select.fields import AutoCompleteSelectField, AutoCompleteSelectMultipleField
+from ajax_select.fields import AutoCompleteSelectField #, AutoCompleteSelectMultipleField
 from inventory.models import Inventory
 
 from django.contrib.auth.models import User
@@ -15,7 +15,6 @@ from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
 from common.models import Location
 from common.api import role_from_request
 from assets.models import Item
-import logging
 import datetime
 
 

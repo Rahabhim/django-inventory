@@ -1,4 +1,4 @@
-from django.template import Library, Node, Variable, VariableDoesNotExist
+from django.template import Library
 from django.utils.translation import ugettext as _
 from copy import copy
 

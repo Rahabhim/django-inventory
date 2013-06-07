@@ -7,7 +7,7 @@ def home(request):
     logger = logging.getLogger('permissions')
     try:
         user_profile = request.user.get_profile()
-    except Exception, e:
+    except Exception:
         logger.warning("Cannot get profile:", exc_info=True)
         user_profile = None
     current_user_role = None
@@ -20,7 +20,7 @@ def home(request):
                 request.session.modified = True
         else:
             user_roles = []
-    except Exception, e:
+    except Exception:
         logger.warning("Cannot prepare user role:", exc_info=True)
         user_roles = []
 

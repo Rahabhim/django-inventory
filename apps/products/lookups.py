@@ -2,9 +2,6 @@
 # Copyright P. Christeas <xrg@hellug.gr> 2012
 # Only a few rights reserved
 
-from django.db import models
-
-from django.http import HttpResponse
 from models import ItemTemplate, Manufacturer, ItemCategory
 from common.api import LookupChannel
 

@@ -7,10 +7,10 @@ from generic_views.views import GenericDeleteView, \
                                 GenericCreateView, GenericUpdateView, \
                                 CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
 
-from models import Inventory, InventoryItem, Log
+from models import Inventory, InventoryItem
 
 from forms import InventoryForm, InventoryItemForm, \
-                 LogForm, InventoryItemForm_inline
+                 InventoryItemForm_inline
 
 def check_inventory(inventory):
     """ Check that it is an open inventory

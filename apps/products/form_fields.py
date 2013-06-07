@@ -1,9 +1,8 @@
 # -*- encoding: utf-8 -*-
-from django.db import models
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import StrAndUnicode, force_unicode
-from django.utils.html import escape, conditional_escape
+from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.forms.util import flatatt
 from django.utils.datastructures import MultiValueDict, MergeDict

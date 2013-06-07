@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 import logging
-import datetime
 from collections import defaultdict
 from operator import itemgetter
 from django.utils.translation import ugettext_lazy as _
@@ -27,6 +26,8 @@ from models import PurchaseOrder, Movement
 from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField, Step5ChoiceField
 
 logger = logging.getLogger('apps.movements.po_wizard')
+
+__hush = [Movement,]
 
 class _WizardFormMixin:
     title = "Step x"

@@ -1,8 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
-from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.views.generic.list_detail import object_detail, object_list
-from generic_views.views import generic_assign_remove, generic_list
+from django.shortcuts import get_object_or_404
+from generic_views.views import generic_assign_remove
 
 from common.models import Supplier
 from models import ItemTemplate

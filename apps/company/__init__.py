@@ -20,7 +20,7 @@ def make_mv_location(destination):
     """ Constructs the filter clojure for a destination column
     """
     dept_col = destination + '__department__in'
-    dept_col2 = destination + '__department__isnull'
+    # dept_col2 = destination + '__department__isnull'
     lname_col = destination + '__name__icontains'
     return lambda q: Q(**{dept_col: models.Department.objects.filter(_department_filter_q(q))}) | \
                     Q(**{lname_col: q})

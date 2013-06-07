@@ -3,7 +3,7 @@ import types
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.template.defaultfilters import stringfilter
-from django.template import Library, Node, Variable, VariableDoesNotExist
+from django.template import Library, Node, Variable
 
 
 register = Library()

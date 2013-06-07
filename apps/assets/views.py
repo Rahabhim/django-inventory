@@ -7,13 +7,13 @@ from django.shortcuts import render_to_response, get_object_or_404 #, redirect
 from django.core.exceptions import PermissionDenied
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Q, Count
+#from django.db.models import Q, Count
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 
-from generic_views.views import generic_assign_remove, GenericBloatedListView
+from generic_views.views import GenericBloatedListView
 
-from models import Item, ItemGroup, State, ItemState
+from models import Item, State, ItemState
 
 from common.models import Location
 from common.api import role_from_request
@@ -21,7 +21,7 @@ from company.models import Department
 from assets import state_filter
 from company import make_mv_location
 from products.models import Manufacturer, ItemCategory, ItemTemplate
-from procurements.models import Contract
+#from procurements.models import Contract
 
 def manufacturer_filter_queryset(form, parent, parent_queryset):
     return Manufacturer.objects.filter(id__in=parent_queryset.order_by('item_template__id').values('item_template__manufacturer'))

@@ -13,12 +13,9 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, Validat
 from common.models import Supplier
 from common.api import role_from_request
 
-from models import Inventory, \
-                   InventoryItem
+from models import Inventory
 
-#from inventory import location_filter
-
-from forms import InventoryForm_view, InventoryItemForm, InventoryValidateForm
+from forms import InventoryForm_view, InventoryValidateForm
 
 
 def inventory_view(request, object_id):

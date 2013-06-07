@@ -17,7 +17,7 @@ from models import ItemTemplate, ItemCategory, Manufacturer, \
         ProductAttribute #, ProductAttributeValue
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
         ItemCategoryForm, ItemCategoryForm_view, ItemCategoryContainForm, \
-        ItemPartsForm_inline, ItemPartsFormD_inline, \
+        ItemPartsFormD_inline, \
         ItemCategoryContainForm_view, \
         ManufacturerForm, ManufacturerForm_view, \
         ProductAttributeForm, ProductAttributeForm_view, \

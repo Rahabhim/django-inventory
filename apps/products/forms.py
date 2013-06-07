@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django import forms
-from generic_views.forms import DetailForm, InlineModelForm, ColumnsDetailWidget, \
-            ROModelChoiceField, DetailPlainForeignWidget
+from generic_views.forms import DetailForm, InlineModelForm, \
+            ROModelChoiceField, DetailPlainForeignWidget #, ColumnsDetailWidget
 from models import ItemTemplate, Manufacturer, ItemCategory, ItemCategoryContain, \
             ProductAttribute, ProductAttributeValue, ItemTemplateAttributes, \
             ItemTemplatePart
@@ -63,7 +63,6 @@ class ItemTemplateForm(forms.ModelForm):
         # print "after s[h]ave:", self.cleaned_data
         if 'attributes' in self.cleaned_data:
             attrs = set(self.cleaned_data['attributes'])
-            to_remove = []
             for aval in self.instance.attributes.all():
                 if aval.value_id in attrs:
                     attrs.remove(aval.value_id)

@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 #from django.contrib.contenttypes.models import ContentType
 #from django.views.generic.list_detail import object_detail, object_list
-from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import reverse
 #from django.views.generic.create_update import create_object
 from django.forms.formsets import formset_factory
 
@@ -22,7 +22,7 @@ from assets.models import ItemTemplate, Item, ItemGroup
 from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
 from main import cart_utils
 
-from models import PurchaseRequest, PurchaseRequestItem, PurchaseOrder, \
+from models import PurchaseRequest, PurchaseOrder, \
                     Movement, RepairOrder
 from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
                   PurchaseOrderForm_view, PurchaseOrderItemForm, \
@@ -763,7 +763,7 @@ def repair_itemgroup(request, object_id):
                         move.items.add(item)
             # Repair Order and its moves are created, get out of here!
             return redirect(reform.get_absolute_url())
-        except Exception, e:
+        except Exception:
             logger.warning("Exception at repair:", exc_info=True)
             # continue with our form, ask again.
 

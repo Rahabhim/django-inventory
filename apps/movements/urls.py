@@ -2,9 +2,8 @@
 from django.conf.urls.defaults import patterns, url
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import Q
 
-from generic_views.views import GenericDeleteView, generic_list, generic_detail, \
+from generic_views.views import GenericDeleteView, generic_list, \
                 GenericCreateView, GenericUpdateView, GenericDetailView, \
                 CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
 
@@ -25,6 +24,8 @@ from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm,
         RepairOrderForm_view
 
 from procurements.models import Contract
+
+__hush = [Contract,]
 
 from company import make_mv_location
 from main import cart_utils

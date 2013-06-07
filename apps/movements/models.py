@@ -953,10 +953,10 @@ class Movement(models.Model):
         try:
             self.items.remove(obj)
             done = True
-        except Exception, e:
+        except Exception:
             raise ValueError(_("Item %s not in movement!") % unicode(obj))
         self.save()
-        return 'removed'
+        return done and 'removed' or ''
 
 
 register(PurchaseRequestStatus, _(u'purchase request status'), ['name'])

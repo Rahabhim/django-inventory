@@ -11,7 +11,7 @@ from photos.views import generic_photos
 
 from models import Item, ItemGroup, State
 from forms import ItemForm, ItemForm_view, \
-                    ItemGroupForm, ItemGroupForm_view, ItemGroupForm_edit, \
+                    ItemGroupForm_view, ItemGroupForm_edit, \
                     ItemMovesForm_view
 from conf import settings as asset_settings
 from views import AssetListView, LocationAssetsView, DepartmentAssetsView

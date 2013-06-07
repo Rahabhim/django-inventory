@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from django import forms
+# from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import conditional_escape
 
@@ -8,9 +8,9 @@ from generic_views.forms import DetailForm, ColumnsDetailWidget, \
 
 from models import Item, ItemGroup
 from common.models import Location
-from movements.models import Movement
+# from movements.models import Movement
 from products.models import ItemTemplate
-from ajax_select.fields import AutoCompleteSelectField
+#from ajax_select.fields import AutoCompleteSelectField
 
 class ItemForm(RModelForm):
     class Meta:
@@ -40,7 +40,7 @@ def _fmt_groupitem(item):
     try:
         if item.item_template.category.is_bundle:
             href = item.itemgroup.get_absolute_url()
-    except Exception, e:
+    except Exception:
         href = False
     if not href:
         href = item.get_absolute_url()
