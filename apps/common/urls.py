@@ -30,7 +30,7 @@ urlpatterns += patterns('',
                 prefetch_fields=('department',),
                 extra_context=dict(title =_(u'locations'))), name='location_list'),
     url(r'^location/create/$', GenericCreateView.as_view(model=Location, form_class= LocationForm), name='location_create'),
-    url(r'^location/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(model=Location), name='location_update'),
+    url(r'^location/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(model=Location, form_class=LocationForm), name='location_update'),
     url(r'^location/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Location, success_url="location_list", extra_context=dict(object_name=_(u'locations'))), name='location_delete'),
     url(r'^location/(?P<object_id>\d+)/$', generic_detail, dict(form_class=LocationForm_view, queryset=Location.objects.all()), 'location_view'),
 
