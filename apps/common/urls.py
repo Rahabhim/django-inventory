@@ -14,6 +14,10 @@ from company.lookups import _department_filter_q
 location_dept_filter = {'name': 'dept', 'title': _('department'), 
             'destination': lambda q: Q(department__in=Department.objects.filter(_department_filter_q(q)))}
 
+name_filter = {'name': 'name', 'title': _("name"), 'destination': 'name__contains' }
+usage_filter = {'name': 'usage', 'title': _("location type"), 'destination': 'usage',
+            'choices':'common.Location.usage' , }
+
 urlpatterns = patterns('common.views',
     url(r'^about/$', direct_to_template, { 'template' : 'about.html'}, 'about'),
 )
@@ -22,7 +26,7 @@ urlpatterns += patterns('',
     url(r'^set_language/$', 'django.views.i18n.set_language', name='set_language'),
 
     url(r'^location/list/$', GenericBloatedListView.as_view(queryset=Location.objects.all(), 
-                list_filters=[location_dept_filter],
+                list_filters=[location_dept_filter, name_filter, usage_filter],
                 prefetch_fields=('department',),
                 extra_context=dict(title =_(u'locations'))), name='location_list'),
     url(r'^location/create/$', GenericCreateView.as_view(model=Location, form_class= LocationForm), name='location_create'),
