@@ -20,9 +20,14 @@ def help_display_view(request, object_id):
 
 def help_index_view(request, key=None, mode=None):
     
-    return render_to_response('help_index.html',
-            {'topics': HelpTopic.objects.by_request(request), 
-                'key':key, 'mode': mode},
+    data = {'topics': HelpTopic.objects.by_request(request), 
+                'key':key, 'mode': mode}
+    
+    if key is None:
+        if mode is None:
+            data['our_topics'] = data['topics'].filter(mode='app')
+            data['other_topics'] = data['topics'].filter(mode='general')
+    return render_to_response('help_index.html', data,
             context_instance=RequestContext(request))
 
 
