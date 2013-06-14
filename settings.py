@@ -116,6 +116,7 @@ INSTALLED_APPS = [
     'photologue',
     'photos',
     'common',
+    'dhelp',
     'generic_views',
     'inventory',
     'assets',

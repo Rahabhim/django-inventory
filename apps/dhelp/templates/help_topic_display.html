@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <style type="text/css">
+    </style>
+{% endblock %}
+
+{% block web_theme_sidebar %}
+{% if request.user.is_staff %}
+    {{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>{{ topic.title }} </h2>
+
+        <div class="block">
+            {{ topic.content|safe }}
+        </div>
+    </div>
+    {% if can_edit %}
+        <div class="content" style="text-alignment: right">
+            <a class="button" href="./{{ topic.id }}/update">{% trans 'Edit' %}</a>
+        </div>
+    {% endif %}
+
+{% endblock %}
