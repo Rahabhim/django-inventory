@@ -20,6 +20,19 @@
         <div class="block">
             {{ topic.content|safe }}
         </div>
+
+        {% if sub_topics %}
+        <h2>{% trans 'More' %}</h2>
+        {% for title, sts in sub_topics %}
+            <div class="block">
+            <h3>{{ title }}</h3>
+            <ul>{% for s in sts %}
+                <li><a href="{{ s.get_absolute_url }}">{{ s.title}}</a></li>
+            {% endfor %}
+            </ul>
+            </div>
+        {% endfor %}
+        {% endif %}
     </div>
     {% if can_edit %}
         <div class="content" style="text-alignment: right">
