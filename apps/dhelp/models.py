@@ -16,7 +16,7 @@ class HelpTopic(models.Model):
     objects = HelpTopicManager()
     title = models.CharField(verbose_name=_(u'title'), max_length=100)
     mode = models.CharField(max_length=16, default='other', 
-                choices=[('other', _('Other')),
+                choices=[('other', _('Other')), ('general', _("General")),
                         ('app', _('Application')),
                         ('view', _('View')), ('view_field', _('View field')),
                         ('model', _('Model')), ('field', _('Field')),
@@ -36,6 +36,7 @@ class HelpTopic(models.Model):
     
 
     class Meta:
+        ordering = ('sequence', 'tkey')
         verbose_name = _(u'help topic')
         verbose_name_plural = _(u'help topic')
         unique_together = (('mode', 'tkey'),)
