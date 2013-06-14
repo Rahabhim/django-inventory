@@ -14,9 +14,10 @@ class HelpTopic(models.Model):
     """ A piece of help, for any of our models, views, fields etc.
     """
     objects = HelpTopicManager()
-    title = models.CharField(verbose_name=_(u'title'), max_length=32)
+    title = models.CharField(verbose_name=_(u'title'), max_length=100)
     mode = models.CharField(max_length=16, default='other', 
                 choices=[('other', _('Other')),
+                        ('app', _('Application')),
                         ('view', _('View')), ('view_field', _('View field')),
                         ('model', _('Model')), ('field', _('Field')),
                         ])
@@ -26,7 +27,7 @@ class HelpTopic(models.Model):
     create_date = models.DateTimeField(verbose_name=_(u'create date'))
     write_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("last changed by"), on_delete=models.PROTECT)
     write_date = models.DateTimeField(blank=True, null=True, verbose_name=_(u'last update date'))
-    active = models.BooleanField(default=True, verbose_name=_(u'active'))
+    active = models.BooleanField(default=False, verbose_name=_(u'active'))
     content = models.TextField(null=True, blank=True, verbose_name=_(u'text'))
     
     # TODO:
