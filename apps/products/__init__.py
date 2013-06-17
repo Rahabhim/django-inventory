@@ -58,7 +58,7 @@ register_links(ItemTemplate, [template_list, template_delete, template_photos,
 
 register_links(['category_list'], [category_create], menu_name='sidebar')
 register_links(ItemCategory, [categories_list, category_create,  category_delete], menu_name='sidebar')
-register_links(ItemCategory, [category_update,])
+register_links(ItemCategory, [dict(category_update, hide_text=True), dict(category_delete, hide_text=True)])
 register_links(Manufacturer, [manufs_list, manufacturer_create, manufacturer_update, manufacturer_delete], menu_name='sidebar')
 register_links(['manufacturers_list'], [manufacturer_create], menu_name='sidebar')
 
