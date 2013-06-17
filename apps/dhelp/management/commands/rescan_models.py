@@ -13,6 +13,29 @@ from django.utils.translation import ugettext_lazy as _
 import logging
 from datetime import datetime
 from operator import itemgetter
+from django.core.urlresolvers import RegexURLResolver, RegexURLPattern
+
+
+def list_view_urls(urllist, depth=0, app=None):
+    sub_app = None
+    for entry in urllist:
+        if isinstance(entry, RegexURLResolver):
+            name = entry.app_name or entry.urlconf_name
+            if isinstance(name, list):
+                continue
+            elif isinstance(name, basestring):
+                sub_app = name
+            else:
+                sub_app = name.__name__
+                if sub_app.endswith('.urls'):
+                    sub_app = sub_app[:-5]
+        elif isinstance(entry, RegexURLPattern) and entry.name:
+            yield app, entry.name
+
+        if hasattr(entry, 'url_patterns'):
+            for a, n in list_view_urls(entry.url_patterns, depth + 1, app=sub_app):
+                yield a, n
+
 
 class Command(BaseCommand):
     args = ''
@@ -59,6 +82,23 @@ class Command(BaseCommand):
                                 'create_user': user, 'create_date': datetime.now(),
                                 'active': False,
                                 'content': field.help_text or False})
+
+        import urls
+        for app, name in list_view_urls(urls.urlpatterns):
+            if mmeta.app_label not in apps_done:
+                logger.debug("Application: %s", app)
+                HelpTopic.objects.get_or_create(mode='app', tkey=app,
+                        defaults={'title': _("Application: %s") % app,
+                                'create_user': user, 'create_date': datetime.now(),
+                                'active': False })
+
+            logger.debug("View: %s.%s", app, name)
+
+            HelpTopic.objects.get_or_create(mode='view',
+                        tkey='%s.%s' %(app, name),
+                        defaults={'title': _("View: %s") % name,
+                                'create_user': user, 'create_date': datetime.now(),
+                                'active': False })
 
         if options.get('lang', False):
             translation.deactivate()
