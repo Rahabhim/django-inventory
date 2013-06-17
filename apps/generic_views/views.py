@@ -2,7 +2,7 @@ import urllib
 
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count, get_model, ProtectedError
 from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.core.exceptions import ObjectDoesNotExist
@@ -345,6 +345,14 @@ class GenericDeleteView(_PermissionsMixin, django_gv.DeleteView):
         else:
             raise ImproperlyConfigured(
                 "No URL to redirect to. Provide a success_url.")
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.error(request, _("The item %s cannot be deleted because it is referenced by other records") % unicode(self.object))
+        return HttpResponseRedirect(self.get_success_url())
 
 class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
     """ Form-based, read-only view of an object
