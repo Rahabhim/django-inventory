@@ -27,12 +27,12 @@ register_links(['help_topic_update', 'help_topic_view'], [help_topic_delete, ], 
 def has_pending_help(obj, context):
     return HelpTopic.objects.filter(active=False).exists()
 
-action_help_pending = {'text':_('pending help topics'), \
-        'condition': (user_is_staff, has_pending_help),
-        'view': 'help_pending_list', 'famfam':'page_go'}
+# TODO:
+# action_help_pending = {'text':_('pending help topics'), \
+#        'condition': (user_is_staff, has_pending_help),
+#        'view': 'help_pending_list', 'famfam':'page_go'}
 
-
-register_links(['home',], [action_help_pending ], menu_name='my_pending')
+# register_links(['home',], [action_help_pending ], menu_name='my_pending')
 
 register_menu([
     {'text':_('Help'), 'view':'help_index_view', 
