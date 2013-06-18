@@ -1,0 +1,200 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# P. Christeas <xrg@linux.gr>, 2013.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-06-17 21:15+0300\n"
+"PO-Revision-Date: 2013-06-18 07:22+0300\n"
+"Last-Translator: P. Christeas <xrg@linux.gr>\n"
+"Language-Team: Greek <>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Lokalize 1.2\n"
+
+#: __init__.py:9
+msgid "view all help topics"
+msgstr "Προβολή θεμάτων βοήθειας"
+
+#: __init__.py:11 urls.py:33
+msgid "create new help topic"
+msgstr "Δημιουργία θέματος βοήθειας"
+
+#: __init__.py:13
+msgid "edit"
+msgstr "επεξεργασία"
+
+#: __init__.py:15
+msgid "delete"
+msgstr "διαγραφή"
+
+#: __init__.py:18
+msgid "view"
+msgstr "προβολή"
+
+#: __init__.py:21
+msgid "index"
+msgstr "Ευρετήριο"
+
+#: __init__.py:30
+msgid "pending help topics"
+msgstr ""
+
+#: __init__.py:38
+msgid "Help"
+msgstr "Βοήθεια"
+
+#: forms.py:29
+msgid "Text"
+msgstr "Κείμενο"
+
+#: models.py:17
+msgid "title"
+msgstr "τίτλος"
+
+#: models.py:19
+msgid "Other"
+msgstr "Άλλο"
+
+#: models.py:19
+msgid "General"
+msgstr "Γενικά"
+
+#: models.py:20
+msgid "Application"
+msgstr "Εφαρμογή"
+
+#: models.py:21
+msgid "View"
+msgstr "Προβολή"
+
+#: models.py:21
+msgid "View field"
+msgstr "Πεδίο προβολής"
+
+#: models.py:22
+msgid "Model"
+msgstr "Μοντέλο"
+
+#: models.py:22
+msgid "Field"
+msgstr "Πεδίο"
+
+#: models.py:24 urls.py:25
+msgid "Key"
+msgstr "Κλειδί"
+
+#: models.py:25
+msgid "sequence"
+msgstr "Ακολουθία"
+
+#: models.py:26
+msgid "created by"
+msgstr "Δημιουργήθηκε από"
+
+#: models.py:27
+msgid "create date"
+msgstr "Δημιουργία"
+
+#: models.py:28
+msgid "last changed by"
+msgstr "τελευταία αλλαγή από"
+
+#: models.py:29
+msgid "last update date"
+msgstr "τελευταία αλλαγή"
+
+#: models.py:30 urls.py:18
+msgid "active"
+msgstr "ενεργό"
+
+#: models.py:31
+msgid "text"
+msgstr "κείμενο"
+
+#: models.py:40 models.py:41 urls.py:40
+msgid "help topic"
+msgstr "Θέμα βοήθειας"
+
+#: urls.py:11
+msgid "Title"
+msgstr "Τίτλος"
+
+#: urls.py:13
+msgid "key"
+msgstr "κλειδί"
+
+#: urls.py:15
+msgid "mode"
+msgstr "λειτουργία"
+
+#: urls.py:24
+msgid "Mode"
+msgstr "Λειτουργία"
+
+#: urls.py:26
+msgid "Active"
+msgstr "Ενεργό"
+
+#: urls.py:27
+msgid "Sequence"
+msgstr "Ακολουθία"
+
+#: urls.py:29
+msgid "list of help topics"
+msgstr "Λίστα θεμάτων βοήθειας"
+
+#: views.py:9
+msgid "Models"
+msgstr "Μοντέλα"
+
+#: views.py:9
+msgid "Views"
+msgstr "Προβολές"
+
+#: views.py:10
+msgid "Fields"
+msgstr "Πεδία"
+
+#: management/commands/rescan_models.py:62
+#: management/commands/rescan_models.py:91
+#, python-format
+msgid "Application: %s"
+msgstr "Εφαρμογή: %s"
+
+#: management/commands/rescan_models.py:70
+#, python-format
+msgid "Model: %s"
+msgstr "Μοντέλο: %s"
+
+#: management/commands/rescan_models.py:81
+#, python-format
+msgid "Field: %s"
+msgstr "Πεδίο: %s"
+
+#: management/commands/rescan_models.py:99
+#, python-format
+msgid "View: %s"
+msgstr "Προβολή: %s"
+
+#: templates/help_index.html:18
+msgid "General topics"
+msgstr "Γενικά θέματα"
+
+#: templates/help_index.html:27
+msgid "Applications"
+msgstr "Εφαρμογές"
+
+#: templates/help_topic_display.html:25
+msgid "More"
+msgstr "Περισσότερα"
+
+#: templates/help_topic_display.html:39
+msgid "Edit"
+msgstr "Επεξεργασία"
+
