@@ -320,7 +320,6 @@ class GenericCreateView(_PermissionsMixin, _InlineViewMixin, django_gv.CreateVie
     def get_initial(self):
         initial = self.initial.copy()
         if self.request.method == 'GET':
-            print self.request.GET
             initial.update(self.request.GET.dict())
         return initial
 
