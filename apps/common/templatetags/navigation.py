@@ -73,11 +73,13 @@ def main_navigation(parser, token):
 #http://www.djangosnippets.org/snippets/1378/
 __all__ = ('resolve_to_name',)
 
-def _pattern_resolve_to_name(self, path):
+def _pattern_resolve_to_name(self, path, prefix=False):
     match = self.regex.search(path)
     if match:
         name = ""
-        if self.name:
+        if self.name and prefix:
+            name = prefix + self.name
+        elif self.name:
             name = self.name
         elif hasattr(self, '_callback_str'):
             name = self._callback_str
@@ -85,14 +87,27 @@ def _pattern_resolve_to_name(self, path):
             name = "%s.%s" % (self.callback.__module__, self.callback.func_name)
         return name
 
-def _resolver_resolve_to_name(self, path):
+def _resolver_resolve_to_name(self, path, prefix=False):
     tried = []
     match = self.regex.search(path)
     if match:
+        if prefix:
+            prefix = self.app_name or self.urlconf_name
+            if isinstance(prefix, list):
+                prefix = False
+            elif isinstance(prefix, basestring):
+                prefix += '.'
+            else:
+                prefix = prefix.__name__
+                if prefix.endswith('.urls'):
+                    prefix = prefix[:-4]
+                elif not prefix.endswith('.'):
+                    prefix += '.'
+
         new_path = path[match.end():]
         for pattern in self.url_patterns:
             try:
-                name = pattern.resolve_to_name(new_path)
+                name = pattern.resolve_to_name(new_path, prefix=prefix)
             except Resolver404, e:
                 tried.extend([(pattern.regex.pattern + '   ' + t) for t in e.args[0]['tried']])
             else:
@@ -106,8 +121,8 @@ def _resolver_resolve_to_name(self, path):
 RegexURLPattern.resolve_to_name = _pattern_resolve_to_name
 RegexURLResolver.resolve_to_name = _resolver_resolve_to_name
 
-def resolve_to_name(path, urlconf=None):
-    return get_resolver(urlconf).resolve_to_name(path)
+def resolve_to_name(path, urlconf=None, prefix=False):
+    return get_resolver(urlconf).resolve_to_name(path, prefix=prefix)
 
 @register.filter
 def resolve_url_name(value):
