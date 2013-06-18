@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load navigation %}
 {% load carts %}
+{% load online_help %}
 
 {% block stylesheets %}
     {{ block.super }}
@@ -110,6 +111,8 @@ a:hover {
         {% blocktrans %}Welcome to the Django Inventory application, where you can keep track of your equipment.{% endblocktrans %}
         </div>
 
+        {% help_for_view %}
+
         {% if user_roles %}
         <div id="dept-selection">
             <div class="tc"> {% trans 'Select department and role:' %}</div>
@@ -156,7 +159,6 @@ a:hover {
         {% endif %}
         {% session_carts 1 %}
     </div>
-
 
 {% comment %}
 <script type="text/javascript">
