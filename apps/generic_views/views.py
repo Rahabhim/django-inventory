@@ -317,6 +317,13 @@ class GenericCreateView(_PermissionsMixin, _InlineViewMixin, django_gv.CreateVie
     template_name = 'generic_form_fs.html'
     need_permission = '%(app)s.add_%(model)s'
 
+    def get_initial(self):
+        initial = self.initial.copy()
+        if self.request.method == 'GET':
+            print self.request.GET
+            initial.update(self.request.GET.dict())
+        return initial
+
 class GenericUpdateView(_PermissionsMixin, _InlineViewMixin, django_gv.UpdateView):
     template_name = 'generic_form_fs.html'
     need_permission = '%(app)s.change_%(model)s'
