@@ -53,4 +53,42 @@ def help_for_view(context):
 
     return ''
 
+@register.inclusion_tag('inline_help.html', takes_context=True)
+def help_for(context, mode='view', field=None, suffix=None, **kwargs):
+    _discover_view(context)
+
+    tkl = []
+    if mode in ('model', 'field'):
+        obj = context['dhelp'].get('obj',None)
+        if obj:
+            tkl.append(obj._meta.app_label)
+            tkl.append(obj._meta.object_name)
+    elif mode in ('view', 'view_field'):
+        view = context['dhelp'].get('view', None)
+        if view:
+            tkl.append(view)
+
+    if field:
+        tkl.append(field)
+    if suffix:
+        tkl.append(suffix)
+    tkey = '.'.join(tkl)
+    edit_link = ''
+    try:
+        topic = HelpTopic.objects.get(tkey=tkey, mode=mode)
+        if topic.content and topic.active:
+            visible = True
+        if context['request'].user.is_staff:
+            visible = True
+            edit_link = '/help/topic/%s/update/' % topic.id
+    except HelpTopic.DoesNotExist:
+        topic = None
+        if context['request'].user.is_staff:
+            visible = True
+            edit_link = '/help/topic/create/?tkey=%s&mode=%s' %(tkey, mode)
+
+    return dict(kwargs, topic=topic, mode=mode, tkey=tkey, 
+                edit_link=edit_link, visible=visible)
+
+
 #eof
