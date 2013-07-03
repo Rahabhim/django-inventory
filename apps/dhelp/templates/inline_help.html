@@ -1,0 +1,28 @@
+{% load i18n %}
+
+{% if visible %}
+{% if sidebar %}
+<div class="block dhelp">
+    <h3>{% trans 'Help' %}</h3>
+    {% if topic %}
+    <div class="dhelp">{% if topic.content and topic.active %}{{ topic.content|safe }}{% endif %}
+        {% if edit_link %}<a href="{{ edit_link }}" class="famfam active famfam-pencil">{% trans "Edit" %}</a>{% endif %}
+    </div>
+    {% else %}
+    <div class="dhelp dhelp-create">
+        {% if edit_link %}<a href="{{ edit_link }}" class="famfam active famfam-new">{% trans "Create" %}</a>{% endif %}
+    </div>
+    {% endif %}
+</div>
+{% else %}
+    {% if topic %}
+    <div class="dhelp">{% if topic.content and topic.active %}{{ topic.content|safe }}{% endif %}
+        {% if edit_link %}<a href="{{ edit_link }}" class="famfam active famfam-pencil">{% trans "Edit" %}</a>{% endif %}
+    </div>
+    {% else %}
+    <div class="dhelp dhelp-create">
+        {% if edit_link %}<a href="{{ edit_link }}" class="famfam active famfam-new">{% trans "Create" %}</a>{% endif %}
+    </div>
+    {% endif %}
+{% endif %}
+{% endif %}

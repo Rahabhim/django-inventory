@@ -6,6 +6,7 @@
 {% load carts %}
 {% load generic_views_tags %}
 {% load generic_views_helpers %}
+{% load online_help %}
 
 {% block html_title %}{% project_name %}{% block title %}{% endblock %}{% endblock %}
 
@@ -101,6 +102,7 @@
         {% session_carts %}
 
     {% block sidebar %}{% endblock %}
+    {% help_for "view" "sidebar" sidebar=1 %}
 {% endblock %}
 
 

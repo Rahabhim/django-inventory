@@ -163,6 +163,7 @@ INSTALLED_APPS = [
     'photologue',
     'photos',
     'common',
+    'dhelp',
     'products',
     'procurements',
     'company',

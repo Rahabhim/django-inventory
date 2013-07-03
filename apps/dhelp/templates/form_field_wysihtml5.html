@@ -1,0 +1,83 @@
+<ul id="{{ html_id }}-toolbar" style="display: none;" class="clearfix toolbar">
+        <li>
+            <div class="btn-group">
+                <a style="font-weight:bold;" title="CTRL+B" data-wysihtml5-command="bold" class="btn" href="javascript:;" unselectable="on">Bold</a>
+                <a style="font-style:italic;" title="CTRL+I" data-wysihtml5-command="italic" class="btn" href="javascript:;" unselectable="on">Italic</a>
+                <a style="text-decoration:underline;" title="CTRL+U" data-wysihtml5-command="underline" class="btn" href="javascript:;" unselectable="on">Underline</a>
+            </div>
+        </li>
+        <li>
+            <div class="btn-group">
+                <a title="Unordered List" data-wysihtml5-command="insertUnorderedList" class="btn" href="javascript:;" unselectable="on"><i class="icon-list"></i></a>
+                <a title="Ordered List" data-wysihtml5-command="insertOrderedList" class="btn" href="javascript:;" unselectable="on"><i class="icon-th-list"></i></a>
+                <a title="Outdent" data-wysihtml5-command="Outdent" class="btn" href="javascript:;" unselectable="on"><i class="icon-indent-right"></i></a>
+                <a title="Indent" data-wysihtml5-command="Indent" class="btn" href="javascript:;" unselectable="on"><i class="icon-indent-left"></i></a>
+            </div>
+        </li>
+        <li>
+            <a title="Link" data-wysihtml5-command="createLink" class="btn" href="javascript:;" unselectable="on"><i class="icon-share"></i></a>
+        </li>
+
+        <li>
+            <a title="Insert image" data-wysihtml5-command="insertImage" class="btn" href="javascript:;" unselectable="on"><i class="icon-picture"></i></a>
+        </li>
+
+        <li>
+            <div class="btn-group">
+                <a style="font-weight:bold;" class="btn" unselectable="on" href="javascript:;" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1">H1</a>
+                <a style="font-weight:bold;" class="btn" unselectable="on" href="javascript:;" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2">H2</a>
+                <a style="font-weight:bold;" class="btn" unselectable="on" href="javascript:;" data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h3">H3</a>
+            </div>
+        </li>
+        <li>
+            <div class="btn-group">
+                <a class="btn" unselectable="on" href="javascript:;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="red">red</a>
+                <a class="btn" unselectable="on" href="javascript:;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="green">green</a>
+                <a class="btn" unselectable="on" href="javascript:;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="blue">blue</a>
+            </div>
+        </li>
+        <a class="btn" style="display: none;" unselectable="on" href="javascript:;" data-wysihtml5-command="insertSpeech">speech</a>
+        <a class="btn" class="" unselectable="on" href="javascript:;" data-wysihtml5-action="change_view"><i class="icon-code"></i></a>
+
+        <div data-wysihtml5-dialog="createLink" style="display: none;">
+
+            <div class="control-group">
+                <label class="control-label" for="inputUrl">Link:</label>
+                <div class="controls">
+                    <input type="url" id="inputUrl" data-wysihtml5-dialog-field="href" value="http://">
+                </div>
+            </div>
+
+            <a class="btn" data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a class="btn" data-wysihtml5-dialog-action="cancel">Cancel</a>
+        </div>
+
+        <div data-wysihtml5-dialog="insertImage" style="display: none;">
+            <div class="control-group">
+                <label class="control-label" for="inputImg">Link:</label>
+                <div class="controls">
+                    <input type="url" id="inputImg" data-wysihtml5-dialog-field="src" value="http://">
+                </div>
+            </div>
+
+            <label>
+                Align:
+                <select data-wysihtml5-dialog-field="className">
+                    <option selected="selected" value="">default</option>
+                    <option value="wysiwyg-float-left">left</option>
+                    <option value="wysiwyg-float-right">right</option>
+                </select>
+            </label>
+            <a class="btn" data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a class="btn" data-wysihtml5-dialog-action="cancel">Cancel</a>
+        </div>
+
+    </ul>
+
+    <textarea id="{{ html_id }}" placeholder="Enter your text ..."
+            name="{{ name }}" {{ extra_attrs }}
+            autofocus >{{ value }}
+    </textarea>
+
+<script>
+var editor = new wysihtml5.Editor("{{ html_id }}", 
+            { toolbar: "{{ html_id }}-toolbar", parserRules: wysihtml5ParserRules });
+</script>
