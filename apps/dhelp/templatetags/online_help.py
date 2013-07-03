@@ -74,6 +74,7 @@ def help_for(context, mode='view', field=None, suffix=None, **kwargs):
         tkl.append(suffix)
     tkey = '.'.join(tkl)
     edit_link = ''
+    visible = False
     try:
         topic = HelpTopic.objects.get(tkey=tkey, mode=mode)
         if topic.content and topic.active:
