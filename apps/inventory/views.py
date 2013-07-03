@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 import logging
 import datetime
+import subprocess
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -16,7 +17,7 @@ from common.api import role_from_request
 from models import Inventory
 
 from forms import InventoryForm_view, InventoryValidateForm
-
+from conf import settings
 
 def inventory_view(request, object_id):
     inventory = get_object_or_404(Inventory, pk=object_id)
@@ -107,6 +108,12 @@ def inventory_validate(request, object_id):
         # actual act of closing the inventory: (note, we don't pass the date)
         if request.method == 'POST' and form.is_valid() and inventory.signed_file and inventory.name:
             inventory.save() # for the file
+            if getattr(settings, 'signature_verify_bin', False):
+                try:
+                    subprocess.check_call([settings.signature_verify_bin, inventory.signed_file.path])
+                except subprocess.CalledProcessError:
+                    inventory.signed_file.delete(save=True)
+                    raise
             inventory.do_close(request.user)
             messages.success(request, _("The inventory has been validated and all movements fixated"), fail_silently=True)
 
@@ -120,6 +127,8 @@ def inventory_validate(request, object_id):
     except PermissionDenied, e:
         messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
         return redirect('inventory_view', object_id=object_id)
+    except subprocess.CalledProcessError, e:
+        messages.error(request, _("The uploaded signature file does not contain a valid signature"), fail_silently=True)
     except ObjectDoesNotExist, e:
         messages.error(request, _("Incorrect role or department to validate inventory: %s") % e, fail_silently=True)
 
