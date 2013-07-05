@@ -2,6 +2,7 @@
 # from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.utils.html import conditional_escape
+from django.utils import formats
 
 from generic_views.forms import DetailForm, ColumnsDetailWidget, \
         DetailForeignWidget, ReadOnlyInput, RModelForm
@@ -69,9 +70,19 @@ class ItemGroupForm_edit(ItemForm):
                 }
                 # read-only widget, edits must be done through special actions.
 
+def _fmt_date_act(item):
+    val = item.date_act
+    if val:
+        val = val.strftime(formats.get_format('DATE_INPUT_FORMATS')[0])
+    if item.purchase_order:
+        href = item.purchase_order.get_absolute_url()
+    else:
+        href = item.get_absolute_url()
+    return '<a href="%s">%s</a>' % (href, conditional_escape(val))
+
 class ItemMovesWidget(ColumnsDetailWidget):
-    columns = [ {'name': _('Date'), 'attribute': 'date_act'},
-            {'name': _(u'Reference'), 'attribute': 'name' },
+    columns = [ {'name': _('Date'), 'format': _fmt_date_act },
+            {'name': _(u'Reference'), 'attribute': 'origin' },
             {'name': _(u'From'), 'attribute':'location_src' },
             {'name': _(u'To'), 'attribute':'location_dest'},
             # {'name': _(u'State'), 'attribute':'get_state_display'},
