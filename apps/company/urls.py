@@ -15,6 +15,7 @@ from lookups import _department_filter_q
 
 dept_name_filter = {'name': 'name', 'title': _('name'), 'destination': _department_filter_q}
 dept_code_filter = {'name': 'code', 'title': _('code'), 'destination': ('code', 'code2')}
+generic_name_filter = {'name': 'name', 'title': _('name'), 'destination':'name__icontains'}
 
 urlpatterns = patterns('',
     url(r'^object/list/company_department$', GenericBloatedListView.as_view( \
@@ -26,8 +27,10 @@ urlpatterns = patterns('',
                     {'name': _("Parent dept."), 'attribute': 'parent'}],
             ),
         name='company_department_list'),
-    url(r'^object/list/company_department_type$', generic_list, 
-            dict({'queryset':DepartmentType.objects.all()}, extra_context=dict(title =_(u'department types'))),
+    url(r'^object/list/company_department_type$', GenericBloatedListView.as_view( \
+            queryset=DepartmentType.objects.all(),
+            list_filters=[generic_name_filter,],
+            title =_(u'department types')),
             name='company_department_type_list'),
     # url(r'^object/list/company_locations$', ListView.as_view()),
     

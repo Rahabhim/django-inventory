@@ -15,6 +15,7 @@ class DepartmentType(models.Model):
             help_text=_(u"These will automatically be setup as locations, for each new department of this type") )
 
     class Meta:
+        ordering = ['name']
         permissions = [('admin_company', 'Can manage companies'),]
         verbose_name = _("department type")
 
