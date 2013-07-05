@@ -223,6 +223,7 @@ LOGIN_EXEMPT_URLS = (
 
 if AUTH_BACKEND == 'auth_passwd':
     LOGIN_EXEMPT_URLS = LOGIN_EXEMPT_URLS + ( \
+    r'^/?$',
     r'^accounts/register/$',
     r'^accounts/register/complete/$',
     r'^accounts/register/closed/$',
@@ -251,6 +252,8 @@ STATIC_URL= '/static/'
 STATIC_ROOT = './staticfiles/'
 # USE_ETAGS = False
 USE_THOUSAND_SEPARATOR = True
+
+# LANDING_PAGE='landing.html'
 
 #======== End of configuration options =======
 try:

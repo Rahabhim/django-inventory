@@ -1,10 +1,19 @@
 # -*- encoding: utf-8 -*-
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.http import HttpResponseRedirect
 import logging
+import settings
 
 def home(request):
     logger = logging.getLogger('permissions')
+    if request.user.is_authenticated():
+        pass
+    elif getattr(settings, 'LANDING_PAGE', False):
+        return render_to_response(settings.LANDING_PAGE, {'login_url': '/login/?next=%2F'},
+            context_instance=RequestContext(request))
+    else:
+        return HttpResponseRedirect('/login/?next=%2F')
     try:
         user_profile = request.user.get_profile()
     except Exception:
