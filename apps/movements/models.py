@@ -294,14 +294,14 @@ class PurchaseOrder(models.Model):
                         return True
         return False
 
-    def items_into_moves(self, mapped_items, request, department, master_location):
+    def items_into_moves(self, mapped_items, request, departments, master_location):
         """ Generate moves for mapped items
         """
 
         the_moves = {}
-        def _get_move(loc_kind):
-            if loc_kind in the_moves:
-                return the_moves[loc_kind]
+        def _get_move(loc_kind, department):
+            if (loc_kind, department.id) in the_moves:
+                return the_moves[(loc_kind, department.id)]
 
             lsrcs = Location.objects.filter(department__isnull=True, usage='procurement')[:1]
             if not lsrcs:
@@ -335,15 +335,40 @@ class PurchaseOrder(models.Model):
                     purchase_order=self,
                     defaults=dict(create_user=request.user,date_act=self.issue_date, ))
             movement.save()
-            the_moves[loc_kind] = movement
+            the_moves[(loc_kind, department.id)] = movement
             return movement
 
         id_map = {}
+        if not isinstance(departments, list):
+            departments = [departments,]
         for lk, it_tmpls in mapped_items.items():
             for tmpl_id, objs in it_tmpls.items():
+                depts_copy = departments[:]
+                if lk in ('', 'bdl'):
+                    # for virtual locations, put everything in first one
+                    max_objs = len(objs)
+                else:
+                    # need to divide objects into departments. Integer division
+                    # means that we may have objects that will NOT fit in any move.
+                    max_objs = int(len(objs) / len(departments))
+
+                move = False # don't attempt to create it yet
+                cur_items = 0
                 for o in objs:
                     if not o.item_id:
-                        move = _get_move(lk)
+                        while depts_copy and not move:
+                            move = _get_move(lk, depts_copy[0]) # create, if we really need it
+                            cur_items = move.items.filter(item_template_id=tmpl_id).count()
+                            if cur_items >= max_objs:
+                                move = False # not use that move, try next dept..
+                                depts_copy.pop(0)
+                            # else:
+                            #    break
+
+                        if not move:
+                            # integer remainder, we cannot create the item
+                            continue
+
                         if o.serial:
                             new_item, c = Item.objects.get_or_create(item_template_id=tmpl_id,
                                         serial_number=o.serial)
@@ -352,6 +377,12 @@ class PurchaseOrder(models.Model):
                         new_item.save()
                         move.items.add(new_item)
                         o.item_id = new_item.id
+
+                        # only if we are creating a new item!
+                        cur_items += 1
+                        if cur_items >= max_objs:
+                            move = False
+                            depts_copy.pop(0)
 
                     if o.id in id_map:
                         # inserted early by parent setdefault()

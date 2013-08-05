@@ -566,13 +566,41 @@ class PO_Step5m(WizardForm):
             messages.error(request, unicode(ve), fail_silently=True)
             return '5m'
 
-        return '5m'
-        active_role = None
-        msg = None
-        try:
-            active_role = role_from_request(request)
-        except ObjectDoesNotExist:
-            pass
+        # check that user can create POs for every department requested
+        depts = set(self.cleaned_data['depts'])
+        departments = []
+
+        for role in request.user.dept_roles.all():
+            if role.department.id not in depts:
+                continue
+            if not role.has_perm('movements.change_purchaseorder'):
+                logger.warning("User %s not allowed to change PO for dept %s", request.user, role.department)
+                raise PermissionDenied
+            depts.remove(role.department.id)
+            departments.append(role.department)
+
+        if len(depts):
+            if request.user.is_staff or request.user.is_superuser:
+                for dept in Department.objects.filter(id__in=depts):
+                    departments.append(dept)
+            else:
+                logger.warning("User %s has no role for departments %r", request.user, list(depts))
+                raise PermissionDenied
+
+        if po_instance.map_has_left(mapped_items):
+            loc_template = self.cleaned_data['loc_template']
+            if mapped_items.get('', None):
+                # we have items that could go to any location, "move" them to
+                # our location /kind/
+                it_tmpls = mapped_items.pop('')
+                loc_its = mapped_items[loc_template.id]
+                for tmpl_id, objs in it_tmpls.items():
+                    loc_its.setdefault(tmpl_id, []).extend(objs)
+
+            po_instance.items_into_moves(mapped_items, request, \
+                        departments, False)
+
+        return True
 
 class PO_Wizard(SessionWizardView):
     form_list = [('1', PO_Step1), ('2', PO_Step2), ('3', PO_Step3), ('3a', PO_Step3_allo),
