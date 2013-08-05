@@ -83,4 +83,35 @@ class RoleLocationLookup(LookupChannel):
 
         return loc_list.order_by('name')[:20]
 
+class DeptListLookup(LookupChannel):
+    model = Department
+
+    def get_query(self, q, request):
+        """ Query the departments for codes in requests list
+        """
+        if not request.user.is_authenticated():
+            raise HttpResponseForbidden()
+
+        if request.method == "GET":
+            params = request.GET
+        else:
+            params = request.POST
+
+        dept_list = None
+        if request.user.is_staff:
+            # all departments
+            dept_list = Department.objects.all()
+        else:
+            # search all allowed departments for user
+            dept_list = Department.objects.filter(pk__in=request.user.dept_roles.values_list('department', flat=True))
+
+        codes = params.getlist('codes') or params.getlist('codes[]')
+        codes = filter(bool, [c.strip() for c in codes])
+
+        return dept_list.filter(code__in=codes)
+
+    def get_result(self,obj):
+        """ The text result of autocompleting the code """
+        return obj.code
+
 #eof

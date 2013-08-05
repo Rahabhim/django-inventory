@@ -10,20 +10,20 @@ from django.shortcuts import get_object_or_404, redirect # render_to_response,
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib import messages
 
-from common.models import Supplier, Location
+from common.models import Supplier, Location, LocationTemplate
 from common.api import role_from_request
 from company.models import Department
 from products.models import ItemCategory, Manufacturer, ItemTemplate
 from products.form_fields import CategoriesSelectWidget, CategoriesAttributesField
 from procurements.models import Contract
-from ajax_select.fields import AutoCompleteSelectField #, AutoCompleteSelectMultipleField
+from ajax_select.fields import AutoCompleteSelectField
 
 from django.db.models import Count
 from django.forms.util import ErrorDict
 from django.utils.datastructures import MultiValueDict
 
 from models import PurchaseOrder, Movement
-from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField, Step5ChoiceField
+from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField, Step5ChoiceField, DeptSelectMultipleField
 
 logger = logging.getLogger('apps.movements.po_wizard')
 
@@ -416,6 +416,8 @@ class PO_Step4(WizardForm):
                     messages.warning(wizard.request, err, fail_silently=True)
         if errors:
             return '4a'
+        elif step1.instance.department is None:
+            return '5m'
         else:
             step5_data = wizard.storage.get_step_data('5')
             if step1.instance.department is not None:
@@ -545,10 +547,38 @@ class PO_Step5(WizardForm):
         if msg:
             return '5'
 
+class PO_Step5m(WizardForm):
+    title = _("Multiple import - Finish")
+    loc_template = forms.ModelChoiceField(queryset=LocationTemplate.objects.all(), widget=forms.widgets.RadioSelect, required=True)
+    depts = DeptSelectMultipleField('departments_list', label=_("Department"), show_help_text=False)
+    #locations = Step5ChoiceField(label=_("location"), empty_label=None, required=False,
+    #                queryset=Location.objects.none())
+
+    def save_data(self, wizard):
+        # Mostly copied from views.purchase_order_receive
+        po_instance = wizard.get_form_instance('1')
+        request = wizard.request
+        if not po_instance.pk:
+            raise RuntimeError("PO instance must be saved by step 5")
+        try:
+            mapped_items = po_instance.map_items()
+        except ValueError, ve:
+            messages.error(request, unicode(ve), fail_silently=True)
+            return '5m'
+
+        return '5m'
+        active_role = None
+        msg = None
+        try:
+            active_role = role_from_request(request)
+        except ObjectDoesNotExist:
+            pass
+
 class PO_Wizard(SessionWizardView):
     form_list = [('1', PO_Step1), ('2', PO_Step2), ('3', PO_Step3), ('3a', PO_Step3_allo),
             ('3s', PO_Step3s), ('3b', PO_Step3b),
-            ('4', PO_Step4), ('4a', PO_Step4a), ('5', PO_Step5)]
+            ('4', PO_Step4), ('4a', PO_Step4a), 
+            ('5', PO_Step5), ('5m', PO_Step5m)]
 
 
     @classmethod

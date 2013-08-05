@@ -1,0 +1,97 @@
+{% load i18n %}
+{% if bootstrap %}{% include "ajax_select/bootstrap.html" %}{% endif %}
+<input type="hidden" name="{{name}}" id="{{html_id}}" value="{{current_ids}}" />
+<div id="{{html_id}}_found_deck" class="results_on_deck found">
+    <h3>{% trans 'Found departments' %}</h3>
+    <ul></ul>
+</div>
+<div id="{{html_id}}_not_found" class="results_on_deck not-found">
+    <h3>{% trans 'Codes not found' %}</h3>
+    <ul></ul>
+</div>
+<textarea name="{{name}}_text" id="{{html_id}}_text" {{ extra_attrs }} >{{current_codes|join:', '}}</textarea>
+<script type="text/javascript">//<![CDATA[
+
+$.fn.acselectmultiple = function(options) {
+    return this.each(function() {
+        var id = this.id;
+
+        var $this = $(this);
+        var $text = $("#"+id+"_text");
+        var $deck = $("#"+id+"_found_deck > ul");
+        var $nfdeck = $("#"+id+"_not_found > ul");
+        var delay = options.delay || 500;
+
+        function addElement(pk, val, repr) {
+            var li = $('<li>').append($('<span class="dept_code">').text(val))
+                    .append(': ')
+                    .append($('<span class="dept_name">').text(repr));
+            $deck.append(li);
+        }
+
+        function receiveResults(data, status, xhr){
+//             console.log("Data came! " + data.length);
+            $deck.empty();
+            $nfdeck.empty();
+
+            var codes = $text.val().replace(/\n/g,',').split(',');
+            var cset = {};
+            for (var c in codes)
+                cset[$.trim(codes[c])] = false;
+            var pks = [];
+            for(var i in data){
+                addElement(data[i].pk, data[i].value, data[i].repr);
+                cset[data[i].value] = true;
+                pks.push(data[i].pk);
+            }
+            if (data.length)
+                $("#"+id+"_found_deck").show();
+            else
+                $("#"+id+"_found_deck").hide();
+            var missing = false;
+            for(var c in cset)
+                if (!(cset[c] || c == '')){
+                    $nfdeck.append($('<li>').text(c));
+                    missing = true;
+                }
+            if (missing)
+                $("#"+id+"_not_found").show();
+            else
+                $("#"+id+"_not_found").hide();
+
+            $this.val(pks.join('|'));
+        }
+
+        if (options.initial) {
+            $.each(options.initial, function(i, its) {
+                addElement(its[0], its[1], its[2]);
+            });
+            $("#"+id+"_found_deck").show();
+        }
+
+        var tmout = false;
+        $text.bind('input propertychange', function(event){
+                if (tmout)
+                    clearTimeout(tmout);
+                var codes = $text.val().replace(/\n/g,',').split(',');
+                tmout = setTimeout(function(){
+                    $.ajax("{% url ajax_lookup 'departments_list' %}", {
+                        'dataType': 'json',
+                        'data': {'term': 'foo', 'codes': codes, },
+                        'success': receiveResults});
+                    }, delay);
+            });
+    });
+};
+
+jQuery(document).ready(function($){
+	addAutoComplete("{{html_id}}", function(html_id) {
+		$("#"+html_id).acselectmultiple({{plugin_options}});
+	});
+{% block extra_script %}{% endblock %}
+});
+//]]>
+</script>
+{# django admin adds the help text. this is for use outside of the admin #}
+{% block help %}{% if help_text %}<p class="help">{{help_text}}</p>{% endif %}{% endblock %}
+{{ inline }}

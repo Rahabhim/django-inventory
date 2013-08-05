@@ -1,0 +1,77 @@
+{% extends "po_wizard_base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+
+{% block pow_content %}
+<style>
+    div.results_on_deck {
+        display: none;
+    }
+
+    div.results_on_deck.found {
+        
+    }
+
+    div.results_on_deck.found li .dept_code{
+        font-weight: bold;
+        color: #008000;
+    }
+
+    div.results_on_deck.not-found li {
+        font-weight: bold;
+        color: #800000;
+    }
+
+</style>
+
+<div class="u2_form">
+{{ wizard.form.management_form }}
+
+{% with wizard.form as form %}
+    {{ form.department }}
+    <table class="wiz_form">
+    <tr><td colspan="3">{% blocktrans %}
+        In order to finish the Purchase Order wizard, you need to select the location
+        into which the items will be received.
+        {% endblocktrans %}
+        </td>
+    </tr>
+    {% with form.loc_template as field %}
+    <tr>
+        {% if field.errors %}
+        <td colspan="2" class="wf_error">
+            {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
+        </td>
+        </tr><tr><th>&nbsp;</th>
+        {% endif %}
+        <td class="wf_field" style="width:100%">
+            {{ field }}
+        </td>
+    </tr>
+    {% endwith %}
+    {% with form.depts as field %}
+    <tr>
+        {% if field.errors %}
+        <td colspan="2" class="wf_error">
+            {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
+        </td>
+        </tr><tr><th>&nbsp;</th>
+        {% endif %}
+        <td class="wf_field" style="width:100%">
+            {{ field }}
+        </td>
+    </tr>
+    {% endwith %}
+    </table>
+{% endwith %}
+</div>
+
+
+<div width="100%">
+<div class="submit_button" align="right">
+    <input id="submit0" type="submit" value="{%trans 'Finish' %}">
+</div>
+</div>
+{% endblock %}
+

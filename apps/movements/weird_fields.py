@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import logging
 from collections import defaultdict
-# from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
 from django import forms
 from django.template.loader import render_to_string
@@ -10,9 +10,13 @@ from django.utils.safestring import mark_safe
 from django.db.models import Count
 from generic_views.forms import DetailForeignWidget
 from django.forms.util import flatatt
+from django.utils import simplejson
+from django.conf import settings
 
 from products.models import Manufacturer, ItemTemplate, ItemCategoryContain
 from products.form_fields import CATItem
+from ajax_select import get_lookup
+from ajax_select.fields import _check_can_add, bootstrap, plugin_options
 
 """ Fields used by the PO wizard
 
@@ -408,5 +412,149 @@ class Step5ChoiceField(forms.ModelChoiceField):
         if isinstance(value, tuple):
             value = value[0]
         return super(Step5ChoiceField,self).to_python(value)
+
+# -----------------------
+class AcSelectMultipleWidget(forms.widgets.SelectMultiple):
+    """ widget to select multiple models, fork of AutoCompleteSelectMultipleField """
+
+    add_link = None
+    render_template = 'autocompleteselectmultiple.html'
+
+    def __init__(self,
+                 channel,
+                 help_text='',
+                 show_help_text=True,
+                 plugin_options = {},
+                 *args, **kwargs):
+        super(AcSelectMultipleWidget, self).__init__(*args, **kwargs)
+        self.channel = channel
+
+        self.help_text = help_text
+        self.show_help_text = show_help_text
+        self.plugin_options = plugin_options
+
+    def render(self, name, value, attrs=None):
+
+        if value is None:
+            value = []
+
+        final_attrs = self.build_attrs(attrs)
+        self.html_id = final_attrs.pop('id', name)
+
+        lookup = get_lookup(self.channel)
+
+        # eg. value = [3002L, 1194L]
+        if value:
+            current_ids = "|" + "|".join( str(pk) for pk in value ) + "|" # |pk|pk| of current
+        else:
+            current_ids = "|"
+
+        objects = lookup.get_objects(value)
+
+        # text repr of currently selected items
+        initial = [ [obj.pk, lookup.get_result(obj), lookup.format_item_display(obj)] \
+                        for obj in objects]
+
+        if self.show_help_text:
+            help_text = self.help_text
+        else:
+            help_text = u''
+
+        context = {
+            'name':name,
+            'html_id':self.html_id,
+            'current':value,
+            'current_ids':current_ids,
+            'current_codes': [ lookup.get_result(obj) for obj in objects],
+            # 'current_reprs':mark_safe(simplejson.dumps(initial)),
+            'help_text':help_text,
+            'extra_attrs': mark_safe(flatatt(final_attrs)),
+            'func_slug': self.html_id.replace("-",""),
+            'add_link' : self.add_link,
+        }
+        context.update(plugin_options(lookup,self.channel,self.plugin_options,initial))
+        context.update(bootstrap())
+
+        return mark_safe(render_to_string(self.render_template, context))
+
+    def value_from_datadict(self, data, files, name):
+        # eg. u'members': [u'|229|4688|190|']
+        return [long(val) for val in data.get(name,'').split('|') if val]
+
+    def id_for_label(self, id_):
+        return '%s_text' % id_
+
+
+class AcSelectMultipleField(forms.fields.CharField):
+
+    """ form field to select multiple models for a ManyToMany db field """
+
+    channel = None
+    widget_class = AcSelectMultipleWidget
+
+    def __init__(self, channel, *args, **kwargs):
+        self.channel = channel
+
+        help_text = kwargs.get('help_text')
+        show_help_text = kwargs.pop('show_help_text',False)
+
+        if not (help_text is None):
+            # '' will cause translation to fail
+            # should be u''
+            if type(help_text) == str:
+                help_text = unicode(help_text)
+            # django admin appends "Hold down "Control",..." to the help text
+            # regardless of which widget is used. so even when you specify an explicit help text it appends this other default text onto the end.
+            # This monkey patches the help text to remove that
+            if help_text != u'':
+                if type(help_text) != unicode:
+                    # ideally this could check request.LANGUAGE_CODE
+                    translated = help_text.translate(settings.LANGUAGE_CODE)
+                else:
+                    translated = help_text
+                django_default_help = _(u'Hold down "Control", or "Command" on a Mac, to select more than one.').translate(settings.LANGUAGE_CODE)
+                if django_default_help in translated:
+                    cleaned_help = translated.replace(django_default_help,'').strip()
+                    # probably will not show up in translations
+                    if cleaned_help:
+                        help_text = cleaned_help
+                    else:
+                        help_text = u""
+                        show_help_text = False
+        else:
+            show_help_text = False
+            help_text = None
+
+        # django admin will also show help text outside of the display
+        # area of the widget.  this results in duplicated help.
+        # it should just let the widget do the rendering
+        # so by default do not show it in widget
+        # if using in a normal form then set to True when creating the field
+        widget_kwargs = {
+            'channel': channel,
+            'help_text': help_text,
+            'show_help_text': show_help_text,
+            'plugin_options': kwargs.pop('plugin_options',{})
+        }
+        kwargs['widget'] = self.widget_class(**widget_kwargs)
+        kwargs['help_text'] = help_text
+
+        super(AcSelectMultipleField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        if not value and self.required:
+            raise forms.ValidationError(self.error_messages['required'])
+        return value # a list of IDs from widget value_from_datadict
+
+    def check_can_add(self,user,model):
+        _check_can_add(self,user,model)
+
+#-------------
+
+class DeptSelectWidget(AcSelectMultipleWidget):
+    render_template = 'depts_select_multiple.html'
+
+class DeptSelectMultipleField(AcSelectMultipleField):
+    widget_class = DeptSelectWidget
 
 # eof
