@@ -33,10 +33,10 @@ import views
 
 from views_po_wizard import PO_Wizard
 
-state_filter = {'name':'state', 'title':_(u'state'), 
+state_filter = {'name':'state', 'title': _(u'state'),
             'choices':'movements.Movement.state' , 'destination':'state'}
 
-stype_filter = {'name':'stype', 'title':_(u'type'), 
+stype_filter = {'name':'stype', 'title':_(u'type'),
             'choices':'movements.Movement.stype' , 'destination':'stype'}
 
 
@@ -58,7 +58,7 @@ def supplier_filter_queryset(form, parent, parent_queryset):
 supplier_filter = {'name': 'supplier', 'title':_(u'Supplier'),
             'queryset': supplier_filter_queryset, 'destination': 'supplier'}
 
-po_active_filter = {'name': 'state', 'title': _(u'State'), }
+po_active_filter = {'name': 'state', 'title': _(u'State'),'destination':'state'}
 
 def open_move_as_cart(obj, request):
     cart_utils.close_all_carts(request)
