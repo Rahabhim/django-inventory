@@ -61,10 +61,10 @@ def can_do_po(o,c):
         return True
     else:
         cnt = 0
-        for dr in c['request'].user.dept_roles:
-            if dr.role.has_perm('movements.add_purchaseorder'):
+        for dr in c['request'].user.dept_roles.all():
+            if dr.has_perm('movements.add_purchaseorder'):
                 cnt += 1
-        if cnt > 10:
+        if cnt >= 10:
             return True
     return False
 
