@@ -550,7 +550,7 @@ class PO_Step5(WizardForm):
 class PO_Step5m(WizardForm):
     title = _("Multiple import - Finish")
     step_is_hidden = True
-    loc_template = forms.ModelChoiceField(queryset=LocationTemplate.objects.all(), widget=forms.widgets.RadioSelect, required=True)
+    loc_template = forms.ModelChoiceField(queryset=LocationTemplate.objects.filter(sequence__lt=100), widget=forms.widgets.RadioSelect, required=True)
     depts = DeptSelectMultipleField('departments_list', label=_("Department"), show_help_text=False)
     #locations = Step5ChoiceField(label=_("location"), empty_label=None, required=False,
     #                queryset=Location.objects.none())
