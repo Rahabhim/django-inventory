@@ -56,7 +56,20 @@ purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'ar
 purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_link',
             'view':'purchase_order_receive', 'args':'object.id', 
             'condition': (iz_open, lambda o,c: _context_has_perm(c, PurchaseOrder, '%(app)s.receive_%(model)s'))  }
-purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 'condition': (can_add(PurchaseOrder), has_no_pending_inventories)}
+def can_do_po(o,c):
+    if can_add(PurchaseOrder)(o,c):
+        return True
+    else:
+        cnt = 0
+        for dr in c['request'].user.dept_roles:
+            if dr.role.has_perm('movements.add_purchaseorder'):
+                cnt += 1
+        if cnt > 10:
+            return True
+    return False
+
+purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 
+            'condition': (can_do_po, has_no_pending_inventories)}
 
 purchase_order_reject = {'text':_('reject order'), 'famfam':'package_red',
             'view':'purchase_order_reject', 'args':'object.id', 
