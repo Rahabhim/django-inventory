@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"POT-Creation-Date: 2013-08-08 10:14+0300\n"
 "PO-Revision-Date: 2013-05-21 09:10+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -41,7 +41,7 @@ msgstr "σύνδεση με προϊόντα"
 msgid "related purchase orders"
 msgstr "Σχετικές παραλαβές εξοπλισμού"
 
-#: __init__.py:21 models.py:80 models.py:149 urls.py:27 urls.py:30
+#: __init__.py:21 models.py:80 models.py:149 urls.py:31 urls.py:34
 msgid "locations"
 msgstr "τοποθεσίες"
 
@@ -57,7 +57,7 @@ msgstr "εξοπλισμός"
 msgid "location"
 msgstr "τοποθεσία"
 
-#: models.py:11 models.py:45 models.py:67 models.py:119
+#: models.py:11 models.py:45 models.py:67 models.py:119 urls.py:17
 msgid "name"
 msgstr "όνομα"
 
@@ -101,7 +101,7 @@ msgstr "Ακολουθία"
 msgid "location template"
 msgstr "πρότυπο τοποθεσίας"
 
-#: models.py:51 urls.py:34
+#: models.py:51 urls.py:38
 msgid "location templates"
 msgstr "πρότυπα τοποθεσιών"
 
@@ -113,7 +113,7 @@ msgstr "μονάδα"
 msgid "From template"
 msgstr "Από πρότυπο"
 
-#: models.py:72
+#: models.py:72 urls.py:18
 msgid "location type"
 msgstr "τύπος τοποθεσίας"
 
@@ -145,7 +145,7 @@ msgstr "Σε Σύνθεση"
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:110 models.py:150 urls.py:46
+#: models.py:110 models.py:150 urls.py:50
 msgid "supplier"
 msgstr "προμηθευτής"
 
@@ -173,11 +173,10 @@ msgstr "Συμπλήρωση αριθμών"
 msgid "sequences"
 msgstr "Ακολουθίες"
 
-#: urls.py:40
+#: urls.py:44
 msgid "Supplier details"
 msgstr "Λεπτομέρειες προμηθευτή"
 
-#: urls.py:43
+#: urls.py:47
 msgid "Suppliers"
 msgstr "Προμηθευτές"
-

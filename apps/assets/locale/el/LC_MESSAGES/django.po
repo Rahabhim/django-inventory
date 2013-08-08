@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-03 09:48+0300\n"
+"POT-Creation-Date: 2013-08-08 10:14+0300\n"
 "PO-Revision-Date: 2013-06-03 09:52+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -73,37 +73,37 @@ msgstr "εξοπλισμός"
 msgid "print assets list"
 msgstr "εκτύπωση εξοπλισμού μονάδας"
 
-#: forms.py:50
+#: forms.py:51
 msgid "Contained Item"
 msgstr "Περιεχόμενο αντικείμενο"
 
-#: forms.py:51 urls.py:49 views.py:130 templates/asset_details.rml.tmpl:57
+#: forms.py:52 urls.py:49 views.py:130 templates/asset_details.rml.tmpl:57
 #: templates/asset_details.rml.tmpl:68
 msgid "Manufacturer"
 msgstr "Κατασκευαστής"
 
-#: forms.py:52 urls.py:50 views.py:131 templates/asset_details.rml.tmpl:56
+#: forms.py:53 urls.py:50 views.py:131 templates/asset_details.rml.tmpl:56
 #: templates/asset_details.rml.tmpl:69
 msgid "Category"
 msgstr "Είδος"
 
-#: forms.py:73
+#: forms.py:84
 msgid "Date"
 msgstr "Ημερομηνία"
 
-#: forms.py:74
+#: forms.py:85
 msgid "Reference"
 msgstr "Αρ. πρωτοκόλλου"
 
-#: forms.py:75 templates/asset_details.rml.tmpl:89
+#: forms.py:86 templates/asset_details.rml.tmpl:89
 msgid "From"
 msgstr "Από"
 
-#: forms.py:76 templates/asset_details.rml.tmpl:90
+#: forms.py:87 templates/asset_details.rml.tmpl:90
 msgid "To"
 msgstr "Προς"
 
-#: forms.py:78
+#: forms.py:89
 msgid "Type"
 msgstr "Tύπος"
 

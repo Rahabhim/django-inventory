@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-21 09:06+0300\n"
+"POT-Creation-Date: 2013-08-08 10:15+0300\n"
 "PO-Revision-Date: 2013-06-07 09:35+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -51,49 +51,49 @@ msgstr ""
 msgid "Go"
 msgstr "Πήγαινε"
 
-#: templates/base.html:34
+#: templates/base.html:35
 msgid "User"
 msgstr "Χρήστης"
 
-#: templates/base.html:36
+#: templates/base.html:37
 msgid "Anonymous"
 msgstr "Ανώνυμος"
 
-#: templates/base.html:43
+#: templates/base.html:44
 msgid "Admin site"
 msgstr "Διαχείριση"
 
-#: templates/base.html:46
+#: templates/base.html:47
 msgid "Login"
 msgstr "Σύνδεση"
 
-#: templates/base.html:46
+#: templates/base.html:47
 msgid "Logout"
 msgstr "Αποσύνδεση"
 
-#: templates/base.html:75
+#: templates/base.html:76
 #, python-format
 msgid "Actions for %(object_name)s: %(object)s"
 msgstr "Ενέργειες για %(object_name)s: %(object)s"
 
-#: templates/base.html:77
+#: templates/base.html:78
 #, python-format
 msgid "Actions for: %(object)s"
 msgstr "Ενέργειες για: %(object)s"
 
-#: templates/base.html:80
+#: templates/base.html:81
 msgid "Actions"
 msgstr "Ενέργειες"
 
-#: templates/base.html:93
+#: templates/base.html:94
 msgid "Other available actions"
 msgstr "Άλλες διαθέσιμες ενέργειες"
 
-#: templates/base.html:116
+#: templates/base.html:118
 msgid "Based on Django-inventory"
 msgstr "Βασισμένο στο Django-inventory"
 
-#: templates/home.html:110
+#: templates/home.html:111
 msgid ""
 "Welcome to the Django Inventory application, where you can keep track of "
 "your equipment."
@@ -101,19 +101,19 @@ msgstr ""
 "Καλωσήλθατε στην Υπηρεσία αποτύπωσης υπολογιστικού και δικτυακού Εξοπλισμού "
 "Εκπαιδευτικών και Διοικητικών Μονάδων του Υπουργείου Παιδείας."
 
-#: templates/home.html:115
+#: templates/home.html:118
 msgid "Select department and role:"
 msgstr "Μονάδα και ρόλος:"
 
-#: templates/home.html:119
+#: templates/home.html:122
 msgid "Updating, please wait"
 msgstr "Παρακαλώ περιμένετε"
 
-#: templates/home.html:138
+#: templates/home.html:141
 msgid "Available actions"
 msgstr "Διαθέσιμες ενέργειες"
 
-#: templates/home.html:149
+#: templates/home.html:152
 msgid "My pending actions "
 msgstr "Ενέργειες σε εκκρεμότητα"
 

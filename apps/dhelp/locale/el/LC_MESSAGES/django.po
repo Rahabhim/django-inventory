@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-17 21:15+0300\n"
-"PO-Revision-Date: 2013-06-18 07:22+0300\n"
+"POT-Creation-Date: 2013-08-08 10:15+0300\n"
+"PO-Revision-Date: 2013-08-08 10:16+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -41,11 +41,7 @@ msgstr "προβολή"
 msgid "index"
 msgstr "Ευρετήριο"
 
-#: __init__.py:30
-msgid "pending help topics"
-msgstr ""
-
-#: __init__.py:38
+#: __init__.py:38 templates/inline_help.html:6
 msgid "Help"
 msgstr "Βοήθεια"
 
@@ -194,7 +190,17 @@ msgstr "Εφαρμογές"
 msgid "More"
 msgstr "Περισσότερα"
 
-#: templates/help_topic_display.html:39
+#: templates/help_topic_display.html:39 templates/inline_help.html:9
+#: templates/inline_help.html.py:20 templatetags/online_help.py:43
 msgid "Edit"
 msgstr "Επεξεργασία"
+
+#: templates/inline_help.html:13 templates/inline_help.html.py:24
+msgid "Create"
+msgstr "Δημιουργία"
+
+#: templatetags/online_help.py:52
+msgid "Write help"
+msgstr "Συγγραφή βοήθειας"
+
 
