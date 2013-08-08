@@ -19,6 +19,24 @@ def iz_open(obj, context):
 def iz_open_or_rej(obj, context):
     return obj.state in ('draft', 'pending', 'reject')
 
+def iz_single_dept(obj, context):
+    if context['request'].user.is_staff or obj.department is not None:
+        return True
+    else:
+        return False
+
+def can_do_mass_po(o,c):
+    cnt = 0
+    if c['request'].user.is_staff:
+        return True
+    for dr in c['request'].user.dept_roles.all():
+        if dr.has_perm('movements.add_purchaseorder'):
+            cnt += 1
+    if cnt >= 10:
+        return True
+    return False
+
+
 purchase_request_state_list = {'text':_('purchase request states'), 'view':'purchase_request_state_list', 'famfam':'pencil_go'}
 purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add', 'condition': user_is_staff}
 purchase_request_state_update = {'text':_('edit state'), 'view':'purchase_request_state_update', 'args':'object.id', 'famfam':'pencil', 'condition': user_is_staff}
@@ -49,27 +67,23 @@ purchase_order_item_state_delete = {'text':_('delete state'), 'view':'purchase_o
 purchase_order_list = {'text':_('purchase orders'), 'view':'purchase_order_list', 'famfam':'cart_go'}
 purchase_order_create = {'text':_('create new order'), 'view':'purchase_order_create', 'famfam':'cart_add', 'condition': can_add(PurchaseOrder)}
 purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update', 'args':'object.id', 'famfam':'pencil', 'condition': lambda o,c: o.state }
-purchase_order_updwiz = {'text':_('edit order items'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': (iz_open,  can_edit, has_no_pending_inventories)  }
+
+purchase_order_updwiz = {'text':_('edit order items'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': (iz_open, iz_single_dept,  can_edit, has_no_pending_inventories)  }
+purchase_order_updwiz_mass = {'text':_('edit order items (mass)'), 
+            'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil',
+            'condition': (iz_open, lambda o,c: o.department is None, can_do_mass_po, can_edit, has_no_pending_inventories)  }
 purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': (iz_open_or_rej, can_delete)  }
 purchase_order_close = {'text':_('close order'), 'view':'purchase_order_close', 'args':'object.id', 'famfam':'cross'}
 purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'args':'object.id', 'famfam':'accept'}
 purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_link',
             'view':'purchase_order_receive', 'args':'object.id', 
             'condition': (iz_open, lambda o,c: _context_has_perm(c, PurchaseOrder, '%(app)s.receive_%(model)s'))  }
-def can_do_po(o,c):
-    if can_add(PurchaseOrder)(o,c):
-        return True
-    else:
-        cnt = 0
-        for dr in c['request'].user.dept_roles.all():
-            if dr.has_perm('movements.add_purchaseorder'):
-                cnt += 1
-        if cnt >= 10:
-            return True
-    return False
 
 purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 
-            'condition': (can_do_po, has_no_pending_inventories)}
+            'condition': (can_add(PurchaseOrder), has_no_pending_inventories)}
+
+purchase_order_wizard_mass = {'text':_('create new mass order'), 'view':'purchaseorder_wizard_new_mass', 'famfam':'cart_add', 
+            'condition': (can_do_mass_po, has_no_pending_inventories)}
 
 purchase_order_reject = {'text':_('reject order'), 'famfam':'package_red',
             'view':'purchase_order_reject', 'args':'object.id', 
@@ -102,7 +116,7 @@ register_links(['purchase_order_state_create', 'purchase_order_state_list', 'pur
 register_links(PurchaseOrderItemStatus, [purchase_order_item_state_update, purchase_order_item_state_delete])
 register_links(['purchase_order_item_state_create', 'purchase_order_item_state_list', 'purchase_order_item_state_update', 'purchase_order_item_state_delete'], [purchase_order_item_state_create], menu_name='sidebar')
 
-register_links(PurchaseOrder, [dict(purchase_order_updwiz, hide_text=True),])
+register_links(PurchaseOrder, [dict(purchase_order_updwiz, hide_text=True), dict(purchase_order_updwiz_mass, hide_text=True)])
 register_links(['purchase_order_view',], [purchase_order_receive, purchase_order_reject,  purchase_order_delete,], menu_name='sidebar')
 # register_links(['purchase_order_list', 'purchase_order_view', 'supplier_purchase_orders'], [purchase_order_create], menu_name='sidebar')
 
@@ -134,7 +148,7 @@ action_move_internal = dict(text=_(u'Move assets (internal)'), view='move_items_
 
 register_links( ['item_list'], [ action_destroy, action_lose, action_move, action_move_internal ], menu_name='sidebar')
 register_links(['home',], [action_destroy, action_lose, action_move, action_move_internal ], menu_name='start_actions')
-register_links(['home',], [purchase_order_wizard ], menu_name='start_actions')
+register_links(['home',], [purchase_order_wizard, purchase_order_wizard_mass ], menu_name='start_actions')
 
 register_links([('purchase_order_receive', Movement),], 
         [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',

@@ -31,7 +31,7 @@ from company import make_mv_location
 from main import cart_utils
 import views
 
-from views_po_wizard import PO_Wizard
+from views_po_wizard import PO_Wizard, PO_MassWizard
 
 state_filter = {'name':'state', 'title': _(u'state'),
             'choices':'movements.Movement.state' , 'destination':'state'}
@@ -265,6 +265,10 @@ urlpatterns = patterns('movements.views',
     url(r'^po/wizard/$', PO_Wizard.as_view(), name="purchaseorder_wizard" ),
     url(r'^po/wizard/new/$', PO_Wizard.as_view(), kwargs={'new': True}, name="purchaseorder_wizard_new" ),
     url(r'^po/wizard/(?P<object_id>\d+)/$', PO_Wizard.as_view(), name="purchaseorder_wizard_update" ),
+
+    url(r'^po/mass-wizard/$', PO_MassWizard.as_view(), name="purchaseorder_wizard_mass" ),
+    url(r'^po/mass-wizard/new/$', PO_MassWizard.as_view(), kwargs={'new': True}, name="purchaseorder_wizard_new_mass" ),
+    url(r'^po/mass-wizard/(?P<object_id>\d+)/$', PO_MassWizard.as_view(), name="purchaseorder_wizard_update_mass" ),
 
     # Repair Orders
     url(r'^itemgroup/(?P<object_id>\d+)/repair/$', 'repair_itemgroup',

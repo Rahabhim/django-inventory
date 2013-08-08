@@ -41,7 +41,7 @@
     </tr>
     {% endwith %}
 
-    {% if user.is_staff %}
+    {% if user.is_staff and form.department %}
     {% with form.department as field %}
     <tr><th>{{ field.label }} <font color="red">*</font></th>
         <td class="wf_middle">&nbsp;</td><td class="wf_field">{{field }}

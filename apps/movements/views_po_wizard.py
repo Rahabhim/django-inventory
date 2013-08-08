@@ -39,13 +39,12 @@ class _WizardFormMixin:
 class WizardForm(_WizardFormMixin, forms.Form):
     pass
 
-class PO_Step1(_WizardFormMixin, forms.ModelForm):
+class PO_Step1b(_WizardFormMixin, forms.ModelForm):
     title = _("Purchase Order Header Data")
     user_id = forms.CharField(max_length=32, required=False, label=_(u'purchase order number'))
     issue_date = forms.DateField(label=_(u'issue date'), required=True,help_text=_("Format: 23/04/2010"))
 
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.all())
-    department = AutoCompleteSelectField('department', label=_("Department"), required=False, show_help_text=False)
     supplier_name_or_vat = forms.ChoiceField(label=_('Find by'), widget=forms.widgets.RadioSelect,
             initial='name',
             choices=[('vat', _('VAT (exact)')), ('name', _('Company Name'))], )
@@ -56,7 +55,7 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
 
     class Meta:
         model = PurchaseOrder
-        fields = ('user_id', 'issue_date', 'procurement', 'supplier', 'department')
+        fields = ('user_id', 'issue_date', 'procurement', 'supplier')
                 # That's the fields we want to fill in the PO
 
     def __init__(self, data=None, files=None, **kwargs):
@@ -65,18 +64,30 @@ class PO_Step1(_WizardFormMixin, forms.ModelForm):
             if not initial.get('supplier_name', None):
                 initial['supplier_name'] = kwargs['instance'].supplier_id
 
-        super(PO_Step1, self).__init__(data, files, **kwargs)
+        super(PO_Step1b, self).__init__(data, files, **kwargs)
 
     def save_to_db(self, request):
         """ Explicitly commit the data into the database
         """
         if not (self.instance.pk or self.instance.create_user_id):
             self.instance.create_user = request.user
+        self.instance.save()
+
+class PO_Step1(PO_Step1b):
+    department = AutoCompleteSelectField('department', label=_("Department"), required=False, show_help_text=False)
+
+    class Meta:
+        model = PurchaseOrder
+        fields = ('user_id', 'issue_date', 'procurement', 'supplier', 'department')
+
+    def save_to_db(self, request):
+        """ Explicitly commit the data into the database
+        """
         if self.instance.department is None:
             active_role = role_from_request(request)
             if active_role:
                 self.instance.department = active_role.department
-        self.instance.save()
+        super(PO_Step1, self).save_to_db(request)
 
 class PO_Step2(WizardForm):
     title = _("Select Product Categories")
@@ -416,11 +427,9 @@ class PO_Step4(WizardForm):
                     messages.warning(wizard.request, err, fail_silently=True)
         if errors:
             return '4a'
-        elif step1.instance.department is None:
-            return '5m'
         else:
-            step5_data = wizard.storage.get_step_data('5')
-            if step1.instance.department is not None:
+            if getattr(step1.instance, 'department', None) is not None:
+                step5_data = wizard.storage.get_step_data('5')
                 if step5_data is None:
                     step5_data = MultiValueDict()
                 step5_data['5-department'] = step1.instance.department.id
@@ -549,7 +558,6 @@ class PO_Step5(WizardForm):
 
 class PO_Step5m(WizardForm):
     title = _("Multiple import - Finish")
-    step_is_hidden = True
     loc_template = forms.ModelChoiceField(queryset=LocationTemplate.objects.filter(sequence__lt=100), widget=forms.widgets.RadioSelect, required=True)
     depts = DeptSelectMultipleField('departments_list', label=_("Department"), show_help_text=False)
     #locations = Step5ChoiceField(label=_("location"), empty_label=None, required=False,
@@ -565,7 +573,7 @@ class PO_Step5m(WizardForm):
             mapped_items = po_instance.map_items()
         except ValueError, ve:
             messages.error(request, unicode(ve), fail_silently=True)
-            return '5m'
+            return '5'
 
         # check that user can create POs for every department requested
         depts = set(self.cleaned_data['depts'])
@@ -606,8 +614,8 @@ class PO_Step5m(WizardForm):
 class PO_Wizard(SessionWizardView):
     form_list = [('1', PO_Step1), ('2', PO_Step2), ('3', PO_Step3), ('3a', PO_Step3_allo),
             ('3s', PO_Step3s), ('3b', PO_Step3b),
-            ('4', PO_Step4), ('4a', PO_Step4a), 
-            ('5', PO_Step5), ('5m', PO_Step5m)]
+            ('4', PO_Step4), ('4a', PO_Step4a),
+            ('5', PO_Step5) ]
 
 
     @classmethod
@@ -837,5 +845,36 @@ class PO_Wizard(SessionWizardView):
             rdict[itc.chained_location_id or '*'].append(it['item_template'])
 
         return rdict
+
+class PO_MassWizard(PO_Wizard):
+    """Variant, with mass-insert step "5"
+    """
+    form_list = [('1', PO_Step1b), ('2', PO_Step2), ('3', PO_Step3), ('3a', PO_Step3_allo),
+            ('3s', PO_Step3s), ('3b', PO_Step3b),
+            ('4', PO_Step4), ('4a', PO_Step4a),
+            ('5', PO_Step5m)]
+
+    def get(self, request, *args, **kwargs):
+        if 'object_id' in kwargs:
+            self.storage.reset()
+            self.storage.current_step = '4' # rather than: self.steps.first
+
+            po_instance = get_object_or_404(PurchaseOrder, pk=kwargs['object_id'])
+            self.storage.extra_data = {'po_pk': po_instance.id }
+            self.storage.set_step_data('4', self.form_list['4'].prepare_data_from(po_instance))
+
+            return redirect('purchaseorder_wizard_mass')
+        elif kwargs.get('new', False):
+            # just reset the data..
+            self.storage.reset()
+            return redirect('purchaseorder_wizard_mass')
+
+        return self.render(self.get_form())
+
+    def get_template_names(self):
+        if self.steps.current == '5':
+            return ['po_wizard_step5m.html',]
+        else:
+            return ['po_wizard_step%s.html' % self.steps.current,]
 
 #eof
