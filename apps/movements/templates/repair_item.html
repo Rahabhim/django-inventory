@@ -29,7 +29,7 @@
 <tr><td width="*">
     <table id="rform">
         <tr><td>{% trans 'Now at:' %}</td> <td>{{ item.location }}</td> </tr>
-        <tr><td><label for="issue_date">{% trans 'Issue date:' %}</label></td>
+        <tr><td><label for="issue_date" class="required">{% trans 'Issue date:' %}</label></td>
             <td><input name="issue_date" type="text"/>
                 <div id="date_invalid" style="display: none; color: red;">
                     {% trans 'You have to enter a date in DD/MM/YYY format' %}
@@ -130,7 +130,7 @@
     </div>
 </div>
 
-<div id="dsubmit" style="display: none">
+<div id="dsubmit" style="display: none" class="submit_button">
     <p>
     {%blocktrans %}If you agree with the above movements, you can now press the submit
     button and the appropriate actions will be prepared for the repair. <br/>
@@ -138,7 +138,7 @@
     {% endblocktrans %}
     </p>
     <p style="text-align: left; width: 100%">
-        <input type="submit" value="{% trans 'Submit' %}" />
+        <button type="submit">{% trans 'Submit' %}</button>
     </p>
 </div>
 </form>
