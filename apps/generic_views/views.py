@@ -313,6 +313,13 @@ class _PermissionsMixin(object):
                 raise PermissionDenied
         return obj
 
+    def get_queryset(self):
+        if self.queryset is not None and not isinstance(self.queryset, QuerySet) \
+                    and callable(self.queryset):
+            return self.queryset(self.request)
+        else:
+            return super(_PermissionsMixin, self).get_queryset()
+
 class GenericCreateView(_PermissionsMixin, _InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
     need_permission = '%(app)s.add_%(model)s'
