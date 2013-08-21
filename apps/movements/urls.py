@@ -225,6 +225,7 @@ urlpatterns = patterns('movements.views',
             name='movement_view'),
     url(r'^objects/moves/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
                 template_name="movement_form_gu.html",
+                queryset=Movement.objects.by_request,
                 check_object=check_movement,
                 form_class=MovementForm_gu,
             ),
@@ -232,6 +233,7 @@ urlpatterns = patterns('movements.views',
     url(r'^objects/moves/(?P<pk>\d+)/update_po/$', GenericUpdateView.as_view( \
                 template_name="movement_form.html",
                 check_object=check_movement,
+                queryset=Movement.objects.by_request,
                 form_class=MovementForm_update_po,
                 success_url=lambda obj, *a: reverse('purchase_order_receive', kwargs=dict(object_id=obj.purchase_order.id)),
             ),
@@ -260,6 +262,7 @@ urlpatterns = patterns('movements.views',
 
     url(r'^objects/moves/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Movement, success_url="movements_pending_list", 
                 check_object=check_movement2,
+                queryset=Movement.objects.by_request,
                 extra_context=dict(object_name=_(u'Movement'))), name='movement_delete'),
 
     url(r'^po/wizard/$', PO_Wizard.as_view(), name="purchaseorder_wizard" ),
