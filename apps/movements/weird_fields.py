@@ -549,8 +549,6 @@ class AcSelectMultipleField(forms.fields.CharField):
     def check_can_add(self,user,model):
         _check_can_add(self,user,model)
 
-#-------------
-
 class DeptSelectWidget(AcSelectMultipleWidget):
     render_template = 'depts_select_multiple.html'
 

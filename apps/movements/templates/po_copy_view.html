@@ -1,0 +1,78 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+
+{% block stylesheets %}
+{{ block.super }}
+<style>
+    div.results_on_deck {
+        display: none;
+    }
+
+    div.results_on_deck.found {
+    }
+
+    div.results_on_deck.found li .dept_code{
+        font-weight: bold;
+        color: #008000;
+    }
+
+    div.results_on_deck.not-found li {
+        font-weight: bold;
+        color: #800000;
+    }
+
+</style>
+{% endblock %}
+
+{% block form_layout %}
+
+    {% with form=po_form form_mode='details' %}
+        <div class="group inline">
+            {% field_for issue_date read_only %}
+        </div>
+
+        <div class="group newline">
+            {% field_for procurement %}
+        </div>
+
+        <div class="group inline">
+            {% field_for supplier %}
+        </div>
+
+        <div style="clear: both; width=100%;"> </div>
+
+        {% for subtemplate in subtemplates%}
+        {% with title=subtemplate.title extra_columns=subtemplate.extra_columns object_list=subtemplate.object_list main_object=subtemplate.main_object hide_object=subtemplate.hide_object hide_link=subtemplate.hide_link  %}
+            {% include subtemplate.name %}
+        {% endwith %}
+        {% endfor %}
+
+        <div class="group">
+            {% field_for notes %}
+        </div>
+    {% endwith %}
+
+    <div style="clear: both; width=100%; min-height: 2em;"> </div>
+
+    <h2>{% trans "Copy Purchase Order to:" %}</h2>
+
+    {{ form.purchase_order.as_hidden }}
+
+    <div class="group">
+        {% field_for date_mode %}
+    </div>
+    <div class="group">
+        {% field_for loc_template %}
+    </div>
+    <div class="group">
+        {% field_for depts %}
+    </div>
+
+{% endblock %}
+
+{% block submit_button %}
+    <div class="group navform wat-cf submit_button">
+        <button class="button" type="submit">{% trans 'Copy' %}</button>
+    </div>
+{% endblock %}

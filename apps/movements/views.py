@@ -6,7 +6,7 @@ from collections import defaultdict
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect #, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import render_to_response, get_object_or_404, redirect, render
 from django.template import RequestContext
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
@@ -16,12 +16,13 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 #from django.views.generic.create_update import create_object
 from django.forms.formsets import formset_factory
 
-from common.models import Supplier, Location
+from common.models import Supplier, Location, LocationTemplate
 from common.api import role_from_request
 from assets.models import ItemTemplate, Item, ItemGroup
 from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
 from main import cart_utils
 
+from company.models import Department
 from models import PurchaseRequest, PurchaseOrder, \
                     Movement, RepairOrder
 from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
@@ -29,6 +30,7 @@ from forms import PurchaseRequestForm_view, PurchaseRequestItemForm, \
                   PurchaseOrderItem, PurchaseOrderWizardItemForm, \
                   PurchaseOrderForm_short_view
 
+from weird_fields import DeptSelectMultipleField
 
 def purchase_request_view(request, object_id):
     purchase_request = get_object_or_404(PurchaseRequest, pk=object_id)
@@ -534,6 +536,147 @@ def purchase_order_item_create(request, object_id):
         'title': _(u'add new purchase order item') ,
     },
     context_instance=RequestContext(request))
+
+class POCopyForm(forms.Form):
+    purchase_order = forms.ModelChoiceField(queryset=PurchaseOrder.objects.all(), widget=forms.widgets.HiddenInput, required=True)
+    date_mode = forms.ChoiceField(label=_("Date mode"), widget=forms.RadioSelect, choices=(('original', _('Original date')), ('today', _('Today'))))
+    # loc_template = forms.ModelChoiceField(queryset=LocationTemplate.objects.filter(sequence__lt=100), widget=forms.widgets.RadioSelect, required=True)
+    depts = DeptSelectMultipleField('departments_list', label=_("Departments"), show_help_text=False)
+
+def purchase_order_copy(request, object_id):
+    po_instance = get_object_or_404(PurchaseOrder.objects.by_request(request), pk=object_id)
+    logger = logging.getLogger('apps.movements.po_copy')
+
+    if request.method == 'POST':
+        form = POCopyForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['date_mode'] == 'original':
+                new_date = po_instance.issue_date
+            elif form.cleaned_data['date_mode'] == 'today':
+                new_date = datetime.date.today()
+            else:
+                raise ValueError
+
+            # Step 1: check that user can create POs for every department requested
+            logger.debug("Step 1")
+            depts = set(form.cleaned_data['depts'])
+            departments = []
+
+            for role in request.user.dept_roles.all():
+                if role.department.id not in depts:
+                    continue
+                if not role.has_perm('movements.create_purchaseorder'):
+                    logger.warning("User %s not allowed to create PO for dept %s", request.user, role.department)
+                    raise PermissionDenied
+                depts.remove(role.department.id)
+                departments.append(role.department)
+
+            if len(depts):
+                if request.user.is_staff or request.user.is_superuser:
+                    for dept in Department.objects.filter(id__in=depts):
+                        departments.append(dept)
+                else:
+                    logger.warning("User %s has no role for departments %r", request.user, list(depts))
+                    raise PermissionDenied
+
+            # Step 2: Code that copies a PO + its items:
+            logger.debug("Step 2")
+            all_new_pos = []
+            counter = 1
+            for dept in departments:
+                new_user_id = '%s/%d' %(po_instance.user_id or '', counter)
+                counter += 1
+                new_po = PurchaseOrder(user_id=new_user_id,
+                            purchase_request=po_instance.purchase_request,
+                            procurement=po_instance.procurement, create_user=request.user,
+                            supplier=po_instance.supplier, issue_date=new_date,
+                            notes=po_instance.notes, department=dept)
+                new_po.save()
+                line_map = {}
+                in_group_defer = []
+                for item in po_instance.items.all():
+                    npi = new_po.items.create(item_name=item.item_name,
+                            item_template=item.item_template, agreed_price=item.agreed_price,
+                            qty=item.qty, received_qty=item.received_qty)
+                    line_map[item.id] = npi.id
+                    if item.in_group:
+                        in_group_defer.append((npi.id, item.in_group))
+
+                if in_group_defer:
+                    for pk, grp_line in in_group_defer:
+                        contained = new_po.items.get(pk=pk)
+                        group_pk = line_map.get(grp_line, None)
+                        if not group_pk:
+                            logger.warning("Algo failure: cannot locate group %s", grp_line)
+                            continue
+                        contained.in_group = group_pk
+                        contained.save()
+
+                all_new_pos.append(new_po)
+            # end of loop, we have saved some POs, so far
+
+            # shortcut, stop here:
+            logger.debug("Finish")
+            return redirect('purchase_order_pending_list')
+        if False:
+            # DISABLED CODE: remove 4 lines above to enable automatic moves!
+            # Step 3: sort items for each PO and create the moves
+            logger.debug("Step 3")
+            loc_template = form.cleaned_data['loc_template']
+            for new_po in all_new_pos:
+                try:
+                    mapped_items = new_po.map_items()
+                except ValueError, ve:
+                    messages.error(request, unicode(ve), fail_silently=True)
+                    continue
+                try:
+                    if new_po.map_has_left(mapped_items):
+                        if mapped_items.get('', None):
+                            # we have items that could go to any location, "move" them to
+                            # our location /kind/
+                            it_tmpls = mapped_items.pop('')
+                            loc_its = mapped_items[loc_template.id]
+                            for tmpl_id, objs in it_tmpls.items():
+                                loc_its.setdefault(tmpl_id, []).extend(objs)
+                        new_po.items_into_moves(mapped_items, request, new_po.department, False)
+                except Exception, e:
+                    messages.error(request, unicode(e), fail_silently=True)
+                    continue
+
+            logger.debug("Finish")
+            return redirect('purchase_order_pending_list')
+        # else: form is invalid, stay there.
+    else:
+        old_dept = None
+        # check if the PO can be copied
+        for move in po_instance.movements.all():
+            if move.location_dest.department:
+                if old_dept and move.location_dest.department != old_dept:
+                    messages.error(request, _('This Purchase Order used more than one Department, cannot copy.'), fail_silently=True)
+                    return redirect(po_instance.get_absolute_url())
+                elif not old_dept:
+                    old_dept = move.location_dest.department
+        # Just a blank copy form:
+        form = POCopyForm(initial={'purchase_order': po_instance, 'date_mode': 'original' })
+
+    po_form = PurchaseOrderForm_view(instance=po_instance)
+
+    subtemplates = [{
+            'name':'generic_list_subtemplate.html',
+            'title': _(u'purchase order items'),
+            'object_list':po_instance.items.all(),
+            'hide_link': True,
+            'extra_columns':[
+                {'name': _(u'qty'), 'attribute':'qty'},
+                {'name': _(u'qty received'), 'attribute':'received_qty'},
+                ],
+            },]
+
+    return render(request, 'po_copy_view.html', { 'title': _("Purchase Order Copy"),
+                'form': form, 'form_mode': 'create',
+                'po_form': po_form, 'subtemplates': subtemplates,
+                'object': po_instance })
+
 
 class PurchaseOrderListView(GenericBloatedListView):
     queryset=PurchaseOrder.objects.by_request
