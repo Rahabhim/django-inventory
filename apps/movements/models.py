@@ -340,7 +340,14 @@ class PurchaseOrder(models.Model):
 
         id_map = {}
         if not isinstance(departments, list):
-            departments = [departments,]
+            if departments:
+                departments = [departments,]
+            elif master_location:
+                departments = [master_location.department,]
+            else:
+                logger.warning("Fishy, both 'departments' and 'master_location' are empty in items_into_moves")
+                departments = []
+
         for lk, it_tmpls in mapped_items.items():
             for tmpl_id, objs in it_tmpls.items():
                 depts_copy = departments[:]
