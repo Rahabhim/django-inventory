@@ -602,6 +602,9 @@ def purchase_order_copy(request, object_id):
                     if item.in_group:
                         in_group_defer.append((npi.id, item.in_group))
 
+                    for bit in item.bundled_items.all():
+                        npi.bundled_items.create(item_template=bit.item_template, qty=bit.qty)
+
                 if in_group_defer:
                     for pk, grp_line in in_group_defer:
                         contained = new_po.items.get(pk=pk)
