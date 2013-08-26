@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from common import has_pending_inventories, has_no_pending_inventories
 from common.api import register_links, register_menu, register_submenu, \
+                    role_from_request, \
                     can_add, user_is_staff, _context_has_perm, can_edit, can_delete
 
 from models import PurchaseRequestStatus, PurchaseRequest, \
@@ -18,6 +19,27 @@ def iz_open(obj, context):
 
 def iz_open_or_rej(obj, context):
     return obj.state in ('draft', 'pending', 'reject')
+
+def check_our_move(state=None, perm=False):
+    """ Check if movement is for our active role's department and has some state
+    """
+    if isinstance(state, basestring):
+        state = (state, )
+
+    def __check(move, context):
+        if (state is not None) and (move.state not in state):
+            return False
+        if perm and not _context_has_perm(context, Movement, perm):
+            return False
+        if context['request'].user.is_staff:
+            return True
+        else:
+            rrq = role_from_request(context['request'])
+            if rrq and (rrq.department == (move.location_src.department or move.location_dest.department or "foo bar")):
+                return True
+        return False
+
+    return __check
 
 purchase_request_state_list = {'text':_('purchase request states'), 'view':'purchase_request_state_list', 'famfam':'pencil_go'}
 purchase_request_state_create = {'text':_('create new purchase request state'), 'view':'purchase_request_state_create', 'famfam':'pencil_add', 'condition': user_is_staff}
@@ -125,22 +147,24 @@ register_links(['home',], [purchase_order_wizard ], menu_name='start_actions')
 
 register_links([('purchase_order_receive', Movement),], 
         [ {'text':_(u'details'), 'view':'movement_view', 'args':'object.id',
-            'famfam':'page_go', 'condition': ((lambda o,c: o.state == 'done'), has_no_pending_inventories)},
+            'famfam':'page_go', 'condition': (check_our_move(state='done'), has_no_pending_inventories)},
           {'text':_(u'edit'), 'view':'movement_update_po', 'args':'object.id', 'famfam':'page_go',
-           'condition': iz_open }])
+           'condition': check_our_move(state=('draft', 'pending')) }])
 
-movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open', 'args':'object.id', 'famfam':'package_green', 'condition': ((lambda o,c: o.state == 'draft'),  can_edit, has_no_pending_inventories) }
-movement_cart_close = {'text':_(u'End selection'), 'view':'movement_cart_close', 'args':'object.id', 'famfam':'package_red', 'condition': lambda o,c: o.state == 'draft' and _context_has_perm(c, Movement,'%(app)s.change_%(model)s')}
+movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open',
+            'args':'object.id', 'famfam':'package_green',
+            'condition': (check_our_move(state='draft'),  can_edit, has_no_pending_inventories) }
+movement_cart_close = {'text':_(u'End selection'), 'view':'movement_cart_close',
+            'args':'object.id', 'famfam':'package_red',
+            'condition': check_our_move(state='draft', perm='%(app)s.change_%(model)s')}
 
 movement_validate = {'text':_(u'validate move'), 'view':'movement_do_close',
             'args':'object.id', 'famfam':'page_go', 
-            'condition': lambda o,c: o.state in ('draft', 'pending') \
-                    and _context_has_perm(c, Movement, '%(app)s.validate_%(model)s') }
+            'condition': check_our_move(state=('draft', 'pending'), perm='%(app)s.validate_%(model)s') }
 
 movement_reject = {'text':_(u'reject move'), 'view':'movement_do_reject',
             'args':'object.id', 'famfam':'alert', 
-            'condition': lambda o,c: o.state in ('draft', 'pending') \
-                    and _context_has_perm(c, Movement, '%(app)s.validate_%(model)s') }
+            'condition': check_our_move(state=('draft', 'pending'), perm='%(app)s.validate_%(model)s') }
 
 register_links(['movement_view', ], [ movement_validate, movement_reject,
             movement_cart_open, movement_cart_close, movement_delete,
