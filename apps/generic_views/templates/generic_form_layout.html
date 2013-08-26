@@ -54,7 +54,7 @@ $(function() {
     <h2 class="title"> {% include "calculate_form_title.html" %} </h2>
     {% endblock %}
     <div class="inner">
-
+        {% block pre_form_inner %}{% endblock %}
     {% if form.is_multipart %}
         <form enctype="multipart/form-data" method="{{ submit_method|default:'post' }}" action="" class="form">
     {% else %}
