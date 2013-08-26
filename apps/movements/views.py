@@ -539,8 +539,9 @@ def purchase_order_item_create(request, object_id):
 
 class POCopyForm(forms.Form):
     purchase_order = forms.ModelChoiceField(queryset=PurchaseOrder.objects.all(), widget=forms.widgets.HiddenInput, required=True)
-    date_mode = forms.ChoiceField(label=_("Date mode"), widget=forms.RadioSelect, choices=(('original', _('Original date')), ('today', _('Today'))))
     # loc_template = forms.ModelChoiceField(queryset=LocationTemplate.objects.filter(sequence__lt=100), widget=forms.widgets.RadioSelect, required=True)
+    issue_date = forms.DateField(label=_("Date"), required=True, initial=datetime.date.today,
+                    help_text=_("Format: 23/04/2010"))
     depts = DeptSelectMultipleField('departments_list', label=_("Departments"), show_help_text=False)
 
 def purchase_order_copy(request, object_id):
@@ -550,12 +551,7 @@ def purchase_order_copy(request, object_id):
     if request.method == 'POST' and 'submit' in request.POST:
         form = POCopyForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data['date_mode'] == 'original':
-                new_date = po_instance.issue_date
-            elif form.cleaned_data['date_mode'] == 'today':
-                new_date = datetime.date.today()
-            else:
-                raise ValueError
+            new_date = form.cleaned_data['issue_date']
 
             # Step 1: check that user can create POs for every department requested
             logger.debug("Step 1")
