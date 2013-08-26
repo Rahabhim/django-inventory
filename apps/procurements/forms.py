@@ -2,7 +2,8 @@
 from django import forms
 from generic_views.forms import DetailForm
 from models import Delegate, Project, Contract
-
+from ajax_select.fields import AutoCompleteSelectField
+from django.utils.translation import ugettext_lazy as _
 
 class DelegateForm(forms.ModelForm):
     class Meta:
@@ -14,6 +15,7 @@ class DelegateForm_view(DetailForm):
         exclude = ('photos',)
 
 class ContractForm(forms.ModelForm):
+    department = AutoCompleteSelectField('department', label=_("Department"), required=False)
     class Meta:
         model = Contract
 
