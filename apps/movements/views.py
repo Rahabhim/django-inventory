@@ -547,7 +547,7 @@ def purchase_order_copy(request, object_id):
     po_instance = get_object_or_404(PurchaseOrder.objects.by_request(request), pk=object_id)
     logger = logging.getLogger('apps.movements.po_copy')
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'submit' in request.POST:
         form = POCopyForm(request.POST)
         if form.is_valid():
             if form.cleaned_data['date_mode'] == 'original':

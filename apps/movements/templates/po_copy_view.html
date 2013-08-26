@@ -21,13 +21,18 @@
         font-weight: bold;
         color: #800000;
     }
-
+    .inner .details textarea,
+    .inner .details select option,
+    .inner .details input,
+    .inner .details select,
+    .inner .details input { background: none; color: black; border: none; }
 </style>
 {% endblock %}
 
-{% block form_layout %}
-
-    {% with form=po_form form_mode='details' %}
+{% block pre_form_inner %}
+    <h2>{% trans "Details of original Purchase Order:" %}</h2>
+    {% with form=po_form form_mode='details' read_only=1 %}
+        <form class="form details">
         <div class="group inline">
             {% field_for issue_date read_only %}
         </div>
@@ -51,13 +56,17 @@
         <div class="group">
             {% field_for notes %}
         </div>
+        </form>
     {% endwith %}
 
     <div style="clear: both; width=100%; min-height: 2em;"> </div>
+{% endblock %}
 
+{% block form_layout %}
     <h2>{% trans "Copy Purchase Order to:" %}</h2>
 
     {{ form.purchase_order.as_hidden }}
+    <input type="hidden" name="submit" value="1">
 
     <div class="group">
         {% field_for date_mode %}
