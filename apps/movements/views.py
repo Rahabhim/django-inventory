@@ -580,7 +580,7 @@ def purchase_order_copy(request, object_id):
             all_new_pos = []
             counter = 1
             for dept in departments:
-                new_user_id = '%s/%d' %(po_instance.user_id or '', counter)
+                new_user_id = None # '%s/%d' %(po_instance.user_id or '', counter)
                 counter += 1
                 new_po = PurchaseOrder(user_id=new_user_id,
                             purchase_request=po_instance.purchase_request,
