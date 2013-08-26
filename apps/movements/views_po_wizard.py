@@ -44,7 +44,7 @@ class PO_Step1b(_WizardFormMixin, forms.ModelForm):
     user_id = forms.CharField(max_length=32, required=False, label=_(u'purchase order number'))
     issue_date = forms.DateField(label=_(u'issue date'), required=True,help_text=_("Format: 23/04/2010"))
 
-    procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.all())
+    procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.filter(use_mass=True))
     supplier_name_or_vat = forms.ChoiceField(label=_('Find by'), widget=forms.widgets.RadioSelect,
             initial='name',
             choices=[('vat', _('VAT (exact)')), ('name', _('Company Name'))], )
@@ -75,6 +75,7 @@ class PO_Step1b(_WizardFormMixin, forms.ModelForm):
 
 class PO_Step1(PO_Step1b):
     department = AutoCompleteSelectField('department', label=_("Department"), required=False, show_help_text=False)
+    procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.filter(use_regular=True))
 
     class Meta:
         model = PurchaseOrder

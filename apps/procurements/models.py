@@ -42,6 +42,8 @@ class Project(models.Model):
 class Contract(models.Model):
     name = models.CharField(max_length=128)
     description = models.TextField(blank=True)
+    use_regular = models.BooleanField(default=True, verbose_name=_(u'use for regular procurements'))
+    use_mass = models.BooleanField(default=False, verbose_name=_(u'use for mass procurements'))
     date_start = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True) # called 'date' in oerp
     warranty_dur = models.CharField(max_length=64, blank=True, null=True)
