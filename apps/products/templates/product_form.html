@@ -334,6 +334,12 @@
     </div>
     {% endif %}
 
+    {% if form_mode == 'update' %}
+    <div class="group newline">
+        {% field_for attributes %}
+    </div>
+    {% endif %}
+
     <div class="group newline">
         {% field_for supplies %}
     </div>
