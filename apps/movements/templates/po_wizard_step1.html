@@ -3,6 +3,37 @@
 {% load styling %}
 {% load generic_views_helpers %}
 
+{% block javascript %}
+<script type="text/javascript">
+    $(function() {
+        var explain_div = $( "#id-procurement-explain" );
+        $("#id_1-procurement").change(function(){
+            var $selected = $("#id_1-procurement option:selected");
+            if (! ($selected && $selected.val())) {
+                explain_div.text('');
+                return false;
+            }
+            else {
+                $.ajax("/contracts/" + $selected.val() +"/get_description/",
+                        { 'success': function(data, status, xhr) {
+                            explain_div.text(data);
+                            },
+                        });
+            }
+        });
+    });
+</script>
+<style>
+    #id-procurement-explain {
+        color: #808080;
+        font-size: 95%;
+        padding-left: 2em;
+        padding-right: 4em;
+        padding-top: 0.6em;
+    }
+</style>
+{% endblock %}
+
 {% block pow_content %}
 <div class="u2_form">
 {{ wizard.form.management_form }}
@@ -37,7 +68,9 @@
         {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
-        {% endif %}</td>
+        {% endif %}
+        <div class="wf_explain" id="id-procurement-explain"></div>
+        </td>
     </tr>
     {% endwith %}
 
