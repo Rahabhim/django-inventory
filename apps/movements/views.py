@@ -561,7 +561,7 @@ def purchase_order_copy(request, object_id):
             for role in request.user.dept_roles.all():
                 if role.department.id not in depts:
                     continue
-                if not role.has_perm('movements.create_purchaseorder'):
+                if not role.has_perm('movements.add_purchaseorder'):
                     logger.warning("User %s not allowed to create PO for dept %s", request.user, role.department)
                     raise PermissionDenied
                 depts.remove(role.department.id)
