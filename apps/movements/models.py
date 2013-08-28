@@ -109,7 +109,7 @@ class PurchaseOrderManager(models.Manager):
                 else:
                     q = Q(create_user=request.user) | Q(validate_user=request.user) \
                         | Q(department__in=request.user.dept_roles.values_list('department', flat=True))
-                return self.filter(q)
+                return self.filter(q).distinct()
         except Exception:
             logger.exception("cannot filter:")
         return self.none()
@@ -659,7 +659,7 @@ class RepairOrderManager(models.Manager):
                 else:
                     q = Q(create_user=request.user) | Q(validate_user=request.user) \
                         | Q(department__in=request.user.dept_roles.values_list('department', flat=True))
-                return self.filter(q)
+                return self.filter(q).distinct()
         except Exception:
             logger.exception("cannot filter:")
         return self.none()
@@ -750,7 +750,7 @@ class MovementManager(models.Manager):
                     q = Q(create_user=request.user) | Q(validate_user=request.user) \
                         | Q(location_src__department__in=allowed_depts) \
                         | Q(location_dest__department__in=allowed_depts)
-                return self.filter(q)
+                return self.filter(q).distinct()
         except Exception:
             logger.exception("cannot filter:")
         return self.none()
