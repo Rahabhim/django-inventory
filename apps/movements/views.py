@@ -349,7 +349,13 @@ def purchase_order_receive(request, object_id):
             pass
 
         items_left = purchase_order.map_has_left(mapped_items)
-        if items_left and request.GET.get('do_create', False):
+        if (not purchase_order.user_id) and request.GET.get('user_id_ask', False):
+            purchase_order.user_id = request.GET['user_id_ask']
+            purchase_order.save()
+
+        if items_left and (not purchase_order.user_id):
+            messages.warning(request, _("You must fill the ID of the Purchase Order to continue"))
+        elif items_left and request.GET.get('do_create', False):
             if not active_role.has_perm('movements.receive_purchaseorder'):
                 raise PermissionDenied
             if request.GET.get('location_ask', False):

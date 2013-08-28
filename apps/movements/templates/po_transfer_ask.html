@@ -63,9 +63,16 @@
 	<form method="GET" >
 	  <p>{% trans 'There are still items received that have not been acknowledged in a movement.' %}</p>
           <p>{% trans 'Do you want a new movement for these received items?' %}</p>
+            {% if not object.user_id %}
+            <div class="group">
+                <label for="user_id_ask">{% trans 'User defined ID' %}</label>
+                <input type="text" name="user_id_ask">
+            </div>
+            {% endif %}
             {% if ask_location %}
             <div class="group">
                 <span id="id_location_ask_wrapper">
+                <label for="id_location_ask_text">{% trans 'Location' %}</label>
                 <input type="text" name="location_ask_text" id="id_location_ask_text" value=""
                         class="text_field ui-autocomplete-input" maxlength="255" 
                         autocomplete="off" role="textbox" aria-autocomplete="list" 
@@ -80,6 +87,7 @@ jQuery(document).ready(function($){
 });//]]>
 </script>
                 </span>
+            </div>
             {% endif %}
 	  <div class="group navform wat-cf">
             <input type="hidden" name="do_create" value="1" />
