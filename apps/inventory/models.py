@@ -52,7 +52,7 @@ class InventoryManager(models.Manager):
                     role_id = request.session['current_user_role']
                     role = request.user.dept_roles.get(pk=role_id)
                     q = q | Q(location__department=role.department)
-                return self.filter(q)
+                return self.filter(q).distinct()
         except Exception:
             logger.exception("cannot filter:")
         return self.none()
