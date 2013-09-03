@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 10:15+0300\n"
-"PO-Revision-Date: 2013-05-21 09:17+0300\n"
+"POT-Creation-Date: 2013-09-03 11:58+0300\n"
+"PO-Revision-Date: 2013-09-03 12:00+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -33,6 +33,18 @@ msgstr "έργα"
 msgid "contracts"
 msgstr "συμβάσεις"
 
+#: forms.py:18 urls.py:34
+msgid "Department"
+msgstr "Μονάδα"
+
+#: models.py:45
+msgid "use for regular procurements"
+msgstr "χρήση σε απλές παραλαβές"
+
+#: models.py:46
+msgid "use for mass procurements"
+msgstr "χρήση σε μαζικές παραλαβές"
+
 #: urls.py:16
 msgid "Active"
 msgstr "Ενεργό"
@@ -44,10 +56,6 @@ msgstr "Λίστα ανάδοχων"
 #: urls.py:19 urls.py:22 urls.py:26 urls.py:30
 msgid "delegate"
 msgstr "ανάδοχος"
-
-#: urls.py:34
-msgid "Department"
-msgstr "Μονάδα"
 
 #: urls.py:35
 msgid "Date"
@@ -69,11 +77,11 @@ msgstr "σύμβαση"
 msgid "Contract details"
 msgstr "Λεπτομέρειες σύμβασης"
 
-#: urls.py:56
+#: urls.py:57
 msgid "list of projects"
 msgstr "λίστα έργων"
 
-#: urls.py:58 urls.py:61 urls.py:65 urls.py:69
+#: urls.py:59 urls.py:62 urls.py:66 urls.py:70
 msgid "project"
 msgstr "έργο"
 
