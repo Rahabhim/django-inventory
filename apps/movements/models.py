@@ -165,6 +165,19 @@ class PurchaseOrder(models.Model):
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.id)])
 
+    def clean(self):
+        """Before saving the Movement, update checkpoint_src to the last validated one
+        """
+        super(PurchaseOrder, self).clean()
+        if self.procurement:
+            if self.procurement.date_start and (self.issue_date < self.procurement.date_start):
+                raise ValidationError(_("You cannot register a Purchase Order before the Procurement start date: %s") \
+                        % (self.procurement.date_start.strftime(DATE_FMT_FORMAT)))
+
+            if self.procurement.end_date and (self.issue_date > self.procurement.end_date):
+                raise ValidationError(_("You cannot register a Purchase Order after the Procurement end date: %s") \
+                        % (self.procurement.end_date.strftime(DATE_FMT_FORMAT)))
+
     def map_items(self):
         """ Map the items mentioned in this PO to real items inside the PO's movements
 

@@ -39,6 +39,16 @@
 {{ wizard.form.management_form }}
 
 {% with wizard.form as form %}
+    {% if form.non_field_errors %}
+        <div class="inner">
+            <div class="flash">
+                <div class="message error">
+                    <p onclick="$(this).parent().parent().fadeOut(); return false;">{{ form.non_field_errors }}</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     <table class="wiz_form">
 
     {% with form.user_id as field %}
