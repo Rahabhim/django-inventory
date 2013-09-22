@@ -349,11 +349,9 @@ def purchase_order_receive(request, object_id):
             pass
 
         items_left = purchase_order.map_has_left(mapped_items)
-        if (not purchase_order.user_id) and request.GET.get('user_id_ask', False):
-            purchase_order.user_id = request.GET['user_id_ask']
-            purchase_order.save()
+        new_origin = request.GET.get('user_id_ask', False)
 
-        if items_left and (not purchase_order.user_id):
+        if items_left and (not purchase_order.user_id) and not new_origin:
             messages.warning(request, _("You must fill the ID of the Purchase Order to continue"))
         elif items_left and request.GET.get('do_create', False):
             if not active_role.has_perm('movements.receive_purchaseorder'):
@@ -366,7 +364,7 @@ def purchase_order_receive(request, object_id):
                 messages.error(request,_('You must select a location!'), fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
 
-            purchase_order.items_into_moves(mapped_items, request, dept, master_loc)
+            purchase_order.items_into_moves(mapped_items, request, dept, master_loc, new_origin=new_origin)
 
             # reload the request in the browser, but get rid of any "action" arguments!
             return redirect(request.path.rstrip('?'), object_id=object_id)
@@ -375,6 +373,7 @@ def purchase_order_receive(request, object_id):
                 raise PermissionDenied
             try:
                 moves_pending = False
+                moves_other_pending = False
                 for move in purchase_order.movements.all():
                     if move.state == 'done':
                         continue
@@ -387,6 +386,7 @@ def purchase_order_receive(request, object_id):
                         # User is not allowed to validate the movement for that
                         # department, so carry on, avoid confirming the PO.
                         moves_pending = True
+                        moves_other_pending = True
                         continue
                     move.do_close(val_user=request.user)
                     if move.state != 'done':
@@ -402,6 +402,8 @@ def purchase_order_receive(request, object_id):
                     purchase_order.save()
                     messages.success(request, _("Purchase order has been confirmed"), fail_silently=True)
                     return redirect(purchase_order.get_absolute_url())
+                elif moves_other_pending:
+                    messages.warning(request, _(u'Purchase order %s cannot be finalized, because other Departments still have pending moves! Please wait until all departments have confirmed their moves.') % purchase_order.user_id)
                 else:
                     msg = _(u'Purchase order %s cannot be confirmed, because it contains pending moves! Please inspect and close these first.') % purchase_order.user_id
                     messages.error(request, msg, fail_silently=True)
@@ -447,6 +449,13 @@ def purchase_order_receive(request, object_id):
                     {'name': _(u'destination'), 'attribute': 'location_dest'}
                     ],
                 })
+            for move in moves_list:
+                if move.state == 'draft' and active_role \
+                            and active_role.department is not None \
+                            and move.location_dest.usage == 'internal' \
+                            and active_role.department == move.location_dest.department:
+                    form_attrs['confirm_ask'] = True
+                    break
 
         return render_to_response('po_transfer_ask.html', form_attrs, context_instance=RequestContext(request))
 

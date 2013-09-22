@@ -89,17 +89,18 @@ jQuery(document).ready(function($){
                 </span>
             </div>
             {% endif %}
-	  <div class="group navform wat-cf">
+          <div class="group navform wat-cf">
             <input type="hidden" name="do_create" value="1" />
             <button class="button" type="submit">
                 <img src="{{ STATIC_URL }}theme/images/tick.png" 
-			alt="{% trans 'Create Movement' %}" />{% trans 'Create' %}
+                        alt="{% trans 'Create Movement' %}" />{% trans 'Create' %}
             </button>
-	  </div>
-	</form>
-	</div>
+          </div>
+        </form>
+        </div>
     {% else %} {# no pending items, we may confirm #}
         {% if object.state == 'draft' or object.state == 'pending' %}
+            {% if  confirm_ask %}
         <div id="confirm_form">
         <form method="GET" >
           <p>{% blocktrans %}Do you want to mark all movements as done and close this Purchase Order? {% endblocktrans %}</p>
@@ -112,6 +113,11 @@ jQuery(document).ready(function($){
           </div>
         </form>
         </div>
+            {% else %}
+        <div id="confirm_form">
+          <p>{% blocktrans %}Some movements by other Departments are still pending. The order will be confirmed once all of them have confirmed.{% endblocktrans %}</p>
+        </div>
+            {% endif %}
         {% endif %}
     {% endif %}
 </div>

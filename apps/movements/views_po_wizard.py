@@ -74,6 +74,7 @@ class PO_Step1b(_WizardFormMixin, forms.ModelForm):
         self.instance.save()
 
 class PO_Step1(PO_Step1b):
+    user_id = forms.CharField(max_length=32, required=False, label=_(u'protocol number'))
     department = AutoCompleteSelectField('department', label=_("Department"), required=False, show_help_text=False)
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.filter(use_regular=True))
 
@@ -553,7 +554,7 @@ class PO_Step5(WizardForm):
                 raise PermissionDenied
             po_instance.items_into_moves(mapped_items, request, \
                         self.cleaned_data['location'].department, \
-                        self.cleaned_data['location'])
+                        self.cleaned_data['location'], new_origin=po_instance.user_id)
         if msg:
             return '5'
 
