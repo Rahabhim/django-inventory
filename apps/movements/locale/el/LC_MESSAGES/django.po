@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-03 11:58+0300\n"
-"PO-Revision-Date: 2013-09-03 12:02+0300\n"
+"POT-Creation-Date: 2013-09-22 20:09+0300\n"
+"PO-Revision-Date: 2013-09-22 20:16+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -146,7 +146,7 @@ msgid "template"
 msgstr "προϊόν"
 
 #: __init__.py:126 __init__.py:127 models.py:42 models.py:150 models.py:536
-#: views.py:428
+#: views.py:430
 msgid "status"
 msgstr "Κατάσταση"
 
@@ -238,7 +238,7 @@ msgstr "Επώνυμο"
 msgid "email"
 msgstr "email"
 
-#: forms.py:47 views_po_wizard.py:47 views_po_wizard.py:78
+#: forms.py:47 views_po_wizard.py:47 views_po_wizard.py:79
 msgid "Procurement Contract"
 msgstr "Σύμβαση Προμήθειας"
 
@@ -320,7 +320,7 @@ msgstr "Τοποθεσία προέλευσης"
 msgid "Destination location"
 msgstr "Τοποθεσία Προορισμού"
 
-#: forms.py:162 forms.py:176 views_po_wizard.py:329
+#: forms.py:162 forms.py:176 views_po_wizard.py:330
 #: templates/po_wizard_step5_locations.html:9
 #: templates/po_wizard_step5_locations.html:21
 msgid "Items"
@@ -345,7 +345,7 @@ msgstr "Μετά την απογραφή"
 msgid "Accounted in inventory"
 msgstr "Υπολογίζεται στην απογραφή"
 
-#: forms.py:243 views.py:932
+#: forms.py:243 views.py:941
 msgid "Destroy"
 msgstr "Καταστροφή"
 
@@ -353,11 +353,11 @@ msgstr "Καταστροφή"
 msgid "date of event"
 msgstr "Ημερομηνία συμβάντος"
 
-#: forms.py:250 models.py:775 views.py:550 views_po_wizard.py:45
+#: forms.py:250 models.py:775 views.py:559 views_po_wizard.py:45
 msgid "Format: 23/04/2010"
 msgstr "Μορφή: 23/04/2010"
 
-#: forms.py:260 views.py:932
+#: forms.py:260 views.py:941
 msgid "Lost"
 msgstr "Κλοπή"
 
@@ -365,7 +365,7 @@ msgstr "Κλοπή"
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:25 models.py:26 models.py:1013
+#: models.py:25 models.py:26 models.py:1015
 msgid "purchase request status"
 msgstr "κατάσταση αίτησης"
 
@@ -385,7 +385,7 @@ msgstr "αναμενόμενη ημερομηνία"
 msgid "budget"
 msgstr "Προϋπολογισμός"
 
-#: models.py:41 models.py:535 views.py:429
+#: models.py:41 models.py:535 views.py:431
 msgid "active"
 msgstr "ενεργό"
 
@@ -397,7 +397,7 @@ msgstr "προέλευση"
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:49 models.py:66 models.py:140 models.py:1014 urls.py:103
+#: models.py:49 models.py:66 models.py:140 models.py:1016 urls.py:103
 msgid "purchase request"
 msgstr "αίτηση προμήθειας"
 
@@ -417,7 +417,7 @@ msgstr "προϊόν"
 msgid "quantity"
 msgstr "Ποσότητα"
 
-#: models.py:72 models.py:1015 urls.py:111
+#: models.py:72 models.py:1017 urls.py:111
 msgid "purchase request item"
 msgstr "γραμμή αίτησης προμήθειας"
 
@@ -425,7 +425,7 @@ msgstr "γραμμή αίτησης προμήθειας"
 msgid "purchase request items"
 msgstr "γραμμές αίτησης προμήθειας"
 
-#: models.py:87 models.py:88 models.py:1016 urls.py:116
+#: models.py:87 models.py:88 models.py:1018 urls.py:116
 msgid "purchase order status"
 msgstr "Κατάσταση Εντολής"
 
@@ -457,7 +457,7 @@ msgstr "Ακυρωμένη"
 msgid "corresponding department"
 msgstr "Αντίστοιχη Μονάδα"
 
-#: models.py:156 models.py:530 models.py:1018 urls.py:134 urls.py:144
+#: models.py:156 models.py:530 models.py:1020 urls.py:134 urls.py:144
 msgid "purchase order"
 msgstr "Εντολή Αγοράς"
 
@@ -520,7 +520,7 @@ msgid "Cannot add items to this Purchase Order"
 msgstr "Δεν μπορούν να προστεθούν γραμμές σε αυτή την εντολή παραλαβής"
 
 #: models.py:481 models.py:491 models.py:616 models.py:624 models.py:644
-#: models.py:986 models.py:1001
+#: models.py:988 models.py:1003
 #, python-format
 msgid "Incorrect object passed: %s"
 msgstr "Λάθος αντικείμενο: %s"
@@ -536,7 +536,7 @@ msgstr ""
 "Μία εντολή παραλαβής που περιέχει ολοκληρωμένες μετακινήσεις δεν μπορεί να "
 "απορριφθεί!"
 
-#: models.py:519 models.py:520 models.py:1017 urls.py:164
+#: models.py:519 models.py:520 models.py:1019 urls.py:164
 msgid "purchase order item status"
 msgstr "κατάσταση γραμμής"
 
@@ -560,11 +560,11 @@ msgstr "Σειριακοί Αριθμοί"
 msgid "In group"
 msgstr "Σε ομάδα"
 
-#: models.py:543 models.py:1019 urls.py:171 urls.py:177
+#: models.py:543 models.py:1021 urls.py:171 urls.py:177
 msgid "purchase order item"
 msgstr "γραμμή εντολής προμήθειας"
 
-#: models.py:544 views.py:224 views.py:671
+#: models.py:544 views.py:224 views.py:680
 msgid "purchase order items"
 msgstr "γραμμές εντολών προμήθειας"
 
@@ -613,8 +613,8 @@ msgstr "ημερομηνία επικύρωσης προέλευσης"
 msgid "reference"
 msgstr "Αρ. πρωτοκόλλου"
 
-#: models.py:783 urls.py:36 views.py:242 views.py:446 views.py:694
-#: views.py:701
+#: models.py:783 urls.py:36 views.py:242 views.py:448 views.py:703
+#: views.py:710
 msgid "state"
 msgstr "κατάσταση"
 
@@ -634,7 +634,7 @@ msgstr "Εσωτερικό"
 msgid "Other"
 msgstr "Άλλο"
 
-#: models.py:785 urls.py:39 views.py:702
+#: models.py:785 urls.py:39 views.py:711
 msgid "type"
 msgstr "τύπος"
 
@@ -666,7 +666,7 @@ msgstr "Πρίν την απογραφή"
 msgid "movement"
 msgstr "Μετακίνηση"
 
-#: models.py:804 views.py:698
+#: models.py:804 views.py:707
 msgid "movements"
 msgstr "Μετακινήσεις"
 
@@ -687,11 +687,15 @@ msgstr ""
 msgid "Cannot close movement because it seems already validated!"
 msgstr "Δεν γίνεται να επικυρωθεί η κίνηση γιατί είναι ήδη επικυρωμένη!"
 
-#: models.py:837 models.py:912
+#: models.py:837
+msgid "A movement must have origin set to be closed"
+msgstr "Για να επικυρωθεί μία μετακίνηση, πρέπει να έχει αρ. πρωτοκόλλου"
+
+#: models.py:839 models.py:914
 msgid "Internal error, movement is already checkpointed"
 msgstr "Εσωτερικό λάθος, η κίνηση έχει ήδη τελική απογραφή."
 
-#: models.py:841
+#: models.py:843
 #, python-format
 msgid ""
 "You are not allowed to make any movements before %s, when last inventory was "
@@ -700,25 +704,25 @@ msgstr ""
 "Δεν επιτρέπεται να κάνετε κινήσεις πρίν τις %s, οπότε έγινε η τελευταία "
 "απογραφή."
 
-#: models.py:845
+#: models.py:847
 msgid "You cannot close a movement with no items selected"
 msgstr "Δεν επιτρέπεται να κλείσει κίνηση χωρίς επιλεγμένο εξοπλισμό."
 
-#: models.py:850
+#: models.py:852
 #, python-format
 msgid "Product %s is not approved, you cannot use it in this movement"
 msgstr ""
 "Το προϊόν %s δεν έχει εγκριθεί, και δεν μπορείτε να το χρησιμοποιήσετε στην "
 "κίνηση αυτή."
 
-#: models.py:858
+#: models.py:860
 #, python-format
 msgid "Item %(item)s is at %(location)s, rather than the move source location!"
 msgstr ""
 "Ο εξοπλισμός %(item)s είναι στο %(location)s, αντί για την τοποθεσία "
 "προέλευσης της κίνησης!"
 
-#: models.py:864
+#: models.py:866
 #, python-format
 msgid ""
 "Item of category %(category)s cannot be moved into a %(template)s "
@@ -729,11 +733,11 @@ msgstr ""
 "τοποθεσία %(template)s.\n"
 "Τέτοιος εξοπλισμός επιτρέπεται μόνο στην τοποθεσία: %(allow_tmpl)s"
 
-#: models.py:867
+#: models.py:869
 msgid "generic"
 msgstr "γενικό"
 
-#: models.py:909
+#: models.py:911
 #, python-format
 msgid ""
 "Cannot reject movement %(move)s (id: %(mid)s) because it is not in open state"
@@ -741,42 +745,42 @@ msgstr ""
 "Δεν γίνεται να απορριφθεί η κίνηση %(move)s (id: %(mid)s) γιατί δεν είναι "
 "πρόχειρη."
 
-#: models.py:938
+#: models.py:940
 #, python-format
 msgid "Move from %(src)s to %(dest)s %(name)s"
 msgstr "Μετακίνηση %(name)s από %(src)s προς %(dest)s"
 
-#: models.py:945
+#: models.py:947
 #, python-format
 msgid "Movement: %s"
 msgstr "Μετακίνηση: %s"
 
-#: models.py:981 models.py:996
+#: models.py:983 models.py:998
 msgid "Cannot modify items of this move"
 msgstr "Δεν επιτρέπονται αλλαγές σε αυτή τη μετακίνηση"
 
-#: models.py:984 models.py:999
+#: models.py:986 models.py:1001
 msgid "Cannot modify items of a validated move"
 msgstr "Δεν επιτρέπονται τροποποιήσεις σε μία επικυρωμένη κίνηση."
 
-#: models.py:989
+#: models.py:991
 msgid "Item already in movement"
 msgstr "Ο εξοπλισμός είναι ήδη στη μετακίνηση"
 
-#: models.py:1008
+#: models.py:1010
 #, python-format
 msgid "Item %s not in movement!"
 msgstr "Ο εξοπλισμός %s δεν ανήκει στη μετακίνηση!"
 
-#: urls.py:52 views.py:690
+#: urls.py:52 views.py:699
 msgid "Contract"
 msgstr "σύμβαση"
 
-#: urls.py:58 views.py:691 templates/po_wizard_step1.html:99
+#: urls.py:58 views.py:700 templates/po_wizard_step1.html:99
 msgid "Supplier"
 msgstr "Προμηθευτής"
 
-#: urls.py:61 views.py:990 templates/po_wizard_treeitems.html:7
+#: urls.py:61 views.py:999 templates/po_wizard_treeitems.html:7
 msgid "State"
 msgstr "κατάσταση"
 
@@ -849,7 +853,7 @@ msgstr "Σχετικές εντολές προμήθειας"
 msgid "details for purchase request: %s"
 msgstr "λεπτομέρειες για την αίτηση: %s"
 
-#: views.py:53 views.py:228 views.py:675
+#: views.py:53 views.py:228 views.py:684
 msgid "qty"
 msgstr "Ποσ."
 
@@ -908,16 +912,18 @@ msgid ""
 "purchase order wizard, using purchase request source: <a href=\"%(url)s\">"
 "%(name)s</a>"
 msgstr ""
+"purchase order wizard, using purchase request source: <a href=\"%(url)s\">"
+"%(name)s</a>"
 
-#: views.py:229 views.py:427 views.py:676
+#: views.py:229 views.py:429 views.py:685
 msgid "qty received"
 msgstr "Παραληφθείσα Ποσ."
 
-#: views.py:238 views.py:442
+#: views.py:238 views.py:444
 msgid "movements for this purchase order"
 msgstr "μετακινήσεις για αυτή την παραλαβή"
 
-#: views.py:243 views.py:700
+#: views.py:243 views.py:709
 msgid "date"
 msgstr "ημερομηνία"
 
@@ -934,7 +940,7 @@ msgstr "Θέλετε σίγουρα να κλείσετε την εντολή α
 msgid "There are still open items."
 msgstr "Υπάρχουν ακόμα εκκρεμείς εγγραφές"
 
-#: views.py:269 views.py:319 views.py:321 views.py:463 views.py:465
+#: views.py:269 views.py:319 views.py:321 views.py:472 views.py:474
 msgid "This purchase order has already been closed."
 msgstr "Η εντολή αγοράς είναι ήδη κλειστή."
 
@@ -955,11 +961,12 @@ msgstr "Η εντολή παραλαβής είναι ήδη ανοιχτή."
 msgid "The purchase order has been opened successfully."
 msgstr "Η εντολή παραλαβής άνοιξε με επιτυχία."
 
-#: views.py:357
+#: views.py:355
 msgid "You must fill the ID of the Purchase Order to continue"
 msgstr ""
+"Πρέπει να συμπληρώσετε τον Αρ. Πρωτοκόλλου της παραλαβής για να συνεχίσετε"
 
-#: views.py:366
+#: views.py:364
 msgid "You must select a location!"
 msgstr "Πρέπει να επιλέξετε τοποθεσία!"
 
@@ -970,86 +977,98 @@ msgstr "Η εντολή αγοράς έχει επιβεβαιωθεί."
 #: views.py:406
 #, python-format
 msgid ""
+"Purchase order %s cannot be finalized, because other Departments still have "
+"pending moves! Please wait until all departments have confirmed their moves."
+msgstr ""
+"Η παραλαβή %s δεν μπορεί να επικυρωθεί, γιατί οι άλλες Μονάδες που "
+"συμμετέχουν "
+"σε αυτήν δεν έχουν επικυρώσει το δικό τους σκέλος. Παρακαλώ περιμένετε μέχρι "
+"και "
+"εκείνες οι μονάδες να επικυρώσουν."
+
+#: views.py:408
+#, python-format
+msgid ""
 "Purchase order %s cannot be confirmed, because it contains pending moves! "
 "Please inspect and close these first."
 msgstr ""
 "Η εντολή %s δεν μπορεί να επιβεβαιωθεί, γιατί περιέχει εκκρεμείς κινήσεις! "
 "Παρακαλώ εξετάστε τις κινήσεις και κλείστε αυτές πρώτα."
 
-#: views.py:414
+#: views.py:416
 #, python-format
 msgid "details for purchase order: %s"
 msgstr "λεπτομέρειες της εντολής: %s"
 
-#: views.py:423
+#: views.py:425
 msgid "order items received"
 msgstr "παραληφθέντα αντικείμενα"
 
-#: views.py:447
+#: views.py:449
 msgid "destination"
 msgstr "προορισμός"
 
-#: views.py:493
+#: views.py:502
 msgid "The purchase order has been marked as rejected"
 msgstr "Η εντολή παραλαβής απορρίφθηκε"
 
-#: views.py:507
+#: views.py:516
 #, python-format
 msgid "Are you sure you wish close the purchase order item: %s"
 msgstr "Θέλετε σίγουρα να κλείσετε την γραμμή εντολής αγοράς: %s"
 
-#: views.py:511
+#: views.py:520
 msgid "This purchase order item has already been closed."
 msgstr "Η εντολή παραλαβής είναι ήδη κλειστή."
 
-#: views.py:519
+#: views.py:528
 msgid "The purchase order item has been closed successfully."
 msgstr "Η εντολή παραλαβής έκλεισε με επιτυχία."
 
-#: views.py:534
+#: views.py:543
 msgid "The purchase order item was created successfully."
 msgstr "Η γραμμή εντολής άνοιξε με επιτυχία."
 
-#: views.py:542
+#: views.py:551
 msgid "add new purchase order item"
 msgstr "δημιουργία γραμμής εντολής αγοράς"
 
-#: views.py:549
+#: views.py:558
 msgid "Date"
 msgstr "Ημερομηνία"
 
-#: views.py:551
+#: views.py:560
 msgid "Departments"
 msgstr "Μονάδες"
 
-#: views.py:660
+#: views.py:669
 msgid "This Purchase Order used more than one Department, cannot copy."
 msgstr ""
 "Η Παραλαβή αυτή έχει πάνω από μία Μονάδα, δεν μπορεί να χρησιμοποιηθεί ως "
 "πρότυπο για αντιγραφή."
 
-#: views.py:680
+#: views.py:689
 msgid "Purchase Order Copy"
 msgstr "Αντιγραφή Εντολής Παραλαβής"
 
-#: views.py:688
+#: views.py:697
 msgid "list of purchase orders"
 msgstr "Λίστα από εντολές αγοράς"
 
-#: views.py:692 views.py:989 views_po_wizard.py:77 views_po_wizard.py:563
+#: views.py:701 views.py:998 views_po_wizard.py:78 views_po_wizard.py:564
 msgid "Department"
 msgstr "Μονάδα"
 
-#: views.py:715 views.py:755
+#: views.py:724 views.py:764
 #, python-format
 msgid "You do not have the permission to validate an incoming movement to %s"
 msgstr "Δεν έχετε δικαίωμα να επικυρώσετε εισερχόμενη κίνηση στο %s"
 
-#: views.py:717 views.py:731 views.py:750 views.py:762 views.py:768
+#: views.py:726 views.py:740 views.py:759 views.py:771 views.py:777
 msgid "The movement has been validated."
 msgstr "Η κίνηση επιβεβαιώθηκε"
 
-#: views.py:739
+#: views.py:748
 msgid ""
 "Movement has been validated by you, but is still pending validation from "
 "source department"
@@ -1057,7 +1076,7 @@ msgstr ""
 "Η μετακίνηση έχει επικυρωθεί από εσάς, αλλά εκκρεμεί και επικύρωση από την "
 "μονάδα προέλευσης."
 
-#: views.py:752
+#: views.py:761
 msgid ""
 "You have approved the move, and now it is pending validation from the "
 "destination department."
@@ -1065,56 +1084,56 @@ msgstr ""
 "Έχετε επικυρώσει τη μετακίνηση, και τώρα εκκρεμεί επικύρωση και από τη "
 "μονάδα προορισμού."
 
-#: views.py:760
+#: views.py:769
 #, python-format
 msgid "You do not have the permission to validate an outgoing movement from %s"
 msgstr "Δεν έχετε δικαίωμα να επικυρώσετε εξερχόμενη κίνηση από το %s"
 
-#: views.py:764
+#: views.py:773
 msgid "Unexpected movement type, you do not have permission to validate"
 msgstr "Δεν έχετε το δικαίωμα να επικυρώσετε μετακίνηση αυτού του τύπου."
 
-#: views.py:787 views.py:800
+#: views.py:796 views.py:809
 #, python-format
 msgid "You do not have the permission to reject an incoming movement to %s"
 msgstr "Δεν έχετε δικαίωμα να απορρίψετε εισερχόμενη κίνηση στο %s"
 
-#: views.py:789 views.py:798 views.py:807 views.py:813
+#: views.py:798 views.py:807 views.py:816 views.py:822
 msgid "The movement has been rejected."
 msgstr "Η κίνηση ακυρώθηκε"
 
-#: views.py:805
+#: views.py:814
 #, python-format
 msgid "You do not have the permission to reject an outgoing movement from %s"
 msgstr "Δεν έχετε δικαίωμα να απορρίψετε εξερχόμενη κίνηση από το %s"
 
-#: views.py:809
+#: views.py:818
 msgid "Unexpected movement type, you do not have permission to reject"
 msgstr "Δεν έχετε το δικαίωμα να απορρίψετε μετακίνηση αυτού του τύπου."
 
-#: views.py:829
+#: views.py:838
 msgid "Repair of asset"
 msgstr "Τροποποίηση Εξοπλισμού"
 
-#: views.py:841
+#: views.py:850
 #, python-format
 msgid "Internal error: item is contained in %d bundles!"
 msgstr "Εσωτερικό σφάλμα: το εξάρτημα περιέχεται σε %d συνθέσεις!"
 
-#: views.py:877
+#: views.py:886
 msgid "Issue date cannot be empty"
 msgstr "Η ημερομηνία δεν μπορεί να είναι κενή"
 
-#: views.py:948
+#: views.py:957
 #, python-format
 msgid "You do not have the permission to validate a repair order for %s"
 msgstr "Δεν έχετε δικαίωμα να επικυρώσετε τροποποίηση εξοπλισμού στο %s"
 
-#: views.py:973
+#: views.py:982
 msgid "Repair order has been confirmed"
 msgstr "Η φόρμα τροποποίησης έχει επιβεβαιωθεί."
 
-#: views.py:976
+#: views.py:985
 #, python-format
 msgid ""
 "Repair order %s cannot be confirmed, because it contains pending moves! "
@@ -1123,16 +1142,16 @@ msgstr ""
 "Η τροποποίηση %s δεν μπορεί να επιβεβαιωθεί, γιατί περιέχει εκκρεμείς "
 "κινήσεις! Παρακαλώ εξετάστε τις κινήσεις και κλείστε αυτές πρώτα."
 
-#: views.py:987
+#: views.py:996
 msgid "list of repair orders"
 msgstr "Λίστα από φόρμες τροποποίησης"
 
-#: views.py:1006
+#: views.py:1015
 #, python-format
 msgid "%(item)s set in %(description)s"
 msgstr "Ομάδα %(item)s στο %(description)s"
 
-#: views.py:1022
+#: views.py:1031
 #, python-format
 msgid "%(item)s added to bundle for %(main)s"
 msgstr "%(item)s προστέθηκε στη σύνθεση %(main)s"
@@ -1161,44 +1180,48 @@ msgstr "Επωνυμία εταιρείας"
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: views_po_wizard.py:94
+#: views_po_wizard.py:77
+msgid "protocol number"
+msgstr "Αρ. Πρωτοκόλλου"
+
+#: views_po_wizard.py:95
 msgid "Select Product Categories"
 msgstr "Επιλογή ειδών Εξοπλισμού"
 
-#: views_po_wizard.py:106
+#: views_po_wizard.py:107
 msgid "Input Product Details"
 msgstr "Καταχώρηση στοιχείων Εξοπλισμού"
 
-#: views_po_wizard.py:109 views_po_wizard.py:115
+#: views_po_wizard.py:110 views_po_wizard.py:116
 #: templates/po_wizard_treeitems.html:7
 msgid "Product"
 msgstr "Προϊόν"
 
-#: views_po_wizard.py:110
+#: views_po_wizard.py:111
 msgid "Product number"
 msgstr "Κωδικός προϊόντος"
 
-#: views_po_wizard.py:111
+#: views_po_wizard.py:112
 msgid "Quantity"
 msgstr "Ποσότητα"
 
-#: views_po_wizard.py:112
+#: views_po_wizard.py:113
 msgid "Serial numbers"
 msgstr "Σειριακοί Αριθμοί"
 
-#: views_po_wizard.py:113
+#: views_po_wizard.py:114
 msgid "manufacturer"
 msgstr "κατασκευαστής"
 
-#: views_po_wizard.py:114
+#: views_po_wizard.py:115
 msgid "attributes"
 msgstr "Χαρακτηριστικά"
 
-#: views_po_wizard.py:239
+#: views_po_wizard.py:240
 msgid "New Product Request"
 msgstr "Νέα αίτηση προμήθειας"
 
-#: views_po_wizard.py:249
+#: views_po_wizard.py:250
 #, python-format
 msgid ""
 "Your request for %s has been stored. An administrator of the Helpdesk will "
@@ -1209,47 +1232,47 @@ msgstr ""
 "Helpdesk θα το εξετάσει και θα επικοινωνήσει μαζί σας. Στο μεταξύ, "
 "παρακαλούμε να συνεχίσετε με τα υπόλοιπα αντικείμενα της εντολής παραλαβής."
 
-#: views_po_wizard.py:254
+#: views_po_wizard.py:255
 msgid "Add bundled items"
 msgstr "Προσθήκη εξαρτημάτων"
 
-#: views_po_wizard.py:301
+#: views_po_wizard.py:302
 msgid "Add set items"
 msgstr "Συμπλήρωση συνόλου"
 
-#: views_po_wizard.py:328
+#: views_po_wizard.py:329
 msgid "Final Review"
 msgstr "Τελικός έλεγχος"
 
-#: views_po_wizard.py:391
+#: views_po_wizard.py:392
 msgid "You must select some equipment into the purchase order"
 msgstr "Πρέπει να περιλάβετε κάποιον εξοπλισμό στην εντολή παραλαβής"
 
-#: views_po_wizard.py:511
+#: views_po_wizard.py:512
 msgid "Pending Items - Finish"
 msgstr "Εκκρεμή προϊόντα - Αποθήκευση"
 
-#: views_po_wizard.py:515
+#: views_po_wizard.py:516
 msgid "Successful Entry - Finish"
 msgstr "Επιτυχής καταχώρηση - τέλος"
 
-#: views_po_wizard.py:517
+#: views_po_wizard.py:518
 msgid "location"
 msgstr "τοποθεσία"
 
-#: views_po_wizard.py:561
+#: views_po_wizard.py:562
 msgid "Multiple import - Finish"
 msgstr "Τέλος - Μαζική εισαγωγή"
 
-#: views_po_wizard.py:773
+#: views_po_wizard.py:774
 msgid "Not permitted to save data"
 msgstr "Δεν επιτρέπεται η αποθήκευση"
 
-#: views_po_wizard.py:777 views_po_wizard.py:803
+#: views_po_wizard.py:778 views_po_wizard.py:804
 msgid "Cannot save data"
 msgstr "Δεν είναι δυνατή η αποθήκευση"
 
-#: views_po_wizard.py:799
+#: views_po_wizard.py:800
 msgid "No permission to save data"
 msgstr "Δεν επιτρέπεται η αποθήκευση"
 
@@ -1296,9 +1319,8 @@ msgid "Move of assets"
 msgstr "Μετακίνηση εξοπλισμού"
 
 #: templates/po_copy_view.html:33
-#, fuzzy
 msgid "Details of original Purchase Order:"
-msgstr "Λεπτομέρειες παραλαβής"
+msgstr "Λεπτομέρειες της αρχικής παραλαβής:"
 
 #: templates/po_copy_view.html:66
 msgid "Copy Purchase Order to:"
@@ -1341,8 +1363,8 @@ msgid "Do you want a new movement for these received items?"
 msgstr "Θέλετε να δημιουργηθούν κινήσεις γι' αυτά τα αντικείμενα;"
 
 #: templates/po_transfer_ask.html:68
-msgid "User defined ID"
-msgstr "Αρ. Τιμολογίου/εντολής"
+msgid "Protocol number"
+msgstr "Αρ. Πρωτοκόλλου"
 
 #: templates/po_transfer_ask.html:75
 #: templates/po_wizard_step5_locations.html:14
@@ -1358,20 +1380,29 @@ msgstr "Δημιουργία κίνησης"
 msgid "Create"
 msgstr "Δημιουργία"
 
-#: templates/po_transfer_ask.html:105
+#: templates/po_transfer_ask.html:106
 msgid ""
 "Do you want to mark all movements as done and close this Purchase Order? "
 msgstr ""
 "Θέλετε να επιβεβαιώσετε όλες τις κινήσεις και να κλείσετε αυτή την εντολή "
 "αγοράς;"
 
-#: templates/po_transfer_ask.html:110
+#: templates/po_transfer_ask.html:111
 msgid "Confirm Order"
 msgstr "Επιβεβαίωση Εντολής"
 
-#: templates/po_transfer_ask.html:110
+#: templates/po_transfer_ask.html:111
 msgid "Confirm"
 msgstr "Επιβεβαίωση"
+
+#: templates/po_transfer_ask.html:118
+msgid ""
+"Some movements by other Departments are still pending. The order will be "
+"confirmed once all of them have confirmed."
+msgstr ""
+"Δεν έχουν επικυρώσει ακόμα όλες οι Μονάδες το σκέλος της παραλαβής τους. Η "
+"συνολική "
+"παραλαβή θα κλείσει όταν ολοκληρώσουν κι αυτές τη διαδικασία επικύρωσης."
 
 #: templates/po_wizard_base.html:5 templates/po_wizard_done.html:6
 msgid " Purchase order wizard"
@@ -1386,27 +1417,27 @@ msgstr ""
 "Η εντολή παραλαβής %(po.user_id)s έχει αποθηκευτεί. Μπορείτε να προχωρήσετε "
 "στη διαδικασία επικύρωσης."
 
-#: templates/po_wizard_oneitem.html:22 templates/po_wizard_step3s.html:36
+#: templates/po_wizard_oneitem.html:23 templates/po_wizard_step3s.html:36
 #: templates/po_wizard_treeitems.html:18
 msgid "OK"
 msgstr "OK"
 
-#: templates/po_wizard_oneitem.html:23 templates/po_wizard_step3s.html:37
+#: templates/po_wizard_oneitem.html:24 templates/po_wizard_step3s.html:37
 #: templates/po_wizard_treeitems.html:19
 msgid "Bad"
 msgstr "Πρόβλημα"
 
-#: templates/po_wizard_oneitem.html:24 templates/po_wizard_step3s.html:38
+#: templates/po_wizard_oneitem.html:25 templates/po_wizard_step3s.html:38
 #: templates/po_wizard_treeitems.html:20
 msgid "Missing"
 msgstr "Ελλειπής"
 
-#: templates/po_wizard_oneitem.html:26 templates/po_wizard_step3s.html:40
+#: templates/po_wizard_oneitem.html:27 templates/po_wizard_step3s.html:40
 #: templates/po_wizard_treeitems.html:22
 msgid "Edit"
 msgstr "Επεξεργασία"
 
-#: templates/po_wizard_oneitem.html:27 templates/po_wizard_step3s.html:41
+#: templates/po_wizard_oneitem.html:28 templates/po_wizard_step3s.html:41
 #: templates/po_wizard_treeitems.html:23
 msgid "Delete"
 msgstr "Διαγραφή"
@@ -1631,6 +1662,9 @@ msgstr ""
 "χρήστης να <u>επικυρώσει</u> την φόρμα τροποποίησης, ώστε να "
 "οριστικοποιηθούν οι μεταβολές στον εξοπλισμό.\n"
 "  "
+
+#~ msgid "User defined ID"
+#~ msgstr "Αρ. Τιμολογίου/εντολής"
 
 #~ msgid "Original date"
 #~ msgstr "Αρχική ημερομηνία"
