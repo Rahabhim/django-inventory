@@ -375,6 +375,9 @@ def purchase_order_receive(request, object_id):
                 for move in purchase_order.movements.all():
                     if move.state == 'done':
                         continue
+                    # Skip movements to bundle location, at this first pass:
+                    if move.location_dest.usage == 'production':
+                        continue
                     if move.state != 'draft':
                         moves_pending = True
                         continue
@@ -386,10 +389,34 @@ def purchase_order_receive(request, object_id):
                         moves_pending = True
                         moves_other_pending = True
                         continue
+                    if not move.name:
+                        if new_reference:
+                            move.name = new_reference
+                            move.save()
+                        else:
+                            messages.warning(request, _("You must fill the reference for the movement to continue"))
+                            moves_pending = True
+                            break
                     move.do_close(val_user=request.user)
                     if move.state != 'done':
                         moves_pending = True
+
                 if not moves_pending:
+                    # Second pass, if all Department moves are closed, confirm
+                    # the bundle one, as the last user attempting the confirmation
+                    for move in purchase_order.movements.all():
+                        if move.location_dest.usage == 'production':
+                            if move.state == 'done':
+                                continue
+                            if move.state != 'draft':
+                                moves_pending = True
+                                continue
+                            move.do_close(val_user=request.user)
+                            if move.state != 'done':
+                                moves_pending = True
+
+                if not moves_pending:
+                    # now, all moves are closed
                     for po_item in purchase_order.items.all():
                         po_item.active = False
                         po_item.status = None # TODO
@@ -447,12 +474,14 @@ def purchase_order_receive(request, object_id):
                     {'name': _(u'destination'), 'attribute': 'location_dest'}
                     ],
                 })
+
+            form_attrs['confirm_ask'] = True
             for move in moves_list:
                 if move.state == 'draft' and active_role \
                             and active_role.department is not None \
                             and move.location_dest.usage == 'internal' \
-                            and active_role.department == move.location_dest.department:
-                    form_attrs['confirm_ask'] = True
+                            and active_role.department != move.location_dest.department:
+                    form_attrs['confirm_ask'] = False
                     break
 
         return render_to_response('po_transfer_ask.html', form_attrs, context_instance=RequestContext(request))
