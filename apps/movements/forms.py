@@ -226,7 +226,7 @@ class MovementForm_gu(_baseMovementForm):
 
     class Meta:
         model = Movement
-        exclude = ('date_val', 'validate_user', 'state', 'stype')
+        exclude = ('date_val', 'validate_user', 'state', 'stype', 'purchase_order', 'repair_order')
 
 class DestroyItemsForm(_outboundMovementForm):
     """This form is registered whenever defective equipment is trashed (destroyed)
