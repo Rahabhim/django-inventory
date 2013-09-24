@@ -4,7 +4,7 @@ import logging
 from collections import defaultdict
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.http import HttpResponseRedirect #, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect, render
 from django.template import RequestContext
@@ -312,6 +312,7 @@ def purchase_order_receive(request, object_id):
     Take a purchase order and call transfer_to_inventory to transfer and
     close all of its item and close the purchase order too
     """
+    _ = ugettext
     purchase_order = get_object_or_404(PurchaseOrder, pk=object_id)
 
     msg = None
@@ -587,6 +588,7 @@ class POCopyForm(forms.Form):
     depts = DeptSelectMultipleField('departments_list', label=_("Departments"), show_help_text=False)
 
 def purchase_order_copy(request, object_id):
+    _ = ugettext
     po_instance = get_object_or_404(PurchaseOrder.objects.by_request(request), pk=object_id)
     logger = logging.getLogger('apps.movements.po_copy')
 
@@ -741,6 +743,7 @@ class MovementCloseForm(forms.Form):
     name = forms.CharField(max_length=32, label=_(u'reference'))
 
 def movement_do_close(request, object_id):
+    _ = ugettext
     movement = get_object_or_404(Movement, pk=object_id)
     active_role = role_from_request(request)
     if request.user.is_superuser:
@@ -831,6 +834,7 @@ def movement_do_close(request, object_id):
     return redirect(movement.get_absolute_url())
 
 def movement_do_reject(request, object_id):
+    _ = ugettext
     movement = get_object_or_404(Movement, pk=object_id)
     active_role = role_from_request(request)
     if request.user.is_superuser:
@@ -876,6 +880,7 @@ def movement_do_reject(request, object_id):
     return redirect(movement.get_absolute_url())
 
 def repair_itemgroup(request, object_id):
+    _ = ugettext
     item = get_object_or_404(ItemGroup, pk=object_id)
     active_role = role_from_request(request)
     logger = logging.getLogger('apps.movements.repair')
@@ -993,6 +998,7 @@ def repair_itemgroup(request, object_id):
 def repair_do_close(request, object_id):
     """ Close moves of repair order; then the order itself
     """
+    _ = ugettext
     repair = get_object_or_404(RepairOrder, pk=object_id)
     active_role = role_from_request(request)
     if request.user.is_superuser:
