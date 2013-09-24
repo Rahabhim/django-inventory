@@ -29,6 +29,16 @@
 </style>
 {% endblock %}
 
+{% block javascript %}
+    <script type="text/javascript">
+    $(function() {
+        $("form.form.details :input").each(function() {
+            this.disabled = true;
+        });
+    });
+    </script>
+{% endblock %}
+
 {% block pre_form_inner %}
     <h2>{% trans "Details of original Purchase Order:" %}</h2>
     {% with form=po_form form_mode='details' read_only=1 %}
