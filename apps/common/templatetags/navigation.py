@@ -8,6 +8,7 @@ from django.template import TemplateSyntaxError, Library, \
                             VariableDoesNotExist, Node, Variable
 from django.utils.text import unescape_string_literal
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import ugettext_lazy as _
 
 from common.api import object_navigation, menu_links as menu_navigation
 
@@ -301,6 +302,6 @@ def session_active_role(context):
         if settings.DEBUG:
             raise
 
-    return ''
+    return _('Multiple Departments')
 
 #eof

@@ -121,7 +121,7 @@ a:hover {
             {% csrf_token %}
             <div id="wait_for_user_role" style="display: none;">{% trans 'Updating, please wait'%}</div>
                 <select id="select_user_role" name="role_id" onchange="this.form.submit()">
-                    <option value="x">--------</option>
+                    <option value="x">{% trans '-- Multiple Departments --' %}</option>
                     {% for r in user_roles %}
                     <option value="{{ r.id }}" {% if r.id == current_user_role %} selected="1" {% endif %}>
                     {{ r.department.name }} - {{ r.role.name }} </option>
