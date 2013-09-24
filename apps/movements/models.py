@@ -307,7 +307,7 @@ class PurchaseOrder(models.Model):
                         return True
         return False
 
-    def items_into_moves(self, mapped_items, request, departments, master_location, new_origin=None):
+    def items_into_moves(self, mapped_items, request, departments, master_location):
         """ Generate moves for mapped items
         """
 
@@ -343,7 +343,7 @@ class PurchaseOrder(models.Model):
                             { 'dept': unicode(department), 'loc': unicode(ltmpl) }
                     messages.error(request, msg, fail_silently=True)
                     raise RuntimeError
-            movement, c = Movement.objects.get_or_create(stype='in', origin=new_origin,
+            movement, c = Movement.objects.get_or_create(stype='in',
                     location_src=lsrcs[0], location_dest=ldests[0],
                     purchase_order=self,
                     defaults=dict(create_user=request.user,date_act=self.issue_date, ))
@@ -783,7 +783,7 @@ class Movement(models.Model):
     state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))], verbose_name=_("state"))
     stype = models.CharField(max_length=16, choices=[('in', _('Incoming')),('out', _('Outgoing')),
                 ('internal', _('Internal')), ('other', _('Other'))], verbose_name=_('type'))
-    origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'), null=True)
+    origin = models.CharField(max_length=64, blank=True, verbose_name=_('origin'))
     note = models.TextField(verbose_name=_('Notes'), blank=True)
     location_src = models.ForeignKey(Location, related_name='location_src', verbose_name=_("source location"), on_delete=models.PROTECT)
     location_dest = models.ForeignKey(Location, related_name='location_dest', verbose_name=_("destination location"), on_delete=models.PROTECT)
@@ -833,8 +833,8 @@ class Movement(models.Model):
         if self.date_val:
             raise ValueError(_("Cannot close movement because it seems already validated!"))
 
-        if self.stype != 'other' and not self.origin:
-            raise ValueError(_('A movement must have origin set to be closed'))
+        if self.stype != 'other' and not (self.name or self.location_dest.usage == 'production'):
+            raise ValueError(_('A movement must have its reference set, before it can be closed'))
         if self.checkpoint_dest is not None:
             raise ValueError(_("Internal error, movement is already checkpointed"))
 

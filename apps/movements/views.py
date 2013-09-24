@@ -349,11 +349,9 @@ def purchase_order_receive(request, object_id):
             pass
 
         items_left = purchase_order.map_has_left(mapped_items)
-        new_origin = request.GET.get('user_id_ask', False)
+        new_reference = request.GET.get('reference_ask', False)
 
-        if items_left and (not purchase_order.user_id) and not new_origin:
-            messages.warning(request, _("You must fill the ID of the Purchase Order to continue"))
-        elif items_left and request.GET.get('do_create', False):
+        if items_left and request.GET.get('do_create', False):
             if not active_role.has_perm('movements.receive_purchaseorder'):
                 raise PermissionDenied
             if request.GET.get('location_ask', False):
@@ -364,7 +362,7 @@ def purchase_order_receive(request, object_id):
                 messages.error(request,_('You must select a location!'), fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
 
-            purchase_order.items_into_moves(mapped_items, request, dept, master_loc, new_origin=new_origin)
+            purchase_order.items_into_moves(mapped_items, request, dept, master_loc)
 
             # reload the request in the browser, but get rid of any "action" arguments!
             return redirect(request.path.rstrip('?'), object_id=object_id)

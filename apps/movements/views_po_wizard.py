@@ -41,7 +41,7 @@ class WizardForm(_WizardFormMixin, forms.Form):
 
 class PO_Step1b(_WizardFormMixin, forms.ModelForm):
     title = _("Purchase Order Header Data")
-    user_id = forms.CharField(max_length=32, required=False, label=_(u'purchase order number'))
+    user_id = forms.CharField(max_length=32, required=False, label=_(u'user defined id'))
     issue_date = forms.DateField(label=_(u'issue date'), required=True,help_text=_("Format: 23/04/2010"))
 
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.filter(use_mass=True))
@@ -74,7 +74,6 @@ class PO_Step1b(_WizardFormMixin, forms.ModelForm):
         self.instance.save()
 
 class PO_Step1(PO_Step1b):
-    user_id = forms.CharField(max_length=32, required=False, label=_(u'protocol number'))
     department = AutoCompleteSelectField('department', label=_("Department"), required=False, show_help_text=False)
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.filter(use_regular=True))
 
@@ -554,7 +553,7 @@ class PO_Step5(WizardForm):
                 raise PermissionDenied
             po_instance.items_into_moves(mapped_items, request, \
                         self.cleaned_data['location'].department, \
-                        self.cleaned_data['location'], new_origin=po_instance.user_id)
+                        self.cleaned_data['location'])
         if msg:
             return '5'
 
