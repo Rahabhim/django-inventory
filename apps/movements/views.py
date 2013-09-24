@@ -708,6 +708,9 @@ class MovementListView(GenericBloatedListView):
                     {'name':_(u'state'), 'attribute': 'get_state_display', 'order_attribute': 'state'},
                     {'name':_(u'type'), 'attribute': 'get_stype_display', 'order_attribute': 'stype'}]
 
+class MovementCloseForm(forms.Form):
+    name = forms.CharField(max_length=32, label=_(u'reference'))
+
 def movement_do_close(request, object_id):
     movement = get_object_or_404(Movement, pk=object_id)
     active_role = role_from_request(request)
@@ -715,6 +718,24 @@ def movement_do_close(request, object_id):
         pass
     elif not (active_role and active_role.has_perm('movements.validate_movement')):
         raise PermissionDenied
+
+    form = None
+    if request.method == 'POST':
+        form = MovementCloseForm(request.POST)
+        if form.is_valid():
+            movement.name = form.cleaned_data['name']
+            movement.save()
+            if movement.name:
+                # we can close it now
+                form = None
+    else:
+        form = MovementCloseForm(initial={'name': movement.name})
+
+    if form:
+        # not a valid submitted form + movement name
+        return render(request, 'movement_do_close.html', { 'title': _("Confirm Movement Close"),
+                'form': form, 'object': movement})
+
     try:
         if active_role.department is not None:
             if movement.stype in ('in', 'other'):
