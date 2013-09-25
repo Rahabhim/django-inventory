@@ -16,7 +16,7 @@ class Delegate(Partner):
     objects = PartnerManager()
     #name = models.CharField(max_length=64)
     #parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True)
-    code = models.CharField(max_length=32, blank=True, null=True)
+    code = models.CharField(max_length=32, blank=True, null=True, verbose_name=_("code"))
 
     class Meta:
         # TODO: redundant
@@ -27,8 +27,8 @@ class Delegate(Partner):
         return ('delegate_view', [str(self.id)])
 
 class Project(models.Model):
-    name = models.CharField(max_length=128)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=128, verbose_name=_("name"))
+    description = models.TextField(blank=True, verbose_name=_("description"))
 
     class Meta:
         ordering = ['name']
@@ -41,19 +41,19 @@ class Project(models.Model):
         return ('project_view', [str(self.id)])
 
 class Contract(models.Model):
-    name = models.CharField(max_length=128)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=128, verbose_name=_("name"))
+    description = models.TextField(blank=True, verbose_name=_("description"))
     use_regular = models.BooleanField(default=True, verbose_name=_(u'use for regular procurements'))
     use_mass = models.BooleanField(default=False, verbose_name=_(u'use for mass procurements'))
-    date_start = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True) # called 'date' in oerp
-    warranty_dur = models.CharField(max_length=64, blank=True, null=True)
-    service_response = models.CharField(max_length=64, blank=True, null=True)
-    repair_time = models.CharField(max_length=64, blank=True, null=True)
-    kp_filename = models.CharField(max_length=128, blank=True, null=True)
-    department = models.ForeignKey('company.Department', blank=True, null=True) # Either department or manager
-    parent = models.ForeignKey(Project)
-    delegate = models.ForeignKey(Delegate, related_name='delegate', blank=True, null=True)
+    date_start = models.DateField(blank=True, null=True, verbose_name=_("start date"))
+    end_date = models.DateField(blank=True, null=True, verbose_name=_("end date")) # called 'date' in oerp
+    warranty_dur = models.CharField(max_length=64, blank=True, null=True, verbose_name=_("warranty duration"))
+    service_response = models.CharField(max_length=64, blank=True, null=True, verbose_name=_("service response"))
+    repair_time = models.CharField(max_length=64, blank=True, null=True, verbose_name=_("repair time"))
+    kp_filename = models.CharField(max_length=128, blank=True, null=True, verbose_name=_("filename"))
+    department = models.ForeignKey('company.Department', blank=True, null=True, verbose_name=_("department")) # Either department or manager
+    parent = models.ForeignKey(Project, verbose_name=_("project"))
+    delegate = models.ForeignKey(Delegate, related_name='delegate', blank=True, null=True, verbose_name=_("delegete"))
 
     class Meta:
         ordering = ['name']
