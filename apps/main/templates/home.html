@@ -126,7 +126,9 @@ a:hover {
                     <option value="{{ r.id }}" {% if r.id == current_user_role %} selected="1" {% endif %}>
                     {{ r.department.name }} - {{ r.role.name }} </option>
                     {% endfor %}
-                </select></form>
+                </select>
+                <div>* Επιλέξτε μονάδα για να εμφανιστούν οι αντίστοιχες διαθέσιμες ενέργειες</div>
+            </form>
             </div>
         </div>
         {% endif %}
