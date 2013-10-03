@@ -237,6 +237,8 @@ class PO_Step3(WizardForm):
 
 class PO_Step3_allo(_WizardFormMixin, forms.ModelForm):
     title = _("New Product Request")
+    url = forms.CharField(max_length=256, required=False, label=_(u'Product URL'),
+            help_text=_("Please enter the URL of the manufacturer for this project"))
     step_is_hidden = True
 
     class Meta:

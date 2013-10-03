@@ -840,6 +840,10 @@ table.wiz_form tr { /*vertical-align:top; Corrects the alignment problem with Pr
     margin-bottom: 16px;
 }
 
+table.wiz_form th span.description {
+    display: block;
+    font-weight: normal;
+}
 
 div.u_or { /*Small styling changes for "or"*/
     color: #333333;
