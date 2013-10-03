@@ -10,7 +10,7 @@ from common.models import Location # , Partner, Supplier
 from products.models import ItemTemplate
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('apps.' + __name__)
 
 class State(models.Model):
     name = models.CharField(max_length=32, verbose_name=_(u'name'))

@@ -16,7 +16,7 @@ import datetime
 import logging
 from settings import DATE_FMT_FORMAT
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('apps.' + __name__)
 
 class PurchaseRequestStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)

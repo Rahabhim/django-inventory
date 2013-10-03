@@ -8,6 +8,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
+import logging
+logger = logging.getLogger('apps.'+__name__)
 class DepartmentType(models.Model):
     name = models.CharField(max_length=128, verbose_name=_('name'))
     location_tmpl = models.ManyToManyField('common.LocationTemplate', blank=True, related_name='location_tmpl',
