@@ -428,6 +428,20 @@ input.checkbox {
     width: 99%; /* or auto? */
 }
 
+.form .filter_form > div {
+    display: inline-block;
+    min-width: 15em;
+    max-width: 25em;
+    vertical-align: bottom;
+    margin-right: 8px;
+    padding: 4px;
+}
+
+.form .filter_form > div label {
+    display: block;
+    font-weight: bold;
+}
+
 .form textarea.text_area {
     height: 55px;
 }
@@ -673,9 +687,12 @@ a.button:link, a.button:visited, a.button:hover, a.button:active, button.button 
   min-width: 30%;
 }
 
+form.form .filter_form.table {
+    overflow: inherit;
+}
 
 /* search button in fiter forms */
-form.form table.filter_form button.button {
+form.form .filter_form button.button {
   padding:5px 10px;
   text-align: center;
   background-color: #F0F0F0;
@@ -736,8 +753,8 @@ form.form table.filter_form button.button {
 }
 .form div.submit_button button:hover,
 .form div.submit_button button:active,
-form.form table.filter_form button.button:hover,
-form.form table.filter_form button.button:active
+form.form .filter_form button.button:hover,
+form.form .filter_form button.button:active
 {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); 
   color: #818181;

@@ -18,33 +18,21 @@
                 <p>{{ value }}</p>
             </div>
         {% endfor %}
-  </div>
+    </div>
 {% endif %}
 
-    <table class="table filter_form">
-        <thead><tr>
-                {% for field in form.visible_fields %}
-                <th> {{ field.label_tag }} </th>
-                {% endfor %}
-                <th>&nbsp;</th>
-        </tr>
-        </thead>
-
-        <tbody> <tr>
+    <div class="table filter_form">
     {% for field in form.visible_fields %}
-            <td title="{% if field.errors %}{% for error in field.errors %}{{ error }}{% if not forloop.last %} | {% endif %}{% endfor %}{% else %}{{ field.help_text }}{% endif %}">
+        <div title="{% if field.errors %}{% for error in field.errors %}{{ error }}{% if not forloop.last %} | {% endif %}{% endfor %}{% else %}{{ field.help_text }}{% endif %}">
+            {{ field.label_tag }}
             {% if field.errors %}<div class="flash"><div class="error">{% endif %}
               {{ field }}
             {% if field.errors %}</div></div>{% endif %}
-            </td>
+        </div>
     {% endfor %}
-
-                <td class="group navform wat-cf">
-                <button class="button" type="submit">
-                        {% trans 'Search' %}
-                </button>
-                </td>
-        </tr>
-        </table>
+        <div class="group navform wat-cf">
+            <button class="button" type="submit">{% trans 'Search' %}</button>
+        </div>
+    </div>
     </form>
 </div></div>
