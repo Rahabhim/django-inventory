@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-22 20:09+0300\n"
-"PO-Revision-Date: 2013-08-08 10:17+0300\n"
+"POT-Creation-Date: 2013-10-03 14:02+0300\n"
+"PO-Revision-Date: 2013-10-03 13:35+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -265,7 +265,7 @@ msgstr "μοντέλο"
 
 #: models.py:112
 msgid "part number"
-msgstr "κωδικός εξαρτήματος"
+msgstr "κωδικός προϊόντος"
 
 #: models.py:113
 msgid "URL"

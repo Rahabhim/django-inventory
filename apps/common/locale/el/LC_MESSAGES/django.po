@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-24 20:10+0300\n"
+"POT-Creation-Date: 2013-10-03 14:02+0300\n"
 "PO-Revision-Date: 2013-09-24 20:18+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -184,4 +184,3 @@ msgstr "Προμηθευτές"
 #: templatetags/navigation.py:305
 msgid "Multiple Departments"
 msgstr "Πολλαπλές Μονάδες"
-

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-22 20:09+0300\n"
+"POT-Creation-Date: 2013-10-03 14:02+0300\n"
 "PO-Revision-Date: 2013-05-21 09:10+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -127,7 +127,7 @@ msgstr "Δημιουργία νέου %(object_name)s"
 msgid "Create"
 msgstr "Δημιουργία"
 
-#: templates/filter_form_subtemplate.html:44
+#: templates/filter_form_subtemplate.html:34
 msgid "Search"
 msgstr "Αναζήτηση"
 

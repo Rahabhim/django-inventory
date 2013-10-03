@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-22 20:09+0300\n"
+"POT-Creation-Date: 2013-10-03 14:02+0300\n"
 "PO-Revision-Date: 2013-08-08 10:15+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -29,7 +29,7 @@ msgstr "εξοπλισμός"
 msgid "edit department"
 msgstr "διόρθωση μονάδας"
 
-#: __init__.py:28 models.py:51
+#: __init__.py:28 models.py:53
 msgid "departments"
 msgstr "Μονάδες"
 
@@ -41,15 +41,15 @@ msgstr "Τύποι Μονάδων"
 msgid "company"
 msgstr "Διοικητική δομή"
 
-#: models.py:12 models.py:30 urls.py:16 urls.py:18
+#: models.py:14 models.py:32 urls.py:16 urls.py:18
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:14
+#: models.py:16
 msgid "location templates"
 msgstr "πρότυπα τοποθεσιών"
 
-#: models.py:15
+#: models.py:17
 msgid ""
 "These will automatically be setup as locations, for each new department of "
 "this type"
@@ -57,67 +57,67 @@ msgstr ""
 "Αυτές οι τοποθεσίες θα δημιουργηθούν αυτόματα, για κάθε νέα Μονάδα αυτού του "
 "τύπου"
 
-#: models.py:20
+#: models.py:22
 msgid "department type"
 msgstr "Τύπος Μονάδας"
 
-#: models.py:31 urls.py:17 urls.py:25
+#: models.py:33 urls.py:17 urls.py:25
 msgid "code"
 msgstr "Κωδ. Μονάδας"
 
-#: models.py:32 urls.py:26
+#: models.py:34 urls.py:26
 msgid "code 2"
 msgstr "κωδικός ΠΣΔ"
 
-#: models.py:33
+#: models.py:35
 msgid "deprecated"
 msgstr "Σε αναστολή"
 
-#: models.py:34
+#: models.py:36
 msgid "Department Type"
 msgstr "Τύπος Μονάδας"
 
-#: models.py:35
+#: models.py:37
 msgid "Merged in"
 msgstr "Συγχωνεύτηκε σε"
 
-#: models.py:37
+#: models.py:39
 msgid "Nom Name"
 msgstr "Νομαρχία"
 
-#: models.py:38
+#: models.py:40
 msgid "Note"
 msgstr "Σημείωση"
 
-#: models.py:39
+#: models.py:41
 msgid "OTA Name"
 msgstr "ΟΤΑ"
 
-#: models.py:40
+#: models.py:42
 msgid "Parent Department"
 msgstr "Προϊστάμενο τμήμα"
 
-#: models.py:41
+#: models.py:43
 msgid "Section"
 msgstr "Τμήμα"
 
-#: models.py:42
+#: models.py:44
 msgid "Serviced By"
 msgstr "Υποστηρίζεται Από"
 
-#: models.py:44
+#: models.py:46
 msgid "Sequence for items"
 msgstr "Ακολουθία για τον εξοπλισμό"
 
-#: models.py:50
+#: models.py:52
 msgid "department"
 msgstr "μονάδα"
 
-#: models.py:62
+#: models.py:64
 msgid "The department cannot have itself as a parent"
 msgstr "Η μονάδα δεν μπορεί να έχει τον εαυτό της ως γονική"
 
-#: models.py:74
+#: models.py:76
 #, python-format
 msgid "No sequence for department %s"
 msgstr "Δεν έχει οριστεί ακολουθία για τη μονάδα %s"

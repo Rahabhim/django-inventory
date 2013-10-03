@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-22 20:09+0300\n"
+"POT-Creation-Date: 2013-10-03 14:02+0300\n"
 "PO-Revision-Date: 2013-08-08 10:18+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -206,7 +206,7 @@ msgstr ""
 "Δεν μπορείτε να επικυρώσετε απογραφή για τις %s, γιατί υπάρχουν οριστικές "
 "κινήσεις από/προς την τοποθεσία αυτή σε μεταγενέστερες ημερομηνίες."
 
-#: models.py:270 views.py:167
+#: models.py:270 views.py:165
 #, python-format
 msgid "This inventory is %s, cannot reject."
 msgstr "Η απογραφή είναι %s, δεν μπορεί να ακυρωθεί."
@@ -259,50 +259,50 @@ msgstr "Απογεγραμμένος εξοπλισμός"
 msgid "purchase orders from supplier"
 msgstr "εντολές προμήθειας από προμηθευτή"
 
-#: views.py:105
+#: views.py:103
 msgid "Your active role does not have permission to validate an inventory"
 msgstr "Ο ενεργός σας ρόλος δεν έχει δικαίωμα επικύρωσης της απογραφής"
 
-#: views.py:108 views.py:176
+#: views.py:106 views.py:174
 msgid "You are not currently signed at the same Department as this Inventory"
 msgstr "Δεν έχετε την ίδια Μονάδα με αυτή της απογραφής"
 
-#: views.py:120
+#: views.py:118
 msgid "The inventory has been validated and all movements fixated"
 msgstr ""
 "Η απογραφή επικυρώθηκε, και όλες οι κινήσεις της τοποθεσίας "
 "οριστικοποιήθηκαν."
 
-#: views.py:124
+#: views.py:122
 msgid "You must fill the name and upload a signed file to proceed"
 msgstr ""
 "Για να συνεχίσετε πρέπει να συμπληρώστε τον αρ. πρωτοκόλλου και να ανεβάσετε "
 "το υπογεγραμμένο αρχείο."
 
-#: views.py:130 views.py:178
+#: views.py:128 views.py:176
 #, python-format
 msgid "Permission denied: %s"
 msgstr "Μη επιτρεπτή ενέργεια: %s"
 
-#: views.py:133
+#: views.py:131
 msgid "The uploaded signature file does not contain a valid signature"
 msgstr "Το αρχείο που ανεβάσατε δεν περιέχει έγκυρη ψηφιακή υπογραφή"
 
-#: views.py:135
+#: views.py:133
 #, python-format
 msgid "Incorrect role or department to validate inventory: %s"
 msgstr "Λάθος ρόλος ή Μονάδα για την επικύρωση της απογραφής: %s"
 
-#: views.py:163
+#: views.py:161
 #, python-format
 msgid "Are you sure you want to reject inventory: %s?"
 msgstr "Θέλετε σίγουρα να ακυρώσετε την απογραφή: %s;"
 
-#: views.py:173
+#: views.py:171
 msgid "Your active role does not have permission to reject an inventory"
 msgstr "Ο ενεργός σας ρόλος δεν έχει δικαίωμα απόρριψης της απογραφής"
 
-#: views.py:183
+#: views.py:181
 msgid "The inventory has been marked as rejected, it will no longer be used."
 msgstr ""
 "Η απογραφή ακυρώθηκε, θα μείνει στη βάση αλλά δεν θα υπολογίζεται σε καμία "
