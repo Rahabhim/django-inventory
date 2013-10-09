@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-10-03 14:02+0300\n"
-"PO-Revision-Date: 2013-10-03 14:03+0300\n"
+"PO-Revision-Date: 2013-10-09 12:05+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -1291,7 +1291,9 @@ msgstr "Μονάδες που αντιστοιχούν"
 
 #: templates/depts_select_multiple.html:9
 msgid "Codes not found"
-msgstr "Κωδικοί που δεν αντιστοιχούν σε Μονάδες"
+msgstr ""
+"Κωδικοί που δεν αντιστοιχούν σε Μονάδες, ή Κωδικοί μονάδων που δεν έχετε "
+"διαχειριστικά δικαιώματα."
 
 #: templates/destroy_form.html:10 templates/lose_form.html:9
 msgid ""
