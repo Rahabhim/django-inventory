@@ -814,4 +814,8 @@ input[type="checkbox"] {
   display: inline-block;
 }
 
+ul.errorlist li {
+    color: red;
+}
+
 /* eof */
