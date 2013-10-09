@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-03 14:02+0300\n"
-"PO-Revision-Date: 2013-05-21 09:10+0300\n"
+"POT-Creation-Date: 2013-10-09 15:06+0300\n"
+"PO-Revision-Date: 2013-10-09 15:07+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -50,6 +50,7 @@ msgstr "Αφαιρέθηκαν %s"
 #, python-format
 msgid "The item %s cannot be deleted because it is referenced by other records"
 msgstr ""
+"Το αντικείμενο %s δεν μπορεί να διαγραφεί γιατί αναφέρεται σε άλλες εγγραφές."
 
 #: views.py:771
 msgid "The cart is already open."
