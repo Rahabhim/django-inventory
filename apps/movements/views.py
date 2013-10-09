@@ -354,7 +354,8 @@ def purchase_order_receive(request, object_id):
 
         if items_left and request.GET.get('do_create', False):
             if not active_role.has_perm('movements.receive_purchaseorder'):
-                raise PermissionDenied
+                messages.error(request,_('You do not have permission to receive the order'), fail_silently=True)
+                return redirect(request.path.rstrip('?'), object_id=object_id)
             if request.GET.get('location_ask', False):
                 master_loc = Location.objects.get(pk=request.GET['location_ask'])
             elif dept:
@@ -369,7 +370,8 @@ def purchase_order_receive(request, object_id):
             return redirect(request.path.rstrip('?'), object_id=object_id)
         elif (not items_left) and request.GET.get('do_confirm', False):
             if not (active_role and active_role.has_perm('movements.validate_purchaseorder')):
-                raise PermissionDenied
+                messages.error(request,_('You do not have permission to validate the order!'), fail_silently=True)
+                return redirect(request.path.rstrip('?'), object_id=object_id)
             try:
                 moves_pending = False
                 moves_other_pending = False
@@ -607,7 +609,8 @@ def purchase_order_copy(request, object_id):
                     continue
                 if not role.has_perm('movements.add_purchaseorder'):
                     logger.warning("User %s not allowed to create PO for dept %s", request.user, role.department)
-                    raise PermissionDenied
+                    messages.error(request,_('Not allowed to create PO for department %s') % role.department, fail_silently=True)
+                    return redirect(request.path.rstrip('?'), object_id=object_id)
                 depts.remove(role.department.id)
                 departments.append(role.department)
 
@@ -617,7 +620,8 @@ def purchase_order_copy(request, object_id):
                         departments.append(dept)
                 else:
                     logger.warning("User %s has no role for departments %r", request.user, list(depts))
-                    raise PermissionDenied
+                    messages.error(request,_('You don\'t have sufficient permissions for all Departments requested!'), fail_silently=True)
+                    return redirect(request.path.rstrip('?'), object_id=object_id)
 
             # Step 2: Code that copies a PO + its items:
             logger.debug("Step 2")
@@ -886,7 +890,8 @@ def repair_itemgroup(request, object_id):
     logger = logging.getLogger('apps.movements.repair')
     if not (request.user.is_superuser or active_role.has_perm('assets.change_itemgroup')):
         logger.warning("User %s is not allowed to repair item", request.user)
-        raise PermissionDenied
+        messages.error(request,_('You dont\'t have the permission to repair items'), fail_silently=True)
+        return redirect(item.get_absolute_url())
 
     data = {'title': _("Repair of asset"), }
     # we need data for the three columns:
@@ -895,7 +900,8 @@ def repair_itemgroup(request, object_id):
     item_location = item.location
     if not item_location:
         logger.warning("Item %d %s does not belong to any location, cannot repair", item.id, item)
-        raise PermissionDenied
+        messages.error(request,_('Item cannot be repaired if it does not belong to a location'), fail_silently=True)
+        return redirect(item.get_absolute_url())
     elif not item_location.department:
         # search for a bundle in bundle
         parents = item.bundled_in.all()
@@ -906,7 +912,8 @@ def repair_itemgroup(request, object_id):
             item_location = parents[0].location
         else:
             logger.warning("Item %d %s, nor its parent belong to any location", item.id, item)
-            raise PermissionDenied
+            messages.error(request,_('Item, nor its parent, belong to any location'), fail_silently=True)
+            return redirect(item.get_absolute_url())
 
     # A: the locations we can fetch from + their available parts
     if active_role:
@@ -918,7 +925,8 @@ def repair_itemgroup(request, object_id):
         else:
             logger.warning("User %s does not have active_role for dept %s to edit item %d %s",
                         request.user, item_location.department, item.id, item)
-            raise PermissionDenied
+            messages.error(request,_('Your active role does not allow repairing items at this location'), fail_silently=True)
+            return redirect(item.get_absolute_url())
     else:
         dept = item_location.department
     
@@ -927,7 +935,8 @@ def repair_itemgroup(request, object_id):
         # will completely bork
         logger.warning("Department for item %d %s is not specified, cannot allow repair",
                     item.id, item)
-        raise PermissionDenied
+        messages.error(request,_('Item can not be repaired if the Location is not a Department one'), fail_silently=True)
+        return redirect(item.get_absolute_url())
 
     if request.method == 'POST':
         try:

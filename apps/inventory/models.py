@@ -162,7 +162,7 @@ class Inventory(models.Model):
 
     def add_to_cart(self, obj):
         if self.validate_user is not None or self.date_val is not None:
-            raise PermissionDenied(_("Inventory is validated, cannot modify"))
+            raise ValueError(_("Inventory is validated, cannot modify"))
 
         if obj is None or not isinstance(obj, assets.Item):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))
@@ -175,7 +175,7 @@ class Inventory(models.Model):
 
     def remove_from_cart(self, obj):
         if self.validate_user is not None or self.date_val is not None:
-            raise PermissionDenied(_("Inventory is validated, cannot modify"))
+            raise ValueError(_("Inventory is validated, cannot modify"))
 
         if obj is None or not isinstance(obj, assets.Item):
             raise TypeError(_("Incorrect object passed: %s") % repr(obj))

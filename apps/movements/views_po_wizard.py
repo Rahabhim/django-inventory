@@ -552,7 +552,7 @@ class PO_Step5(WizardForm):
 
         if po_instance.map_has_left(mapped_items):
             if not active_role.has_perm('movements.change_purchaseorder'):
-                raise PermissionDenied
+                raise PermissionDenied(_("Your active role is not allowed to modify this PO"))
             po_instance.items_into_moves(mapped_items, request, \
                         self.cleaned_data['location'].department, \
                         self.cleaned_data['location'])
@@ -587,7 +587,7 @@ class PO_Step5m(WizardForm):
                 continue
             if not role.has_perm('movements.change_purchaseorder'):
                 logger.warning("User %s not allowed to change PO for dept %s", request.user, role.department)
-                raise PermissionDenied
+                raise PermissionDenied(_("You don't have permission to change this PO for department %s") % role.department)
             depts.remove(role.department.id)
             departments.append(role.department)
 
@@ -597,7 +597,7 @@ class PO_Step5m(WizardForm):
                     departments.append(dept)
             else:
                 logger.warning("User %s has no role for departments %r", request.user, list(depts))
-                raise PermissionDenied
+                raise PermissionDenied(_("You don't have enough permissions for all departments in this PO"))
 
         if po_instance.map_has_left(mapped_items):
             loc_template = self.cleaned_data['loc_template']
@@ -771,9 +771,12 @@ class PO_Wizard(SessionWizardView):
         """
         try:
             next_step = form.save_data(self)
-        except PermissionDenied:
-            messages.error(self.request, _('Not permitted to save data'))
+        except PermissionDenied, e:
             logger.exception('cannot save at step %s: ' % (self.steps.current))
+            if (e.message):
+                messages.error(self.request, _("Permission denied: %s") % e, fail_silently=True)
+            else:
+                messages.error(self.request, _('Not permitted to save data'))
             return self.render(form)
         except Exception, e:
             messages.error(self.request, _('Cannot save data'))
