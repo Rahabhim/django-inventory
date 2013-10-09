@@ -94,7 +94,7 @@ purchase_order_update = {'text':_('edit order'), 'view':'purchase_order_update',
 
 purchase_order_updwiz = {'text':_('edit order items'), 'view':'purchaseorder_wizard_update', 'args':'object.id', 'famfam':'pencil', 'condition': (iz_open, iz_single_dept,  can_edit, has_no_pending_inventories)  }
 purchase_order_updwiz_mass = {'text':_('edit order items (mass)'), 
-            'view':'purchaseorder_wizard_update_mass', 'args':'object.id', 'famfam':'pencil',
+            'view':'purchaseorder_wizard_update_mass', 'args':'object.id', 'famfam':'application_cascade',
             'condition': (iz_open, lambda o,c: o.department is None, can_do_mass_po, can_edit, has_no_pending_inventories)  }
 purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': (iz_open_or_rej, can_delete)  }
 purchase_order_close = {'text':_('close order'), 'view':'purchase_order_close', 'args':'object.id', 'famfam':'cross'}
@@ -106,7 +106,7 @@ purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_li
 purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wizard_new', 'famfam':'cart_add', 
             'condition': (can_add(PurchaseOrder), has_no_pending_inventories)}
 
-purchase_order_wizard_mass = {'text':_('create new mass order'), 'view':'purchaseorder_wizard_new_mass', 'famfam':'cart_add', 
+purchase_order_wizard_mass = {'text':_('create new mass order'), 'view':'purchaseorder_wizard_new_mass', 'famfam':'application_cascade', 
             'condition': (can_do_mass_po, has_no_pending_inventories)}
 
 purchase_order_reject = {'text':_('reject order'), 'famfam':'package_red',
