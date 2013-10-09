@@ -41,7 +41,9 @@ def check_our_move(state=None, perm=False):
             return True
         else:
             rrq = role_from_request(context['request'])
-            if rrq and (rrq.department == (move.location_src.department or move.location_dest.department or "foo bar")):
+            if rrq and rrq.department and  \
+                    ((rrq.department == move.location_src.department) \
+                      or (rrq.department == move.location_dest.department)):
                 return True
         return False
 
