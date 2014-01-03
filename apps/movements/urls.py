@@ -295,6 +295,7 @@ urlpatterns = patterns('movements.views',
             name='repair_pending_list'),
     url(r'^objects/repair/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(
                 model=RepairOrder, success_url="repair_order_list",
+                queryset=RepairOrder.objects.by_request,
                 check_object=check_repair_order,
                 extra_context=dict(object_name=_(u'Repair Order'))),
             name='repair_order_delete'),
