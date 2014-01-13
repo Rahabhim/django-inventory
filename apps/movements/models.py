@@ -812,7 +812,7 @@ class Movement(models.Model):
         super(Movement, self).clean()
         locs = []
         if self.location_src_id and (self.location_src_id == self.location_dest_id):
-            raise ValueError(_("A movement cannot have the same source and destination locations!"))
+            raise ValidationError(_("A movement cannot have the same source and destination locations!"))
 
         if self.location_dest_id and self.location_dest.usage in 'internal':
             locs.append(self.location_dest)
