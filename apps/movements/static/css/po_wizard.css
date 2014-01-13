@@ -968,6 +968,11 @@ table.group_3s_t2 tr.cat td.left {
     font-weight: bold;
 }
 
+table.group_3s_t2 td button {
+    border: none;
+    background: transparent;
+}
+
 a.like-button {
     appearance: button;
     -moz-appearance: button;
