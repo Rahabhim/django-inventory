@@ -32,7 +32,7 @@ class ItemCategory(models.Model):
         ordering = ['sequence', 'name']
 
 class ItemCategoryContain(models.Model):
-    parent_category = models.ForeignKey(ItemCategory, related_name="may_contain", verbose_name=_("May contain"))
+    parent_category = models.ForeignKey(ItemCategory, related_name="may_contain", verbose_name=_("May contain"), on_delete=models.PROTECT)
     category = models.ForeignKey(ItemCategory, related_name='contained_in', verbose_name=_("contained category"))
     min_count = models.IntegerField(verbose_name=_("minimum count"), default=0)
     max_count = models.IntegerField(verbose_name=_("maximum count"), default=1)
@@ -51,7 +51,7 @@ class ProductAttribute(models.Model):
     sequence = models.IntegerField(default=10, verbose_name=_("sequence"))
     
     applies_category = models.ForeignKey(ItemCategory, related_name="attributes",
-                    verbose_name=_("category"))
+                    verbose_name=_("category"), on_delete=models.PROTECT)
     required = models.BooleanField(default=True, verbose_name=_("required"))
     in_name = models.BooleanField(default=False, verbose_name=_("include in name"))
 
@@ -71,7 +71,7 @@ class ProductAttributeValue(models.Model):
     """Allowed value for some ProductAttribute
     """
     atype = models.ForeignKey(ProductAttribute, verbose_name=_(u"attribute"), \
-                    related_name="values")
+                    related_name="values", on_delete=models.PROTECT)
     value = models.CharField(max_length=32, verbose_name=_("value"))
 
     def __unicode__(self):
@@ -192,8 +192,8 @@ class ItemTemplatePart(models.Model):
         verbose_name_plural = _("standard parts")
 
 class ItemTemplateAttributes(models.Model):
-    template = models.ForeignKey(ItemTemplate, related_name="attributes")
-    value = models.ForeignKey(ProductAttributeValue, verbose_name=_("value"))
+    template = models.ForeignKey(ItemTemplate, related_name="attributes", on_delete=models.PROTECT)
+    value = models.ForeignKey(ProductAttributeValue, verbose_name=_("value"), on_delete=models.PROTECT)
     
     class Meta:
         verbose_name = _("attribute")
