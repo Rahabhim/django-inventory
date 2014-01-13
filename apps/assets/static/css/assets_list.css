@@ -15,10 +15,10 @@
   text-align: left;
 }
 
-.equipment-list tbody tr.bl_group th { /*top items of table*/
+.equipment-list tbody tr.bl_group th {
+  /*top items of table*/
   /*background-color:#FFFFFF;*/
-  
-  border-bottom: 3px solid #A7B47C;
+  border-top: 3px solid #A7B47C;
   font-size: 1.1em;
   text-align: left;
   color:inherit;
@@ -28,6 +28,7 @@
   padding-left: 0px;
   padding-top: 8px;
 }
+
 .equipment-list tbody tr.bl_group th p {
     padding-left: 18px;
     width:90%;
