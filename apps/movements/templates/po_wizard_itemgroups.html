@@ -53,7 +53,7 @@
                         </div>
                         <p align="center"> ή </p>
 
-                        <div> <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία: </p>
+                        <div> <p> Σύνθετη <u>αναζήτηση</u> με βάση τα παρακάτω στοιχεία: </p>
             
                             <label>Κατασκευαστής:</label>
                             <select id="{{mand.did}}_manuf_combo">
@@ -68,7 +68,7 @@
                                 <div class="product_attrib">{{ attrib|safe }}</div>
                             {% endfor %}
                             </div>
-                            <br/>
+                            <hr/>
                             <label>Προϊόν:</label> <select id="{{mand.did}}_combo" ><option value="">-----</option></select>
                         </div>
                         <div id="{{ mand.did }}_on_deck">Δεν βρέθηκε</div>
