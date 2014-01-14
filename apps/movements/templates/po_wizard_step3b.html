@@ -216,7 +216,7 @@
 
     function update_product2(field_id, cat_id){
         var attribs = new Array();
-        $(field_id + "_attribs > select").each(function() { attribs.push(this.value)});
+        $(field_id + "_attribs div.product_attrib > select").each(function() { attribs.push(this.value)});
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
                 'data': {'term': 'foo', 'attributes': attribs,
@@ -299,7 +299,7 @@
             update_product2(field_id, cat_id);
         }
         $(field_id + "_manuf_combo").change(upd_product2);
-        $(field_id + "_attribs > select").change(upd_product2);
+        $(field_id + "_attribs div.product_attrib > select").change(upd_product2);
         $(field_id + "_combo").change(function() { select_some_part(field_id); } );
         $(field_id + "_qty").change(function() { upd_quantity(field_id); });
         $(field_id + "_code").autocomplete({
