@@ -30,6 +30,11 @@
     #ss3s-1 > div hr {
         margin-top: 1.2em;
     }
+
+    .product_search label {
+        display: inline-block;
+        width: 15em;
+    }
 </style>
 
 {{ wizard.form.management_form }}
@@ -40,10 +45,10 @@
         <p>Μπορείτε να καταχωρήσετε τα στοιχεία του Εξοπλισμού με δύο δυνατούς τρόπους:</p>
         {{ form.line_num }}
         {{ form.in_group }}
-        <div>{% with form.item_template as it %}
-            <p>Κωδικός προϊόντος:
+        <div class="product_search">
+            {% with form.item_template as it %}
+            <label for="{{it.auto_id}}_text"> Κωδικός προϊόντος:</label>
                 <input type="text" name="{{it.name}}_text" id="{{it.auto_id}}_text" value="" width="7em" />
-            </p>
             {% endwith %}
             <p class="hint">Αν γνωρίζετε τον κωδικό προϊόντος (πλήρες μοντέλο ή part number),
             δοκιμάστε να τον εισάγετε παραπάνω για να αναζητηθεί στη βάση μας.
@@ -52,11 +57,16 @@
         </div>
         <p align="center"> ή </p>
 
-        <div> <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία:
+        <div class="product_search"> <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία:
                 </p>
             
         <label>Κατασκευαστής: </label>{{ form.manufacturer }}<br/>
-        {{ form.product_attributes }}
+        {# form.product_attributes #}
+            <div id="{{form.product_attributes.auto_id}}">
+                {% for attrib in  form.product_attributes %}
+                    <div class="product_attrib">{{ attrib|safe }}</div>
+                {% endfor %}
+            </div>
             <hr/>
             <label>{{form.item_template2.label}}:</label> {{ form.item_template2 }}
         </div>

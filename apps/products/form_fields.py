@@ -174,7 +174,7 @@ class CATItem(StrAndUnicode):
                     vid, selected and ' selected="selected"' or '',
                     conditional_escape(force_unicode(label)) ))
         ret.append(u'</select>')
-        return u''.join(ret)
+        return u' '.join(ret)
 
 class CategoriesAttributesWidget(forms.widgets.Widget):
     def __init__(self, queryset=None, choices=(), *args, **kwargs):
@@ -196,7 +196,7 @@ class CategoriesAttributesWidget(forms.widgets.Widget):
         for sw in self.subwidgets(name, value, attrs):
             ret.append( unicode(sw))
         ret.append('</div>')
-        return mark_safe(u''.join(ret))
+        return mark_safe(u' '.join(ret))
 
 
     def value_from_datadict(self, data, files, name):
