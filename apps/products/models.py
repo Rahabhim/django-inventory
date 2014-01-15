@@ -125,7 +125,13 @@ class ItemTemplate(models.Model):
         return ('template_view', [str(self.id)])
 
     def __unicode__(self):
-        return self.description
+        ret = self.description
+        try:
+            for attr in self.attributes.filter(value__atype__in_name=True):
+                ret += ' ' + unicode(attr.value)
+        except Exception:
+            pass
+        return ret
 
     def validate_bundle(self, bundled_items, flat=True, group_mode=False):
         """Validates that this bundle/group is assembled according to category rules
