@@ -31,43 +31,6 @@
         margin-top: 1.2em;
     }
 </style>
-<script>
-    function update_product3(data, status, xhr){
-        var pcombo = $("#{{form.item_template2.auto_id}}");
-        pcombo.empty();
-        pcombo.append($('<option>', {value: ''}).text('-----'));
-
-        /* console.log("Data came! " + data.length); */
-        for(i=0;i<data.length;i++){
-            pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
-        }
-    }
-    function update_product2(){
-        var attribs = new Array();
-        $("#{{form.product_attributes.auto_id}} > select").each(function() { attribs.push(this.value)});
-        $.ajax("{% url ajax_lookup 'product_specs' %}", {
-                'dataType': 'json',
-                'data': {'term': 'foo', 'attributes': attribs,
-                        'category': "{{ form.category_id }}",
-                        'manufacturer': $("#{{ form.manufacturer.auto_id }}")[0].value },
-                'success': update_product3});
-    }
-
-    $("#{{form.manufacturer.auto_id}}").change(update_product2);
-    $("#{{form.product_attributes.auto_id}} > select").change(update_product2);
-
-    function select_some_product(){
-        var $selected = $("#{{form.item_template2.auto_id}} option:selected");
-        if (! $selected) { return false; }
-        
-        var fake_win = new Object();
-        {# /* bind fake_win to item autocompletion, so that its select() is returned */ #}
-        $("#{{form.item_template.auto_id}}").autocompleteselect(fake_win);
-        fake_win.select(null, {item: {pk: $selected.val(), repr: $selected.text()}});
-    }
-    $("#{{form.item_template2.auto_id}}").change(select_some_product);
-
-</script>
 
 {{ wizard.form.management_form }}
 
@@ -119,6 +82,41 @@
     </div>
 
 <script>
+    function update_product3(data, status, xhr){
+        var pcombo = $("#{{form.item_template2.auto_id}}");
+        pcombo.empty();
+        pcombo.append($('<option>', {value: ''}).text('-----'));
+
+        /* console.log("Data came! " + data.length); */
+        for(i=0;i<data.length;i++){
+            pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
+        }
+    }
+    function update_product2(){
+        var attribs = new Array();
+        $("#{{form.product_attributes.auto_id}} select").each(function() { attribs.push(this.value)});
+        $.ajax("{% url ajax_lookup 'product_specs' %}", {
+                'dataType': 'json',
+                'data': {'term': 'foo', 'attributes': attribs,
+                        'category': "{{ form.category_id }}",
+                        'manufacturer': $("#{{ form.manufacturer.auto_id }}")[0].value },
+                'success': update_product3});
+    }
+
+    $("#{{form.manufacturer.auto_id}}").change(update_product2);
+    $("#{{form.product_attributes.auto_id}} select").change(update_product2);
+
+    function select_some_product(){
+        var $selected = $("#{{form.item_template2.auto_id}} option:selected");
+        if (! $selected) { return false; }
+        
+        var fake_win = new Object();
+        {# /* bind fake_win to item autocompletion, so that its select() is returned */ #}
+        $("#{{form.item_template.auto_id}}").autocompleteselect(fake_win);
+        fake_win.select(null, {item: {pk: $selected.val(), repr: $selected.text()}});
+    }
+    $("#{{form.item_template2.auto_id}}").change(select_some_product);
+
     $("#{{form.item_template.auto_id}}_on_deck").bind('added', function() {
         $("#label_not_found").hide();
         $("#note_not_found").hide();
