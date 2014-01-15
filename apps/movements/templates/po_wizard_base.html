@@ -32,7 +32,7 @@
     <tr>{% for wkey, wform in wiz_steps %}
         {% if wkey == wizard.steps.current or not wform.step_is_hidden %}
         <td width="{{ wiz_width }}%">
-        <button type="submit" class="wiz_button" name="wizard_goto_step" value="{{ wkey }}" {% if wkey >= wizard.steps.current and wkey != '4' %}disabled="1"{% endif %} >
+        <button type="submit" class="wiz_button" name="wizard_goto_step" value="{{ wkey }}" {% if wkey != '1' and wkey != '2' and wkey != '4' %}disabled="1"{% endif %} >
         <table class="{% if wkey == wizard.steps.current %}wiz_step_cell_active{% else %}wiz_step_cell{% endif %}">
             <tr><td class="wiz_number">{{ wkey }}</td>
                 <td><span style="">{{ wform.title }}</span></td>
