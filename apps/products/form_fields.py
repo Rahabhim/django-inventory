@@ -183,9 +183,15 @@ class CategoriesAttributesWidget(forms.widgets.Widget):
         self.choices = choices # but don't render them to list
 
     def subwidgets(self, name, value, attrs=None, choices=()):
-        if not (value and ('from_category' in value)):
+        cat = False
+        if value:
+            if 'from_category' in value:
+                cat = value['from_category']
+            elif 'from_category' in value.get('all', [{},])[0]:
+                cat = value['all'][0]['from_category']
+        if not cat:
             return
-        for cattr in value['from_category'].attributes.all():
+        for cattr in cat.attributes.all():
             yield CATItem(name, cattr, value.get('all', []))
 
     def render(self, name, value, attrs=None, choices=()):
