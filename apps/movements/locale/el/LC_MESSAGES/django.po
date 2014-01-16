@@ -1252,7 +1252,7 @@ msgstr "Χαρακτηριστικά"
 
 #: views_po_wizard.py:239
 msgid "New Product Request"
-msgstr "Νέα αίτηση προμήθειας"
+msgstr "Νέα αίτηση προϊόντος"
 
 #: views_po_wizard.py:240
 msgid "Product URL"
