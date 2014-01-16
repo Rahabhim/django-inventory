@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext_lazy as _
 
-from common.api import register_links, register_menu, role_from_request
+from common.api import register_links, register_menu, role_from_request, can_edit
 
 from models import State, Item, ItemGroup
 import models
@@ -17,7 +17,7 @@ state_delete = {'text':_(u'delete asset state'), 'view':'state_delete', 'args':'
 
 asset_list = {'text':_('list all assets'), 'view':'item_list', 'famfam':'computer'}
 # asset_create = {'text':_('create new asset'), 'view':'item_create', 'famfam':'computer_add'}
-asset_edit = {'text':_(u'edit serials'), 'view':'item_update', 'args':'object.id', 'famfam':'computer_edit', 'condition':  asset_is_ours}
+asset_edit = {'text':_(u'edit serials'), 'view':'item_update', 'args':'object.id', 'famfam':'computer_edit', 'condition':  (asset_is_ours, can_edit)}
 # asset_delete = {'text':_(u'delete'), 'view':'item_delete', 'args':'object.id', 'famfam':'computer_delete'}
 asset_photos = {'text':_(u'add / remove photos'), 'view':'item_photos', 'args':'object.id', 'famfam':'picture_edit', 'condition':  asset_is_ours}
 asset_template = {'text':_(u'template'), 'view':'template_view', 'args':'object.item_template.id', 'famfam':'page_go'}
@@ -26,7 +26,8 @@ asset_printout = {'text':_(u'printout'), 'view':'asset_printout', 'args':'object
 
 
 group_list = {'text':_(u'list all groups'), 'view':'group_list', 'famfam':'chart_pie'}
-group_edit = {'text':_(u'edit serials'), 'view':'group_update', 'args':'object.item_ptr.id', 'famfam':'computer_edit'}
+group_edit = {'text':_(u'edit serials'), 'view':'group_update', 'args':'object.item_ptr.id',
+                'condition': (asset_is_ours, can_edit), 'famfam':'computer_edit'}
 
 #group_create = {'text':_(u'create group'), 'view':'group_create', 'famfam':'chart_pie_add'}
 #group_update = {'text':_(u'edit'), 'view':'group_update', 'args':'object.id', 'famfam':'chart_pie_edit'}
