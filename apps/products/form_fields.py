@@ -46,6 +46,10 @@ class CSWItem(StrAndUnicode):
     def picture(self):
         return self._obj.picture
 
+    @property
+    def categ_class(self):
+        return self._obj.categ_class
+
 class CSWItem_Main(CSWItem):
     """Instance of first-level category in the page
     

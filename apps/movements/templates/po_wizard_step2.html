@@ -8,6 +8,19 @@
     $(function() {
         $( "#{{ wizard.form.new_category.auto_id }}" ).tabs().addClass( "ui-tabs-vertical ui-helper-clearfix" );
         $( "#{{ wizard.form.new_category.auto_id }} li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
+
+        $("div.cat_box div.catsel input").change(function() {
+            var sel = $("div.cat_box div.catsel input:checked").val();
+            console.log("Radio select:", sel);
+            
+            if (sel == "*"){
+                $("div.cat_box div.catbt").show();
+            }
+            else {
+                $("div.cat_box div.catbt").hide();
+                $("div.cat_box div.catbt."+sel).show();
+            }
+            });
     });
 </script>
 {% endblock %}
@@ -27,8 +40,15 @@
         {% for cat in form.new_category %} {# content for each tab #}
         <div id="{{ cat.did }}" class="cat_box">
                 <h2>{{ cat }}</h2>
+            <div class="catsel">
+                All<input type="radio" name="__catsel" value="*" checked>&nbsp;
+                Sets<input type="radio" name="__catsel" value="bundle-group">&nbsp;
+                Bundles<input type="radio" name="__catsel" value="bundle">&nbsp;
+                Equipment<input type="radio" name="__catsel" value="equipment">&nbsp;
+                Parts<input type="radio" name="__catsel" value="part">
+            </div>
             {% for cat2 in cat.standalones %}
-                <div><button id="{{ cat2.did }}" name="{{cat2.name}}" value="{{ cat2.id }}" >{% if cat2.picture %}<img src="{{ MEDIA_URL }}/{{ cat2.picture }}" />{% else %}<img src="{{ MEDIA_URL }}/images/empty_img.png" />{% endif %}{{ cat2 }}</button></div>
+                <div class="catbt {{ cat2.categ_class }}"><button id="{{ cat2.did }}" name="{{cat2.name}}" value="{{ cat2.id }}" >{% if cat2.picture %}<img src="{{ MEDIA_URL }}/{{ cat2.picture }}" />{% else %}<img src="{{ MEDIA_URL }}/images/empty_img.png" />{% endif %}{{ cat2 }}</button></div>
             {% endfor %}
         </div>
         {% endfor %}

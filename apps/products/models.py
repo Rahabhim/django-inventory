@@ -31,6 +31,20 @@ class ItemCategory(models.Model):
         verbose_name=_("item category")
         ordering = ['sequence', 'name']
 
+    @property
+    def categ_class(self):
+        """behavior of the category, in one word"""
+        if self.is_group and self.is_bundle:
+            return 'bundle-group'
+        elif self.is_group:
+            return 'group'
+        elif self.is_bundle:
+            return 'bundle'
+        elif self.contained_in.filter(parent_category__is_group=False).exists():
+            return 'part'
+        else:
+            return 'equipment'
+
 class ItemCategoryContain(models.Model):
     parent_category = models.ForeignKey(ItemCategory, related_name="may_contain", verbose_name=_("May contain"), on_delete=models.PROTECT)
     category = models.ForeignKey(ItemCategory, related_name='contained_in', verbose_name=_("contained category"))

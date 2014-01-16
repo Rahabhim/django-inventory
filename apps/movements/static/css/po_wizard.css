@@ -762,7 +762,7 @@ button.wiz_button {
     margin-right: 15%;
 }
 
-div.cat_box div { /*step 2 epilogi eksoplismou */
+div.cat_box div.catbt { /*step 2 epilogi eksoplismou */
     background-color: #FFFFFF;
     border-right: 1px solid #D4D4D4;
     display: inline-block;
@@ -773,7 +773,7 @@ div.cat_box div { /*step 2 epilogi eksoplismou */
 
 }
 
-div.cat_box div:hover { /*step 2 epilogi eksoplismou boxes */
+div.cat_box div.catbt:hover { /*step 2 epilogi eksoplismou boxes */
     /*
     background-color: #e9ecde;
     */
@@ -788,10 +788,31 @@ div.cat_box div:hover { /*step 2 epilogi eksoplismou boxes */
     background: linear-gradient(to bottom,  rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f9ff', endColorstr='#a1dbff',GradientType=0 ); /* IE6-9 */
 
-
 }
 
-div.cat_box button { /*step 2 epilogi eksoplismou text style */
+div.cat_box div.equipment {
+    background-color: #FFFF8F;
+}
+
+div.cat_box div.part {
+    background-color: #FF8FFF;
+}
+
+div.cat_box div.bundle {
+    background-color: #FFFFEF;
+}
+
+div.cat_box div.group {
+    background-color: #FFFF0F;
+}
+
+div.cat_box div.bundle-group {
+    background-color: #AFFFFF;
+}
+
+
+
+div.cat_box div.catbt button { /*step 2 epilogi eksoplismou text style */
     vertical-align: middle;
     background: none;
     appearance: normal;
@@ -804,7 +825,7 @@ div.cat_box button { /*step 2 epilogi eksoplismou text style */
     height: 100%;
 }
 
-div.cat_box button img {
+div.cat_box div.catbt button img {
     float: left;
     margin-right: 2px;
 }
