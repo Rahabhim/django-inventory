@@ -151,6 +151,23 @@
     div.product_search hr {
         margin-top: 1.2em;
     }
+
+    div.product_search .note_not_found {
+        margin-left: 2em;
+        display: none;
+    }
+
+    div.product_search .note_not_found button {
+        border:0px solid #fff;  /* needed for opera */
+        border-bottom:1px solid blue;
+        background:transparent;
+        color:blue;
+        cursor:pointer;
+        display: inline;
+        padding: 0px;
+        white-space: normal;
+
+    }
 </style>
 
 <script>
@@ -194,6 +211,7 @@
         $(field_id + "_part").val(part_id);
         $(field_id + "_on_deck").text($('#cont_parts-' + part_id + ' > a.cont_part').text());
         $(field_id + "_qty").val(part_qty);
+        $(field_id+ "_note_not_found").hide();
     }
 
     /** Remove part
@@ -211,6 +229,9 @@
 
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
+        }
+        if (!data.length) {
+            $(field_id+ "_note_not_found").show();
         }
     }
 
@@ -230,11 +251,14 @@
     */
     function select_some_part(field_id){
         var $selected = $(field_id +"_combo option:selected");
-        if (! $selected) {
+        if ($selected && $selected.val()) {
+            select_part2(field_id, $selected.text(), $selected.val());
+            $(field_id+ "_note_not_found").hide();
+        } else {
             $(field_id + '_on_deck').text('---');
-            return false; 
+            $(field_id+ "_note_not_found").show();
+            return false;
         }
-        select_part2(field_id, $selected.text(), $selected.val());
     }
 
     /** Update the selected part at both the left menu and right pane

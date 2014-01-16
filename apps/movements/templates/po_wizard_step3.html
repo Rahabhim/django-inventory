@@ -35,6 +35,17 @@
         display: inline-block;
         width: 15em;
     }
+    div.found_product #note_not_found {
+        margin-left: 2em;
+    }
+    div.found_product #note_not_found button {
+        border:0px solid #fff;  /* needed for opera */
+        border-bottom:1px solid blue;
+        background:transparent;
+        color:blue;
+        cursor:pointer;
+        display: inline;
+    }
 </style>
 
 {{ wizard.form.management_form }}
@@ -73,12 +84,11 @@
         <div class="found_product">
            <label>Επιλεγμένο προϊόν:</label> {{ form.item_template }}
             <span id="label_not_found">Δεν βρέθηκε προϊόν. </span>
-        </div>
-        <div id="note_not_found">
-            <h4>ΔΕΝ ΒΡΙΣΚΩ ΤΟ ΠΡΟΙΟΝ</h4>
-            Σημείωση: Σε περίπτωση που δεν βρήκατε τον εξοπλισμό που επιθυμείτε μπορείτε να επιλέξετε "Άλλο" και στο παράθυρο που θα εμφανιστεί να μας στείλετε το στοιχείο αυτό.
-            <br/>
-            <button type="submit" name="wizard_goto_step" value="3a">Άλλο</button>
+            <div id="note_not_found" style="display: none">
+                <i>Σημείωση</i>: Σε περίπτωση που δεν βρήκατε τον εξοπλισμό που επιθυμείτε
+                επιλέξτε εδώ για
+                <button type="submit" name="wizard_goto_step" value="3a">αίτημα καταχώρησης νέου προιόντος</button>
+            </div>
         </div>
     </div>
 
@@ -101,6 +111,8 @@
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
         }
+        if (!data.length)
+            $("#note_not_found").show();
     }
     function update_product2(){
         var attribs = new Array();
@@ -118,12 +130,19 @@
 
     function select_some_product(){
         var $selected = $("#{{form.item_template2.auto_id}} option:selected");
-        if (! $selected) { return false; }
-        
+
         var fake_win = new Object();
         {# /* bind fake_win to item autocompletion, so that its select() is returned */ #}
         $("#{{form.item_template.auto_id}}").autocompleteselect(fake_win);
-        fake_win.select(null, {item: {pk: $selected.val(), repr: $selected.text()}});
+        if ($selected && $selected.val()) {
+            fake_win.select(null, {item: {pk: $selected.val(), repr: $selected.text()}});
+        }
+        else {
+            fake_win.select(null, {item: false });
+            $("#note_not_found").show();
+            $("#label_not_found").show();
+            return false;
+        }
     }
     $("#{{form.item_template2.auto_id}}").change(select_some_product);
 

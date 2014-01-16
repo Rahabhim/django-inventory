@@ -72,6 +72,11 @@
                             <label>Προϊόν:</label> <select id="{{mand.did}}_combo" ><option value="">-----</option></select>
                         </div>
                         <div id="{{ mand.did }}_on_deck">Δεν βρέθηκε</div>
+                        <div id="{{ mand.did }}_note_not_found" class="note_not_found">
+                            <i>Σημείωση</i>: Σε περίπτωση που δεν βρήκατε το εξάρτημα
+                            που επιθυμείτε επιλέξτε εδώ για
+                            <button type="submit" name="wizard_goto_step" value="3a">αίτημα καταχώρησης νέου προιόντος</button>
+                        </div>
                     </div>
                     <div class="line_vals">
                         <label for="{{mand.did}}_qty">Ποσότητα</label><input type="text" id="{{mand.did}}_qty" value="1" />
@@ -106,15 +111,6 @@
             {% endif %}{% endfor %}
             </select>
             </td>
-        </tr>
-        <tr><td>
-            <h4>ΔΕΝ ΒΡΙΣΚΩ ΤΟ ΠΡΟΙΟΝ</h4>
-            <b>Σημείωση:</b><br/>
-            • Αν το εξάρτημα που επιθυμείτε να προσθέσετε δεν υπάρχει στην
-            παραπάνω λίστα επιλέξτε <b>Άλλο Εξάρτημα</b>, όπου θα ανοίξει 
-            νέο παράθυρο και θα σας ζητηθεί να εισάγετε την περιγραφή του προϊόντος.
-            <button type="submit" name="wizard_goto_step" value="3a">Άλλο Εξάρτημα</button>
-        </td>
         </tr>
     </tbody>
 </table>
