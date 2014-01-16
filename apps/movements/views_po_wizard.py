@@ -104,6 +104,7 @@ class PO_Step2(WizardForm):
 
 class PO_Step3(WizardForm):
     title = _("Input Product Details")
+    bubble_name = '3'
     line_num = forms.IntegerField(required=False, widget=forms.widgets.HiddenInput)
     in_group = forms.IntegerField(required=False, widget=forms.widgets.HiddenInput)
     item_template = AutoCompleteSelectField('product_part', label=_("Product"), show_help_text=False, required=False)
@@ -242,6 +243,7 @@ class PO_Step3(WizardForm):
 
 class PO_Step3_allo(_WizardFormMixin, forms.ModelForm):
     title = _("New Product Request")
+    bubble_name = '3iii'
     url = forms.CharField(max_length=256, required=True, label=_(u'Product URL'),
             help_text=_("Please enter the URL of the manufacturer for this project"))
     step_is_hidden = True
@@ -259,6 +261,7 @@ class PO_Step3_allo(_WizardFormMixin, forms.ModelForm):
 
 class PO_Step3b(WizardForm):
     title = _("Add bundled items")
+    bubble_name = '3i'
     step_is_hidden = True
 
     ig = ItemsGroupField()
@@ -306,6 +309,7 @@ class PO_Step3b(WizardForm):
 
 class PO_Step3s(WizardForm):
     title = _("Add set items")
+    bubble_name = '3ii'
     step_is_hidden = True
 
     iset = GroupGroupField()
@@ -515,6 +519,7 @@ class PO_Step4(WizardForm):
 
 class PO_Step4a(WizardForm):
     step_is_hidden = True
+    bubble_name = '4i'
     title = _("Pending Items - Finish")
 
 
