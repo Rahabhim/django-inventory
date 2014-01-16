@@ -232,6 +232,8 @@ class ItemsGroupWidget(forms.widgets.Widget):
                 for dpart in data.getlist('id_%s-%d_parts' %(name, mc.id), []):
                     if not qtys:
                         break
+                    if not dpart:
+                        continue
                     dpart_id = int(dpart)
                     dqty = int(qtys.pop(0) or '0')
                     pa.append((ItemTemplate.objects.get(pk=dpart_id, category=mc.category), dqty))
