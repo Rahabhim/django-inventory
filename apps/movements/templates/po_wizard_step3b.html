@@ -207,6 +207,7 @@
         /* Cleanup the right pane and display our part on deck */
         $(field_id + "_manuf_combo option:selected").prop("selected", false);
         $(field_id + "_combo option:selected").prop("selected", false);
+        $(field_id + "_combo_results").text('');
         $(field_id + "_attribs option:selected").prop("selected", false);
         $(field_id + "_part").val(part_id);
         $(field_id + "_on_deck").text($('#cont_parts-' + part_id + ' > a.cont_part').text());
@@ -230,7 +231,10 @@
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
         }
-        if (!data.length) {
+        if (data.length)
+            $(field_id + "_combo_results").text('('+ data.length + ')');
+        else {
+            $(field_id + "_combo_results").text('');
             $(field_id+ "_note_not_found").show();
         }
     }
@@ -245,6 +249,7 @@
                         'manufacturer': $(field_id + "_manuf_combo")[0].value },
                 'success': function(data,status, xhr) { update_product3(data, field_id);},
             });
+        $(field_id + "_combo_results").text('?');
     }
 
     /** Read the field_combo (when changed) and update the selection
