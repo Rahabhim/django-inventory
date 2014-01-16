@@ -170,6 +170,8 @@ class PurchaseOrder(models.Model):
         """
         super(PurchaseOrder, self).clean()
         if self.procurement:
+            if not self.issue_date:
+                raise ValidationError(_("You must supply a date"))
             if self.procurement.date_start and (self.issue_date < self.procurement.date_start):
                 raise ValidationError(_("You cannot register a Purchase Order before the Procurement start date: %s") \
                         % (self.procurement.date_start.strftime(DATE_FMT_FORMAT)))
