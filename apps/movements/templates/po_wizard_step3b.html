@@ -105,6 +105,23 @@
         padding: 10px;
     }
 
+    div.product_search > div .sclear {
+        display: inline-block;
+        float: right;
+        margin-right: 10px;
+    }
+    div.product_search > div button.sclear {
+        border: none;
+        font-style: italic;
+        font-size: 80%;
+        color: #606060;
+        text-decoration: none;
+        background:transparent;
+        cursor:pointer;
+        display: inline;
+        padding: 0px;
+    }
+
     div.add_more > a {
         color: #32ADFF;
         text-decoration: underline;
@@ -206,14 +223,21 @@
         $(field_id).show('fast');
         var part_qty = $('#cont_parts-'+ part_id +' input[name="'+ field_id.substr(1)+'_part_qty"]').val();
         /* Cleanup the right pane and display our part on deck */
+        clear_attribs(field_id);
+        $(field_id + "_part").val(part_id);
+        $(field_id + "_on_deck").text($('#cont_parts-' + part_id + ' > a.cont_part').text());
+        $(field_id + "_qty").val(part_qty);
+    }
+
+    /** Clear the attributes form, on user's request
+    */
+    function clear_attribs(field_id) {
         $(field_id + "_manuf_combo option:selected").prop("selected", false);
         $(field_id + "_combo option:selected").prop("selected", false);
         $(field_id + "_combo_results").text('');
         $(field_id + "_attribs option:selected").prop("selected", false);
-        $(field_id + "_part").val(part_id);
-        $(field_id + "_on_deck").text($('#cont_parts-' + part_id + ' > a.cont_part').text());
-        $(field_id + "_qty").val(part_qty);
         $(field_id+ "_note_not_found").hide();
+        return false;
     }
 
     /** Remove part
