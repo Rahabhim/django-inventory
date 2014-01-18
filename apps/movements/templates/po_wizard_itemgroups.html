@@ -71,15 +71,15 @@
                             <hr/>
                             <label>Βρέθηκαν <span id="{{mand.did}}_combo_results"></span>:</label> <select id="{{mand.did}}_combo" ><option value="">-----</option></select>
                         </div>
-                        <div id="{{ mand.did }}_on_deck">Δεν βρέθηκε</div>
+                        <div class="line_vals">
+                            <div id="{{ mand.did }}_on_deck">Κανένα</div>
+                            &times; <input type="text" title="Ποσότητα" id="{{mand.did}}_qty" value="1" />
+                        </div>
                         <div id="{{ mand.did }}_note_not_found" class="note_not_found">
                             <i>Σημείωση</i>: Σε περίπτωση που δεν βρήκατε το εξάρτημα
                             που επιθυμείτε επιλέξτε εδώ για
                             <button type="submit" name="wizard_goto_step" value="3a">αίτημα καταχώρησης νέου προιόντος</button>
                         </div>
-                    </div>
-                    <div class="line_vals">
-                        <label for="{{mand.did}}_qty">Ποσότητα</label><input type="text" id="{{mand.did}}_qty" value="1" />
                     </div>
                 </div>
             {% endfor %}

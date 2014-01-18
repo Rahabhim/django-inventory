@@ -226,7 +226,11 @@
     function update_product3(data, field_id){
         var pcombo = $(field_id + "_combo");
         pcombo.empty();
-        pcombo.append($('<option>', {value: ''}).text('-----'));
+        if (data.length)
+            pcombo.append($('<option>', {value: ''}).text('-----'));
+        else
+            pcombo.append($('<option>', {value: ''}).text('--- Δε βρέθηκε ---'));
+
 
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
@@ -260,7 +264,7 @@
             select_part2(field_id, $selected.text(), $selected.val());
             $(field_id+ "_note_not_found").hide();
         } else {
-            $(field_id + '_on_deck').text('---');
+            $(field_id + '_on_deck').text('Κανένα');
             $(field_id+ "_note_not_found").show();
             return false;
         }
