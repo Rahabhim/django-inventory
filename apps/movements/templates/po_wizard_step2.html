@@ -48,7 +48,20 @@
                 Parts<input type="radio" name="__catsel" value="part">
             </div>
             {% for cat2 in cat.standalones %}
-                <div class="catbt {{ cat2.categ_class }}"><button id="{{ cat2.did }}" name="{{cat2.name}}" value="{{ cat2.id }}" >{% if cat2.picture %}<img src="{{ MEDIA_URL }}/{{ cat2.picture }}" />{% else %}<img src="{{ MEDIA_URL }}/images/empty_img.png" />{% endif %}{{ cat2 }}</button></div>
+                <div class="catbt {{ cat2.categ_class }}">
+                    <button id="{{ cat2.did }}" name="{{cat2.name}}" value="{{ cat2.id }}" >
+                        {% if cat2.picture %}<img src="{{ MEDIA_URL }}/{{ cat2.picture }}" />
+                        {% else %}<img src="{{ MEDIA_URL }}/images/empty_img.png" />
+                        {% endif %}{{ cat2 }}
+                        <span>{% if cat2.categ_class == 'bundle-group' %}Set
+                            {% elif cat2.categ_class == 'bundle' %}Bundle
+                            {% elif cat2.categ_class == 'equipment' %}Equipment
+                            {% elif cat2.categ_class == 'part' %}Part
+                            {% else %}{{ cat2.categ_class }}
+                            {% endif %}
+                        </span>
+                    </button>
+                </div>
             {% endfor %}
         </div>
         {% endfor %}
