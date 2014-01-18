@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load styling %}
 {% load generic_views_helpers %}
+{% load online_help %}
 
 {% block pow_content %}
 <style>
@@ -349,6 +350,8 @@
 
 <div class="u2_form">
 {{ wizard.form.management_form }}
+
+{% help_for "view" "step3b" "items" %}
 
 {% with wizard.form as form %}
 

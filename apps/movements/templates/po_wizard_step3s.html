@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load styling %}
 {% load generic_views_helpers %}
+{% load online_help %}
 
 {% block pow_content %}
 
@@ -9,7 +10,7 @@
 {{ wizard.form.management_form }}
 
 {% with wizard.form as form %}
-    <p> Το Κινητό εργαστήριο περιέχει τα παρακάτω components που πρέπει να εισάγετε τα στοιχεία τους επιλέγοντας Προσθήκη. Πρέπει να γίνει πρόσθήκη των στοιχείων όλων των εξοπλισμών που επισημαίνονται με * για να μπορέσετε να προχωρήσετε στο επόμενο βήμα.</p>
+    {% help_for "view" "step3s" %}
 
     {% with f=form.iset %}
         {{ f }}
