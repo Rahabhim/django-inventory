@@ -122,8 +122,8 @@ class PO_Step3(WizardForm):
         if data and self.data.get(it_pref, {}):
             item = ItemTemplate.objects.get(pk=self.data[it_pref])
             category = item.category
-            if data and data.get(pa_pref, {}).get('from_category', False) \
-                    and data[pa_pref]['from_category'] != category:
+            if data and self.data.get(pa_pref, {}).get('from_category', False) \
+                    and self.data[pa_pref]['from_category'] != category:
                 # reset that and any attributes set by previous category
                 self.data = self.data.copy()
                 self.data[pa_pref] = {'from_category': category}
