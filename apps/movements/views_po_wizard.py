@@ -15,6 +15,7 @@ from common.api import role_from_request
 from company.models import Department
 from products.models import ItemCategory, Manufacturer, ItemTemplate
 from products.form_fields import CategoriesSelectWidget, CategoriesAttributesField
+from products.forms import ItemTemplateRequestForm_base
 from procurements.models import Contract
 from ajax_select.fields import AutoCompleteSelectField
 
@@ -241,22 +242,21 @@ class PO_Step3(WizardForm):
 
         return
 
-class PO_Step3_allo(_WizardFormMixin, forms.ModelForm):
-    title = _("New Product Request")
+class PO_Step3_allo(_WizardFormMixin, ItemTemplateRequestForm_base):
     bubble_name = '3iii'
-    url = forms.CharField(max_length=256, required=True, label=_(u'Product URL'),
-            help_text=_("Please enter the URL of the manufacturer for this project"))
     step_is_hidden = True
-
-    class Meta:
-        model = ItemTemplate
-        fields = ('description', 'category', 'manufacturer', 'model', 'part_number', 'url', 'notes')
+    title = _("New Product Request")
 
     def save_data(self, wizard):
         self.instance.save()
         wizard.storage.set_step_data('3a', MultiValueDict())
-        messages.info(wizard.request, _("Your request for %s has been stored. An administrator of the Helpdesk will review it and come back to you. In the meanwhile, please continue filling the Purchase Order form with the remaining items") % \
-                self.instance.description)
+        try:
+            self._send_request()
+            messages.info(wizard.request, _("Your request for %s has been stored. An administrator of the Helpdesk will review it and come back to you. In the meanwhile, please continue filling the Purchase Order form with the remaining items") % \
+                    self.instance.description)
+        except Exception:
+            logger.exception("Helpdesk request fail:")
+            messages.error(wizard.request, _("The data you have entered has been saved, but the Helpdesk has NOT been notified, due to an internal error."))
         return '4'
 
 class PO_Step3b(WizardForm):

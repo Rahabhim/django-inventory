@@ -8,6 +8,7 @@ from models import ItemTemplate, Manufacturer, ItemCategory, ItemCategoryContain
 from django.utils.translation import ugettext_lazy as _
 from form_fields import CategoriesAttributesField
 from ajax_select.fields import AutoCompleteSelectField
+from django.contrib import messages
 
 from movements.weird_fields import ItemsGroupWidget
 from collections import defaultdict
@@ -106,6 +107,41 @@ class ItemTemplateForm(forms.ModelForm):
     class Meta:
         model = ItemTemplate
         exclude = ('photos', 'supplies', 'suppliers')
+
+class ItemTemplateRequestForm_base(forms.ModelForm):
+    """Request a new Product, from non-admin users
+
+        This is taken from PO_Wizard step 3a
+    """
+
+    url = forms.CharField(max_length=256, required=True, label=_(u'Product URL'),
+            help_text=_("Please enter the URL of the manufacturer for this project"))
+
+    class Meta:
+        model = ItemTemplate
+        fields = ('description', 'category', 'manufacturer', 'model', 'part_number', 'url', 'notes')
+
+    def _send_request(self):
+        """Sends notification about the pending ItemTemplate
+        """
+        # Hint: use self.instance
+        pass
+
+class ItemTemplateRequestForm(ItemTemplateRequestForm_base):
+
+    def _set_request(self, request):
+        self._request = request
+
+    def save(self, commit=True):
+        ret = super(ItemTemplateRequestForm, self).save(commit=commit)
+        try:
+            self._send_request()
+            messages.info(self._request, _("Your request for %s has been stored. An administrator of the Helpdesk will review it and come back to you.") % \
+                    self.instance.description)
+        except Exception:
+            logger.exception("Helpdesk request fail:")
+            messages.error(self._request, _("The data you have entered has been saved, but the Helpdesk has NOT been notified, due to an internal error."))
+        return ret
 
 class ItemPartsForm_inline(InlineModelForm):
     item_template = AutoCompleteSelectField('product', show_help_text=False, required=False,

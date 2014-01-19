@@ -8,8 +8,10 @@ from models import ItemTemplate, ItemCategory, Manufacturer, ProductAttribute
 template_list = {'text':_('item templates'), 'view':'template_list', 'famfam':'page_go'}
 template_pending_list = {'text':_('pending item templates'), 'view':'template_pending_list', 
         'famfam':'page_go', 'condition': user_is_staff }
-template_create = {'text':_('create new template'), 'view':'template_create', 
+template_create = {'text':_('create new template'), 'view':'template_create',
         'famfam':'page_add', 'condition': can_add(ItemTemplate)}
+template_request = {'text': _("New Product Request"), 'view':'template_request',
+        'famfam':'page_add' }
 template_orphan_list = {'text':_('orphans templates'), 'view':'template_orphans_list'}
 template_update = {'text':_(u'edit'), 'view':'template_update', 'args':'object.id', 'famfam':'page_edit', 'condition': can_edit}
 template_delete = {'text':_(u'delete'), 'view':'template_delete', 'args':'object.id', 'famfam':'page_delete', 'condition': can_delete}
@@ -51,6 +53,8 @@ register_links(['template_list', 'template_create', 'template_view',
                 'template_orphans_list', 'template_update', 'template_delete', 
                 'template_photos', 'template_assign_supply', 'template_assign_suppliers'],
             [template_create], menu_name='sidebar')
+
+register_links(['template_list'], [template_request,], menu_name='sidebar')
 
 register_links(ItemTemplate, [dict(template_update, hide_text=True ), dict(template_assets, hide_text=True )])
 register_links(ItemTemplate, [template_list, template_delete, template_photos, 

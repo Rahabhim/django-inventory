@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
-
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic.create_update import create_object, update_object
 
@@ -22,7 +22,7 @@ from forms import ItemTemplateForm, ItemTemplateForm_view, \
         ManufacturerForm, ManufacturerForm_view, \
         ProductAttributeForm, ProductAttributeForm_view, \
         ProductAttributeValueForm, ProductAttributeValueForm_view, \
-        ItemTemplateAttributesForm
+        ItemTemplateAttributesForm, ItemTemplateRequestForm
 
 from assets.views import TemplateAssetsView
 
@@ -58,6 +58,13 @@ urlpatterns = patterns('products.views',
                     template_name= 'product_form.html',
                     extra_context={'object_name':_(u'item template')}),
             name='template_create'),
+    url(r'^template/request/$', GenericCreateView.as_view(form_class=ItemTemplateRequestForm,
+                    template_name= 'product_request_form.html',
+                    success_url=lambda obj, req: reverse('template_list'),
+                    extra_context={'object_name':_(u'item template'),
+                            'title': _("New Product Request"),
+                                }),
+            name='template_request'),
     url(r'^template/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
             form_class=ItemTemplateForm,
             template_name= 'product_form.html',
