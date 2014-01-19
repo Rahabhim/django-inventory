@@ -58,7 +58,8 @@ def supplier_filter_queryset(form, parent, parent_queryset):
 supplier_filter = {'name': 'supplier', 'title':_(u'Supplier'),
             'queryset': supplier_filter_queryset, 'destination': 'supplier'}
 
-po_active_filter = {'name': 'state', 'title': _(u'State'),'destination':'state'}
+po_active_filter = {'name': 'state', 'title': _(u'State'), 'destination':'state',
+            'choices': 'movements.PurchaseOrder.state' }
 
 def open_move_as_cart(obj, request):
     cart_utils.close_all_carts(request)
@@ -116,7 +117,7 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/state/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=PurchaseOrderStatus, success_url="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), name='purchase_order_state_delete'),
 
     url(r'^purchase/order/list/$', views.PurchaseOrderListView.as_view( \
-                list_filters=[po_active_filter, purchase_order_state_filter, contract_filter, supplier_filter]),
+                list_filters=[po_active_filter, contract_filter, supplier_filter]),
             name='purchase_order_list'),
     url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
                 queryset=lambda r: PurchaseOrder.objects.by_request(r).filter(state__in=('draft', 'pending')).distinct()), 
