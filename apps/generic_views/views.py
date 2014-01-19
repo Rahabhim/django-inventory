@@ -540,6 +540,8 @@ class _InlineViewMixin(object):
     def form_valid(self, form):
         if hasattr(form, '_pre_save_by_user'):
             form._pre_save_by_user(self.request.user)
+        if hasattr(form, '_set_request'):
+            form._set_request(self.request)
         context = self.get_context_data()
         if all([ inline_form.is_valid() for inline_form in context['formsets']]):
             self.object = form.save()
