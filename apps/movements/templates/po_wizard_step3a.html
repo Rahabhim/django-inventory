@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load styling %}
 {% load generic_views_helpers %}
+{% load online_help %}
 
 {% block pow_content %}
 <div class="u2_form">
@@ -9,8 +10,7 @@
 
 {% with wizard.form as form %}
     <table class="wiz_form">
-    <tr><td colspan="3">Επιλέξατε Άλλο, που σημαίνει ότι το στοιχείο που αναζητάτε δεν περιέχεται στη λίστα.</td></tr>
-    <tr><td colspan="3">Παρακαλούμε εισάγετε παρακάτω τις παρακάτω πληροφορίες για το στοιχείο αυτό και πατήστε Αποστολή για να μας σταλεί. Στη συνέχεια θα λάβετε απάντηση το συντομότερο δυνατό στο email του λογαριασμού με τον οποίο έχετε συνδεθεί.</td></tr>
+    <tr><td colspan="3">{% help_for "view" "step3a" %}</td></tr>
     {% for field in form%}
     <tr><th>{{ field.label }}
             {% if field.field.required and not read_only %} <span style="color: red;" title="{% trans 'required' %}">*</span>{% endif %}
