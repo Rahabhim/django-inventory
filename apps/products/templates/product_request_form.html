@@ -1,0 +1,37 @@
+{% extends 'generic_form_layout.html' %}
+{% load i18n %}
+{% load styling %}
+{% load online_help %}
+
+{% block form_layout %}
+<div class="content">
+    {% help_for "view" %}
+
+    <div class="group newline">
+        {% field_for description %}
+    </div>
+    <div class="group newline">
+        {% field_for category%}
+    </div>
+    <div class="group newline">
+        {% field_for manufacturer %}
+    </div>
+    <div class="group inline">
+        {% field_for model %}
+    </div>
+    <div class="group newline">
+        {% field_for part_number %}
+    </div>
+
+    <div class="group newline">
+        {% field_for url %}
+    </div>
+
+    <div class="group newline">
+        {% field_for notes %}
+    </div>
+
+    <div style="clear:both;"> </div>
+</div>
+
+{% endblock %}
