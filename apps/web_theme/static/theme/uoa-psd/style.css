@@ -691,6 +691,10 @@ form.form .filter_form.table {
     overflow: inherit;
 }
 
+form.form .filter_form select {
+    max-width: 25em;
+}
+
 /* search button in fiter forms */
 form.form .filter_form button.button {
   padding:5px 10px;
@@ -711,6 +715,7 @@ form.form .filter_form button.button {
   vertical-align: middle;
   white-space: nowrap;
   word-wrap: normal;
+  float: inherit;
 
 }
 
