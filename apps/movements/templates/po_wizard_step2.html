@@ -10,9 +10,18 @@
         $( "#{{ wizard.form.new_category.auto_id }} li" ).removeClass( "ui-corner-top" ).addClass( "ui-corner-left" );
 
         $("div.cat_box div.catsel input").change(function() {
-            var sel = $("div.cat_box div.catsel input:checked").val();
-            console.log("Radio select:", sel);
-            
+            var sel = $(this).val();
+            var my_name = $(this)[0].name;
+            //console.log("Radio select:", sel, my_name);
+
+            $("div.cat_box div.catsel input").each(function(i, elem) {
+                // iterate over all selections and check ones that have
+                // same value but belong to sibling categories
+                if (elem.name == my_name)
+                    return;
+                if (elem.value == sel)
+                    $(elem).prop('checked', true);
+                });
             if (sel == "*"){
                 $("div.cat_box div.catbt").show();
             }
@@ -41,11 +50,11 @@
         <div id="{{ cat.did }}" class="cat_box">
                 <h2>{{ cat }}</h2>
             <div class="catsel">
-                All<input type="radio" name="__catsel" value="*" checked>&nbsp;
-                Sets<input type="radio" name="__catsel" value="bundle-group">&nbsp;
-                Bundles<input type="radio" name="__catsel" value="bundle">&nbsp;
-                Equipment<input type="radio" name="__catsel" value="equipment">&nbsp;
-                Parts<input type="radio" name="__catsel" value="part">
+                All<input type="radio" name="__catsel_{{cat.id}}" value="*" checked>&nbsp;
+                Sets<input type="radio" name="__catsel_{{cat.id}}" value="bundle-group">&nbsp;
+                Bundles<input type="radio" name="__catsel_{{cat.id}}" value="bundle">&nbsp;
+                Equipment<input type="radio" name="__catsel_{{cat.id}}" value="equipment">&nbsp;
+                Parts<input type="radio" name="__catsel_{{cat.id}}" value="part">
             </div>
             {% for cat2 in cat.standalones %}
                 <div class="catbt {{ cat2.categ_class }}">
