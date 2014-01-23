@@ -123,8 +123,13 @@ class PO_Step3(WizardForm):
         if data and self.data.get(it_pref, {}):
             item = ItemTemplate.objects.get(pk=self.data[it_pref])
             category = item.category
-            if data and self.data.get(pa_pref, {}).get('from_category', False) \
-                    and self.data[pa_pref]['from_category'] != category:
+
+            from_category = False
+            if self.data.get(pa_pref, False):
+                # it may be empty on form POST submission
+                from_category = self.data[pa_pref].get('from_category')
+
+            if not (from_category and from_category == category):
                 # reset that and any attributes set by previous category
                 self.data = self.data.copy()
                 self.data[pa_pref] = {'from_category': category}
