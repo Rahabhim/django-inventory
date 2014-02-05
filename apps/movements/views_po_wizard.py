@@ -120,20 +120,25 @@ class PO_Step3(WizardForm):
         super(PO_Step3, self).__init__(data, files, **kwargs)
         pa_pref = self.add_prefix('product_attributes')
         it_pref = self.add_prefix('item_template')
+        data_pa_pref = False
+        if self.data and self.data.get(pa_pref, False) \
+                    and isinstance(self.data[pa_pref], dict):
+            data_pa_pref = self.data[pa_pref]
+
         if data and self.data.get(it_pref, {}):
             item = ItemTemplate.objects.get(pk=self.data[it_pref])
             category = item.category
 
             from_category = False
-            if self.data.get(pa_pref, False):
+            if data_pa_pref:
                 # it may be empty on form POST submission
-                from_category = self.data[pa_pref].get('from_category')
+                from_category = data_pa_pref.get('from_category')
 
             if not (from_category and from_category == category):
                 # reset that and any attributes set by previous category
                 self.data = self.data.copy()
                 self.data[pa_pref] = {'from_category': category}
-        elif data and self.data.get(pa_pref, {}).get('from_category', False):
+        elif (data_pa_pref or {}).get('from_category', False):
             # Set the manufacturer according to the existing products of `from_category` ,
             # in descending popularity order
             category = self.data[pa_pref]['from_category']
