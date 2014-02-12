@@ -322,20 +322,20 @@ class PurchaseOrder(models.Model):
             if not lsrcs:
                 msg = _(u'There is no procurement location configured in the system!')
                 messages.error(request, msg, fail_silently=True)
-                raise RuntimeError
+                return None
 
             if loc_kind == 'bdl':
                 ldests = Location.objects.filter(department__isnull=True, usage='production')[:1]
                 if not ldests:
                     msg = _(u'This is not bundling location configured in the system!')
                     messages.error(request, msg, fail_silently=True)
-                    raise RuntimeError
+                    return None
             elif loc_kind == '':
                 ldests = [master_location,]
                 if not master_location:
                     msg = _(u'This is not default department and location for this user, please fix!')
                     messages.error(request, msg, fail_silently=True)
-                    raise RuntimeError
+                    return None
             else:
                 # must be a location template_id
                 ldests = Location.objects.filter(department=department, template_id=loc_kind, usage='internal')[:1]
@@ -344,7 +344,7 @@ class PurchaseOrder(models.Model):
                     msg = _("Department %(dept)s does not have a location for \"%(loc)s\" to store items") % \
                             { 'dept': unicode(department), 'loc': unicode(ltmpl) }
                     messages.error(request, msg, fail_silently=True)
-                    raise RuntimeError
+                    return None
             movement, c = Movement.objects.get_or_create(stype='in',
                     location_src=lsrcs[0], location_dest=ldests[0],
                     purchase_order=self,
@@ -380,6 +380,8 @@ class PurchaseOrder(models.Model):
                     if not o.item_id:
                         while depts_copy and not move:
                             move = _get_move(lk, depts_copy[0]) # create, if we really need it
+                            if not move:
+                                break
                             cur_items = move.items.filter(item_template_id=tmpl_id).count()
                             if cur_items >= max_objs:
                                 move = False # not use that move, try next dept..
