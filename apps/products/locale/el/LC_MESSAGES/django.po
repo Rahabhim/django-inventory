@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-09 15:06+0300\n"
+"POT-Creation-Date: 2014-02-15 16:42+0200\n"
 "PO-Revision-Date: 2013-10-03 13:35+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:8 models.py:121
+#: __init__.py:8 models.py:135
 msgid "item templates"
 msgstr "προϊόντα"
 
@@ -29,121 +29,147 @@ msgstr "προϊόντα σε αναμονή έγκρισης"
 msgid "create new template"
 msgstr "Νέο προϊόν"
 
-#: __init__.py:13
+#: __init__.py:13 urls.py:66
+msgid "New Product Request"
+msgstr ""
+
+#: __init__.py:15
 msgid "orphans templates"
 msgstr "προϊόντα χωρίς εξοπλισμό"
 
-#: __init__.py:14
+#: __init__.py:16
 msgid "edit"
 msgstr "επεξεργασία"
 
-#: __init__.py:15
+#: __init__.py:17
 msgid "delete"
 msgstr "διαγραφή"
 
-#: __init__.py:16
+#: __init__.py:18
 msgid "add / remove photos"
 msgstr "προσθήκη / αφαίρεση φωτογραφιών"
 
-#: __init__.py:17
+#: __init__.py:19
 msgid "related assets"
 msgstr "σχετικός εξοπλισμός"
 
-#: __init__.py:18
+#: __init__.py:20
 msgid "assign supplies"
 msgstr "υπαγωγή εξαρτημάτων"
 
-#: __init__.py:19
+#: __init__.py:21
 msgid "assign suppliers"
 msgstr "σύνδεση προμηθευτών"
 
-#: __init__.py:21
+#: __init__.py:23
 msgid "categories"
 msgstr "είδη"
 
-#: __init__.py:22
+#: __init__.py:24
 msgid "pending categories"
 msgstr "Είδη σε εκκρεμότητα"
 
-#: __init__.py:24
+#: __init__.py:26
 msgid "create new category"
 msgstr "Νέο είδος εξοπλισμού"
 
-#: __init__.py:26
+#: __init__.py:28
 msgid "edit category"
 msgstr "επεξεργασία είδους"
 
-#: __init__.py:28
+#: __init__.py:30
 msgid "delete category"
 msgstr "διαγραφή είδους"
 
-#: __init__.py:31 forms.py:31 models.py:67 models.py:200
+#: __init__.py:33 forms.py:32 models.py:81 models.py:220
 msgid "attributes"
 msgstr "χαρακτηριστικά"
 
-#: __init__.py:33
+#: __init__.py:35
 msgid "create new attribute"
 msgstr "Νέο χαρακτηριστικό"
 
-#: __init__.py:35
+#: __init__.py:37
 msgid "edit attribute"
 msgstr "επεξεργασία χαρακτηριστικού"
 
-#: __init__.py:37
+#: __init__.py:39
 msgid "delete attribute"
 msgstr "διαγραφή χαρακτηριστικού"
 
-#: __init__.py:40
+#: __init__.py:42
 msgid "manufacturers"
 msgstr "κατασκευαστές"
 
-#: __init__.py:41
+#: __init__.py:43
 msgid "create new manufacturer"
 msgstr "νέος κατασκευαστής"
 
-#: __init__.py:43
+#: __init__.py:45
 msgid "edit manufacturer"
 msgstr "επεξεργασία κατασκευαστή"
 
-#: __init__.py:45
+#: __init__.py:47
 msgid "delete manufacturer"
 msgstr "διαγραφή κατασκευαστή"
 
-#: __init__.py:70 models.py:202 views.py:23
+#: __init__.py:74 models.py:222 views.py:23
 msgid "templates"
 msgstr "προϊόντα"
 
-#: form_fields.py:226
+#: form_fields.py:236
 #, python-format
 msgid "Attribute %(attribute)s does not apply to category %(category)s"
 msgstr ""
 "Το χαρακτηριστικό \"%(attribute)s\" δεν περιγράφει το είδος \"%(category)s\""
 
-#: form_fields.py:227
+#: form_fields.py:237
 #, python-format
 msgid "Attribute %(attribute)s specified twice"
 msgstr "Το χαρακτηριστικό \"%(attribute)s\" έχει δοθεί 2 φορές"
 
-#: form_fields.py:228
+#: form_fields.py:238
 #, python-format
 msgid "Attribute %(attribute)s is required for %(category)s"
 msgstr "Πρέπει να ορίσετε %(attribute)s για το είδος \"%(category)s\""
 
-#: form_fields.py:229
+#: form_fields.py:239
 #, python-format
 msgid "Attributes %(attributes)s are required for %(category)s"
 msgstr ""
 "Τα χαρακτηριστικά: %(attributes)s είναι απαραίτητα στο είδος %(category)s"
 
-#: forms.py:32 models.py:192
+#: forms.py:33 models.py:212
 msgid "standard parts"
 msgstr "προεπιλεγμένα εξαρτήματα"
 
-#: forms.py:112 forms.py:120
+#: forms.py:117
+#, fuzzy
+msgid "Product URL"
+msgstr "Προϊόν:"
+
+#: forms.py:118
+msgid "Please enter the URL of the manufacturer for this project"
+msgstr ""
+
+#: forms.py:139
+#, python-format
+msgid ""
+"Your request for %s has been stored. An administrator of the Helpdesk will "
+"review it and come back to you."
+msgstr ""
+
+#: forms.py:143
+msgid ""
+"The data you have entered has been saved, but the Helpdesk has NOT been "
+"notified, due to an internal error."
+msgstr ""
+
+#: forms.py:148 forms.py:156
 msgid "Template"
 msgstr "Προϊόν"
 
-#: forms.py:116 forms.py:123
+#: forms.py:152 forms.py:159
 msgid "Standard Parts"
 msgstr "Προεπιλεγμένα Εξαρτήματα"
 
@@ -151,7 +177,7 @@ msgstr "Προεπιλεγμένα Εξαρτήματα"
 msgid "Name"
 msgstr "Όνομα"
 
-#: models.py:11 models.py:51
+#: models.py:11 models.py:65
 msgid "sequence"
 msgstr "Ακολουθία"
 
@@ -159,11 +185,11 @@ msgstr "Ακολουθία"
 msgid "parent category"
 msgstr "γονικό είδος"
 
-#: models.py:14 models.py:107
+#: models.py:14 models.py:121
 msgid "approved"
 msgstr "Εγκεκριμένο"
 
-#: models.py:15 urls.py:96 urls.py:102
+#: models.py:15 urls.py:104 urls.py:110
 msgid "Is bundle"
 msgstr "Είναι σύνθεση"
 
@@ -183,112 +209,112 @@ msgstr "Εικόνα"
 msgid "Chained location"
 msgstr "Συνδεδεμένη Τοποθεσία"
 
-#: models.py:31 urls.py:106 urls.py:112 urls.py:116 urls.py:125
+#: models.py:31 urls.py:114 urls.py:120 urls.py:124 urls.py:133
 msgid "item category"
 msgstr "είδος προϊόντων"
 
-#: models.py:35
+#: models.py:49
 msgid "May contain"
 msgstr "Μπορεί να περιέχει"
 
-#: models.py:36
+#: models.py:50
 msgid "contained category"
 msgstr "περιεχόμενο είδος"
 
-#: models.py:37
+#: models.py:51
 msgid "minimum count"
 msgstr "ελάχιστο πλήθος"
 
-#: models.py:38
+#: models.py:52
 msgid "maximum count"
 msgstr "μέγιστο πλήθος"
 
-#: models.py:49 urls.py:38 urls.py:42
+#: models.py:63 urls.py:38 urls.py:42
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:50 urls.py:151
+#: models.py:64 urls.py:159
 msgid "short name"
 msgstr "σύντομο όνομα"
 
-#: models.py:54 models.py:106 urls.py:32 urls.py:35
+#: models.py:68 models.py:120 urls.py:32 urls.py:35
 msgid "category"
 msgstr "είδος"
 
-#: models.py:55
+#: models.py:69
 msgid "required"
 msgstr "απαιτείται"
 
-#: models.py:56
+#: models.py:70
 msgid "include in name"
 msgstr "περιλαμβάνεται στο όνομα"
 
-#: models.py:66 models.py:73 models.py:199 urls.py:160 urls.py:164 urls.py:171
+#: models.py:80 models.py:87 models.py:219 urls.py:168 urls.py:172 urls.py:179
 msgid "attribute"
 msgstr "χαρακτηριστικό"
 
-#: models.py:75 models.py:196
+#: models.py:89 models.py:216
 msgid "value"
 msgstr "τιμή"
 
-#: models.py:84
+#: models.py:98
 msgid "attribute value"
 msgstr "τιμή χαρακτηριστικού"
 
-#: models.py:85
+#: models.py:99
 msgid "attribute values"
 msgstr "Τιμές χαρακτηριστικού"
 
-#: models.py:91
+#: models.py:105
 msgid "country of origin"
 msgstr "χώρα προέλευσης"
 
-#: models.py:95 models.py:110 urls.py:29 urls.py:133 urls.py:137 urls.py:141
+#: models.py:109 models.py:124 urls.py:29 urls.py:141 urls.py:145 urls.py:149
 msgid "manufacturer"
 msgstr "κατασκευαστής"
 
-#: models.py:105
+#: models.py:119
 msgid "description"
 msgstr "περιγραφή"
 
-#: models.py:108
+#: models.py:122
 msgid "brand"
 msgstr "μάρκα"
 
-#: models.py:109
+#: models.py:123
 msgid "Brand name, if different from manufacturer"
 msgstr "Όνομα μάρκας, αν διαφέρει από το όνομα του κατασκευαστή"
 
-#: models.py:111
+#: models.py:125
 msgid "model"
 msgstr "μοντέλο"
 
-#: models.py:112
+#: models.py:126
 msgid "part number"
 msgstr "κωδικός προϊόντος"
 
-#: models.py:113
+#: models.py:127
 msgid "URL"
 msgstr "URL"
 
-#: models.py:114
+#: models.py:128
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:115 views.py:42
+#: models.py:129 views.py:42
 msgid "supplies"
 msgstr "εξαρτήματα"
 
-#: models.py:116 views.py:58
+#: models.py:130 views.py:58
 msgid "suppliers"
 msgstr "προμηθευτές"
 
-#: models.py:120 urls.py:47 urls.py:59 urls.py:65 urls.py:69 urls.py:75
-#: urls.py:81
+#: models.py:134 urls.py:47 urls.py:59 urls.py:65 urls.py:73 urls.py:77
+#: urls.py:83 urls.py:89
 msgid "item template"
 msgstr "προϊόν"
 
-#: models.py:157
+#: models.py:177
 #, python-format
 msgid ""
 "An item of %(self_cat)s must contain at least %(min_count)d of %(sub_cat)s, "
@@ -297,7 +323,7 @@ msgstr ""
 "Ένα αντικείμενο κατηγορίας: %(self_cat)s πρέπει να περιέχει τουλάχιστον "
 "%(min_count)d από %(sub_cat)s, αλλά τώρα έχετε βάλει μόνο %(count)d."
 
-#: models.py:159
+#: models.py:179
 #, python-format
 msgid ""
 "An item of %(self_cat)s must contain at least %(min_count)d of %(sub_cat)s."
@@ -305,7 +331,7 @@ msgstr ""
 "Ένα αντικείμενο κατηγορίας: %(self_cat)s πρέπει να περιέχει τουλάχιστον "
 "%(min_count)d από %(sub_cat)s."
 
-#: models.py:161
+#: models.py:181
 #, python-format
 msgid ""
 "An item of %(self_cat)s cannot have more than %(max_count)d of %(sub_cat)s. "
@@ -314,39 +340,39 @@ msgstr ""
 "Εξοπλισμός %(self_cat)s δεν μπορεί να περιέχει περισσότερα από %(max_count)d "
 "από το είδος: %(sub_cat)s. Έχετε δώσει %(count)d ."
 
-#: models.py:167
+#: models.py:187
 #, python-format
 msgid "An item of %(self_cat)s cannot contain any items of %(sub_cat)s."
 msgstr ""
 "Εξοπλισμός %(self_cat)s δεν μπορεί να περιέχει εξαρτήματα: %(sub_cat)s ."
 
-#: models.py:173
+#: models.py:193
 #, python-format
 msgid "An item of %s is not a group, cannot have contained items"
 msgstr ""
 "Ο εξοπλισμός κατηγορίας: %s δεν είναι σύνθεση, δεν επιτρέπεται να περιέχει "
 "εξαρτήματα."
 
-#: models.py:175
+#: models.py:195
 #, python-format
 msgid "An item of %s is not a bundle, cannot contain anything"
 msgstr ""
 "Το αντικείμενο κατηγορίας: %s δεν είναι σύνθεση, δεν επιτρέπεται να περιέχει "
 "εξαρτήματα."
 
-#: models.py:186
+#: models.py:206
 msgid "parent"
 msgstr "γονικό"
 
-#: models.py:187
+#: models.py:207
 msgid "template"
 msgstr "προϊόν"
 
-#: models.py:188 templates/product_itemparts.html:69
+#: models.py:208 templates/product_itemparts.html:69
 msgid "Quantity"
 msgstr "Ποσότητα"
 
-#: models.py:191
+#: models.py:211
 msgid "part"
 msgstr "Εξάρτημα"
 
@@ -362,7 +388,7 @@ msgstr "Είδος"
 msgid "pending item template"
 msgstr "προϊόν σε εκκρεμότητα"
 
-#: urls.py:70
+#: urls.py:78
 msgid ""
 "Will be deleted from any user that may have it assigned and from any item "
 "group."
@@ -370,47 +396,47 @@ msgstr ""
 "Θα αφαιρεθεί από οποιονδήποτε χρήστη το έχει συνδεδεμένο και από οποιαδήποτε "
 "σύνθεση."
 
-#: urls.py:73
+#: urls.py:81
 msgid "orphan templates"
 msgstr "ορφανά προϊόντα"
 
-#: urls.py:93 urls.py:150
+#: urls.py:101 urls.py:158
 msgid "Sequence"
 msgstr "Ακολουθία"
 
-#: urls.py:94 urls.py:100
+#: urls.py:102 urls.py:108
 msgid "Parent category"
 msgstr "γονικό είδος"
 
-#: urls.py:95 urls.py:101
+#: urls.py:103 urls.py:109
 msgid "Approved"
 msgstr "Εγκεκριμένο"
 
-#: urls.py:97
+#: urls.py:105
 msgid "list of item categories"
 msgstr "Λίστα ειδών εξοπλισμού"
 
-#: urls.py:103
+#: urls.py:111
 msgid "list of pending item categories"
 msgstr "Λίστα ειδών σε εκκρεμότητα έγκρισης"
 
-#: urls.py:130
+#: urls.py:138
 msgid "Manufacturers"
 msgstr "Κατασκευαστές"
 
-#: urls.py:145
+#: urls.py:153
 msgid "Manufacturer details"
 msgstr "Λεπτομέρειες Κατασκευαστή"
 
-#: urls.py:152
+#: urls.py:160
 msgid "Required"
 msgstr "Απαιτείται"
 
-#: urls.py:153
+#: urls.py:161
 msgid "list of attributes"
 msgstr "Λίστα χαρακτηριστικών"
 
-#: urls.py:155
+#: urls.py:163
 msgid "Create attribute"
 msgstr "Δημιουργία χαρακτηριστικού"
 

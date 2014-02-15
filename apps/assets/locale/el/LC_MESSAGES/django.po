@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-09 15:06+0300\n"
+"POT-Creation-Date: 2014-02-15 16:42+0200\n"
 "PO-Revision-Date: 2013-06-03 09:52+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -61,15 +61,15 @@ msgstr "Εκτύπωση"
 msgid "list all groups"
 msgstr "λίστα συνθέσεων"
 
-#: __init__.py:35 models.py:20 models.py:38
+#: __init__.py:36 models.py:20 models.py:38
 msgid "state"
 msgstr "κατάσταση"
 
-#: __init__.py:52 models.py:89 models.py:170
+#: __init__.py:53 models.py:89 models.py:170
 msgid "assets"
 msgstr "εξοπλισμός"
 
-#: __init__.py:61 __init__.py:66
+#: __init__.py:62 __init__.py:67
 msgid "print assets list"
 msgstr "εκτύπωση εξοπλισμού μονάδας"
 
