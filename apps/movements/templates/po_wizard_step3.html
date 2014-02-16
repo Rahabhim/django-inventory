@@ -114,6 +114,7 @@
         </div>
         <div class="found_product">
            <label>Επιλεγμένο προϊόν:</label> {{ form.item_template }}
+            <span id="qty_container">&times; {{ form.quantity }} ({{ form.quantity.label }})</span>
             <div id="label_not_found"><img src="{{ STATIC_URL }}images/dialog-warning.png" width="22px" height="22px"/>Δεν βρέθηκε προϊόν </div>
             <div id="note_not_found">
                 <i>Σημείωση</i>: Σε περίπτωση που δεν βρήκατε τον εξοπλισμό που επιθυμείτε
@@ -124,12 +125,14 @@
     </div>
 
     <div id="ss3s-2">
-        <h3>Ποσότητα και σειριακοί αριθμοί</h3>
-    <div>{{ form.quantity.label }}: {{ form.quantity }}
-            {% if form.quantity.errors %}<div class="wf_error">{% for error in form.quantity.errors %}<div class="error">{{ error }}</div>{%endfor %}</div>{% endif %}
-        <br/>
-        {{ form.serials.label}}: <br/> {{ form.serials }}
-        {% if form.serials.errors %}<div class="wf_error">{% for error in form.serials.errors %}<div class="error">{{ error }}</div>{%endfor %}</div>{% endif %}
+        <h3>{% trans 'Serial numbers' %}</h3>
+        <div>
+            {{ form.serials.label}}: <br/> {{ form.serials }}
+            {% if form.serials.errors %}<div class="wf_error">
+                {% for error in form.serials.errors %}<div class="error">{{ error }}</div>{%endfor %}
+                </div>
+            {% endif %}
+        </div>
     </div>
 
 <script>
