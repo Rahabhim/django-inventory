@@ -170,6 +170,37 @@
         margin-top: 1.2em;
     }
 
+    div.product_search .label_not_found {
+        display: none;
+        background-color: #FFDCA8;
+        padding: 4px;
+        padding-right: 4em;
+    }
+    div.product_search .label_not_found img {
+        margin-right: 10px;
+    }
+
+    div.product_search .line_vals{
+        display: none;
+    }
+    div.product_search .line_vals .on_deck2 {
+        background-color: #C0FFFF;
+    }
+
+    div.product_search .product_selection {
+        padding-bottom: 4px;
+    }
+
+    div.product_search .product_selection.not-found {
+        background-color: #FFC0C0;
+    }
+    div.product_search .product_selection.found.selected {
+        background-color: #C0FFFF;
+    }
+    div.product_search .product_selection.found {
+        background-color: #FFDCA8;
+    }
+
     div.product_search .note_not_found {
         margin-left: 2em;
         display: block;
@@ -199,6 +230,7 @@
         $('#fill_in_pane > div').hide();
         $(field_id).show('fast');
         $(field_id+"_part").val('');
+        clear_attribs(field_id);
     }
 
     /** Add an optional category, display in left menu and activate on right
@@ -223,7 +255,7 @@
         $(field_id).show('fast');
         var part_qty = $('#cont_parts-'+ part_id +' input[name="'+ field_id.substr(1)+'_part_qty"]').val();
         /* Cleanup the right pane and display our part on deck */
-        clear_attribs(field_id);
+        clear_attribs(field_id, true);
         $(field_id + "_part").val(part_id);
         $(field_id + "_on_deck").text($('#cont_parts-' + part_id + ' > a.cont_part').text());
         $(field_id + "_qty").val(part_qty);
@@ -231,12 +263,21 @@
 
     /** Clear the attributes form, on user's request
     */
-    function clear_attribs(field_id) {
+    function clear_attribs(field_id, has_part) {
         $(field_id + "_manuf_combo option:selected").prop("selected", false);
-        $(field_id + "_combo option:selected").prop("selected", false);
+        $(field_id + "_combo").empty();
         $(field_id + "_combo_results").text('');
         $(field_id + "_attribs option:selected").prop("selected", false);
-        $(field_id+ "_note_not_found").hide();
+        $(field_id + " .product_selection").removeClass("found selected not-found")
+        if (has_part) {
+            $(field_id+ " .note_not_found").hide();
+            $(field_id+ " .label_not_found").hide();
+            $(field_id+ " .line_vals").show();
+        } else {
+            $(field_id+ " .note_not_found").show();
+            $(field_id+ " .label_not_found").show();
+            $(field_id+ " .line_vals").hide();
+        }
         return false;
     }
 
@@ -254,17 +295,19 @@
         if (data.length)
             pcombo.append($('<option>', {value: ''}).text('-----'));
         else
-            pcombo.append($('<option>', {value: ''}).text('--- Δε βρέθηκε ---'));
+            pcombo.append($('<option>', {value: ''}).text('--- Κανένα ---'));
 
 
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
         }
-        if (data.length)
+        if (data.length){
             $(field_id + "_combo_results").text('('+ data.length + ')');
+            $(field_id + " .product_selection").removeClass("not-found selected").addClass("found");
+        }
         else {
+            $(field_id + " .product_selection").removeClass("found selected").addClass("not-found");
             $(field_id + "_combo_results").text('');
-            $(field_id+ "_note_not_found").show();
         }
     }
 
@@ -287,10 +330,16 @@
         var $selected = $(field_id +"_combo option:selected");
         if ($selected && $selected.val()) {
             select_part2(field_id, $selected.text(), $selected.val());
-            $(field_id+ "_note_not_found").hide();
+            $(field_id+ " .note_not_found").hide();
+            $(field_id+" .label_not_found").hide();
+            $(field_id + " .line_vals").show();
+            $(field_id + " .product_selection").addClass('selected');
         } else {
             $(field_id + '_on_deck').text('Κανένα');
-            $(field_id+ "_note_not_found").show();
+            $(field_id+ " .note_not_found").show();
+            $(field_id+" .label_not_found").show();
+            $(field_id + " .line_vals").hide();
+            $(field_id+" .product_selection").removeClass('selected');
             return false;
         }
     }
