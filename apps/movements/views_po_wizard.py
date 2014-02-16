@@ -166,6 +166,10 @@ class PO_Step3(WizardForm):
         aitems = step4_data.setdefault('4-items',[])
         ItemsGroupField.post_validate(our_data)
 
+        if not our_data['item_template']:
+            messages.error(wizard.request, _("You must select some product! Please try again"))
+            return '2'
+
         if not our_data.get('line_num', False):
             # we have to compute an unique id for the new line_num
             lnmax = 0

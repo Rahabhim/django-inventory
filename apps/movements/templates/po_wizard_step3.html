@@ -23,8 +23,22 @@
 
     #label_not_found {
         display: none;
+        background-color: #FFDCA8;
+        padding: 4px;
+        padding-right: 4em;
     }
+    #label_not_found img {
+        margin-right: 10px;
+    }
+
     div.found_product #{{wizard.form.item_template.auto_id}}_text {
+        display: none;
+    }
+    div.found_product #{{wizard.form.item_template.auto_id}}_on_deck div {
+        background-color: #C0FFFF;
+    }
+
+    #qty_container {
         display: none;
     }
     #ss3s-1 > div hr {
@@ -46,6 +60,20 @@
         cursor:pointer;
         display: inline;
     }
+    #product_selection {
+        padding-bottom: 4px;
+    }
+
+    #product_selection.not-found {
+        background-color: #FFC0C0;
+    }
+    #product_selection.found.selected {
+        background-color: #C0FFFF;
+    }
+    #product_selection.found {
+        background-color: #FFDCA8;
+    }
+
 </style>
 
 {{ wizard.form.management_form }}
@@ -68,7 +96,7 @@
         </div>
         <p align="center"> ή </p>
 
-        <div class="product_search"> <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία:
+        <div class="product_search" id="product_search_combi"> <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία:
                 </p>
             
         <label>Κατασκευαστής: </label>{{ form.manufacturer }}<br/>
@@ -79,11 +107,14 @@
                 {% endfor %}
             </div>
             <hr/>
-            <label>{{form.item_template2.label}}:</label> {{ form.item_template2 }}
+            <div id="product_selection">
+                <label>{{form.item_template2.label}}:<span id="product_combo_results"></span></label>
+                    {{ form.item_template2 }}
+            </div>
         </div>
         <div class="found_product">
            <label>Επιλεγμένο προϊόν:</label> {{ form.item_template }}
-            <span id="label_not_found">Δεν βρέθηκε προϊόν. </span>
+            <div id="label_not_found"><img src="{{ STATIC_URL }}images/dialog-warning.png" width="22px" height="22px"/>Δεν βρέθηκε προϊόν </div>
             <div id="note_not_found">
                 <i>Σημείωση</i>: Σε περίπτωση που δεν βρήκατε τον εξοπλισμό που επιθυμείτε
                 επιλέξτε εδώ για
@@ -111,8 +142,16 @@
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
         }
-        if (!data.length)
+        if (!data.length){
             $("#note_not_found").show();
+            $("#qty_container").hide();
+            $("#product_combo_results").text('(δε βρέθηκε!)');
+            $("#product_selection").removeClass().addClass("not-found");
+        }
+        else {
+            $("#product_selection").removeClass().addClass("found");
+            $("#product_combo_results").text('('+ data.length + ')');
+        }
     }
     function update_product2(){
         var attribs = new Array();
@@ -136,11 +175,14 @@
         $("#{{form.item_template.auto_id}}").autocompleteselect(fake_win);
         if ($selected && $selected.val()) {
             fake_win.select(null, {item: {pk: $selected.val(), repr: $selected.text()}});
+            $("#product_selection").addClass('selected');
         }
         else {
             fake_win.select(null, {item: false });
+            $("#qty_container").hide()
             $("#note_not_found").show();
             $("#label_not_found").show();
+            $("#product_selection").removeClass('selected');
             return false;
         }
     }
@@ -149,12 +191,42 @@
     $("#{{form.item_template.auto_id}}_on_deck").bind('added', function() {
         $("#label_not_found").hide();
         $("#note_not_found").hide();
+        $("#qty_container").show();
         });
 
     $("#{{form.item_template.auto_id}}_on_deck").bind('killed', function() {
         $("#label_not_found").show();
         $("#note_not_found").show();
+        $("#qty_container").hide();
         });
+
+    /* Submit function to check validity.
+        Unfortunatelly, Django does not do that for us, since we are using two
+        inputs for the product.
+        
+        Remember NOT to bind that function to $("form").submit(...) , because
+        it would also disable jumping to numbered wizard steps (ie. going back to "2").
+    */
+    function form3_submit(event) {
+            var res = $("#{{form.item_template.auto_id}}");
+            if (res.val())
+                return;
+            else {
+                /* in case the user has selected nothing so far */
+                $("#label_not_found").show();
+                $("#note_not_found").show();
+                event.preventDefault();
+                $('html, body').animate({
+                    scrollTop: $("#product_search_combi").offset().top -26 }, 1000);
+                return false;
+            }
+        };
+
+    $(function() {
+        $("#submit0").click(form3_submit);
+        /* this one (from po_wizard_base), too... */
+        $("#submit_early").click(form3_submit);
+    });
 </script>
 {% endwith %}
 </div>
