@@ -302,12 +302,12 @@
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
         }
         if (data.length){
-            $(field_id + "_combo_results").text('('+ data.length + ')');
+            $(field_id + " .combo_results").text('('+ data.length + ')');
             $(field_id + " .product_selection").removeClass("not-found selected").addClass("found");
         }
         else {
             $(field_id + " .product_selection").removeClass("found selected").addClass("not-found");
-            $(field_id + "_combo_results").text('');
+            $(field_id + " .combo_results").text('');
         }
     }
 
