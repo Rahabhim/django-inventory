@@ -99,7 +99,7 @@ purchase_order_updwiz_mass = {'text':_('edit order items (mass)'),
 purchase_order_delete = {'text':_('delete order'), 'view':'purchase_order_delete', 'args':'object.id', 'famfam':'cart_delete', 'condition': (iz_open_or_rej, can_delete)  }
 purchase_order_close = {'text':_('close order'), 'view':'purchase_order_close', 'args':'object.id', 'famfam':'cross'}
 purchase_order_open = {'text':_('open order'), 'view':'purchase_order_open', 'args':'object.id', 'famfam':'accept'}
-purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_link',
+purchase_order_receive = {'text':_('receive entire order'), 'famfam':'package_go',
             'view':'purchase_order_receive', 'args':'object.id', 
             'condition': (iz_open, lambda o,c: _context_has_perm(c, PurchaseOrder, '%(app)s.receive_%(model)s'))  }
 
@@ -109,7 +109,7 @@ purchase_order_wizard = {'text':_('create new order'), 'view':'purchaseorder_wiz
 purchase_order_wizard_mass = {'text':_('create new mass order'), 'view':'purchaseorder_wizard_new_mass', 'famfam':'application_cascade', 
             'condition': (can_do_mass_po, has_no_pending_inventories)}
 
-purchase_order_reject = {'text':_('reject order'), 'famfam':'package_red',
+purchase_order_reject = {'text':_('reject order'), 'famfam':'package_delete',
             'view':'purchase_order_reject', 'args':'object.id', 
             'condition': (iz_open, lambda o,c: _context_has_perm(c, PurchaseOrder, '%(app)s.validate_%(model)s'))  }
 
@@ -144,7 +144,7 @@ register_links(['purchase_order_state_create', 'purchase_order_state_list', 'pur
 register_links(PurchaseOrderItemStatus, [purchase_order_item_state_update, purchase_order_item_state_delete])
 register_links(['purchase_order_item_state_create', 'purchase_order_item_state_list', 'purchase_order_item_state_update', 'purchase_order_item_state_delete'], [purchase_order_item_state_create], menu_name='sidebar')
 
-register_links(PurchaseOrder, [dict(purchase_order_updwiz, hide_text=True), dict(purchase_order_updwiz_mass, hide_text=True)])
+register_links(PurchaseOrder, [dict(purchase_order_updwiz, hide_text=True), dict(purchase_order_updwiz_mass, hide_text=True), dict(purchase_order_receive, hide_text=True)])
 register_links(['purchase_order_view',], [purchase_order_receive, purchase_order_reject,  purchase_order_delete, purchase_order_copy], menu_name='sidebar')
 # register_links(['purchase_order_list', 'purchase_order_view', 'supplier_purchase_orders'], [purchase_order_create], menu_name='sidebar')
 
