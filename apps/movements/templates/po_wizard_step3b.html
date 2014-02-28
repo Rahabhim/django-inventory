@@ -266,7 +266,7 @@
     function clear_attribs(field_id, has_part) {
         $(field_id + "_manuf_combo option:selected").prop("selected", false);
         $(field_id + "_combo").empty();
-        $(field_id + "_combo_results").text('');
+        $(field_id + " .combo_results").text('');
         $(field_id + "_attribs option:selected").prop("selected", false);
         $(field_id + " .product_selection").removeClass("found selected not-found")
         if (has_part) {
