@@ -42,7 +42,8 @@ class WizardForm(_WizardFormMixin, forms.Form):
 
 class PO_Step1b(_WizardFormMixin, forms.ModelForm):
     title = _("Purchase Order Header Data")
-    user_id = forms.CharField(max_length=32, required=False, label=_(u'user defined id'))
+    user_id = forms.CharField(max_length=32, required=False, label=_(u'user defined id'),
+            help_text=_("Either the order number or protocol of reception"))
     issue_date = forms.DateField(label=_(u'issue date'), required=True,help_text=_("Format: 23/04/2010"))
 
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.filter(use_mass=True))
