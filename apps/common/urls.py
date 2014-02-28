@@ -18,6 +18,10 @@ name_filter = {'name': 'name', 'title': _("name"), 'destination': 'name__contain
 usage_filter = {'name': 'usage', 'title': _("location type"), 'destination': 'usage',
             'choices':'common.Location.usage' , }
 
+template_filter = {'name': 'template', 'title': _("Type of template"), 'destination': 'template',
+            'queryset': LocationTemplate.objects.filter(sequence__lt=100), }
+
+
 urlpatterns = patterns('common.views',
     url(r'^about/$', direct_to_template, { 'template' : 'about.html'}, 'about'),
 )
@@ -26,7 +30,8 @@ urlpatterns += patterns('',
     url(r'^set_language/$', 'django.views.i18n.set_language', name='set_language'),
 
     url(r'^location/list/$', GenericBloatedListView.as_view(queryset=Location.objects.all(), 
-                list_filters=[location_dept_filter, name_filter, usage_filter],
+                list_filters=[location_dept_filter, name_filter, template_filter, usage_filter],
+                extra_columns=[{'name': _('Type'), 'attribute': 'template'}, ],
                 prefetch_fields=('department',),
                 extra_context=dict(title =_(u'locations'))), name='location_list'),
     url(r'^location/create/$', GenericCreateView.as_view(model=Location, form_class=LocationForm), name='location_create'),
