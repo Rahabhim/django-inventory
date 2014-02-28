@@ -29,7 +29,7 @@ class ItemCategory(models.Model):
 
     class Meta:
         verbose_name=_("item category")
-        ordering = ['sequence', 'name']
+        ordering = ['name',]
 
     @property
     def categ_class(self):

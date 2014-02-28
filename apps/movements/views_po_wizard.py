@@ -93,7 +93,7 @@ class PO_Step1(PO_Step1b):
 
 class PO_Step2(WizardForm):
     title = _("Select Product Categories")
-    new_category = forms.ModelChoiceField(queryset=ItemCategory.objects.filter(approved=True),
+    new_category = forms.ModelChoiceField(queryset=ItemCategory.objects.filter(approved=True).order_by('sequence', 'name'),
             widget=CategoriesSelectWidget)
 
     def save_data(self, wizard):
