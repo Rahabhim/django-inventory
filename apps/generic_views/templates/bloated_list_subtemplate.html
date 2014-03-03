@@ -52,7 +52,7 @@
     <tbody>
     {% if not group_results %}
         {% for object in object_list %}
-            <tr class="{% cycle 'odd' 'even2' %}">
+            <tr class="{% cycle 'odd' 'even2' %}{% if state_column %} state-{{ object|object_property:state_column|default_if_none:'' }}{% endif %}">
             {% for col in columns %}
                 {% if not col.attribute %}
                     {% if main_object %}
@@ -102,7 +102,7 @@
             {% if group.items %}
             {% include "bloated_list_header_row.html" %}
                 {% for object in group.items %}
-                <tr class="bl_inrow {% cycle 'odd' 'even2' %}">
+                <tr class="bl_inrow {% cycle 'odd' 'even2' %}{% if state_column %} state-{{ object|object_property:state_column|default_if_none:'' }}{% endif %}">
             {% for col in columns %}
                 {% if not col.attribute %}
                     {% if main_object %}
