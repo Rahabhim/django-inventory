@@ -7,7 +7,15 @@ from django.utils.translation import ugettext_lazy as _
 from dynamic_search.api import register
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 
+class PartnerManager(models.Manager):
+    def by_request(self, request):
+        if request.user.is_superuser or request.user.is_staff:
+            return self.all()
+        else:
+            return self.filter(active=True)
+
 class Partner(models.Model):
+    objects = PartnerManager()
     name = models.CharField(max_length=128, db_index=True, unique=True, verbose_name=_("name"))
     active = models.BooleanField(verbose_name=_("active"), default=False)
     web = models.CharField(max_length=128, blank=True, null=True)
@@ -103,6 +111,7 @@ class Location(models.Model):
 
 class Supplier(Partner):
     #TODO: Contact, extension
+    objects = PartnerManager()
     vat_number = models.CharField(max_length=32, null=True, blank=True, verbose_name=_("VAT number"))
 
     class Meta:

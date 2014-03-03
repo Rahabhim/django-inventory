@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from dynamic_search.api import register
 from collections import defaultdict
 
-from common.models import Partner, Supplier
+from common.models import Partner, PartnerManager, Supplier
 
 class ItemCategory(models.Model):
     name = models.CharField(max_length=64, verbose_name=_("Name"))
@@ -101,6 +101,7 @@ class ProductAttributeValue(models.Model):
 class Manufacturer(Partner):
     #TODO: Contact, extension
     # just put any field here, for db:
+    objects = PartnerManager()
     country = models.CharField(max_length=32, null=True, blank=True, 
         verbose_name=_("country of origin"), )
 

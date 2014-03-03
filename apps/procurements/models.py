@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from dynamic_search.api import register
 
-from common.models import Partner # , Supplier
+from common.models import Partner, PartnerManager # , Supplier
 
 
 class Delegate(Partner):
@@ -13,6 +13,7 @@ class Delegate(Partner):
         procurement contracts. The contracts are `outsourced` to the delegates, which
         take on the administrative tasks.
     """
+    objects = PartnerManager()
     #name = models.CharField(max_length=64)
     #parent = models.ForeignKey("ItemCategory", related_name="+", blank=True, null=True)
     code = models.CharField(max_length=32, blank=True, null=True)
