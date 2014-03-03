@@ -729,6 +729,7 @@ class PurchaseOrderListView(GenericBloatedListView):
     queryset=PurchaseOrder.objects.by_request
     title = _(u'list of purchase orders')
     prefetch_fields = ('procurement', 'supplier')
+    state_column = 'state'
     extra_columns = [ {'name': _('Contract'), 'attribute': 'procurement'},
                     {'name': _('Supplier'), 'attribute': 'supplier', },
                     {'name': _('Department'), 'attribute': 'department' },
@@ -739,6 +740,7 @@ class MovementListView(GenericBloatedListView):
     queryset=Movement.objects.by_request
     title =_(u'movements')
     order_by = '-date_act'
+    state_column = 'state'
     extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
                     {'name':_(u'state'), 'attribute': 'get_state_display', 'order_attribute': 'state'},
                     {'name':_(u'type'), 'attribute': 'get_stype_display', 'order_attribute': 'stype'}]
