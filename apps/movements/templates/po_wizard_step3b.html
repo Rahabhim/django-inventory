@@ -313,12 +313,22 @@
 
     function update_product2(field_id, cat_id){
         var attribs = new Array();
-        $(field_id + "_attribs div.product_attrib > select").each(function() { attribs.push(this.value)});
+        $(field_id + "_attribs div.product_attrib > select").each( function() { if (this.value) attribs.push(this.value) });
+        var manuf_value = $(field_id + "_manuf_combo")[0].value;
+        // console.log("lookup specs", cat_id, attribs);
+
+        if (! (manuf_value || attribs.length)){
+            // don't perform query if no selector is specified
+            // Just clear the results.
+            update_product3([], field_id);
+            return;
+        }
+
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
                 'data': {'term': 'foo', 'attributes': attribs,
                         'category': cat_id,
-                        'manufacturer': $(field_id + "_manuf_combo")[0].value },
+                        'manufacturer': manuf_value },
                 'success': function(data,status, xhr) { update_product3(data, field_id);},
             });
         $(field_id + "_combo_results").text('?');
