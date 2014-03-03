@@ -623,6 +623,27 @@ ul.list li .left  {
   border:none;
 }
 
+.table tr.state-draft {
+    color: #001E40;
+}
+.table tr.state-draft:nth-child(odd), .table tr.state-pending:nth-child(odd) {
+    background-color: #FFDCA8;
+}
+.table tr.state-draft:nth-child(even), .table tr.state-pending:nth-child(even) {
+    background-color: #FFC47C;
+}
+
+.table tr.state-pending {
+    color: #000080;
+}
+.table tr.state-done {
+    color: #004000;
+}
+
+.table tr.state-reject {
+    color: #800000;
+}
+
 /* info elements */
 .info {
   font-size:0.9em;

@@ -126,6 +126,7 @@ class GenericBloatedListView(django_gv.ListView):
     extra_columns = None
     enable_sorting = True
     title = None
+    state_column = False
 
     def get_title(self):
         if getattr(self, 'title', None):
@@ -148,6 +149,8 @@ class GenericBloatedListView(django_gv.ListView):
         context['title'] = self.get_title()
         if self.filter_form:
             context['filter_form'] = self.filter_form
+        if self.state_column:
+            context['state_column'] = self.state_column
         return context
 
     def _select_prefetch(self, queryset, fields_list):
