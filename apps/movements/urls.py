@@ -40,11 +40,8 @@ stype_filter = {'name':'stype', 'title':_(u'type'),
             'choices':'movements.Movement.stype' , 'destination':'stype'}
 
 
-location_src_filter = {'name': 'location_src', 'title': _('Source location'), 
-            'destination': make_mv_location('location_src')}
-
-location_dest_filter = {'name': 'location_dest', 'title': _('Destination location'), 
-            'destination': make_mv_location('location_dest')}
+location_io_filter = {'name': 'location_src', 'title': _('Location'), 
+            'destination': make_mv_location('location_src', 'location_dest')}
 
 #def contract_filter_queryset(form, parent, parent_queryset):
 #    return Contract.objects.filter(id__in=parent_queryset.order_by('procurement__id').values('procurement'))
@@ -212,12 +209,12 @@ urlpatterns = patterns('movements.views',
         name='move_items_internal'),
     url(r'^objects/moves/list/$', views.MovementListView.as_view( \
                     list_filters=[state_filter, stype_filter, \
-                                location_src_filter, location_dest_filter],),
+                                location_io_filter],),
             name='movements_list'),
     url(r'^objects/moves/pending_list/$', views.MovementListView.as_view( \
                     queryset=lambda r: Movement.objects.by_request(r).filter(state__in=('draft', 'pending')).exclude(stype='in'),
                     list_filters=[ stype_filter, \
-                                location_src_filter, location_dest_filter],),
+                                location_io_filter],),
             name='movements_pending_list'),
     url(r'^objects/moves/(?P<pk>\d+)/$', GenericDetailView.as_view(
                 form_class=MovementForm_view,

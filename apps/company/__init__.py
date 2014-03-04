@@ -16,14 +16,21 @@ department_assets = {'text':_(u'assets'), 'view':'department_assets', 'args':'ob
 department_update = {'text':_(u'edit department'), 'view':'department_update',
             'args':'object.id', 'famfam':'pencil', 'condition': user_is_super}
 
-def make_mv_location(destination):
+def make_mv_location(*dests):
     """ Constructs the filter clojure for a destination column
     """
-    dept_col = destination + '__department__in'
     # dept_col2 = destination + '__department__isnull'
-    lname_col = destination + '__name__icontains'
-    return lambda q: Q(**{dept_col: models.Department.objects.filter(_department_filter_q(q))}) | \
-                    Q(**{lname_col: q})
+    dds = []
+    for d in dests:
+        dds.append((d + '__department__in', lambda q: models.Department.objects.filter(_department_filter_q(q)) ))
+        dds.append((d + '__name__icontains', lambda q: q ))
+
+    def ret_fn(q):
+        qs = []
+        for dd_k, dd_l in dds:
+            qs.append(Q(**{dd_k : dd_l(q) }))
+        return reduce(lambda a, b: a | b, qs)
+    return ret_fn
 
 company_department_list = {'text':_('departments'), 'view':'company_department_list', 'famfam':'page_go'}
 company_department_type_list = {'text':_('department types'), 'view':'company_department_type_list', 'famfam':'page_go'}
