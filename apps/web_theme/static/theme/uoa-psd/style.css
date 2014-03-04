@@ -506,6 +506,10 @@ input.checkbox {
   margin-bottom: 20px;
 }
 
+.form input.ui-autocomplete-input {
+    background: transparent url('../images/icon-search.png') right center no-repeat;
+}
+
 .group.inline {
   margin-bottom:10px;
 }
