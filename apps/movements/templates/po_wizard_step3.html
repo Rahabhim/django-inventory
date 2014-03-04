@@ -30,6 +30,10 @@
     #label_not_found img {
         margin-right: 10px;
     }
+    #ss3s-1 div.found_product {
+        background: transparent;
+        border: 2px solid #80ff80;
+    }
 
     div.found_product #{{wizard.form.item_template.auto_id}}_text {
         display: none;
@@ -49,10 +53,10 @@
         display: inline-block;
         width: 15em;
     }
-    div.found_product #note_not_found {
+    #note_not_found {
         margin-left: 2em;
     }
-    div.found_product #note_not_found button {
+    #note_not_found button {
         border:0px solid #fff;  /* needed for opera */
         border-bottom:1px solid blue;
         background:transparent;
@@ -115,12 +119,12 @@
         <div class="found_product">
            <label>Επιλεγμένο προϊόν:</label> {{ form.item_template }}
             <span id="qty_container">&times; {{ form.quantity }} ({{ form.quantity.label }})</span>
-            <div id="label_not_found"><img src="{{ STATIC_URL }}images/dialog-warning.png" width="22px" height="22px"/>Δεν επιλέχθηκε προϊόν </div>
-            <div id="note_not_found">
-                <i>Σημείωση</i>: Σε περίπτωση που δεν βρήκατε τον εξοπλισμό που επιθυμείτε
-                επιλέξτε εδώ για
-                <button type="submit" name="wizard_goto_step" value="3a">αίτημα καταχώρησης νέου προϊόντος</button>
-            </div>
+        </div>
+        <div id="label_not_found"><img src="{{ STATIC_URL }}images/dialog-warning.png" width="22px" height="22px"/>Δεν επιλέχθηκε προϊόν </div>
+        <div id="note_not_found">
+            <i>Σημείωση</i>: Σε περίπτωση που δεν βρήκατε τον εξοπλισμό που επιθυμείτε
+            επιλέξτε εδώ για
+            <button type="submit" name="wizard_goto_step" value="3a">αίτημα καταχώρησης νέου προϊόντος</button>
         </div>
     </div>
 
