@@ -171,7 +171,7 @@ class FilterForm(forms.Form):
                         empty_label= "(%s)" % unicode(queryset.model._meta.verbose_name),
                         required=False)
             elif 'choices' in list_filter:
-                if isinstance(list_filter['choices'], tuple):
+                if isinstance(list_filter['choices'], (tuple, list)):
                     choices = list_filter['choices']
                 elif isinstance(list_filter['choices'], basestring):
                     # we also support the "app.model.field" syntax to automatically fetch
