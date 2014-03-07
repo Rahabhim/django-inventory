@@ -114,8 +114,8 @@ class ItemTemplateRequestForm_base(forms.ModelForm):
         This is taken from PO_Wizard step 3a
     """
 
-    url = forms.CharField(max_length=256, required=True, label=_(u'Product URL'),
-            help_text=_("Please enter the URL of the manufacturer for this project"))
+    url = forms.fields.CharField(max_length=256, required=False, label=_(u'Product URL'),
+            help_text=_("Please enter the URL of the manufacturer for this product"))
 
     class Meta:
         model = ItemTemplate
