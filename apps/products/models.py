@@ -116,7 +116,15 @@ class Manufacturer(Partner):
     def __unicode__(self):
         return self.name
 
+class ItemTemplateManager(models.Manager):
+    def by_request(self, request):
+        if request.user.is_superuser or request.user.is_staff:
+            return self.all()
+        else:
+            return self.filter(approved=True)
+
 class ItemTemplate(models.Model):
+    objects = ItemTemplateManager()
     description = models.CharField(verbose_name=_(u"description"), max_length=256)
     category = models.ForeignKey(ItemCategory, verbose_name=_("category"), on_delete=models.PROTECT)
     approved = models.BooleanField(default=False, verbose_name=_("approved"))

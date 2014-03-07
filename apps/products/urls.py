@@ -6,6 +6,7 @@ from django.views.generic.create_update import create_object, update_object
 
 from conf import settings as inventory_settings
 
+from common.api import user_is_staff
 from photos.views import generic_photos
 
 from generic_views.views import generic_detail, generic_list, \
@@ -39,11 +40,15 @@ product_name_filter = {'name': 'name', 'title': _('name'),
             'destination': ('description__icontains', 'model__icontains',
                             'part_number')}
 
+approved_filter = {'name': 'active', 'title': _('approved'), 'destination': 'approved',
+        'choices': [('', '*'), (1, _('Approved')), (0, _('Not Approved'))],
+        'condition': user_is_staff}
+
 generic_name_filter = {'name': 'name', 'title': _('name'), 'destination':'name__icontains'}
 
 urlpatterns = patterns('products.views',
-    url(r'^template/list/$', GenericBloatedListView.as_view(queryset=ItemTemplate.objects.all(),
-            list_filters=[ manufacturer_filter, category_filter, product_name_filter],
+    url(r'^template/list/$', GenericBloatedListView.as_view(queryset=ItemTemplate.objects.by_request,
+            list_filters=[ manufacturer_filter, category_filter, product_name_filter, approved_filter],
             title=_(u'item template'),
             extra_columns=[dict(name=_(u'Manufacturer'), attribute='manufacturer'),
                             dict(name=_(u'Category'), attribute='category'),] ),
