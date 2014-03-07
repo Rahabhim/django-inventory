@@ -165,7 +165,7 @@ def can_delete_movement(obj, context):
         return False
 
 movement_delete = {'text':_('delete pending movement'), 'view':'movement_delete', \
-            'args':'object.id', 'famfam':'basket_delete', \
+            'args':'object.id', 'famfam':'cancel', \
             'condition': (iz_open_or_rej, can_delete_movement) }
 
 action_destroy = dict(text=_(u'Destroy assets'), view='destroy_items', famfam='computer_delete', condition= (can_add(Movement), has_no_pending_inventories))
@@ -188,18 +188,18 @@ register_links([('purchase_order_receive', Movement),],
            'condition': check_our_move(state=('draft', 'pending')) }])
 
 movement_cart_open = {'text':_(u'Select more Items'), 'view':'movement_cart_open',
-            'args':'object.id', 'famfam':'package_green',
+            'args':'object.id', 'famfam':'cart_put',
             'condition': (check_our_move(state='draft'),  can_edit, has_no_pending_inventories) }
 movement_cart_close = {'text':_(u'End selection'), 'view':'movement_cart_close',
-            'args':'object.id', 'famfam':'package_red',
+            'args':'object.id', 'famfam':'cart_go',
             'condition': check_our_move(state='draft', perm='%(app)s.change_%(model)s')}
 
 movement_validate = {'text':_(u'validate move'), 'view':'movement_do_close',
-            'args':'object.id', 'famfam':'page_go', 
+            'args':'object.id', 'famfam':'cart_edit',
             'condition': check_our_move(state=('draft', 'pending'), perm='%(app)s.validate_%(model)s') }
 
 movement_reject = {'text':_(u'reject move'), 'view':'movement_do_reject',
-            'args':'object.id', 'famfam':'alert', 
+            'args':'object.id', 'famfam':'cart_delete',
             'condition': check_our_move(state=('draft', 'pending'), perm='%(app)s.validate_%(model)s') }
 
 register_links(['movement_view', ], [ movement_validate, movement_reject,
