@@ -271,7 +271,10 @@ class FilterForm(forms.Form):
         """
         qargs = kwargs.pop('qargs', {})
         super(FilterForm, self).__init__(*args, **kwargs)
+        self.field_conditions = {}
         for list_filter in list_filters:
+            if 'condition' in list_filter:
+                self.field_conditions[list_filter['name']] = list_filter['condition']
             label = list_filter.get('title', list_filter['name']).title()
             if 'lookup_channel' in list_filter:
                 self.fields[list_filter['name']] = AutoCompleteSelectField( \
@@ -314,6 +317,11 @@ class FilterForm(forms.Form):
                 self.fields[list_filter['name']] = forms.CharField(label=label, required=False)
 
     def _init_by_request(self, request):
+        for name, cond in self.field_conditions.items():
+            if not cond:
+                continue
+            if not cond(None, {'request': request, 'user': request.user}):
+                del self.fields[name]
         for fname in self.fields:
             if isinstance(self.fields[fname], AutoCompleteSelectField):
                 UnAutoCompleteField(self.fields, fname, request)
