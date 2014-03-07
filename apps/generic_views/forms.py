@@ -152,7 +152,10 @@ class FilterForm(forms.Form):
         """
         qargs = kwargs.pop('qargs', {})
         super(FilterForm, self).__init__(*args, **kwargs)
+        self.field_conditions = {}
         for list_filter in list_filters:
+            if 'condition' in list_filter:
+                self.field_conditions[list_filter['name']] = list_filter['condition']
             label = list_filter.get('title', list_filter['name']).title()
             if 'lookup_channel' in list_filter:
                 self.fields[list_filter['name']] = AutoCompleteSelectField( \
@@ -187,6 +190,11 @@ class FilterForm(forms.Form):
             else:
                 self.fields[list_filter['name']] = forms.CharField(label=label, required=False)
 
+        for name, cond in self.field_conditions.items():
+            if not cond:
+                continue
+            if not cond(None, {'request': request, 'user': request.user}):
+                del self.fields[name]
 class InlineModelForm(forms.ModelForm):
     def as_table(self):
         "Returns this form rendered as HTML <td>s"
