@@ -159,7 +159,7 @@ class PurchaseOrder(models.Model):
                 ('validate_purchaseorder', 'Can validate a purchase order'), )
 
     def __unicode__(self):
-        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date)
+        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date.strftime(DATE_FMT_FORMAT))
 
     @models.permalink
     def get_absolute_url(self):
@@ -701,7 +701,7 @@ class RepairOrder(models.Model):
         permissions = ( ('validate_repairorder', 'Can validate a repair order'), )
 
     def __unicode__(self):
-        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date)
+        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date.strftime(DATE_FMT_FORMAT))
 
     @models.permalink
     def get_absolute_url(self):
