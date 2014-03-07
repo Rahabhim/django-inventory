@@ -24,6 +24,7 @@ from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm,
         RepairOrderForm_view
 
 from procurements.models import Contract
+from common.api import user_is_staff
 
 __hush = [Contract,]
 
@@ -37,7 +38,8 @@ state_filter = {'name':'state', 'title': _(u'state'),
             'choices':'movements.Movement.state' , 'destination':'state'}
 
 stype_filter = {'name':'stype', 'title':_(u'type'),
-            'choices':'movements.Movement.stype' , 'destination':'stype'}
+            'choices':'movements.Movement.stype' , 'destination':'stype',
+            'condition': user_is_staff }
 
 
 location_io_filter = {'name': 'location_src', 'title': _('Location'), 
