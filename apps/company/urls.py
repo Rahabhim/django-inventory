@@ -12,6 +12,7 @@ from generic_views.views import GenericDeleteView, \
 from forms import DepartmentForm, DepartmentForm_view, DepartmentTypeForm_view
 from company import department_type_filter
 from lookups import _department_filter_q
+from common.views import DepartmentLocationsView
 
 dept_name_filter = {'name': 'name', 'title': _('name'), 'destination': _department_filter_q}
 dept_code_filter = {'name': 'code', 'title': _('code'), 'destination': ('code', 'code2')}
@@ -32,7 +33,9 @@ urlpatterns = patterns('',
             list_filters=[generic_name_filter,],
             title =_(u'department types')),
             name='company_department_type_list'),
-    # url(r'^object/list/company_locations$', ListView.as_view()),
+    url(r'^department/(?P<dept_id>\d+)/locations/$', DepartmentLocationsView.as_view(),
+            name='department_locations'),
+
     
     url(r'^object/view/company_department/(?P<pk>\d+)/$', GenericDetailView.as_view( \
                 form_class=DepartmentForm_view,

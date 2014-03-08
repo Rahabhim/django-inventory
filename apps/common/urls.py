@@ -1,27 +1,15 @@
-from django.db.models import Q
+# -*- encoding: utf-8 -*-
 from django.conf.urls.defaults import patterns, url
 from django.views.generic.simple import direct_to_template
 from django.utils.translation import ugettext_lazy as _
 from generic_views.views import GenericDeleteView, GenericUpdateView, GenericCreateView, \
-                                generic_detail, generic_list, GenericBloatedListView
+                                generic_detail, GenericBloatedListView
 
 from models import Location, Supplier, LocationTemplate
 from forms import LocationForm, LocationForm_view, SupplierForm, \
         LocationTemplateForm, LocationTemplateForm_view
 
-from company.models import Department
-from company.lookups import _department_filter_q
-
-location_dept_filter = {'name': 'dept', 'title': _('department'), 
-            'destination': lambda q: Q(department__in=Department.objects.filter(_department_filter_q(q)))}
-
-name_filter = {'name': 'name', 'title': _("name"), 'destination': 'name__contains' }
-usage_filter = {'name': 'usage', 'title': _("location type"), 'destination': 'usage',
-            'choices':'common.Location.usage' , }
-
-template_filter = {'name': 'template', 'title': _("Type of template"), 'destination': 'template',
-            'queryset': LocationTemplate.objects.filter(sequence__lt=100), }
-
+from views import LocationListView
 
 urlpatterns = patterns('common.views',
     url(r'^about/$', direct_to_template, { 'template' : 'about.html'}, 'about'),
@@ -30,11 +18,7 @@ urlpatterns = patterns('common.views',
 urlpatterns += patterns('',
     url(r'^set_language/$', 'django.views.i18n.set_language', name='set_language'),
 
-    url(r'^location/list/$', GenericBloatedListView.as_view(queryset=Location.objects.all(), 
-                list_filters=[location_dept_filter, name_filter, template_filter, usage_filter],
-                extra_columns=[{'name': _('Type'), 'attribute': 'template'}, ],
-                prefetch_fields=('department',),
-                extra_context=dict(title =_(u'locations'))), name='location_list'),
+    url(r'^location/list/$', LocationListView.as_view(), name='location_list'),
     url(r'^location/create/$', GenericCreateView.as_view(model=Location, form_class=LocationForm), name='location_create'),
     url(r'^location/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(model=Location, form_class=LocationForm), name='location_update'),
     url(r'^location/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Location, success_url="location_list", extra_context=dict(object_name=_(u'locations'))), name='location_delete'),

@@ -19,13 +19,16 @@ supplier_assign_itemtemplate = {'text':_(u'assign templates'), 'view':'supplier_
 supplier_purchase_orders = {'text':_(u'related purchase orders'), 'view':'supplier_purchase_orders', 'args':'object.id', 'famfam':'cart_go', 'condition': user_is_staff}
 
 location_list = {'text':_('locations'), 'view':'location_list', 'famfam':'map'}
-location_create = {'text':_(u'create new location'), 'view':'location_create', 'famfam':'map_add',
-            'condition': can_add(Location) }
-location_update = {'text':_(u'edit'), 'view':'location_update', 'args':'object.id', 'famfam':'map_edit',
-            'condition': can_edit}
-location_delete = {'text':_(u'delete'), 'view':'location_delete', 'args':'object.id', 'famfam':'map_delete',
-            'condition': can_delete}
-location_assets = {'text':_(u'assets'), 'view':'location_assets', 'args':'object.id', 'famfam':'computer', 'condition': user_is_staff}
+location_create = {'text':_(u'create new location'), 'view':'location_create',
+            'famfam':'map_add', 'condition': can_add(Location) }
+location_update = {'text':_(u'edit'), 'view':'location_update',
+            'args':'object.id', 'famfam':'map_edit',
+            'condition': can_edit, 'hide_text': True}
+location_delete = {'text':_(u'delete'), 'view':'location_delete',
+                'args':'object.id', 'famfam':'map_delete',
+            'condition': can_delete, 'hide_text': True}
+location_assets = {'text':_(u'assets'), 'view':'location_assets', 'hide_text': True,
+            'args':'object.id', 'famfam':'computer', 'condition': user_is_staff}
 
 
 register_links(['supplier_list', 'supplier_create', 'supplier_update', 'supplier_view', 'supplier_delete', 'supplier_assign_itemtemplates'], [supplier_create], menu_name='sidebar')

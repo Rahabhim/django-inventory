@@ -11,10 +11,14 @@ from lookups import _department_filter_q
 
 department_type_filter = {'name':'department_type', 'title':_(u'type'), 'queryset': models.DepartmentType.objects.all(), 'destination':'dept_type'}
 
-department_assets = {'text':_(u'assets'), 'view':'department_assets', 'args':'object.id', 'famfam':'computer'}
+department_assets = {'text':_(u'assets'), 'view':'department_assets',
+                'hide_text': True, 'args':'object.id', 'famfam':'computer'}
+department_locations = {'text': _("locations"), 'view': 'department_locations',
+                'args': 'object.id', 'famfam': 'map', 'hide_text': True }
 
 department_update = {'text':_(u'edit department'), 'view':'department_update',
-            'args':'object.id', 'famfam':'pencil', 'condition': user_is_super}
+            'args':'object.id', 'famfam':'pencil', 'condition': user_is_super,
+            'hide_text': True}
 
 def make_mv_location(*dests):
     """ Constructs the filter clojure for a destination column
@@ -40,6 +44,6 @@ register_menu([
             'links':[ company_department_list, company_department_type_list, location_list, location_tmpl_list ],
         'famfam':'building','position':4, 'condition': user_is_staff}])
 
-register_links(models.Department, [department_assets, department_update])
+register_links(models.Department, [department_assets, department_locations, department_update])
 
 #eof
