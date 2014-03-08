@@ -6,7 +6,8 @@ from generic_views.views import GenericDeleteView, GenericUpdateView, GenericCre
                                 generic_detail, generic_list, GenericBloatedListView
 
 from models import Location, Supplier, LocationTemplate
-from forms import LocationForm, LocationForm_view, SupplierForm, LocationTemplateForm_view
+from forms import LocationForm, LocationForm_view, SupplierForm, \
+        LocationTemplateForm, LocationTemplateForm_view
 
 from company.models import Department
 from company.lookups import _department_filter_q
@@ -44,7 +45,14 @@ urlpatterns += patterns('',
     url(r'^location/template/(?P<object_id>\d+)/$', generic_detail, \
                 dict(form_class=LocationTemplateForm_view, queryset=LocationTemplate.objects.all()),
                 name='location_template_view'),
-    
+    url(r'^location/template/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(
+                    model=LocationTemplate, form_class=LocationTemplateForm),
+                name='location_template_update'),
+    url(r'^location/template/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(
+                    model=LocationTemplate, success_url="location_list",
+                    extra_context=dict(object_name=_(u'location templates'))),
+                name='location_template_delete'),
+
     url(r'^supplier/(?P<object_id>\d+)/$', generic_detail, dict(form_class=SupplierForm,
                 title=_("Supplier details"), queryset=Supplier.objects.all()),
             name='supplier_view'),

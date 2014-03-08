@@ -19,6 +19,10 @@ class SupplierForm(forms.ModelForm):
     class Meta:
         model = Supplier
 
+class LocationTemplateForm(forms.ModelForm):
+    class Meta:
+        model = LocationTemplate
+
 class LocationTemplateForm_view(DetailForm):
     class Meta:
         model = LocationTemplate

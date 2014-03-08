@@ -4,7 +4,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 from common.api import register_links, register_menu, user_is_staff, user_is_super
-from common import location_list
+from common import location_list, location_tmpl_list
 
 import models
 from lookups import _department_filter_q
@@ -37,7 +37,7 @@ company_department_type_list = {'text':_('department types'), 'view':'company_de
 
 register_menu([
     {'text':_('company'), 'view':'company_department_list', 
-            'links':[ company_department_list, company_department_type_list, location_list, ],
+            'links':[ company_department_list, company_department_type_list, location_list, location_tmpl_list ],
         'famfam':'building','position':4, 'condition': user_is_staff}])
 
 register_links(models.Department, [department_assets, department_update])

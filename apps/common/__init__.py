@@ -5,7 +5,7 @@
 from django.utils.translation import ugettext_lazy as _
 from common.api import register_links, register_menu, can_add, can_edit, can_delete, user_is_staff
 
-from models import Supplier, Location
+from models import Supplier, Location, LocationTemplate
 
 supplier_list = {'text':_('suppliers'), 'view':'supplier_list', 'famfam':'lorry'}
 supplier_create = {'text':_('create new supplier'), 'view':'supplier_create', 'famfam':'lorry_add',
@@ -37,6 +37,16 @@ register_links(Location, [location_update, location_delete, location_assets])
 location_filter = {'name':'location', 'title':_(u'location'), \
                 'lookup_channel': 'location', 'destination':'location'}
 
+
+location_tmpl_list = {'text':_('location templates'), 'view':'location_template_list', 'famfam':'cog', 'condition': user_is_staff}
+location_tmpl_create = {'text':_(u'create new location template'), 'view':'location_template_create', 'famfam':'cog_add',
+            'condition': can_add(LocationTemplate) }
+location_tmpl_update = {'text':_(u'edit'), 'view':'location_template_update', 'args':'object.id', 'famfam':'cog_edit',
+            'condition': can_edit}
+location_tmpl_delete = {'text':_(u'delete'), 'view':'location_template_delete', 'args':'object.id', 'famfam':'cog_delete',
+            'condition': can_delete}
+
+register_links(LocationTemplate, [location_tmpl_update, location_tmpl_delete])
 
 def has_pending_inventories(obj, context):
     from inventory.models import Inventory # lazy import!
