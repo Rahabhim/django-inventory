@@ -53,7 +53,7 @@
 
     {% with form.user_id as field %}
     <tr><th>{{ field.label }}</th>
-        <td class="wf_middle"></td><td class="wf_field">{{field }}
+        <td class="wf_field">{{field }}
         {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
@@ -64,7 +64,7 @@
 
     {% with form.issue_date as field %}
     <tr><th>{{ field.label }} <font color="red">*</font></th>
-        <td class="wf_middle"></td><td class="wf_field">{{field }}
+        <td class="wf_field">{{field }}
         {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
@@ -74,7 +74,7 @@
 
     {% with form.procurement as field %}
     <tr><th>{{ field.label }} <font color="red">*</font></th>
-        <td class="wf_middle">&nbsp;</td><td class="wf_field">{{field }}
+        <td class="wf_field">{{field }}
         {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
@@ -87,7 +87,7 @@
     {% if user.is_staff and form.department %}
     {% with form.department as field %}
     <tr><th>{{ field.label }} <font color="red">*</font></th>
-        <td class="wf_middle">&nbsp;</td><td class="wf_field">{{field }}
+        <td class="wf_field">{{field }}
         {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
         {% if field.errors %}
         {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
@@ -96,28 +96,15 @@
     {% endwith %}
     {% endif %}
 
-    <tr><th>{%trans "Supplier" %} <font color="red">*</font></th>
-        <td class="wf_middle">{{ form.supplier_name_or_vat.label }}</td>
-        <td class="wf_field">
-            {% with form.supplier_name_or_vat.0 as radio %}{% with form.supplier_vat as field %}
-            <div>{{ radio.tag }} {{ radio.choice_label }}<br/>
-                {{ field.errors }}
-                {{ field }}
-            </div>
-            {% endwith %}{% endwith %}
-
-            <div class="u_or">{% trans 'or' %} </div>
-            {% with form.supplier_name_or_vat.1 as radio %}{% with form.supplier_name as field %}
-            <div>{{ radio.tag }} {{ radio.choice_label }}<br/>
-                {{ field.errors }}
-                {{ field }}
-            </div>
-            {% endwith %}{% endwith %}
-            {% if form.supplier.errors %}
-                {% for error in form.supplier.errors %}<div class="error">{{ error }}</div>{% endfor%}
-            {% endif %}
-        </td>
+    {% with form.supplier as field %}
+    <tr><th>{{ field.label }} <font color="red">*</font></th>
+        <td class="wf_field">{{ field }}
+        {% if field.help_text %}<span class="description">{{ field.help_text }}</span>{% endif %}
+        {% if field.errors %}
+        {% for error in field.errors %}<div class="error">{{ error }}</div>{% endfor%}
+        {% endif %}</td>
     </tr>
+    {% endwith %}
 
     </table>
 {% endwith %}

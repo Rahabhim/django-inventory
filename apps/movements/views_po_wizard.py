@@ -47,13 +47,8 @@ class PO_Step1b(_WizardFormMixin, forms.ModelForm):
     issue_date = forms.DateField(label=_(u'issue date'), required=True,help_text=_("Format: 23/04/2010"))
 
     procurement = forms.ModelChoiceField(label=_("Procurement Contract"), queryset=Contract.objects.filter(use_mass=True))
-    supplier_name_or_vat = forms.ChoiceField(label=_('Find by'), widget=forms.widgets.RadioSelect,
-            initial='name',
-            choices=[('vat', _('VAT (exact)')), ('name', _('Company Name'))], )
-    supplier_name = AutoCompleteSelectField('supplier_name', label=_("Company Name"), required=False,  show_help_text=False)
-    supplier_vat = AutoCompleteSelectField('supplier_vat', label=_("VAT number"), required=False,  show_help_text=False)
-
-    supplier = forms.ModelChoiceField(queryset=Supplier.objects.filter(active=True), widget=DummySupplierWidget)
+    supplier = AutoCompleteSelectField('supplier_vat', label=_("Supplier"), show_help_text=False,
+            help_text=_("You can search by name or full VAT number"))
 
     class Meta:
         model = PurchaseOrder
