@@ -30,12 +30,23 @@ location_delete = {'text':_(u'delete'), 'view':'location_delete',
 location_assets = {'text':_(u'assets'), 'view':'location_assets', 'hide_text': True,
             'args':'object.id', 'famfam':'computer', 'condition': (user_is_staff, lambda obj, c: obj.active)}
 
+location_activate = {'text':_(u'activate'), 'view': 'location_activate',
+            'args':'object.id', 'famfam':'map_add', 'hide_text': True,
+            'condition': lambda obj, ctx: ctx['request'].user.has_perm('common.locations_edit_active') and not obj.active
+            }
+
+location_deactivate = {'text':_(u'deactivate'), 'view': 'location_deactivate',
+            'args':'object.id', 'famfam':'map_delete', 'hide_text': True,
+            'condition': lambda obj, ctx: ctx['request'].user.has_perm('common.locations_edit_active') and obj.active
+            }
+
 
 register_links(['supplier_list', 'supplier_create', 'supplier_update', 'supplier_view', 'supplier_delete', 'supplier_assign_itemtemplates'], [supplier_create], menu_name='sidebar')
 register_links(Supplier, [supplier_update, supplier_delete, supplier_assign_itemtemplate, supplier_purchase_orders])
 
 register_links(['location_list', 'location_create', 'location_update', 'location_delete'], [location_create], menu_name='sidebar')
-register_links(Location, [location_update, location_delete, location_assets])
+register_links(Location, [location_update, location_delete, location_assets,
+            location_activate, location_deactivate])
 
 location_filter = {'name':'location', 'title':_(u'location'), \
                 'lookup_channel': 'location', 'destination':'location'}

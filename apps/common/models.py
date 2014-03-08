@@ -87,6 +87,7 @@ class Location(models.Model):
         ordering = ['sequence', 'name']
         verbose_name = _(u"location")
         verbose_name_plural = _(u"locations")
+        permissions = ( ('locations_edit_active', 'Can activate or deactivate locations'), )
 
     def __unicode__(self):
         ret = ''

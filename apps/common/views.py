@@ -1,13 +1,15 @@
 # -*- encoding: utf-8 -*-
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
+from django.core.exceptions import PermissionDenied
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
+from django.contrib import messages
 
 from generic_views.views import GenericBloatedListView
 
 from models import Location, LocationTemplate
 
-#from common.api import role_from_request
+from common.api import role_from_request
 from company.models import Department
 from company.lookups import _department_filter_q
 
@@ -42,5 +44,49 @@ class DepartmentLocationsView(LocationListView):
         ctx = super(DepartmentLocationsView, self).get_context_data(**kwargs)
         ctx['department'] = Department.objects.get(pk=self.dept_id)
         return ctx
+
+
+def location_do_activate(request, object_id):
+    """Sets the Location to active
+    """
+    location = get_object_or_404(Location, pk=object_id)
+    active_role = role_from_request(request)
+    if request.user.is_superuser:
+        pass
+    elif not (active_role and active_role.has_perm('common.locations_edit_active')):
+        raise PermissionDenied
+    if not location.active:
+        location.active = True
+        messages.info(request, _("Location %s has been activated") % location.name)
+        location.save()
+
+    if 'HTTP_REFERER' in request.META:
+        return redirect(request.META['HTTP_REFERER'])
+    else:
+        return redirect('department_locations', dept_id=location.department.id)
+
+def location_do_deactivate(request, object_id):
+    """Sets the Location to inactive, checks assets there
+    """
+    from assets.models import Item
+
+    location = get_object_or_404(Location, pk=object_id)
+    active_role = role_from_request(request)
+    if request.user.is_superuser:
+        pass
+    elif not (active_role and active_role.has_perm('common.locations_edit_active')):
+        raise PermissionDenied
+
+    if Item.objects.filter(location=location).exists():
+        messages.error(request, _("Location contains assets, cannot deactivate"))
+    elif location.active:
+        location.active = False
+        messages.info(request, _("Location %s has been deactivated") % location.name)
+        location.save()
+
+    if 'HTTP_REFERER' in request.META:
+        return redirect(request.META['HTTP_REFERER'])
+    else:
+        return redirect('department_locations', dept_id=location.department.id)
 
 #eof

@@ -9,7 +9,7 @@ from models import Location, Supplier, LocationTemplate
 from forms import LocationForm, LocationForm_view, SupplierForm, \
         LocationTemplateForm, LocationTemplateForm_view
 
-from views import LocationListView
+from views import LocationListView, location_do_activate, location_do_deactivate
 
 urlpatterns = patterns('common.views',
     url(r'^about/$', direct_to_template, { 'template' : 'about.html'}, 'about'),
@@ -23,6 +23,9 @@ urlpatterns += patterns('',
     url(r'^location/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(model=Location, form_class=LocationForm), name='location_update'),
     url(r'^location/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Location, success_url="location_list", extra_context=dict(object_name=_(u'locations'))), name='location_delete'),
     url(r'^location/(?P<object_id>\d+)/$', generic_detail, dict(form_class=LocationForm_view, queryset=Location.objects.all()), 'location_view'),
+
+    url(r'^location/(?P<object_id>\d+)/activate/$', location_do_activate, name='location_activate'),
+    url(r'^location/(?P<object_id>\d+)/deactivate/$', location_do_deactivate, name='location_deactivate'),
 
     url(r'^location/template/list/$', GenericBloatedListView.as_view(queryset=LocationTemplate.objects.all(),
                 extra_context=dict(title =_(u'location templates'))), name='location_template_list'),
