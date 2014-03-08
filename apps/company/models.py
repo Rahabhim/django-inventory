@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 import logging
 logger = logging.getLogger('apps.'+__name__)
+
 class DepartmentType(models.Model):
     name = models.CharField(max_length=128, verbose_name=_('name'))
     location_tmpl = models.ManyToManyField('common.LocationTemplate', blank=True, related_name='location_tmpl',
@@ -75,21 +76,39 @@ class Department(models.Model):
         else:
             raise ObjectDoesNotExist(_("No sequence for department %s") % self.name)
 
+    def fix_locations(self):
+        """Update Locations for this Department, from template(s)
+        """
+        try:
+            locs_by_tmpl = {}
+            for loc in self.location_set.all():
+                if loc.template is not None:
+                    tmpl_id = loc.template.id
+                    locs_by_tmpl[tmpl_id] = locs_by_tmpl.get(tmpl_id, 0) + 1
+                    # We don't count active ones, we treat all existing as active, here
+
+            for lt in self.dept_type.location_tmpl.all():
+                nold = locs_by_tmpl.get(lt.id, 0)
+                while nold < lt.ncreate:
+                    if nold or lt.ncreate > 1:
+                        name = lt.name + (' %d' % (nold + 1))
+                    else:
+                        name = lt.name
+                    self.location_set.create(name=name, sequence=lt.sequence,
+                                usage='internal', template=lt,
+                                active=(nold < lt.nactive))
+                    nold += 1
+
+        except ObjectDoesNotExist:
+            pass
+
 @receiver(post_save, sender=Department, dispatch_uid='139i436')
 def post_save(sender, **kwargs):
     """ create the locations, after a department has been saved
     """
-    from common.models import Location
     if kwargs.get('created', False) and not kwargs.get('raw', False):
         assert kwargs.get('instance', None), 'keys: %r' % (kwargs.keys(),)
         dept = kwargs['instance']
-        try:
-            for lt in dept.dept_type.location_tmpl.all():
-                dept.location_set.create(name=lt.name, sequence=lt.sequence, usage='internal', template=lt)
-        except ObjectDoesNotExist:
-            pass
-
-    # instance, created, raw, using=None)
-
+        dept.fix_locations()
 
 #eof

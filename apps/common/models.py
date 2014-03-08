@@ -52,6 +52,8 @@ class LocationTemplate(models.Model):
     """
     name = models.CharField(max_length=32, verbose_name=_("name"))
     sequence = models.IntegerField(verbose_name=_("sequence"), default=10)
+    nactive = models.IntegerField(verbose_name=_("number of active"), default=1)
+    ncreate = models.IntegerField(verbose_name=_("total number to create"), default=1)
 
     class Meta:
         ordering = ['sequence', 'name']
