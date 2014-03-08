@@ -25,9 +25,8 @@ template_filter = {'name': 'template', 'title': _("Type of template"), 'destinat
 class LocationListView(GenericBloatedListView):
     queryset=Location.objects.all()  # TODO: by request?
     list_filters=[location_dept_filter, name_filter, template_filter, usage_filter]
-    extra_columns=[{'name': _('Type'), 'attribute': 'template'},
-                    # {''} 
-                    ]
+    extra_columns=[ {'name': _(u'active'), 'attribute': 'fmt_active'},
+                    {'name': _('Type'), 'attribute': 'template'}, ]
     prefetch_fields=('department',)
     extra_context=dict(title =_(u'locations'))
 

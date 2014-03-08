@@ -25,10 +25,10 @@ location_update = {'text':_(u'edit'), 'view':'location_update',
             'args':'object.id', 'famfam':'map_edit',
             'condition': can_edit, 'hide_text': True}
 location_delete = {'text':_(u'delete'), 'view':'location_delete',
-                'args':'object.id', 'famfam':'map_delete',
-            'condition': can_delete, 'hide_text': True}
+                'args':'object.id', 'famfam':'delete',
+            'condition': (can_delete, lambda obj, c: not obj.active), 'hide_text': True}
 location_assets = {'text':_(u'assets'), 'view':'location_assets', 'hide_text': True,
-            'args':'object.id', 'famfam':'computer', 'condition': user_is_staff}
+            'args':'object.id', 'famfam':'computer', 'condition': (user_is_staff, lambda obj, c: obj.active)}
 
 
 register_links(['supplier_list', 'supplier_create', 'supplier_update', 'supplier_view', 'supplier_delete', 'supplier_assign_itemtemplates'], [supplier_create], menu_name='sidebar')

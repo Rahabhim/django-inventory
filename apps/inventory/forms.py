@@ -43,7 +43,7 @@ class InventoryForm(RModelForm):
         except ObjectDoesNotExist:
             pass
         if dept:
-            locations = Location.objects.filter(department=dept)
+            locations = Location.objects.filter(active=True, department=dept)
             if locations:
                 self.initial['location'] = locations[0].id
                 self.fields['location'].initial = locations[0].id

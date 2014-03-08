@@ -67,7 +67,7 @@ class LocationTemplate(models.Model):
 
 
 class Location(models.Model):
-    """
+    """ Place inside a Department, where assets can be stored/registered
     
         The usage is modelled after the OpenERP values.
         inventory is a virtual location, used to correct stock levels
@@ -81,6 +81,7 @@ class Location(models.Model):
             choices=[('customer', _('Customer')), ('procurement', _('Procurement')), 
                     ('internal', _('Internal')), ('inventory', _('Inventory')), 
                     ('supplier', _('Supplier Location')), ('production', _('Bundled'))])
+    active = models.BooleanField(default=True, verbose_name=_(u'active'))
 
     class Meta:
         ordering = ['sequence', 'name']
@@ -108,6 +109,12 @@ class Location(models.Model):
             return self.department.get_sequence()
         else:
             raise ObjectDoesNotExist("No department for location %s" % self.name)
+
+    def fmt_active(self):
+        if self.active:
+            return _(u'Active')
+        else:
+            return _(u'Inactive')
 
 class Supplier(Partner):
     #TODO: Contact, extension

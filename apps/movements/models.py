@@ -338,7 +338,7 @@ class PurchaseOrder(models.Model):
                     return None
             else:
                 # must be a location template_id
-                ldests = Location.objects.filter(department=department, template_id=loc_kind, usage='internal')[:1]
+                ldests = Location.objects.filter(active=True, department=department, template_id=loc_kind, usage='internal')[:1]
                 if not ldests:
                     ltmpl = LocationTemplate.objects.get(pk=loc_kind)
                     msg = _("Department %(dept)s does not have a location for \"%(loc)s\" to store items") % \

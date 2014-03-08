@@ -17,7 +17,7 @@ class ItemForm(RModelForm):
     class Meta:
         model = Item
         exclude = ('photos', 'active', 'is_bundled', 'qty')
-        widgets = {'location': DetailForeignWidget(queryset=Location.objects.all()),
+        widgets = {'location': DetailForeignWidget(queryset=Location.objects.filter(active=True)),
                     'item_template': DetailForeignWidget(queryset=ItemTemplate.objects.all()),
                     'property_number': ReadOnlyInput,
                     }
@@ -31,7 +31,7 @@ class ItemGroupForm(ItemForm):
     class Meta:
         model = ItemGroup
         exclude = ('items', 'active', 'is_bundled', 'qty')
-        widgets = {'location': DetailForeignWidget(queryset=Location.objects.all()),
+        widgets = {'location': DetailForeignWidget(queryset=Location.objects.filter(active=True)),
                     'item_template': DetailForeignWidget(queryset=ItemTemplate.objects.all()),
                     'property_number': ReadOnlyInput,
                     }
@@ -64,7 +64,7 @@ class ItemGroupForm_edit(ItemForm):
         model = ItemGroup
         exclude = ('photos', 'active', 'is_bundled', 'qty')
         widgets = {'items': SubItemsDetailWidget,
-                'location': DetailForeignWidget(queryset=Location.objects.all()),
+                'location': DetailForeignWidget(queryset=Location.objects.filter(active=True)),
                 'item_template': DetailForeignWidget(queryset=ItemTemplate.objects.all()),
                     'property_number': ReadOnlyInput,
                 }

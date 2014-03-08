@@ -359,7 +359,7 @@ def purchase_order_receive(request, object_id):
             if request.GET.get('location_ask', False):
                 master_loc = Location.objects.get(pk=request.GET['location_ask'])
             elif dept:
-                master_loc = Location.objects.filter(department=dept)[:1][0]
+                master_loc = Location.objects.filter(active=True, department=dept)[:1][0]
             else:
                 messages.error(request,_('You must select a location!'), fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
@@ -379,6 +379,9 @@ def purchase_order_receive(request, object_id):
                     if move.state == 'done':
                         continue
                     # Skip movements to bundle location, at this first pass:
+                    if not move.location_dest.active:
+                        moves_pending = True
+                        continue
                     if move.location_dest.usage == 'production':
                         continue
                     if move.state != 'draft':
@@ -991,7 +994,7 @@ def repair_itemgroup(request, object_id):
     may_contain = [ mc.category for mc in item.item_template.category.may_contain.all()]
 
     data['src_locations'] = []
-    for loc in Location.objects.filter(department=dept):
+    for loc in Location.objects.filter(active=True, department=dept):
         data['src_locations'].append((loc, Item.objects.filter(location=loc, \
                                         item_template__category__in=may_contain) \
                                         .order_by('item_template__category', 'item_template')))
@@ -1000,7 +1003,7 @@ def repair_itemgroup(request, object_id):
     data['item'] = item
 
     # C: the locations we can send parts to:
-    data['dest_locations'] = list(Location.objects.filter(department=dept, usage='internal'))
+    data['dest_locations'] = list(Location.objects.filter(active=True, department=dept, usage='internal'))
     data['dest_locations'] += list(Location.objects.filter(department__isnull=True,
                 name__in=[ unicode(_(u'Destroy')), unicode(_(u'Lost'))]))
 

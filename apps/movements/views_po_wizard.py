@@ -546,7 +546,7 @@ class PO_Step5(WizardForm):
         else:
             dept = Department.objects.filter(deprecate=False, location__isnull=False)[:1][0]
             logger.debug("Using an arbitrary department: #%s %s !", dept.id, dept.name)
-        self.fields['location'].queryset = Location.objects.filter(department=dept)
+        self.fields['location'].queryset = Location.objects.filter(active=True, department=dept)
 
     def save_data(self, wizard):
         # Mostly copied from views.purchase_order_receive
@@ -568,7 +568,8 @@ class PO_Step5(WizardForm):
             pass
 
         if not self.cleaned_data.get('location', False):
-            self.cleaned_data['location'] = Location.objects.filter(department=self.cleaned_data['department']).all()[0]
+            self.cleaned_data['location'] = Location.objects.filter(active=True,
+                        department=self.cleaned_data['department']).all()[0]
 
         if po_instance.map_has_left(mapped_items):
             if not active_role.has_perm('movements.change_purchaseorder'):

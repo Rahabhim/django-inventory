@@ -17,6 +17,7 @@ from common.api import role_from_request
 from assets.models import Item
 import datetime
 
+active_locations = Location.objects.filter(active=True)
 
 class UserDetailsWidget(ColumnsDetailWidget):
     show_header = True
@@ -153,9 +154,9 @@ class SubItemsDetailWidget(ColumnsDetailWidget):
     order_by = 'item_template__category__name'
 
 class MovementForm_view(DetailForm):
-    location_src = forms.ModelChoiceField(queryset=Location.objects.all(),
+    location_src = forms.ModelChoiceField(queryset=active_locations,
                 widget=DetailPlainForeignWidget, label=_("Source location"))
-    location_dest = forms.ModelChoiceField(queryset=Location.objects.all(),
+    location_dest = forms.ModelChoiceField(queryset=active_locations,
                 widget=DetailPlainForeignWidget, label=_("Destination location"))
 
     items = forms.ModelMultipleChoiceField(Item.objects.all(), required=False,
@@ -199,7 +200,7 @@ class _outboundMovementForm(_baseMovementForm):
         except ObjectDoesNotExist:
             pass
         if dept:
-            locations = Location.objects.filter(department=dept)[:1]
+            locations = active_locations.filter(department=dept)[:1]
             if locations:
                 self.initial['location_src'] = locations[0].id
         UnAutoCompleteField(self.fields, 'location_src', request)
@@ -218,8 +219,8 @@ class MovementForm_update_po(_baseMovementForm):
 class MovementForm_gu(_baseMovementForm):
     """ Generic update of a Movement
     """
-    location_src = ROModelChoiceField(Location.objects.all(), label=_("From") )
-    location_dest = ROModelChoiceField(Location.objects.all(), label=_("To") )
+    location_src = ROModelChoiceField(active_locations, label=_("From") )
+    location_dest = ROModelChoiceField(active_locations, label=_("To") )
 
     checkpoint_src = ROModelChoiceField(Inventory.objects.all(), label=_("Since inventory") )
     checkpoint_dest = ROModelChoiceField(Inventory.objects.all(), label=_("Accounted in inventory") )
@@ -280,7 +281,7 @@ class MoveItemsForm(_baseMovementForm):
         except ObjectDoesNotExist:
             pass
         if dept:
-            locations = Location.objects.filter(department=dept)[:1]
+            locations = active_locations.filter(department=dept)[:1]
             if locations:
                 self.initial['location_dest'] = locations[0].id
         UnAutoCompleteField(self.fields, 'location_dest', request)
