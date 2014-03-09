@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-15 16:42+0200\n"
+"POT-Creation-Date: 2014-03-09 09:59+0200\n"
 "PO-Revision-Date: 2013-09-03 12:00+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -37,11 +37,11 @@ msgstr "συμβάσεις"
 msgid "Department"
 msgstr "Μονάδα"
 
-#: models.py:45
+#: models.py:46
 msgid "use for regular procurements"
 msgstr "χρήση σε απλές παραλαβές"
 
-#: models.py:46
+#: models.py:47
 msgid "use for mass procurements"
 msgstr "χρήση σε μαζικές παραλαβές"
 

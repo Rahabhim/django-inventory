@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-04 23:35+0200\n"
-"PO-Revision-Date: 2014-03-04 23:43+0200\n"
+"POT-Creation-Date: 2014-03-09 09:59+0200\n"
+"PO-Revision-Date: 2014-03-09 10:06+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Lokalize 1.2\n"
 
-#: __init__.py:10 models.py:121
+#: __init__.py:10 models.py:130
 msgid "suppliers"
 msgstr "προμηθευτές"
 
@@ -25,11 +25,11 @@ msgstr "προμηθευτές"
 msgid "create new supplier"
 msgstr "νέος προμηθευτής"
 
-#: __init__.py:13 __init__.py:24
+#: __init__.py:13 __init__.py:24 __init__.py:58
 msgid "edit"
 msgstr "επεξεργασία"
 
-#: __init__.py:15 __init__.py:26
+#: __init__.py:15 __init__.py:27 __init__.py:60
 msgid "delete"
 msgstr "διαγραφή"
 
@@ -41,7 +41,7 @@ msgstr "σύνδεση με προϊόντα"
 msgid "related purchase orders"
 msgstr "Σχετικές παραλαβές εξοπλισμού"
 
-#: __init__.py:21 models.py:89 models.py:159 urls.py:36 urls.py:39
+#: __init__.py:21 models.py:91 models.py:168 urls.py:24 views.py:33
 msgid "locations"
 msgstr "τοποθεσίες"
 
@@ -49,19 +49,35 @@ msgstr "τοποθεσίες"
 msgid "create new location"
 msgstr "δημιουργία τοποθεσίας"
 
-#: __init__.py:28
+#: __init__.py:30
 msgid "assets"
 msgstr "εξοπλισμός"
 
-#: __init__.py:37 models.py:88
+#: __init__.py:33
+msgid "activate"
+msgstr "ενεργοποίηση"
+
+#: __init__.py:38
+msgid "deactivate"
+msgstr "απενεργοποίηση"
+
+#: __init__.py:51 models.py:90
 msgid "location"
 msgstr "τοποθεσία"
 
-#: models.py:19 models.py:53 models.py:76 models.py:129 urls.py:17
+#: __init__.py:55 models.py:61 urls.py:31 urls.py:40
+msgid "location templates"
+msgstr "πρότυπα τοποθεσιών"
+
+#: __init__.py:56
+msgid "create new location template"
+msgstr "δημιουργία προτύπου τοποθεσίας"
+
+#: models.py:19 models.py:53 models.py:77 models.py:138 views.py:16
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:20 models.py:37
+#: models.py:20 models.py:37 models.py:86 views.py:30
 msgid "active"
 msgstr "ενεργό"
 
@@ -93,101 +109,132 @@ msgstr "τηλέφωνο 2"
 msgid "addresses"
 msgstr "Διευθύνσεις"
 
-#: models.py:54 models.py:77 models.py:144
+#: models.py:54 models.py:78 models.py:153
 msgid "sequence"
 msgstr "Ακολουθία"
 
-#: models.py:59
+#: models.py:55
+msgid "number of active"
+msgstr "Αρ. ενεργών"
+
+#: models.py:56
+msgid "total number to create"
+msgstr "Αρ. προβλεπόμενων"
+
+#: models.py:60
 msgid "location template"
 msgstr "πρότυπο τοποθεσίας"
 
-#: models.py:60 urls.py:43
-msgid "location templates"
-msgstr "πρότυπα τοποθεσιών"
-
-#: models.py:78 urls.py:14
+#: models.py:79 views.py:18
 msgid "department"
 msgstr "μονάδα"
 
-#: models.py:79
+#: models.py:80
 msgid "From template"
 msgstr "Από πρότυπο"
 
-#: models.py:81 urls.py:18
+#: models.py:82 views.py:21
 msgid "location type"
 msgstr "τύπος τοποθεσίας"
 
-#: models.py:82
+#: models.py:83
 msgid "Customer"
 msgstr "Πελάτης"
 
-#: models.py:82
+#: models.py:83
 msgid "Procurement"
 msgstr "Προμήθεια"
 
-#: models.py:83
+#: models.py:84
 msgid "Internal"
 msgstr "Εσωτερικό"
 
-#: models.py:83
+#: models.py:84
 msgid "Inventory"
 msgstr "απογραφή"
 
-#: models.py:84
+#: models.py:85
 msgid "Supplier Location"
 msgstr "τοποθεσία προμηθευτή"
 
-#: models.py:84
+#: models.py:85
 msgid "Bundled"
 msgstr "Σε Σύνθεση"
 
-#: models.py:116
+#: models.py:118
+msgid "Active"
+msgstr "Ενεργό"
+
+#: models.py:120
+msgid "Inactive"
+msgstr "Ανενεργό"
+
+#: models.py:125
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:120 models.py:160 urls.py:55
+#: models.py:129 models.py:169 urls.py:50
 msgid "supplier"
 msgstr "προμηθευτής"
 
-#: models.py:130
+#: models.py:139
 msgid "prefix"
 msgstr "πρόθεμα"
 
-#: models.py:131
+#: models.py:140
 msgid "suffix"
 msgstr "επίθεμα"
 
-#: models.py:132
+#: models.py:141
 msgid "next number"
 msgstr "επόμενος αριθμός"
 
-#: models.py:133
+#: models.py:142
 msgid "increment"
 msgstr "βήμα"
 
-#: models.py:134
+#: models.py:143
 msgid "Number padding"
 msgstr "Συμπλήρωση αριθμών"
 
-#: models.py:145
+#: models.py:154
 msgid "sequences"
 msgstr "Ακολουθίες"
 
-#: urls.py:21
-msgid "Type of template"
-msgstr "Τύπος προτύπου"
-
-#: urls.py:34
-msgid "Type"
-msgstr "Τύπος"
-
-#: urls.py:49
+#: urls.py:44
 msgid "Supplier details"
 msgstr "Λεπτομέρειες προμηθευτή"
 
-#: urls.py:52
+#: urls.py:47
 msgid "Suppliers"
 msgstr "Προμηθευτές"
+
+#: views.py:24
+msgid "Type of template"
+msgstr "Τύπος προτύπου"
+
+#: views.py:31
+msgid "Type"
+msgstr "Τύπος"
+
+#: views.py:38
+#, python-format
+msgid "locations of %s"
+msgstr "τοποθεσίες του %s"
+
+#: views.py:60
+#, python-format
+msgid "Location %s has been activated"
+msgstr "Η τοποθεσία \"%s\" έχει ενεργοποιηθεί"
+
+#: views.py:81
+msgid "Location contains assets, cannot deactivate"
+msgstr "Η τοποθεσία έχει εξοπλισμό, δεν μπορεί να απενεργοποιηθεί"
+
+#: views.py:84
+#, python-format
+msgid "Location %s has been deactivated"
+msgstr "Η τοποθεσία \"%s\" απενεργοποιήθηκε"
 
 #: templatetags/navigation.py:305
 msgid "Multiple Departments"

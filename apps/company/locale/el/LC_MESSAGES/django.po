@@ -1,13 +1,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# P. Christeas <xrg@linux.gr>, 2012, 2013.
+# P. Christeas <xrg@linux.gr>, 2012, 2013, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-15 16:42+0200\n"
-"PO-Revision-Date: 2013-08-08 10:15+0300\n"
+"POT-Creation-Date: 2014-03-09 09:59+0200\n"
+"PO-Revision-Date: 2014-03-09 10:01+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -26,30 +26,34 @@ msgid "assets"
 msgstr "εξοπλισμός"
 
 #: __init__.py:16
+msgid "locations"
+msgstr "τοποθεσίες"
+
+#: __init__.py:19
 msgid "edit department"
 msgstr "διόρθωση μονάδας"
 
-#: __init__.py:28 models.py:53
+#: __init__.py:39 models.py:54
 msgid "departments"
 msgstr "Μονάδες"
 
-#: __init__.py:29 urls.py:33
+#: __init__.py:40 urls.py:34
 msgid "department types"
 msgstr "Τύποι Μονάδων"
 
-#: __init__.py:32
+#: __init__.py:43
 msgid "company"
 msgstr "Διοικητική δομή"
 
-#: models.py:14 models.py:32 urls.py:16 urls.py:18
+#: models.py:15 models.py:33 urls.py:17 urls.py:19
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:16
+#: models.py:17
 msgid "location templates"
 msgstr "πρότυπα τοποθεσιών"
 
-#: models.py:17
+#: models.py:18
 msgid ""
 "These will automatically be setup as locations, for each new department of "
 "this type"
@@ -57,72 +61,72 @@ msgstr ""
 "Αυτές οι τοποθεσίες θα δημιουργηθούν αυτόματα, για κάθε νέα Μονάδα αυτού του "
 "τύπου"
 
-#: models.py:22
+#: models.py:23
 msgid "department type"
 msgstr "Τύπος Μονάδας"
 
-#: models.py:33 urls.py:17 urls.py:25
+#: models.py:34 urls.py:18 urls.py:26
 msgid "code"
 msgstr "Κωδ. Μονάδας"
 
-#: models.py:34 urls.py:26
+#: models.py:35 urls.py:27
 msgid "code 2"
 msgstr "κωδικός ΠΣΔ"
 
-#: models.py:35
+#: models.py:36
 msgid "deprecated"
 msgstr "Σε αναστολή"
 
-#: models.py:36
+#: models.py:37
 msgid "Department Type"
 msgstr "Τύπος Μονάδας"
 
-#: models.py:37
+#: models.py:38
 msgid "Merged in"
 msgstr "Συγχωνεύτηκε σε"
 
-#: models.py:39
+#: models.py:40
 msgid "Nom Name"
 msgstr "Νομαρχία"
 
-#: models.py:40
+#: models.py:41
 msgid "Note"
 msgstr "Σημείωση"
 
-#: models.py:41
+#: models.py:42
 msgid "OTA Name"
 msgstr "ΟΤΑ"
 
-#: models.py:42
+#: models.py:43
 msgid "Parent Department"
 msgstr "Προϊστάμενο τμήμα"
 
-#: models.py:43
+#: models.py:44
 msgid "Section"
 msgstr "Τμήμα"
 
-#: models.py:44
+#: models.py:45
 msgid "Serviced By"
 msgstr "Υποστηρίζεται Από"
 
-#: models.py:46
+#: models.py:47
 msgid "Sequence for items"
 msgstr "Ακολουθία για τον εξοπλισμό"
 
-#: models.py:52
+#: models.py:53
 msgid "department"
 msgstr "μονάδα"
 
-#: models.py:64
+#: models.py:65
 msgid "The department cannot have itself as a parent"
 msgstr "Η μονάδα δεν μπορεί να έχει τον εαυτό της ως γονική"
 
-#: models.py:76
+#: models.py:77
 #, python-format
 msgid "No sequence for department %s"
 msgstr "Δεν έχει οριστεί ακολουθία για τη μονάδα %s"
 
-#: urls.py:27
+#: urls.py:28
 msgid "Parent dept."
 msgstr "Προϊστ. τμήμα"
 
@@ -149,3 +153,4 @@ msgstr "Όνομα"
 #, python-format
 msgid "There are no %(title)s"
 msgstr "Δεν υπάρχουν %(title)s"
+
