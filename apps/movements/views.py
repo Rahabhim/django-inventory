@@ -737,7 +737,8 @@ class PurchaseOrderListView(GenericBloatedListView):
                     {'name': _('Supplier'), 'attribute': 'supplier', },
                     {'name': _('Department'), 'attribute': 'department' },
                     # not needed: {'name': _('Issue date'), 'attribute': 'issue_date' },
-                    {'name':_(u'state'), 'attribute': 'get_state_display', 'order_attribute': 'state'}]
+                    {'name':_(u'state'), 'attribute': 'get_state_display',
+                      'order_attribute': 'state', 'col_class': 'state'}]
 
 class MovementListView(GenericBloatedListView):
     queryset=Movement.objects.by_request
@@ -745,7 +746,8 @@ class MovementListView(GenericBloatedListView):
     order_by = '-date_act'
     state_column = 'state'
     extra_columns=[{'name':_(u'date'), 'attribute': 'date_act'}, 
-                    {'name':_(u'state'), 'attribute': 'get_state_display', 'order_attribute': 'state'},
+                    {'name':_(u'state'), 'attribute': 'get_state_display',
+                      'order_attribute': 'state', 'col_class': 'state'},
                     {'name':_(u'type'), 'attribute': 'get_stype_display', 'order_attribute': 'stype'}]
 
 class MovementCloseForm(forms.Form):

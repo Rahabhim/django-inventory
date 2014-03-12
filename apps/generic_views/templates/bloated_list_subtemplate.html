@@ -58,13 +58,13 @@
                 {% if not col.attribute %}
                     {% if main_object %}
                     {% with object|object_property:main_object as object %}
-                        <td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                        <td {% if col.col_class %}class="{{ col.col_class }}"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
                     {% endwith %}
                     {% else %}
-                        <td>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                        <td {% if col.col_class %}class="{{ col.col_class }}"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
                     {% endif %}
                 {% else %}
-                    <td>{{ object|object_property:col.attribute|default_if_none:'' }}
+                    <td {% if col.col_class %}class="{{ col.col_class }}"{% endif %}>{{ object|object_property:col.attribute|default_if_none:'' }}
                 {% endif %}
                 {% if col.subrows %}{% for row in col.subrows %}<br/>
                         {{ object|object_property:row.attribute }}
@@ -72,7 +72,7 @@
                 </td>
             {% endfor %}
             {% if not hide_links %}
-                <td class='last'>
+                <td class="last">
                 {% object_navigation_template %}
                 </td>
             {% endif %}
@@ -108,13 +108,13 @@
                 {% if not col.attribute %}
                     {% if main_object %}
                     {% with object|object_property:main_object as object %}
-                        <td {% if forloop.first %}class="first_col"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                        <td {% if col.col_class %}class="{{ col.col_class }}"{% elif forloop.first %}class="first_col"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
                     {% endwith %}
                     {% else %}
-                        <td {% if forloop.first %}class="first_col"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
+                        <td {% if col.col_class %}class="{{ col.col_class }}"{% elif forloop.first %}class="first_col"{% endif %}>{% if not hide_link %}<a href="{{ object|object_property:url_attribute }}">{{ object }}</a>{% else %}{{ object }}{% endif %}
                     {% endif %}
                 {% else %}
-                    <td {% if forloop.first %}class="first_col"{% endif %}>{{ object|object_property:col.attribute|default_if_none:'' }}
+                    <td {% if col.col_class %}class="{{ col.col_class }}"{% elif forloop.first %}class="first_col"{% endif %}>{{ object|object_property:col.attribute|default_if_none:'' }}
                 {% endif %}
                 {% if col.subrows %}{% for row in col.subrows %}<br/>
                         {{ object|object_property:row.attribute }}

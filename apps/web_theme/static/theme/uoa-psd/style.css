@@ -627,24 +627,21 @@ ul.list li .left  {
   border:none;
 }
 
-.table tr.state-draft {
+.table tr.state-draft td.state {
     color: #001E40;
 }
-.table tr.state-draft:nth-child(odd), .table tr.state-pending:nth-child(odd) {
-    background-color: #FFDCA8;
-}
-.table tr.state-draft:nth-child(even), .table tr.state-pending:nth-child(even) {
-    background-color: #FFC47C;
+.table tr.state-draft td.state, .table tr.state-pending td.state {
+    background-color: #F6BB50;
 }
 
-.table tr.state-pending {
+.table tr.state-pending td.state {
     color: #000080;
 }
-.table tr.state-done {
+.table tr.state-done td.state {
     color: #004000;
 }
 
-.table tr.state-reject {
+.table tr.state-reject td.state {
     color: #800000;
 }
 
