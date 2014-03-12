@@ -119,7 +119,7 @@ class ItemTemplateRequestForm_base(forms.ModelForm):
 
     class Meta:
         model = ItemTemplate
-        fields = ('description', 'category', 'manufacturer', 'model', 'part_number', 'url', 'notes')
+        fields = ('description', 'category', 'manufacturer', 'part_number', 'url', 'notes')
 
     def _send_request(self):
         """Sends notification about the pending ItemTemplate
