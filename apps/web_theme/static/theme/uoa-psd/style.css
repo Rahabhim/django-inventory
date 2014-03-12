@@ -506,7 +506,7 @@ input.checkbox {
   margin-bottom: 20px;
 }
 
-.form input.ui-autocomplete-input {
+.form input.ui-autocomplete-input, .u2_form input.ui-autocomplete-input{
     background: transparent url('../images/icon-search.png') right center no-repeat;
 }
 
