@@ -1,0 +1,99 @@
+{% extends "base-bare.html" %}
+{% load i18n %}
+{% load styling %}
+{% block title %} :: {% with "true" as striptags %}{% include "calculate_form_title.html" %}{% endwith %}{% endblock %}
+
+{% block javascript %}
+{% if formsets and form_mode != 'details' %}
+<script src="{{ STATIC_URL }}js/jquery.formset.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    {% for formset in formsets %}
+    $('.form-row.inline.{{ formset.prefix }}').formset({
+        prefix: '{{ formset.prefix }}',
+    })
+    {% endfor %}
+})
+</script>
+{% endif %}
+{% if form_mode == 'details' %}
+<script type="text/javascript">
+    $(function() {
+        $(".inner form.form :input").each(function() {
+            this.disabled = true;
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}
+
+{% block sidebar %}
+{% if form_mode == 'details' %}
+    {% for subtemplate in sidebar_subtemplates %}
+        {% include subtemplate %}
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block stylesheets %}
+{% if form_mode == 'details' %}
+    <style type="text/css">
+        .inner form.form  textarea,
+        .inner form.form  select option,
+        .inner form.form  input,
+        .inner form.form  select,
+        .inner form.form  input { background: none; color: black; border: none; }
+    </style>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="content">
+    {% block form_title %}
+    <h2 class="title"> {% include "calculate_form_title.html" %} </h2>
+    {% endblock %}
+    <div class="inner">
+        {% block pre_form_inner %}{% endblock %}
+    {% if form.is_multipart %}
+        <form enctype="multipart/form-data" method="{{ submit_method|default:'post' }}" action="" class="form">
+    {% else %}
+        <form method="{{ submit_method|default:'post' }}" action="" class="form">
+    {% endif %}
+        {% if step_field %}
+            <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
+        {% endif %}
+
+        {% if submit_method != 'GET' and submit_method != 'get' %} {% csrf_token %} {% endif %}
+
+        {% for hidden_field in hidden_fields %}
+           {{ hidden_field.as_hidden }}
+        {% endfor %}
+
+        {{ form.media|safe }}
+        {% add_classes_to_form form %}
+
+        {% if form.non_field_errors %}
+            <div class="flash">
+                {% for value in form.non_field_errors %}
+                    <div class="message error">
+                        <p>{{ value }}</p>
+                    </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block form_layout %} Y U no layout? {% endblock %}
+
+        {% if not read_only and form_mode != 'details' %}
+            {% block submit_button %}
+                <div class="group navform wat-cf submit_button">
+                    <button class="button" type="submit">
+                    {% if object %}{% trans 'Save' %}{% else %}{% trans 'Submit' %}{% endif %}
+                    </button>
+                </div>
+            {% endblock %}
+        {% endif %}
+    </form>
+</div></div>
+{% endblock %}
