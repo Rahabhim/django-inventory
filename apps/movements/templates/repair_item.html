@@ -143,7 +143,10 @@
 </div>
 </form>
 
-
+<script src="{{ STATIC_URL }}js/jquery.ui.datepicker-{{ LANGUAGE_CODE }}.js"></script>
+    <script>
+       $("#id_issue_date").datepicker({dateFormat: 'dd/mm/yy', changeYear: false, yearRange: '-15:+2'})
+    </script>
 </div>
 
 {% endblock %}

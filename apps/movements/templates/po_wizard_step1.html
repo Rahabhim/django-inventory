@@ -115,6 +115,9 @@
     <input id="submit0" type="submit" value="{%trans 'Continue' %}">
 </p>
 </div>
-
+<script src="{{ STATIC_URL }}js/jquery.ui.datepicker-{{ LANGUAGE_CODE }}.js"></script>
+    <script>
+       $("#id_1-issue_date").datepicker({dateFormat: 'dd/mm/yy', changeYear: false, yearRange: '-15:+2'})
+    </script>
 {% endblock %}
 

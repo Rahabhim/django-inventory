@@ -28,5 +28,10 @@
 
     <div style="clear: both; width=100%;"> </div>
 
-
+    {% comment %}
+    <script src="{{ STATIC_URL }}js/jquery.ui.datepicker-{{ LANGUAGE_CODE }}.js"></script>
+    <script>
+       $("#id_date_act").datepicker({dateFormat: 'dd/mm/yy', changeYear: false, yearRange: '-15:+2'})
+    </script>
+    {% endcomment %}
 {% endblock %}
