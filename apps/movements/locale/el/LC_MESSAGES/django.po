@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-03-09 09:59+0200\n"
-"PO-Revision-Date: 2014-03-09 10:02+0200\n"
+"PO-Revision-Date: 2014-03-12 18:34+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -375,7 +375,7 @@ msgstr "κατάσταση αίτησης"
 
 #: models.py:37 models.py:139 models.py:687 views_po_wizard.py:45
 msgid "user defined id"
-msgstr "Αρ. Καταχώρησης"
+msgstr "Αρ. Τιμολογίου/εντολής"
 
 #: models.py:38 models.py:145 models.py:690 views_po_wizard.py:47
 msgid "issue date"
@@ -619,7 +619,7 @@ msgstr "ημερομηνία επικύρωσης προέλευσης"
 
 #: models.py:786 views.py:752
 msgid "reference"
-msgstr "Αρ. πρωτοκόλλου"
+msgstr "Αρ. Καταχώρησης"
 
 #: models.py:787 urls.py:37 views.py:242 views.py:479 views.py:740
 #: views.py:748
@@ -1473,7 +1473,7 @@ msgstr ""
 
 #: templates/po_transfer_ask.html:104
 msgid "Reference"
-msgstr "Αρ. πρωτοκόλλου"
+msgstr "Αρ. Τιμολογίου/Εντολής"
 
 #: templates/po_transfer_ask.html:109
 msgid "Confirm Order"

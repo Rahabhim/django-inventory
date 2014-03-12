@@ -684,7 +684,7 @@ class RepairOrderManager(models.Manager):
 class RepairOrder(models.Model):
     objects = RepairOrderManager()
     item = models.ForeignKey(ItemGroup, verbose_name=_("Item"), on_delete=models.PROTECT)
-    user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
+    user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'reference'))
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"), on_delete=models.PROTECT)
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"), on_delete=models.PROTECT)
     issue_date = models.DateField(verbose_name=_(u'issue date'))
