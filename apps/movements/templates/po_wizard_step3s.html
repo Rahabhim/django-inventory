@@ -10,10 +10,11 @@
 {{ wizard.form.management_form }}
 
 {% with wizard.form as form %}
-    {% help_for "view" "step3s" %}
 
     {% with f=form.iset %}
         {{ f }}
+        <h3>{{ f.data.item_template.category }} / {{ f.data.item_template }}</h3>
+        {% help_for "view" "step3s" %}
 
         <table class="group_3s_t1">
         <tbody>
