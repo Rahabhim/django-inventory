@@ -271,16 +271,13 @@ class Inventory(models.Model):
                 have_pending = True
         return (have_pending, res)
 
-    def do_close(self, val_user, val_date=None):
-        """Validate the inventory and fix Item quantities
+    def _close_check(self, val_user, val_date):
+        """Read-only check that this inventory can be validated
 
-            After a validation, no more Movements will be allowed for the
-            inventory's location on an earlier date. All subsequent moves
-            will have to use this inventory as checkpoint_src
+            @return True, or raises exceptions
         """
         Q = models.Q
         # First, check that we are not already closed
-        logger.debug("Inventory %d %s do_close()", self.id, self.name)
         if self.state not in ('draft', 'pending'):
             raise ValidationError(_("Cannot validate this inventory, it is: %s") % self.get_state_display() )
         if self.date_val or self.validate_user:
@@ -292,8 +289,7 @@ class Inventory(models.Model):
         if have_pending:
             raise ValidationError(_("Inventory has pending items that don't match computed state. Cannot close"))
 
-        self.date_val = val_date or datetime.date.today()
-        if self.date_val < self.date_act:
+        if val_date < self.date_act:
             raise ValidationError(_("The active date cannot be after the validation date"))
 
         # Third, check that no movements are later than this inventory
@@ -302,8 +298,26 @@ class Inventory(models.Model):
             raise ValidationError(_("You cannot validate an inventory for %s, because there is movements to/from that location on a later date") %\
                     self.date_act.strftime(DATE_FMT_FORMAT))
 
+        return True
+
+    def do_close(self, val_user, val_date=None):
+        """Validate the inventory and fix Item quantities
+
+            After a validation, no more Movements will be allowed for the
+            inventory's location on an earlier date. All subsequent moves
+            will have to use this inventory as checkpoint_src
+        """
+        Q = models.Q
+        logger.debug("Inventory %d %s do_close()", self.id, self.name)
+
+        if val_date is None:
+            val_date = datetime.date.today()
+        # Check that this inventory can be closed
+        self._close_check(val_user, val_date)
+
         # Mark the inventory as closed
         self.state = 'done'
+        self.date_val = val_date
         self.validate_user = val_user
         self.save()
 
