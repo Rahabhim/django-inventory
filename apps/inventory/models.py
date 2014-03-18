@@ -13,6 +13,7 @@ from settings import DATE_FMT_FORMAT
 
 from dynamic_search.api import register
 from common import models as common
+from company import models as company
 from common.api import role_from_request
 from assets import models as assets
 
@@ -41,6 +42,11 @@ class Log(models.Model):
     def get_absolute_url(self):
         return ('log_view', [str(self.id)])
 
+INVENTORY_STATES = [('draft', _('Draft')),
+                    ('pending', _('Pending')),
+                    ('done', _('Done')),
+                    ('reject', _('Rejected'))]
+
 class InventoryManager(models.Manager):
     def by_request(self, request):
         try:
@@ -67,10 +73,7 @@ class Inventory(models.Model):
     date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
     state = models.CharField(max_length=16, default='draft',
                             verbose_name=_("state"),
-                            choices=[('draft', _('Draft')),
-                                    ('pending', _('Pending')),
-                                    ('done', _('Done')),
-                                    ('reject', _('Rejected'))])
+                            choices=INVENTORY_STATES)
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"), on_delete=models.PROTECT)
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"), on_delete=models.PROTECT)
     signed_file = models.FileField(verbose_name=_("Signed file"), upload_to='inventories',
