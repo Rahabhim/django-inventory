@@ -16,7 +16,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 #from django.views.generic.create_update import create_object
 from django.forms.formsets import formset_factory
 
-from common.models import Supplier, Location, LocationTemplate
+from common.models import Supplier, Location
 from common.api import role_from_request
 from assets.models import ItemTemplate, Item, ItemGroup
 from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView

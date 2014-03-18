@@ -1,10 +1,10 @@
-import types
+# -*- encoding: utf-8 -*-
 import logging
 
 from django.conf import settings
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.core.urlresolvers import RegexURLResolver, RegexURLPattern, Resolver404, get_resolver
-from django.template import TemplateSyntaxError, Library, \
+from django.template import Library, \
                             VariableDoesNotExist, Node, Variable
 from django.utils.text import unescape_string_literal
 from django.core.exceptions import ObjectDoesNotExist
@@ -34,7 +34,7 @@ def process_links(links, view_name, url, context=None):
                 else:
                     # when for-loop has passed all of them
                     allowed = True
-            except Exception, e:
+            except Exception:
                 logger.debug("Exception at condition %s:", item.get('url',False) or item.get('view', '?'), exc_info=True)
             if not allowed:
                 continue
@@ -84,8 +84,7 @@ class NavigationNode(Node):
 
 @register.tag
 def main_navigation(parser, token):
-    args = token.split_contents()
-
+    # args = token.split_contents()
 #    if len(args) != 3 or args[1] != 'as':
 #        raise TemplateSyntaxError("'get_all_states' requires 'as variable' (got %r)" % args)
 
@@ -195,7 +194,7 @@ def resolve_links(context, links, current_view, current_path, obj=None):
                 else:
                     # when for-loop has passed all of them
                     allowed = True
-            except Exception, e:
+            except Exception:
                 logger.debug("Exception at condition %s:", link.get('url', False) or link.get('view','?'), exc_info=True)
             if not allowed:
                 continue

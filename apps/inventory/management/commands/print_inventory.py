@@ -35,7 +35,7 @@ class Command(BaseCommand):
                                 'internal_title': "Inventory %d" % inventory.id,
                                 'author': "Django-inventory"  } )
                 out = parseString(rml_str, localcontext={}, fout=fname)
-                # print out
+                logger.debug("out: %r", out)
             except Exception:
                 logger.exception("Cannot render inventory %s", inv_id)
 

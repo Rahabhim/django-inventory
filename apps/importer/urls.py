@@ -1,5 +1,4 @@
 from django.conf.urls.defaults import patterns, url
-from forms import PreviewForm, ExpressionForm, ImportWizard
 
 urlpatterns = patterns('importer.views',
     url(r'^upload/$', 'import_file', (), 'import_wizard'),

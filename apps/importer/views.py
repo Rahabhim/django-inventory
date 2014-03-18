@@ -1,17 +1,13 @@
-import os
-import csv
 import tempfile
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib import messages
-from django.contrib.contenttypes.models import ContentType
 from django.forms.formsets import formset_factory
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from django.utils.simplejson import dumps, loads
+from django.utils.simplejson import dumps
 from django.utils.http import urlencode
 
 

@@ -1,12 +1,8 @@
 # -*- encoding: utf-8 -*-
 from models import Department, DepartmentType
 from django.conf.urls.defaults import patterns, url
-from django.views.generic import ListView
 from django.utils.translation import ugettext_lazy as _
-# from django.views.generic.create_update import create_object, update_object
-from generic_views.views import GenericDeleteView, \
-                                generic_list, \
-                                GenericBloatedListView, GenericDetailView, \
+from generic_views.views import GenericBloatedListView, GenericDetailView, \
                                 GenericUpdateView
 
 from forms import DepartmentForm, DepartmentForm_view, DepartmentTypeForm_view

@@ -10,7 +10,6 @@ from django.utils.safestring import mark_safe
 from django.db.models import Count
 from generic_views.forms import DetailForeignWidget
 from django.forms.util import flatatt
-from django.utils import simplejson
 from django.conf import settings
 
 from products.models import Manufacturer, ItemTemplate, ItemCategoryContain

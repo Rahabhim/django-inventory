@@ -46,7 +46,7 @@ class DepartmentLookup(LookupChannel):
         """
         if not request.user.is_authenticated():
             raise HttpResponseForbidden()
-        # filtering only this user's contacts
+        # filtering only this user's allowed departments
         return _departments_by_q(q)[:100]
 
 class LocationLookup(LookupChannel):

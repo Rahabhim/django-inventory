@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect # render_to_response,
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib import messages
 
-from common.models import Supplier, Location, LocationTemplate
+from common.models import Location, LocationTemplate
 from common.api import role_from_request
 from company.models import Department
 from products.models import ItemCategory, Manufacturer, ItemTemplate
@@ -24,7 +24,7 @@ from django.forms.util import ErrorDict
 from django.utils.datastructures import MultiValueDict
 
 from models import PurchaseOrder, Movement
-from weird_fields import DummySupplierWidget, ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField, Step5ChoiceField, DeptSelectMultipleField
+from weird_fields import ValidChoiceField, ItemsTreeField, ItemsGroupField, GroupGroupField, Step5ChoiceField, DeptSelectMultipleField
 
 logger = logging.getLogger('apps.movements.po_wizard')
 

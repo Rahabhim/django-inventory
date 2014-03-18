@@ -1,6 +1,4 @@
-from django.template.defaultfilters import stringfilter
-from django.template import Library, Node, Variable
-from django.core.urlresolvers import reverse
+from django.template import Library
 
 from photos.models import GenericPhoto
 

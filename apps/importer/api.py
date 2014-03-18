@@ -65,6 +65,7 @@ def perform_import(csvfilename, model, mappings, dialect_settings=None, start_ro
                     entry = model.objects.create(**model_line)
 
                 imported_lines += 1
+                logger.debug("Entry: %s", entry.id)
         except Exception, err:
             errors += 1
             results.append(_(u'Import error, line: %(line)s, error: %(err)s') % {'line':line, 'err':err})

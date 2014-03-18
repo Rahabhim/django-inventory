@@ -4,12 +4,8 @@ import csv
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
-from django.utils.simplejson import dumps, loads
 from django.http import HttpResponseRedirect
 from django.http import Http404
-from django.contrib.formtools.wizard import FormWizard
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404, redirect
 
 from api import perform_import
 from wizard import BoundFormWizard

@@ -13,8 +13,7 @@ from models import PurchaseRequestStatus, PurchaseRequest, \
                    PurchaseOrderItem, Movement, Supplier, \
                    RepairOrder
 
-from movements import purchase_request_state_filter, \
-                      purchase_order_state_filter
+from movements import purchase_request_state_filter
 
 
 from forms import PurchaseRequestForm, PurchaseOrderForm, PurchaseOrderItemForm, \

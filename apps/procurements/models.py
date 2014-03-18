@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from dynamic_search.api import register
+# from dynamic_search.api import register
 
 from common.models import Partner, PartnerManager # , Supplier
 
