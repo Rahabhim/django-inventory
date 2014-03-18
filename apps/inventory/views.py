@@ -2,6 +2,7 @@
 import logging
 import datetime
 import subprocess
+from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -17,7 +18,7 @@ from common.api import role_from_request
 from models import Inventory
 
 from forms import InventoryForm_view, InventoryValidateForm
-from conf import settings
+from conf import settings as app_settings
 
 def inventory_view(request, object_id):
     inventory = get_object_or_404(Inventory, pk=object_id)
@@ -99,18 +100,20 @@ def inventory_validate(request, object_id):
     form = InventoryValidateForm(request.POST, request.FILES, instance=inventory)
     try:
         active_role = role_from_request(request)
-        if not (active_role and active_role.has_perm('inventory.validate_inventory')):
+        if request.user.is_superuser and settings.DEVELOPMENT:
+            pass
+        elif not (active_role and active_role.has_perm('inventory.validate_inventory')):
             raise PermissionDenied(_("Your active role does not have permission to validate an inventory"))
         # check that active_role has the same dept as inventory!
-        if active_role.department != inventory.location.department:
+        elif active_role.department != inventory.location.department:
             raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
 
         # actual act of closing the inventory: (note, we don't pass the date)
         if request.method == 'POST' and form.is_valid() and inventory.signed_file and inventory.name:
             inventory.save() # for the file
-            if getattr(settings, 'signature_verify_bin', False):
+            if getattr(app_settings, 'signature_verify_bin', False):
                 try:
-                    subprocess.check_call([settings.signature_verify_bin, inventory.signed_file.path])
+                    subprocess.check_call([app_settings.signature_verify_bin, inventory.signed_file.path])
                 except subprocess.CalledProcessError:
                     inventory.signed_file.delete(save=True)
                     raise
