@@ -9,9 +9,7 @@ from generic_views.forms import DetailForm, ColumnsDetailWidget, \
 
 from models import Item, ItemGroup
 from common.models import Location
-# from movements.models import Movement
 from products.models import ItemTemplate
-#from ajax_select.fields import AutoCompleteSelectField
 
 class ItemForm(RModelForm):
     class Meta:

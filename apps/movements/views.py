@@ -10,10 +10,6 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect, re
 from django.template import RequestContext
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-#from django.contrib.contenttypes.models import ContentType
-#from django.views.generic.list_detail import object_detail, object_list
-#from django.core.urlresolvers import reverse
-#from django.views.generic.create_update import create_object
 from django.forms.formsets import formset_factory
 
 from common.models import Supplier, Location
