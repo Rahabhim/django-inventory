@@ -7,7 +7,7 @@ from generic_views.views import GenericDeleteView, \
                                 GenericCreateView, GenericUpdateView, \
                                 CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
 
-from models import Inventory, InventoryItem
+from models import Inventory, InventoryGroup, InventoryItem
 
 from forms import InventoryForm, InventoryItemForm, \
                  InventoryItemForm_inline
@@ -18,38 +18,39 @@ def check_inventory(inventory):
     return inventory.date_val is None and inventory.validate_user is None
 
 urlpatterns = patterns('inventory.views',
-    url(r'^inventory/list/$', generic_list, dict({'queryset':Inventory.objects.by_request}, 
+    url(r'^inventory/list/$', generic_list, dict({'queryset':InventoryGroup.objects.by_request}, 
                 extra_context=dict(title=_(u'inventories'), 
-                extra_columns=[{'name':_(u'location'), 'attribute':'location'},
+                extra_columns=[{'name':_(u'department'), 'attribute':'department'},
                         {'name': _('state'), 'attribute': 'get_state_display'}])),
                 'inventory_list'),
     url(r'^inventory/pending_list/$', generic_list, dict({
-                    'queryset': lambda r: Inventory.objects.by_request(r)\
+                    'queryset': lambda r: InventoryGroup.objects.by_request(r)\
                             .filter(state__in=('draft', 'pending'))}, 
                 extra_context=dict(title=_(u'pending inventories'), 
-                extra_columns=[{'name':_(u'location'), 'attribute':'location'},
+                extra_columns=[{'name':_(u'department'), 'attribute':'department'},
                         {'name': _('state'), 'attribute': 'get_state_display'}])),
                 'inventories_pending_list'),
     url(r'^inventory/pending2_list/$', generic_list, dict({
-                    'queryset': lambda r: Inventory.objects.by_request(r)\
+                    'queryset': lambda r: InventoryGroup.objects.by_request(r)\
                             .filter(state='pending')}, 
                 extra_context=dict(title=_(u'inventories pending validation'), 
-                extra_columns=[{'name':_(u'location'), 'attribute':'location'},
+                extra_columns=[{'name':_(u'department'), 'attribute':'department'},
                         {'name': _('state'), 'attribute': 'get_state_display'}])),
                 'inventories_pending2_list'),
     url(r'^inventory/create/$', GenericCreateView.as_view(form_class=InventoryForm,
                 template_name="inventory_create.html",
                 extra_context={'title':_(u'open new inventory')}), name='inventory_create'),
     url(r'^inventory/(?P<object_id>\d+)/$', 'inventory_view', (),'inventory_view'),
+    url(r'^inventory/g/(?P<object_id>\d+)/$', 'inventory_group_view', (),'inventory_group_view'),
     url(r'^inventory/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(
                 form_class=InventoryForm, check_object=check_inventory,
                 inline_fields={'items': InventoryItemForm_inline },
                 extra_context={'object_name':_(u'inventory')}), name='inventory_update'),
-    url(r'^inventory/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=Inventory,
+    url(r'^inventory/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=InventoryGroup,
                 success_url="inventory_list", check_object=check_inventory,
                 extra_context=dict(object_name=_(u'inventory'))), name='inventory_delete'),
     url(r'^inventory/(?P<pk>\d+)/open/$', CartOpenView.as_view(
-                model=Inventory, dest_model='assets.Item', check_object=check_inventory,
+                model=InventoryGroup, dest_model='assets.Item', check_object=check_inventory,
                 extra_context={'object_name':_(u'inventory')}), name='inventory_open'),
     url(r'^inventory/(?P<pk>\d+)/close/$', CartCloseView.as_view(model=Inventory), name='inventory_close'),
     #url(r'^inventory/(?P<object_id>\d+)/current/$', 'inventory_current', (), 'inventory_current'),
@@ -66,10 +67,10 @@ urlpatterns = patterns('inventory.views',
     url(r'^supplier/(?P<object_id>\d+)/purchase/orders/$', 'supplier_purchase_orders', (), 'supplier_purchase_orders'),
 
     url(r'^inventory/(?P<pk>\d+)/add_item/$', AddToCartView.as_view( \
-                cart_model=Inventory, item_model='assets.Item'), \
+                cart_model=InventoryGroup, item_model='assets.Item'), \
             name='inventory_item_add'),
     url(r'^inventory/(?P<pk>\d+)/remove_item/$', RemoveFromCartView.as_view(\
-                cart_model=Inventory, item_model='assets.Item'), \
+                cart_model=InventoryGroup, item_model='assets.Item'), \
             name='inventory_item_remove'),
     url(r'^inventory/(?P<object_id>\d+)/inventory.pdf$', 'inventory_printout', \
             name='inventory_printout'),

@@ -86,6 +86,13 @@ class InventoryGroup(models.Model):
         verbose_name_plural = _(u'inventories')
         permissions = ( ('validate_inventory', 'Can validate an inventory'), )
 
+    def __unicode__(self):
+        date_fmt = formats.get_format('DATE_INPUT_FORMATS')[0]
+        if self.name:
+            return _("%(name)s on %(date)s") % {'name': self.name, 'date': self.date_act.strftime(date_fmt)}
+        else:
+            return self.date_act.strftime(date_fmt)
+
     @models.permalink
     def get_absolute_url(self):
         return ('inventory_group_view', [str(self.id)])

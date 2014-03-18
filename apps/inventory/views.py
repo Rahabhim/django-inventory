@@ -15,7 +15,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, Validat
 from common.models import Supplier
 from common.api import role_from_request
 
-from models import Inventory
+from models import Inventory, InventoryGroup
 
 from forms import InventoryForm_view, InventoryValidateForm
 from conf import settings as app_settings
@@ -30,6 +30,37 @@ def inventory_view(request, object_id):
             asset_qty[t.asset] = asset_qty[t.asset] + t.quantity
         else:
             asset_qty[t.asset] = t.quantity
+
+    supplies_list = [{'item_template':x, 'qty':y} for x,y in asset_qty.items()]
+
+    return render_to_response('generic_detail.html', {
+        'title':_(u'Inventory details'),
+        'object':inventory,
+        'form':form,
+        'subtemplates_dict':[
+            {
+                'name':'generic_list_subtemplate.html',
+                'title':_(u'current balances for inventory'),
+                'object_list':supplies_list,
+                'main_object':'item_template',
+                'extra_columns':[{'name':_(u'quantity'),'attribute':'qty'}],
+
+            }
+        ]
+    },
+    context_instance=RequestContext(request))
+
+def inventory_group_view(request, object_id):
+    inventory = get_object_or_404(InventoryGroup, pk=object_id)
+    form = InventoryForm_view(instance=inventory)
+
+    asset_qty={}
+    for inv in inventory.inventories.all():
+        for t in inv.items.all():
+            if t.asset in asset_qty:
+                asset_qty[t.asset] = asset_qty[t.asset] + t.quantity
+            else:
+                asset_qty[t.asset] = t.quantity
 
     supplies_list = [{'item_template':x, 'qty':y} for x,y in asset_qty.items()]
 
