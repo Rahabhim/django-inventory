@@ -47,6 +47,49 @@ INVENTORY_STATES = [('draft', _('Draft')),
                     ('done', _('Done')),
                     ('reject', _('Rejected'))]
 
+class InventoryGroupManager(models.Manager):
+    def by_request(self, request):
+        try:
+            if request.user.is_superuser:
+                return self.all()
+            else:
+                q = Q(create_user=request.user) | Q(validate_user=request.user)
+                if request.session.get('current_user_role', False):
+                    role_id = request.session['current_user_role']
+                    role = request.user.dept_roles.get(pk=role_id)
+                    q = q | Q(department=role.department)
+                return self.filter(q).distinct()
+        except Exception:
+            logger.exception("cannot filter:")
+        return self.none()
+
+class InventoryGroup(models.Model):
+    """ Collection of inventories, for all locations of some Department
+    """
+    objects = InventoryGroupManager()
+    name = models.CharField(max_length=32, verbose_name=_(u'inventory number'), blank=True, null=True)
+    department = models.ForeignKey(company.Department, verbose_name=_(u'department'), on_delete=models.PROTECT)
+    date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'), default=datetime.date.today)
+    date_val = models.DateField(verbose_name=_(u'date validated'), blank=True, null=True)
+    state = models.CharField(max_length=16, default='draft',
+                            verbose_name=_("state"),
+                            choices=INVENTORY_STATES)
+    create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"), on_delete=models.PROTECT)
+    validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+',
+                            verbose_name=_("validated by"), on_delete=models.PROTECT)
+    signed_file = models.FileField(verbose_name=_("Signed file"), upload_to='inventories',
+                blank=True, null=True)
+
+    class Meta:
+        ordering = ('-date_act',)
+        verbose_name = _(u'inventory')
+        verbose_name_plural = _(u'inventories')
+        permissions = ( ('validate_inventory', 'Can validate an inventory'), )
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('inventory_group_view', [str(self.id)])
+
 class InventoryManager(models.Manager):
     def by_request(self, request):
         try:
@@ -67,6 +110,8 @@ class Inventory(models.Model):
     """ An inventory is a periodical check of all items at some locations
     """
     objects = InventoryManager()
+    group = models.ForeignKey(InventoryGroup, verbose_name=_('parent'),
+                            on_delete=models.CASCADE, related_name='inventories')
     name = models.CharField(max_length=32, verbose_name=_(u'inventory number'), blank=True, null=True)
     location = models.ForeignKey(common.Location, verbose_name=_(u'location'), on_delete=models.PROTECT)
     date_act = models.DateField(auto_now_add=False, verbose_name=_(u'date performed'), default=datetime.date.today)
