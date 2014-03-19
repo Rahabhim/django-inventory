@@ -5,6 +5,8 @@
 *~
 site_media/photologue/photos/*
 site_media/photologue/photos/cache/*
+site_media/categories/
+site_media/inventories/
 django_inventory.sqlite
 settings_local.py
 /dist
