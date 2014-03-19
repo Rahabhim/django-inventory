@@ -63,8 +63,8 @@ location_tmpl_delete = {'text':_(u'delete'), 'view':'location_template_delete', 
 register_links(LocationTemplate, [location_tmpl_update, location_tmpl_delete])
 
 def has_pending_inventories(obj, context):
-    from inventory.models import Inventory # lazy import!
-    return Inventory.objects.by_request(context['request'])\
+    from inventory.models import InventoryGroup # lazy import!
+    return InventoryGroup.objects.by_request(context['request'])\
                 .filter(state__in=('draft', 'pending')).exists()
 
 def has_no_pending_inventories(obj, context):
