@@ -20,6 +20,8 @@ inventory_update = {'text':_(u'edit'), 'view':'inventory_update', 'args':'object
                 'famfam':'package_green', 'condition': (InventoryGroup.can_use, can_edit)  }
 inventory_delete = {'text':_(u'delete'), 'view':'inventory_delete', 'args':'object.id',
                 'famfam':'package_delete', 'condition': (InventoryGroup.can_use, can_delete) }
+inventory_group_view = {'text':_(u'details'), 'view':'inventory_group_view', 'args':'object.id',
+                'famfam':'package_go'}
 inventory_view = {'text':_(u'details'), 'view':'inventory_view', 'args':'object.id',
                 'famfam':'package_go'}
 inventory_open = {'text':_(u'open'), 'view':'inventory_open', 'args':'object.id',
@@ -48,12 +50,12 @@ inventory_menu_links = [
     inventory_list,
 ]
 
-register_links(['inventory_view', 'inventory_list',], [inventory_create], menu_name='sidebar')
+register_links(['inventory_group_view', 'inventory_list',], [inventory_create], menu_name='sidebar')
 
-register_links(Inventory, [inventory_compare,])
-register_links(Inventory, [inventory_delete, ], menu_name='sidebar')
+register_links(InventoryGroup, [inventory_compare,])
+register_links(InventoryGroup, [inventory_delete, ], menu_name='sidebar')
 # register_links(Inventory, [inventory_view], menu_name='sidebar')
-register_links(['inventory_items_compare', 'inventory_view'], [inventory_validate, inventory_reject], menu_name='sidebar')
+register_links(['inventory_items_compare', 'inventory_group_view'], [inventory_validate, inventory_reject], menu_name='sidebar')
 
 action_inventories_pending = {'text':_('pending inventories'), \
         'condition': has_pending_inventories,
