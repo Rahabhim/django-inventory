@@ -94,7 +94,7 @@ def supplier_purchase_orders(request, object_id):
     )
 
 def inventory_items_compare(request, object_id):
-    inventory = get_object_or_404(Inventory, pk=object_id)
+    inventory = get_object_or_404(InventoryGroup, pk=object_id)
     form = InventoryForm_view(instance=inventory)
     subtemplates_dict = []
     

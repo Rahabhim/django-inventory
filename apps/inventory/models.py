@@ -119,6 +119,52 @@ class InventoryGroup(models.Model):
 
         return False
 
+    def _compute_state(self, pending_only=True, offset=0, limit=100):
+        have_pending = False
+        res = []
+        for inv in self.inventories.all():
+            hp, res2 = inv._compute_state(pending_only, 0, limit)
+            if hp:
+                have_pending = True
+            if offset:
+                if offset >= len(res2):
+                    offset -= len(res2)
+                    res2 = []
+                else:
+                    res2 = res2[offset:]
+                    offset = 0
+            limit -= len(res2)
+            res += res2
+            if limit <= 0:
+                break
+        return (have_pending, res)
+
+    def do_close(self, val_user, val_date=None):
+        """Validate all inventories under this group
+        """
+        if val_date is None:
+            val_date = datetime.date.today()
+
+        if self.state not in ('draft', 'pending'):
+            raise ValidationError(_("Cannot validate this inventory, it is: %s") % self.get_state_display() )
+        if self.date_val or self.validate_user:
+            raise ValidationError(_("Inventory already validated"))
+
+        if val_date < self.date_act:
+            raise ValidationError(_("The active date cannot be after the validation date"))
+
+        # Check them all, before any of them is written to
+        for inv in self.inventories.all():
+            inv._close_check(val_user, val_date)
+
+        for inv in self.inventories.all():
+            inv.do_close(val_user, val_date)
+
+        self.state = 'done'
+        self.date_val = val_date
+        self.validate_user = val_user
+        self.save()
+
 class InventoryManager(models.Manager):
     def by_request(self, request):
         try:
