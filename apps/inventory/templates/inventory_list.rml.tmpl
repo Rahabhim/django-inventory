@@ -16,17 +16,23 @@
         <lineStyle kind="INNERGRID" thickness="0.4" colorName="gray" start="0,1" stop="-1,-1"/>
     </blockTableStyle>
     <paraStyle name="Details" fontName="Helvetica" fontSize="10.0" leading="14"
+            spaceBefore="12.0" />
+    <paraStyle name="Details2" fontName="Helvetica" fontSize="10.0" leading="14"
             spaceBefore="12.0" spaceAfter="26.0"/>
+    <paraStyle name="SubTitle" fontName="Helvetica-Bold" fontSize="12.0" leading="13"
+            spaceBefore="24.0" spaceAfter="12.0"/>
     <paraStyle name="Table_title" fontName="Helvetica-Bold" fontSize="11.0" leading="12"/>
     <paraStyle name="Bundled_li" fontSize="9.0" fontName="Helvetica" leading="9.0" leftIndent="6.0"/>
 {% endblock %}
 
 {% block content %}
-<title>Απογραφή: {{ object.name }}</title>
-<para style="Details">{{ object.location }} στις {{ object.date_act|date:"d/m/Y" }} </para>
+<title>Απογραφή: {{ object.name }} </title>
+<para style="Details2">{{ object.department }} στις {{ object.date_act|date:"d/m/Y" }} </para>
 
+{% for inventory in object.inventories.all %}
+<para style="SubTitle">{{ inventory.location.name }} στις {{ inventory.date_act|date:"d/m/Y" }} </para>
+{% if inventory.items.count %}
 <para> </para>
-
 <blockTable colWidths="20.0mm,80.0mm,15.0mm,30.0mm,40.0mm" style="Table_1">
       <tr>
         <td><para style="Table_title">Κτημ. ID</para></td>
@@ -35,7 +41,7 @@
         <td><para style="Table_title">Κατάσταση</para></td>
         <td><para style="Table_title">Έλεγχος/σχόλια</para></td>
       </tr>
-    {% for line in object.items.all %}
+    {% for line in inventory.items.all %}
     <tr>
         <td>{{ line.asset.property_number }}</td>
         <td><para>{{ line.asset.item_template }} {{ line.asset.serial_number|default:'' }}</para>
@@ -51,4 +57,11 @@
     </tr>
     {% endfor %}
     </blockTable>
+{% else %}
+    <para style="Details">
+        Δεν υπάρχει απογεγραμμένος εξοπλισμός σε αυτή την τοποθεσία
+    </para>
+{% endif %}
+{% endfor %}
+
 {% endblock %}

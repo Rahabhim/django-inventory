@@ -172,7 +172,7 @@ def inventory_validate(request, object_id):
         context_instance=RequestContext(request))
 
 def inventory_printout(request, object_id):
-    inventory = get_object_or_404(Inventory, pk=object_id)
+    inventory = get_object_or_404(InventoryGroup, pk=object_id)
     from django.template.loader import render_to_string
     from rml2pdf import parseString
     logger = logging.getLogger('apps.inventory')
