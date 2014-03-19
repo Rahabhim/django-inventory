@@ -127,7 +127,7 @@ def inventory_items_compare(request, object_id):
 
 def inventory_validate(request, object_id):
     # file upload?
-    inventory = get_object_or_404(Inventory, pk=object_id)
+    inventory = get_object_or_404(InventoryGroup, pk=object_id)
     form = InventoryValidateForm(request.POST, request.FILES, instance=inventory)
     try:
         active_role = role_from_request(request)
@@ -151,7 +151,7 @@ def inventory_validate(request, object_id):
             inventory.do_close(request.user)
             messages.success(request, _("The inventory has been validated and all movements fixated"), fail_silently=True)
 
-            return redirect('inventory_view', object_id=object_id)
+            return redirect('inventory_group_view', object_id=object_id)
         elif request.method == 'POST':
             messages.warning(request, _("You must fill the name and upload a signed file to proceed"))
 
