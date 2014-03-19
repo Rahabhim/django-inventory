@@ -97,6 +97,28 @@ class InventoryGroup(models.Model):
     def get_absolute_url(self):
         return ('inventory_group_view', [str(self.id)])
 
+    @classmethod
+    def can_use(cls, obj, context):
+        """Condition function to indicate if an inventory is usable in this context
+
+            Checks that the inventory is open and "belongs" to the user
+        """
+        assert isinstance(obj, cls), repr(obj)
+        if obj.state in ('done', 'reject'):
+            return False
+
+        user = context.get('user', None)
+        if user is None:
+            return False
+        if user.is_superuser or user.is_staff or user == obj.create_user:
+            return True
+
+        active_role = role_from_request(context['request'])
+        if active_role and obj.department == active_role.department:
+            return True
+
+        return False
+
 class InventoryManager(models.Manager):
     def by_request(self, request):
         try:
