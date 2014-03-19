@@ -165,6 +165,13 @@ class InventoryGroup(models.Model):
         self.validate_user = val_user
         self.save()
 
+    def do_reject(self, user=None):
+        for inv in self.inventories.all():
+            inv.do_reject(user)
+        self.state = 'reject'
+        self.validate_user = user
+        self.save()
+
 class InventoryManager(models.Manager):
     def by_request(self, request):
         try:
