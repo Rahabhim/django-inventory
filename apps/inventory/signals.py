@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from models import Inventory
+from models import Inventory, InventoryGroup
 
 from assets.models import Item
 import logging
@@ -35,6 +35,21 @@ def __get_changelog(sender, instance, old_record=True):
                 change_log += "new value:\n%s\n===========\n\n" % (new_value)
 
     return change_log
+
+@receiver(post_save, sender=InventoryGroup, dispatch_uid='139i438')
+def post_save_inventory_group(sender, instance=None, created=False, raw=False,  **kwargs):
+    """ create the locations, after a department has been saved
+    """
+    if instance is not None and created and not raw:
+        logger.debug("New inventory group %s, fill it with items.", instance)
+        if instance.inventories.exists():
+            return
+
+        for loc in instance.department.location_set.filter(active=True):
+            instance.inventories.create(location=loc, date_act=instance.date_act,
+                    create_user=instance.create_user, name=instance.name)
+
+        logger.debug("Created %d inventories in group", instance.inventories.count())
 
 
 @receiver(post_save, sender=Inventory, dispatch_uid='139i439')
