@@ -128,8 +128,6 @@ class Inventory(models.Model):
                             choices=INVENTORY_STATES)
     create_user = models.ForeignKey('auth.User', related_name='+', verbose_name=_("created by"), on_delete=models.PROTECT)
     validate_user = models.ForeignKey('auth.User', blank=True, null=True, related_name='+', verbose_name=_("validated by"), on_delete=models.PROTECT)
-    signed_file = models.FileField(verbose_name=_("Signed file"), upload_to='inventories',
-                blank=True, null=True)
 
     class Meta:
         ordering = ('-date_act',)
