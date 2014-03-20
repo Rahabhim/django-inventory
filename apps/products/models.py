@@ -97,6 +97,7 @@ class ProductAttributeValue(models.Model):
     class Meta:
         verbose_name=_("attribute value")
         verbose_name_plural=_("attribute values")
+        ordering = ['atype', 'value']
 
 class Manufacturer(Partner):
     #TODO: Contact, extension
