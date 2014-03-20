@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-09 09:59+0200\n"
+"POT-Creation-Date: 2014-03-20 20:00+0200\n"
 "PO-Revision-Date: 2014-03-09 10:01+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -37,7 +37,7 @@ msgstr "διόρθωση μονάδας"
 msgid "departments"
 msgstr "Μονάδες"
 
-#: __init__.py:40 urls.py:34
+#: __init__.py:40 urls.py:30
 msgid "department types"
 msgstr "Τύποι Μονάδων"
 
@@ -45,7 +45,7 @@ msgstr "Τύποι Μονάδων"
 msgid "company"
 msgstr "Διοικητική δομή"
 
-#: models.py:15 models.py:33 urls.py:17 urls.py:19
+#: models.py:15 models.py:33 urls.py:13 urls.py:15
 msgid "name"
 msgstr "όνομα"
 
@@ -65,11 +65,11 @@ msgstr ""
 msgid "department type"
 msgstr "Τύπος Μονάδας"
 
-#: models.py:34 urls.py:18 urls.py:26
+#: models.py:34 urls.py:14 urls.py:22
 msgid "code"
 msgstr "Κωδ. Μονάδας"
 
-#: models.py:35 urls.py:27
+#: models.py:35 urls.py:23
 msgid "code 2"
 msgstr "κωδικός ΠΣΔ"
 
@@ -126,7 +126,7 @@ msgstr "Η μονάδα δεν μπορεί να έχει τον εαυτό τη
 msgid "No sequence for department %s"
 msgstr "Δεν έχει οριστεί ακολουθία για τη μονάδα %s"
 
-#: urls.py:28
+#: urls.py:24
 msgid "Parent dept."
 msgstr "Προϊστ. τμήμα"
 
@@ -153,4 +153,3 @@ msgstr "Όνομα"
 #, python-format
 msgid "There are no %(title)s"
 msgstr "Δεν υπάρχουν %(title)s"
-

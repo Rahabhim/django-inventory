@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-09 09:59+0200\n"
+"POT-Creation-Date: 2014-03-20 20:00+0200\n"
 "PO-Revision-Date: 2013-05-21 09:13+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -28,75 +28,75 @@ msgid ""
 "Foreign key fetch error, line: %(line)s, expression: %(exp)s, error: %(err)s"
 msgstr ""
 
-#: api.py:70
+#: api.py:71
 #, python-format
 msgid "Import error, line: %(line)s, error: %(err)s"
 msgstr ""
 
-#: api.py:73
+#: api.py:74
 #, python-format
 msgid "Processed %s lines."
 msgstr "Επεξεργάστηκαν %s γραμμές"
 
-#: api.py:74
+#: api.py:75
 #, python-format
 msgid "Imported %s lines."
 msgstr "Εισήχθησαν %s γραμμές."
 
-#: api.py:75
+#: api.py:76
 #, python-format
 msgid "There were %s errors."
 msgstr "Παρουσιάστηκαν %s σφάλματα."
 
-#: forms.py:28
+#: forms.py:24
 msgid "Only CSV files are valid uploads."
 msgstr "Υποστηρίζονται μόνο αρχεία CSV."
 
-#: forms.py:67
+#: forms.py:63
 msgid "Local document"
 msgstr "Τοπικό Έγγραφο"
 
-#: forms.py:68
+#: forms.py:64
 #, fuzzy
 msgid "Model"
 msgstr "μοντέλο"
 
-#: forms.py:68
+#: forms.py:64
 msgid "Model that will receive the data."
 msgstr "Μοντέλο όπου θα εισαχθούν τα δεδομένα"
 
-#: forms.py:74
+#: forms.py:70
 msgid "Preview"
 msgstr "Προεπισκόπηση"
 
-#: forms.py:75
+#: forms.py:71
 msgid "Start row"
 msgstr ""
 
-#: forms.py:76
+#: forms.py:72
 msgid "Delimiter"
 msgstr "Οριοθέτης"
 
-#: forms.py:76
+#: forms.py:72
 msgid "A one-character string used to separate fields. It defaults to \",\"."
 msgstr ""
 
-#: forms.py:77
+#: forms.py:73
 msgid "Quote character"
 msgstr ""
 
-#: forms.py:77
+#: forms.py:73
 msgid ""
 "A one-character string used to quote fields containing special characters, "
 "such as the delimiter or quote character, or which contain new-line "
 "characters. It defaults to \"."
 msgstr ""
 
-#: forms.py:78
+#: forms.py:74
 msgid "Doublequote"
 msgstr ""
 
-#: forms.py:78
+#: forms.py:74
 msgid ""
 "Controls how instances of the quote character appearing inside a field "
 "should be themselves be quoted. When True, the character is doubled. When "
@@ -104,82 +104,82 @@ msgid ""
 "defaults to True."
 msgstr ""
 
-#: forms.py:79
+#: forms.py:75
 msgid "Escape character"
 msgstr ""
 
-#: forms.py:79
+#: forms.py:75
 msgid ""
 "The escape character removes any special meaning from the following "
 "character. It defaults to None, which disables escaping."
 msgstr ""
 
-#: forms.py:80
+#: forms.py:76
 msgid "Skip initial space"
 msgstr ""
 
-#: forms.py:80
+#: forms.py:76
 msgid ""
 "When True, whitespace immediately following the delimiter is ignored. The "
 "default is False."
 msgstr ""
 
-#: forms.py:84
+#: forms.py:80
 msgid "Model field"
 msgstr ""
 
-#: forms.py:85
+#: forms.py:81
 msgid "Expression"
 msgstr ""
 
-#: forms.py:86
+#: forms.py:82
 msgid "Arguments"
 msgstr ""
 
-#: forms.py:87
+#: forms.py:83
 msgid "Enabled"
 msgstr ""
 
-#: forms.py:92 forms.py:95
+#: forms.py:88 forms.py:91
 msgid "import results"
 msgstr ""
 
-#: forms.py:100
+#: forms.py:96
 msgid "Results"
 msgstr ""
 
-#: forms.py:127
+#: forms.py:123
 msgid "step 1 of 4: Import preview"
 msgstr ""
 
-#: forms.py:128
+#: forms.py:124
 msgid "step 2 of 4: expressions"
 msgstr ""
 
-#: forms.py:129
+#: forms.py:125
 msgid "step 3 of 4: Import test run results"
 msgstr ""
 
-#: forms.py:130
+#: forms.py:126
 msgid "step 4 of 4: Final import results"
 msgstr ""
 
-#: forms.py:171
+#: forms.py:167
 msgid "Import test run results"
 msgstr ""
 
-#: forms.py:179
+#: forms.py:175
 msgid "Final import results"
 msgstr ""
 
-#: views.py:32
+#: views.py:28
 msgid "expressions"
 msgstr ""
 
-#: views.py:68
+#: views.py:64
 msgid "Upload a file to import"
 msgstr ""
 
-#: views.py:83
+#: views.py:79
 msgid "There are no settings available to download."
 msgstr ""
