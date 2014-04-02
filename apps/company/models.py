@@ -14,6 +14,7 @@ logger = logging.getLogger('apps.'+__name__)
 class DepartmentType(models.Model):
     name = models.CharField(max_length=128, verbose_name=_('name'))
     location_tmpl = models.ManyToManyField('common.LocationTemplate', blank=True, related_name='location_tmpl',
+            through='DepartmentLocTemplates',
             verbose_name=_('location templates'),
             help_text=_(u"These will automatically be setup as locations, for each new department of this type") )
 
@@ -28,6 +29,19 @@ class DepartmentType(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('company_department_type_view', [str(self.id)])
+
+class DepartmentLocTemplates(models.Model):
+    dept_type = models.ForeignKey(DepartmentType, verbose_name=_('department type'))
+    loc_tmpl = models.ForeignKey('common.LocationTemplate', verbose_name=_('location template'))
+    nactive = models.IntegerField(verbose_name=_("number of active"), default=1)
+    ncreate = models.IntegerField(verbose_name=_("total number to create"), default=1)
+
+    class Meta:
+        verbose_name = _("Assigned Template")
+        verbose_name_plural = _("Assigned Templates")
+
+    #def __unicode__(self):
+    #    return self.
 
 class Department(models.Model):
     name = models.CharField(max_length=128,verbose_name=_("name"))
@@ -87,16 +101,17 @@ class Department(models.Model):
                     locs_by_tmpl[tmpl_id] = locs_by_tmpl.get(tmpl_id, 0) + 1
                     # We don't count active ones, we treat all existing as active, here
 
-            for lt in self.dept_type.location_tmpl.all():
+            for dtlt in self.dept_type.departmentloctemplates_set.all():
+                lt = dtlt.loc_tmpl
                 nold = locs_by_tmpl.get(lt.id, 0)
-                while nold < lt.ncreate:
-                    if nold or lt.ncreate > 1:
+                while nold < dtlt.ncreate:
+                    if nold or dtlt.ncreate > 1:
                         name = lt.name + (' %d' % (nold + 1))
                     else:
                         name = lt.name
                     self.location_set.create(name=name, sequence=lt.sequence,
                                 usage='internal', template=lt,
-                                active=(nold < lt.nactive))
+                                active=(nold < dtlt.nactive))
                     nold += 1
 
         except ObjectDoesNotExist:
