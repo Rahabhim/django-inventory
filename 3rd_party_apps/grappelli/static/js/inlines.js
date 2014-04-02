@@ -3,14 +3,19 @@
  */
 
 function reinitDateTimeFields(row) {
-    row.find(".vDateField").datepicker({
+    var dateFields = row.find(".vDateField");
+    if (dateFields && dateFields.datepicker)
+      dateFields.datepicker({
         //appendText: '(mm/dd/yyyy)',
         showOn: 'button',
         buttonImageOnly: false,
         buttonText: '',
         dateFormat: grappelli.getFormat('date'),
     });
-    row.find(".vTimeField").timepicker();
+
+    var timeFields = row.find(".vTimeField");
+    if (timeFields && timeFields.timepicker)
+        timeFields.timepicker();
 }
 
 function updateSelectFilter(row) {
