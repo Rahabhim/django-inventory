@@ -38,7 +38,7 @@ attrib_cat_filter = { 'name': 'category', 'title': _(u'category'),
 
 product_name_filter = {'name': 'name', 'title': _('name'),
             'destination': ('description__icontains', 'model__icontains',
-                            'part_number')}
+                            'part_number', 'attributes__value__value__icontains')}
 
 approved_filter = {'name': 'active', 'title': _('approved'), 'destination': 'approved',
         'choices': [('', '*'), (1, _('Approved')), (0, _('Not Approved'))],
