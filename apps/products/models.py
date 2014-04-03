@@ -224,10 +224,11 @@ class ItemTemplatePart(models.Model):
 class ItemTemplateAttributes(models.Model):
     template = models.ForeignKey(ItemTemplate, related_name="attributes", on_delete=models.PROTECT)
     value = models.ForeignKey(ProductAttributeValue, verbose_name=_("value"), on_delete=models.PROTECT)
-    
+
     class Meta:
         verbose_name = _("attribute")
         verbose_name_plural = _("attributes")
+        ordering = ['value__atype__sequence', 'value__atype__name']
 
 register(ItemTemplate, _(u'templates'), ['description', 'brand', 'model', 'part_number', 'notes'])
 
