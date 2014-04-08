@@ -160,7 +160,7 @@ def inventory_validate(request, object_id):
             messages.error(request, msg, fail_silently=True)
     except PermissionDenied, e:
         messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
-        return redirect('inventory_view', object_id=object_id)
+        return redirect('inventory_group_view', object_id=object_id)
     except subprocess.CalledProcessError, e:
         messages.error(request, _("The uploaded signature file does not contain a valid signature"), fail_silently=True)
     except ObjectDoesNotExist, e:
@@ -188,7 +188,7 @@ def inventory_printout(request, object_id):
     return HttpResponse(outPDF, content_type='application/pdf')
 
 def inventory_reject(request, object_id):
-    inventory = get_object_or_404(Inventory, pk=object_id)
+    inventory = get_object_or_404(InventoryGroup, pk=object_id)
 
     data = {
         'object': inventory,
@@ -208,7 +208,7 @@ def inventory_reject(request, object_id):
             raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
     except PermissionDenied, e:
         messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
-        return redirect('inventory_view', object_id=object_id)
+        return redirect('inventory_group_view', object_id=object_id)
 
     if request.method == 'POST':
         inventory.do_reject(request.user)
