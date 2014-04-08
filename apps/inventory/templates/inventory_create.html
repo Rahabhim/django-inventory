@@ -13,7 +13,12 @@
     </div>
 
     <div class="group newline">
+        {% if user.is_staff %}
         {% field_for department %}
+        {% else %}
+            {{ form.department.as_hidden }}
+            {# form.department.data #}
+        {% endif %}
     </div>
 
     {% comment %}

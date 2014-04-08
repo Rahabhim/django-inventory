@@ -93,6 +93,15 @@ class InventoryGroup(models.Model):
         else:
             return self.date_act.strftime(date_fmt)
 
+    def clean(self):
+        super(InventoryGroup, self).clean()
+        if self.state in ('draft', 'pending'):
+            iofilt = InventoryGroup.objects.filter(department=self.department, state__in=('draft','pending'))
+            if self.id:
+                iofilt = iofilt.exclude(id=self.id)
+            if iofilt.exists():
+                raise ValidationError(_("You cannot open more than one inventory for the same department (%s) !") % self.department)
+
     @models.permalink
     def get_absolute_url(self):
         return ('inventory_group_view', [str(self.id)])
