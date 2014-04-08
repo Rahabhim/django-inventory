@@ -48,7 +48,7 @@ fill them in at the wizard.
                         <div> <p>{% blocktrans %}Search based on criteria: {% endblocktrans %}</p>
             
                             <label>{% trans 'Manufacturer:' %}</label>
-                            <select id="{{mand.did}}_manuf_combo">
+                            <select id="{{mand.did}}_manuf_combo" class="manuf_combo">
                                 <option value="">------</option>
                                 {% for manuf in mand.manufs  %}
                                 <option value="{{manuf.id}}">{{ manuf.name}}</option>
@@ -61,13 +61,27 @@ fill them in at the wizard.
                             {% endfor %}
                             </div>
                             <br/>
-                            <label>{% trans 'Product:' %}</label> <select id="{{mand.did}}_combo" ><option value="">-----</option></select>
+                            <div class="product_selection">
+                                <label>Βρέθηκαν <span class="combo_results"></span>:
+                                </label>
+                                <select id="{{mand.did}}_combo" >
+                                    <option value="">-----</option>
+                                </select>
+                            </div>
                         </div>
-                        <div id="{{ mand.did }}_on_deck">{% trans 'Not found' %}</div>
+                        
                     </div>
-                    <div class="line_vals">
-                        <label for="{{mand.did}}_qty">{% trans 'Quantity' %}</label><input type="text" id="{{mand.did}}_qty" value="1" />
-                    </div>
+                        <div class="line_vals">
+                            <label>Επιλεγμένο προϊόν:</label>
+                            <div id="{{ mand.did }}_on_deck" class="on_deck2">Κανένα</div>
+                            <div class="qty_container">
+                                &times; <input type="text"id="{{mand.did}}_qty" value="1" /> (ποσότητα)
+                            </div>
+                        </div>
+                        <div class="label_not_found">
+                                <img src="/static/images/dialog-warning.png" width="22px" height="22px"/>
+                                Δεν επιλέχθηκε προϊόν
+                        </div>
                 </div>
             {% endfor %}
         </td>

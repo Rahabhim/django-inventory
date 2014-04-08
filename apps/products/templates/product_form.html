@@ -88,6 +88,39 @@
         padding: 10px;
     }
 
+    div.product_search .label_not_found {
+        display: none;
+        background-color: #FFDCA8;
+        padding: 4px;
+        padding-right: 4em;
+    }
+    div.product_search .label_not_found img {
+        margin-right: 10px;
+    }
+
+    div.product_search .line_vals{
+        display: none;
+        background: transparent;
+        border: 2px solid #a7a7a7;
+    }
+    div.product_search .line_vals .on_deck2 {
+        background-color: #C0FFFF;
+    }
+
+    div.product_search .product_selection {
+        padding-bottom: 4px;
+    }
+
+    div.product_search .product_selection.not-found {
+        background-color: #FFC0C0;
+    }
+    div.product_search .product_selection.found.selected {
+        background-color: #A7B47C;
+    }
+    div.product_search .product_selection.found {
+        background-color: #FFDCA8;
+    }
+
     div.add_more > a {
         color: #32ADFF;
         text-decoration: underline;
@@ -145,6 +178,7 @@
         $('#fill_in_pane > div').hide();
         $(field_id).show('fast');
         $(field_id+"_part").val('');
+        clear_attribs(field_id);
     }
 
     /** Add an optional category, display in left menu and activate on right
@@ -169,12 +203,30 @@
         $(field_id).show('fast');
         var part_qty = $('#cont_parts-'+ part_id +' input[name="'+ field_id.substr(1)+'_part_qty"]').val();
         /* Cleanup the right pane and display our part on deck */
-        $(field_id + "_manuf_combo option:selected").prop("selected", false);
-        $(field_id + "_combo option:selected").prop("selected", false);
-        $(field_id + "_attribs option:selected").prop("selected", false);
+        clear_attribs(field_id, true);
         $(field_id + "_part").val(part_id);
         $(field_id + "_on_deck").text($('#cont_parts-' + part_id + ' > a.cont_part').text());
         $(field_id + "_qty").val(part_qty);
+    }
+
+    /** Clear the attributes form, on user's request
+    */
+    function clear_attribs(field_id, has_part) {
+        $(field_id + "_manuf_combo option:selected").prop("selected", false);
+        $(field_id + "_combo").empty();
+        $(field_id + " .combo_results").text('');
+        $(field_id + "_attribs option:selected").prop("selected", false);
+        $(field_id + " .product_selection").removeClass("found selected not-found")
+        if (has_part) {
+            $(field_id+ " .note_not_found").hide();
+            $(field_id+ " .label_not_found").hide();
+            $(field_id+ " .line_vals").show();
+        } else {
+            $(field_id+ " .note_not_found").show();
+            $(field_id+ " .label_not_found").show();
+            $(field_id+ " .line_vals").hide();
+        }
+        return false;
     }
 
     /** Remove part
@@ -193,16 +245,35 @@
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
         }
+        if (data.length){
+            $(field_id + " .combo_results").text('('+ data.length + ')');
+            $(field_id + " .product_selection").removeClass("not-found selected").addClass("found");
+        }
+        else {
+            $(field_id + " .product_selection").removeClass("found selected").addClass("not-found");
+            $(field_id + " .combo_results").text('');
+        }
+
     }
 
     function update_product2(field_id, cat_id){
         var attribs = new Array();
-        $(field_id + "_attribs > select").each(function() { attribs.push(this.value)});
+        $(field_id + "_attribs div.product_attrib > select").each( function() { if (this.value) attribs.push(this.value) });
+        var manuf_value = $(field_id + "_manuf_combo")[0].value;
+        // console.log("lookup specs", cat_id, attribs);
+
+        if (! (manuf_value || attribs.length)){
+            // don't perform query if no selector is specified
+            // Just clear the results.
+            update_product3([], field_id);
+            return;
+        }
+        
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
                 'data': {'term': 'foo', 'attributes': attribs,
                         'category': cat_id,
-                        'manufacturer': $(field_id + "_manuf_combo")[0].value },
+                        'manufacturer': manuf_value },
                 'success': function(data,status, xhr) { update_product3(data, field_id);},
             });
     }
@@ -211,11 +282,20 @@
     */
     function select_some_part(field_id){
         var $selected = $(field_id +"_combo option:selected");
-        if (! $selected) {
-            $(field_id + '_on_deck').text('---');
-            return false; 
+        if ($selected && $selected.val()) {
+            select_part2(field_id, $selected.text(), $selected.val());
+            $(field_id+ " .note_not_found").hide();
+            $(field_id+" .label_not_found").hide();
+            $(field_id + " .line_vals").show();
+            $(field_id + " .product_selection").addClass('selected');
+        } else {
+            $(field_id + '_on_deck').text('Κανένα');
+            $(field_id+ " .note_not_found").show();
+            $(field_id+" .label_not_found").show();
+            $(field_id + " .line_vals").hide();
+            $(field_id+" .product_selection").removeClass('selected');
+            return false;
         }
-        select_part2(field_id, $selected.text(), $selected.val());
     }
 
     /** Update the selected part at both the left menu and right pane
@@ -280,7 +360,7 @@
             update_product2(field_id, cat_id);
         }
         $(field_id + "_manuf_combo").change(upd_product2);
-        $(field_id + "_attribs > select").change(upd_product2);
+        $(field_id + "_attribs div.product_attrib > select").change(upd_product2);
         $(field_id + "_combo").change(function() { select_some_part(field_id); } );
         $(field_id + "_qty").change(function() { upd_quantity(field_id); });
         $(field_id + "_code").autocomplete({
