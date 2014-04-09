@@ -43,7 +43,7 @@
     }
 
     #qty_container {
-        display: none;
+        display: auto;
     }
     #ss3s-1 > div hr {
         margin-top: 1.2em;
@@ -233,6 +233,9 @@
         $("#submit0").click(form3_submit);
         /* this one (from po_wizard_base), too... */
         $("#submit_early").click(form3_submit);
+        {% if not form.item_template.value %}
+        $("#qty_container").hide();
+        {% endif %}
     });
 </script>
 {% endwith %}
