@@ -507,7 +507,10 @@ input.checkbox {
 }
 
 .form input.ui-autocomplete-input, .u2_form input.ui-autocomplete-input{
-    background: transparent url('../images/icon-search.png') right center no-repeat;
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-image: url('../images/icon-search.png');
+    background-color: white;
 }
 
 .group.inline {
