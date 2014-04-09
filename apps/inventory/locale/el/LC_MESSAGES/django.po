@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-20 20:00+0200\n"
-"PO-Revision-Date: 2014-03-20 20:02+0200\n"
+"POT-Creation-Date: 2014-04-09 11:48+0300\n"
+"PO-Revision-Date: 2014-04-09 11:49+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -69,11 +69,11 @@ msgstr "επιστροφή στην απογραφή"
 msgid "pending inventories"
 msgstr "Εκκρεμείς Απογραφές"
 
-#: __init__.py:76 models.py:86 models.py:210 urls.py:22
+#: __init__.py:76 models.py:86 models.py:219 urls.py:22
 msgid "inventories"
 msgstr "Απογραφές"
 
-#: forms.py:24 forms.py:55 models.py:77 models.py:204
+#: forms.py:24 forms.py:55 models.py:77 models.py:213
 msgid "created by"
 msgstr "δημιουργήθηκε από"
 
@@ -81,11 +81,11 @@ msgstr "δημιουργήθηκε από"
 msgid "Department"
 msgstr "Μονάδα"
 
-#: forms.py:26 models.py:72 models.py:199
+#: forms.py:26 models.py:72 models.py:208
 msgid "date performed"
 msgstr "Ημερομηνία εκτέλεσης"
 
-#: forms.py:56 models.py:79 models.py:205
+#: forms.py:56 models.py:79 models.py:214
 msgid "validated by"
 msgstr "επικύρωση από"
 
@@ -117,7 +117,7 @@ msgstr "Επικυρωμένη"
 msgid "Rejected"
 msgstr "Ακυρωμένη"
 
-#: models.py:70 models.py:197
+#: models.py:70 models.py:206
 msgid "inventory number"
 msgstr "Αρ. πρωτοκόλλου"
 
@@ -125,11 +125,11 @@ msgstr "Αρ. πρωτοκόλλου"
 msgid "department"
 msgstr "μονάδα"
 
-#: models.py:73 models.py:200
+#: models.py:73 models.py:209
 msgid "date validated"
 msgstr "ημερομηνία επικύρωσης"
 
-#: models.py:75 models.py:202 urls.py:24 urls.py:31 urls.py:38
+#: models.py:75 models.py:211 urls.py:24 urls.py:31 urls.py:38
 msgid "state"
 msgstr "κατάσταση"
 
@@ -137,77 +137,81 @@ msgstr "κατάσταση"
 msgid "Signed file"
 msgstr "Υπογεγραμμένο αρχείο"
 
-#: models.py:85 models.py:209 models.py:437 urls.py:48 urls.py:51 urls.py:54
+#: models.py:85 models.py:218 models.py:446 urls.py:48 urls.py:51 urls.py:54
 #: views.py:121
 msgid "inventory"
 msgstr "απογραφή"
 
-#: models.py:92 models.py:242
+#: models.py:92 models.py:251
 #, python-format
 msgid "%(name)s on %(date)s"
 msgstr "%(name)s στις %(date)s"
 
-#: models.py:149 models.py:362
+#: models.py:103
+#, python-format
+msgid "You cannot open more than one inventory for the same department (%s) !"
+msgstr "Δεν επιτρέπεται δεύτερη εκκρεμής απογραφή για την ίδια μονάδα (%s) !"
+
+#: models.py:158 models.py:371
 #, python-format
 msgid "Cannot validate this inventory, it is: %s"
 msgstr "Η απογραφή δεν μπορεί να επικυρωθεί γιατί είναι %s"
 
-#: models.py:151 models.py:364
+#: models.py:160 models.py:373
 msgid "Inventory already validated"
 msgstr "Η απογραφή έχει επικυρωθεί ήδη"
 
-#: models.py:154 models.py:373
+#: models.py:163 models.py:382
 msgid "The active date cannot be after the validation date"
 msgstr ""
 "Η ημερομηνία εκτέλεσης δεν μπορεί να είναι μεγαλύτερη από την ημερομηνία "
 "επικύρωσης"
 
-#: models.py:195
-#, fuzzy
+#: models.py:204
 msgid "parent"
-msgstr "Σύγκριση"
+msgstr "γονικό"
 
-#: models.py:198
+#: models.py:207
 msgid "location"
 msgstr "Τοποθεσία"
 
-#: models.py:253
+#: models.py:262
 #, python-format
 msgid "You cannot open more than one inventory for the same location (%s) !"
 msgstr ""
 "Δεν επιτρέπεται δεύτερη εκκρεμής απογραφή για την ίδια τοποθεσία (%s) !"
 
-#: models.py:258
+#: models.py:267
 #, python-format
 msgid "Inventory: %s"
 msgstr "Απογραφή: %s"
 
-#: models.py:293 models.py:306
+#: models.py:302 models.py:315
 msgid "Inventory is validated, cannot modify"
 msgstr "Η απογραφή έχει επικυρωθεί, δεν μπορείτε να την τροποποιήσετε"
 
-#: models.py:296 models.py:309
+#: models.py:305 models.py:318
 #, python-format
 msgid "Incorrect object passed: %s"
 msgstr "Λάθος αντικείμενο: %s"
 
-#: models.py:299
+#: models.py:308
 msgid "Item already in inventory"
 msgstr "Ο εξοπλισμός έχει ήδη απογραφεί"
 
-#: models.py:316
+#: models.py:325
 #, python-format
 msgid "Item %s not in inventory!"
 msgstr "Ο εξοπλισμός %s δεν είναι στην απογραφή!"
 
-#: models.py:370
+#: models.py:379
 msgid ""
 "Inventory has pending items that don't match computed state. Cannot close"
 msgstr ""
 "Η απογραφή έχει εκκρεμή εξοπλισμό που δεν ταιριάζει με τις υπολογισμένες "
 "κινήσεις γι' αυτήν την τοποθεσία. Δεν μπορεί να επικυρωθεί."
 
-#: models.py:378
+#: models.py:387
 #, python-format
 msgid ""
 "You cannot validate an inventory for %s, because there is movements to/from "
@@ -216,32 +220,32 @@ msgstr ""
 "Δεν μπορείτε να επικυρώσετε απογραφή για τις %s, γιατί υπάρχουν οριστικές "
 "κινήσεις από/προς την τοποθεσία αυτή σε μεταγενέστερες ημερομηνίες."
 
-#: models.py:412 views.py:199
+#: models.py:421 views.py:199
 #, python-format
 msgid "This inventory is %s, cannot reject."
 msgstr "Η απογραφή είναι %s, δεν μπορεί να ακυρωθεί."
 
-#: models.py:419
+#: models.py:428
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:420 views.py:46 views.py:77
+#: models.py:429 views.py:46 views.py:77
 msgid "quantity"
 msgstr "Ποσότητα"
 
-#: models.py:421
+#: models.py:430
 msgid "item state"
 msgstr "κατάσταση"
 
-#: models.py:423
+#: models.py:432
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:426 urls.py:65
+#: models.py:435 urls.py:65
 msgid "inventory item"
 msgstr "Εξοπλισμός"
 
-#: models.py:427
+#: models.py:436
 msgid "inventory items"
 msgstr "Εξοπλισμός"
 
