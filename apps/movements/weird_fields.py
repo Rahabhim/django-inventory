@@ -174,8 +174,8 @@ class IGW_Attribute(StrAndUnicode):
 
     @property
     def manufs(self):
-        return Manufacturer.objects.filter(products__category=self._obj.category).\
-                        annotate(num_products=Count('products')).order_by('name')
+        return Manufacturer.objects.filter(products__category=self._obj.category)\
+                .order_by('name')
 
     @property
     def parts(self):

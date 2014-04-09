@@ -142,8 +142,7 @@ class PO_Step3(WizardForm):
             category = None
         if category:
             self.fields['manufacturer'].queryset = Manufacturer.objects.\
-                        filter(products__category=category).\
-                        annotate(num_products=Count('products')).order_by('-num_products')
+                        filter(products__category=category).order_by('name')
             self.category_id = category.id
         # self.initial['product_attributes']['all'] = []
 
