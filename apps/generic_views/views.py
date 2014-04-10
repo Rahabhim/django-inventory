@@ -239,7 +239,7 @@ class GenericBloatedListView(django_gv.ListView):
         if filters:
             queryset = queryset.filter(*filters)
 
-        return queryset
+        return queryset.distinct()
 
     def apply_order(self, queryset):
         if isinstance(self.order_by, basestring):
