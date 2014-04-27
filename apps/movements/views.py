@@ -1062,6 +1062,8 @@ def repair_do_close(request, object_id):
                 repair.save()
 
             for move in repair.movements.all():
+                if move.state == 'done':
+                    continue
                 if not move.name:
                     move.name = repair.user_id
                     move.save()
