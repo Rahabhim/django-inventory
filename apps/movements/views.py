@@ -1040,15 +1040,22 @@ def repair_do_close(request, object_id):
                     and active_role.department != move.location_src.department:
                 moves_pending = True
                 continue
-            move.do_close(val_user=request.user)
-            if move.state != 'done':
-                moves_pending = True
+            # check only, on first pass, to ensure that /all/ movements can close
+            move._close_check()
+
+        if not moves_pending:
+            for move in repair.movements.all():
+                move.do_close(val_user=request.user)
+                if move.state != 'done':
+                    moves_pending = True
+
         if not moves_pending:
             repair.do_close(request.user)
             messages.success(request, _("Repair order has been confirmed"), fail_silently=True)
             return redirect(repair.get_absolute_url())
         else:
-            msg = _(u'Repair order %s cannot be confirmed, because it contains pending moves! Please inspect and close these first.') % repair.user_id
+            msg = _(u'Repair order %s cannot be confirmed, because it contains pending moves! Please inspect and close these first.') % \
+                    (repair.user_id or ('#%d' % repair.id))
             messages.error(request, msg, fail_silently=True)
     except Exception, e:
         messages.error(request, unicode(e))
