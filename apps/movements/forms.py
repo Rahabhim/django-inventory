@@ -213,7 +213,7 @@ class MovementForm(_baseMovementForm):
 class MovementForm_update_po(_baseMovementForm):
 
     class Meta:
-        fields = ('name', 'origin', 'note', 'items')
+        fields = ('origin', 'note', 'items')
         model = Movement
 
 class MovementForm_gu(_baseMovementForm):
@@ -227,14 +227,14 @@ class MovementForm_gu(_baseMovementForm):
 
     class Meta:
         model = Movement
-        exclude = ('date_val', 'validate_user', 'state', 'stype', 'purchase_order', 'repair_order')
+        exclude = ('name', 'date_val', 'validate_user', 'state', 'stype', 'purchase_order', 'repair_order')
 
 class DestroyItemsForm(_outboundMovementForm):
     """This form is registered whenever defective equipment is trashed (destroyed)
     """
     class Meta:
         model = Movement
-        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
+        fields = ('date_act', 'origin', 'note', 'location_src', 'items')
 
     def _pre_save_by_user(self, user):
         self.instance.stype = 'out'
@@ -251,7 +251,7 @@ class LoseItemsForm(_outboundMovementForm):
                     help_text=_("Format: 23/04/2010"))
     class Meta:
         model = Movement
-        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'items')
+        fields = ('date_act', 'origin', 'note', 'location_src', 'items')
 
     def _pre_save_by_user(self, user):
         self.instance.stype = 'out'
@@ -269,7 +269,7 @@ class MoveItemsForm(_baseMovementForm):
 
     class Meta:
         model = Movement
-        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'location_dest',
+        fields = ('date_act', 'origin', 'note', 'location_src', 'location_dest',
                 'items')
 
     def _init_by_request(self, request):
@@ -300,7 +300,7 @@ class MoveInternalForm(_baseMovementForm):
 
     class Meta:
         model = Movement
-        fields = ('name', 'date_act', 'origin', 'note', 'location_src', 'location_dest',
+        fields = ('date_act', 'origin', 'note', 'location_src', 'location_dest',
                 'items')
 
     def _init_by_request(self, request):

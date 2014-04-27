@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.forms.formsets import formset_factory
 
-from common.models import Supplier, Location
+from common.models import Supplier, Location, Sequence
 from common.api import role_from_request
 from assets.models import ItemTemplate, Item, ItemGroup
 from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
@@ -392,6 +392,12 @@ def purchase_order_receive(request, object_id):
                         moves_other_pending = True
                         continue
                     if not move.name:
+                        if not new_reference:
+                            try:
+                                new_reference = Sequence.objects.get(name='movement').get_next()
+                            except ObjectDoesNotExist:
+                                pass
+
                         if new_reference:
                             move.name = new_reference
                             move.save()
@@ -746,9 +752,6 @@ class MovementListView(GenericBloatedListView):
                       'order_attribute': 'state', 'col_class': 'state'},
                     {'name':_(u'type'), 'attribute': 'get_stype_display', 'order_attribute': 'stype'}]
 
-class MovementCloseForm(forms.Form):
-    name = forms.CharField(max_length=32, label=_(u'reference'))
-
 def movement_do_close(request, object_id):
     _ = ugettext
     movement = get_object_or_404(Movement, pk=object_id)
@@ -758,22 +761,26 @@ def movement_do_close(request, object_id):
     elif not (active_role and active_role.has_perm('movements.validate_movement')):
         raise PermissionDenied
 
-    form = None
+    form = True
     if request.method == 'POST':
-        form = MovementCloseForm(request.POST)
-        if form.is_valid():
-            movement.name = form.cleaned_data['name']
-            movement.save()
-            if movement.name:
-                # we can close it now
-                form = None
-    else:
-        form = MovementCloseForm(initial={'name': movement.name})
+        if movement.name:
+            form = False
+        else:
+            try:
+                movement._close_check(skip_name=True)
+                                # one early time, to avoid spending a sequence
+                                # for an invalid move
+                movement.name = Sequence.objects.get(name='movement').get_next()
+                movement.save()
+                form = False
+            except ObjectDoesNotExist:
+                pass
+            except Exception, e:
+                messages.error(request, unicode(e))
 
     if form:
-        # not a valid submitted form + movement name
         return render(request, 'movement_do_close.html', { 'title': _("Confirm Movement Close"),
-                'form': form, 'object': movement})
+                'object': movement})
 
     try:
         if active_role.department is not None:
@@ -945,7 +952,7 @@ def repair_itemgroup(request, object_id):
         try:
             df = forms.DateField()
             issue_date = df.to_python(request.REQUEST['issue_date'])
-            user_id = request.REQUEST['user_id']
+            user_id = '' # request.REQUEST['user_id']
 
             if not issue_date:
                 raise ValueError(_("Issue date cannot be empty"))
@@ -1017,6 +1024,7 @@ def repair_do_close(request, object_id):
         pass
     elif not (active_role and active_role.has_perm('movements.validate_repairorder')):
         raise PermissionDenied
+
     try:
         if (active_role.department is not None) \
                 and active_role.department != repair.department:
@@ -1044,7 +1052,14 @@ def repair_do_close(request, object_id):
             move._close_check()
 
         if not moves_pending:
+            if not repair.user_id:
+                repair.user_id = Sequence.objects.get(name='movement').get_next()
+                repair.save()
+
             for move in repair.movements.all():
+                if not move.name:
+                    move.name = repair.user_id
+                    move.save()
                 move.do_close(val_user=request.user)
                 if move.state != 'done':
                     moves_pending = True

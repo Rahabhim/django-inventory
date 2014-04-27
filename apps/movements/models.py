@@ -831,13 +831,14 @@ class Movement(models.Model):
             if chks:
                 self.checkpoint_src = chks[0]
 
-    def _close_check(self):
+    def _close_check(self, skip_name=False):
         if self.state not in ('draft', 'pending'):
             raise ValueError(_("Cannot close movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
         if self.date_val:
             raise ValueError(_("Cannot close movement because it seems already validated!"))
 
-        if self.stype != 'other' and not (self.name or self.location_dest.usage == 'production'):
+        if self.stype != 'other' and not (self.name or skip_name \
+                    or self.location_dest.usage == 'production'):
             raise ValueError(_('A movement must have its reference set, before it can be closed'))
         if self.checkpoint_dest is not None:
             raise ValueError(_("Internal error, movement is already checkpointed"))
