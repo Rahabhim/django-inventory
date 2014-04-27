@@ -1054,7 +1054,7 @@ def repair_do_close(request, object_id):
                 moves_pending = True
                 continue
             # check only, on first pass, to ensure that /all/ movements can close
-            move._close_check()
+            move._close_check(skip_name=True)
 
         if not moves_pending:
             if not repair.user_id:
