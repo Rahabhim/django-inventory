@@ -4,6 +4,7 @@ import logging
 from collections import defaultdict
 
 from django import forms
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.http import HttpResponseRedirect #, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect, render
@@ -349,7 +350,9 @@ def purchase_order_receive(request, object_id):
         new_reference = request.GET.get('reference_ask', False)
 
         if items_left and request.GET.get('do_create', False):
-            if not active_role.has_perm('movements.receive_purchaseorder'):
+            if request.user.is_superuser and settings.DEVELOPMENT:
+                pass
+            elif not active_role.has_perm('movements.receive_purchaseorder'):
                 messages.error(request,_('You do not have permission to receive the order'), fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
             if request.GET.get('location_ask', False):
@@ -365,7 +368,9 @@ def purchase_order_receive(request, object_id):
             # reload the request in the browser, but get rid of any "action" arguments!
             return redirect(request.path.rstrip('?'), object_id=object_id)
         elif (not items_left) and request.GET.get('do_confirm', False):
-            if not (active_role and active_role.has_perm('movements.validate_purchaseorder')):
+            if request.user.is_superuser and settings.DEVELOPMENT:
+                pass
+            elif not (active_role and active_role.has_perm('movements.validate_purchaseorder')):
                 messages.error(request,_('You do not have permission to validate the order!'), fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
             try:
