@@ -30,7 +30,7 @@
     <table id="rform">
         <tr><td>{% trans 'Now at:' %}</td> <td>{{ item.location }}</td> </tr>
         <tr><td><label for="issue_date" class="required">{% trans 'Issue date:' %}</label></td>
-            <td><input name="issue_date" type="text"/>
+            <td><input name="issue_date" id="id_issue_date" type="text"/>
                 <div id="date_invalid" style="display: none; color: red;">
                     {% trans 'You have to enter a date in DD/MM/YYY format' %}
                 </div>
@@ -145,7 +145,9 @@
 
 <script src="{{ STATIC_URL }}js/jquery.ui.datepicker-{{ LANGUAGE_CODE }}.js"></script>
     <script>
-       $("#id_issue_date").datepicker({dateFormat: 'dd/mm/yy', changeYear: false, yearRange: '-15:+2'})
+        $(function(){
+            $("#id_issue_date").datepicker({dateFormat: 'dd/mm/yy', changeYear: false, yearRange: '-15:+2'})
+        });
     </script>
 </div>
 
