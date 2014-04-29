@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <style type="text/css">
+    </style>
+{% endblock %}
+
+{% block web_theme_sidebar_not %}
+{# override, keep it empty #}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h1>{% trans 'Report settings' %}<span class="famfam active famfam-report"></span></h1>
+        
+        <div class="block">
+        <h2>{% trans 'Type of report' %}</h2>
+        </div>
+
+        <div class="block">
+        <h2>{% trans 'Parameters' %}<h2>
+        </div>
+    </div>
+    <hr/>
+    <div class="content">
+        <h1>{% trans 'Result' %}</h1>
+    </div>
+
+    <hr/>
+{% endblock %}

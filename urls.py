@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     (r'^generic_photos/', include('photos.urls')),    
     (r'^ajax_select/', include('ajax_select.urls')),
     (r'^help/', include('dhelp.urls')),
+    (r'^creports/', include('reports.urls')),
 )
 
 if settings.DEVELOPMENT:
