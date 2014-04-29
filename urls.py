@@ -23,6 +23,7 @@ urlpatterns = patterns('',
     (r'^ajax_select/', include('ajax_select.urls')),
     (r'^', include('company.urls')),
     (r'^help/', include('dhelp.urls')),
+    (r'^creports/', include('reports.urls')),
 )
 
 if settings.DEVELOPMENT:

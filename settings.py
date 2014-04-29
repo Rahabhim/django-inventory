@@ -173,6 +173,7 @@ INSTALLED_APPS = [
     'dynamic_search',
     'importer',
     'movements',
+    'reports',
     'main',
     'web_theme',
     'ajax_select',
