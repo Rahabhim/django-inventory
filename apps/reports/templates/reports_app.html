@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load online_help %}
 
 {% block stylesheets %}
     {{ block.super }}
@@ -7,11 +8,18 @@
     </style>
 {% endblock %}
 
-{% block web_theme_sidebar_not %}
-{# override, keep it empty #}
+{% block web_theme_javascript %}
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/angular.min.js"></script>
+
+{% endblock %}
+
+{% block web_theme_sidebar %}
+    {% block sidebar %}{% endblock %}
+    {% help_for "view" "sidebar" sidebar=1 %}
 {% endblock %}
 
 {% block content %}
+<div ng-app="reportsApp" id="ng-app">
     <div class="content">
         <h1>{% trans 'Report settings' %}<span class="famfam active famfam-report"></span></h1>
         
@@ -19,14 +27,28 @@
         <h2>{% trans 'Type of report' %}</h2>
         </div>
 
-        <div class="block">
+        <div class="block" ng-show="show_params">
         <h2>{% trans 'Parameters' %}<h2>
         </div>
     </div>
     <hr/>
-    <div class="content">
+    <div class="content" ng-show="show_result">
         <h1>{% trans 'Result' %}</h1>
+
+        <hr/>
     </div>
 
-    <hr/>
+</div>
+
+{% endblock %}
+
+{% block web_theme_footer %}
+    {{ block.super }}
+<script type="text/javascript">
+    var reportsApp = angular.module('reportsApp', [])
+        .config(['$interpolateProvider', function($interpolateProvider) {
+            $interpolateProvider.startSymbol('[[');
+            $interpolateProvider.endSymbol(']]');
+        }]);
+</script>
 {% endblock %}
