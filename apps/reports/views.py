@@ -2,12 +2,19 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.http import HttpResponseNotFound, HttpResponse
 from django.template import RequestContext
+from django.utils.functional import Promise
 from django.db import models
 import json
 from django.utils.safestring import SafeString
+
+class JsonEncoderS(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Promise):
+            return unicode(obj)
+        return super(JsonEncoderS, self).default(obj)
 
 # ----------- Filters ----------------
 
@@ -24,9 +31,8 @@ class CJFilter(object):
     def real_init(self):
         pass
 
-    # TODO:
     def getGrammar(self):
-        raise NotImplementedError
+        return {'name': self.title }
 
     def getQuery(self, name, domain):
         """Constructs a Django Q object, according to `domain` (as from client)
@@ -36,7 +42,7 @@ class CJFilter(object):
         raise NotImplementedError
     
     def to_main_report(self, idn):
-        ret = {'id': idn, 'name': unicode(self.title) }
+        ret = {'id': idn, 'name': self.title }
         if getattr(self, 'famfam_icon', None):
             ret['famfam'] = 'famfam-' + self.famfam_icon
 
@@ -70,11 +76,21 @@ class CJFilter_Model(CJFilter):
         if not self.title:
             self.title = self._model_inst._meta.verbose_name_plural
 
+    def getGrammar(self):
+        ret = super(CJFilter_Model, self).getGrammar()
+        ret['widget'] = 'model'
+        ret['fields'] = {}
+        for k, field in self.fields.items():
+            ret['fields'][k] = field.getGrammar()
+        return ret
+
 class CJFilter_String(CJFilter):
     pass
 
     def getGrammar(self):
-        pass
+        ret = super(CJFilter_String, self).getGrammar()
+        ret['widget'] = 'char'
+        return ret
 
 
 location_filter = CJFilter_Model('common.Location')
@@ -121,10 +137,24 @@ def _reports_init_cache():
 
 def reports_app_view(request, object_id=None):
     _reports_init_cache()
-    return render_to_response('reports_app.html',
-            {'available_types': SafeString(json.dumps(_reports_cache['available_types'])),
-            },
-            context_instance=RequestContext(request))
+    return render(request, 'reports_app.html',
+            {'available_types': SafeString(json.dumps(_reports_cache['available_types'], cls=JsonEncoderS)),
+            })
 
+def reports_parts_params_view(request, part_id):
+    _reports_init_cache()
+    if part_id not in _reports_cache['main_types']:
+        return HttpResponseNotFound("Part for type %s not found" % part_id)
+    
+    return render(request, 'params-%s.html' % part_id, {})
+
+def reports_grammar_view(request, rep_type):
+    _reports_init_cache()
+    
+    rt = _reports_cache['main_types'].get(rep_type, False)
+    if not rt:
+        return HttpResponseNotFound("Grammar for type %s not found" % rep_type)
+    content = json.dumps(rt.getGrammar(), cls=JsonEncoderS)
+    return HttpResponse(content, content_type='application/json')
 
 # eof
