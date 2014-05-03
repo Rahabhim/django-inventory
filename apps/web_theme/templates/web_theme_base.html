@@ -42,7 +42,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div id="wrapper" class="wat-cf">
+                <div id="wrapper" class="wat-cf" {% block angular_app %}{% endblock %}>
                     <div id="main">
                         <div class="block" id="block-text">
                             {% if not user.is_anonymous %}

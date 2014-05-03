@@ -33,7 +33,7 @@ body {
   min-width: 960px;
 }
 
-#header, #wrapper {
+#header, #wrapper, #ng-app {
   padding: 0 20px;
 }
 
@@ -100,7 +100,7 @@ body {
   padding:10px;
 }
 
-#wrapper {
+#wrapper, #ng-app {
   padding-top: 20px;
 }
 
