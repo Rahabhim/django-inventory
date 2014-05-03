@@ -5,6 +5,17 @@
 {% block stylesheets %}
     {{ block.super }}
     <style type="text/css">
+    section.search {
+        border: thin solid #808080;
+        }
+    
+    section.search div{
+        border: thin solid #a0a0a0;
+    }
+
+    section.search div.add-criterion {
+        border: none;
+    }
     </style>
 {% endblock %}
 
@@ -18,21 +29,34 @@
     {% help_for "view" "sidebar" sidebar=1 %}
 {% endblock %}
 
+{%block angular_app %} ng-app="reportsApp" {% endblock %}
 {% block content %}
-<div ng-app="reportsApp" id="ng-app">
+<div id="ng-main-app">
     <div class="content">
         <h1>{% trans 'Report settings' %}<span class="famfam active famfam-report"></span></h1>
         
-        <div class="block">
-        <h2>{% trans 'Type of report' %}</h2>
+        <div class="block" ng-controller="reportsTypeCtrl">
+            <h2>{% trans 'Type of report' %}</h2>
+            <div ng-show="view_short">
+                <h3 ng-click="view_short=false"><span class="famfam active" ng-class="current.famfam"></span>[[ current.name ]]</h3>
+            </div>
+            <div ng-show="!view_short">
+                <div class="button-selection" ng-repeat="t in available_types" ng-click="selectType(t)">
+                    <span class="famfam active" ng-class="t.famfam"></span>[[ t.name ]]
+                </div>
+            </div>
+
+            <div ng-if="view_short && current" ng-include="'parts/params-'+ current.id +'.html'">
+            </div>
         </div>
 
-        <div class="block" ng-show="show_params">
-        <h2>{% trans 'Parameters' %}<h2>
+        
+        <div class="block" ng-show="show_params" ng-controller="paramsCtrl">
+            <h2>{% trans 'Parameters' %}<h2>
         </div>
     </div>
     <hr/>
-    <div class="content" ng-show="show_result">
+    <div class="content" ng-show="show_result" ng-controller="resultCtrl">
         <h1>{% trans 'Result' %}</h1>
 
         <hr/>
@@ -44,11 +68,82 @@
 
 {% block web_theme_footer %}
     {{ block.super }}
+<script type="text/ng-template" id="parts/params-department.html">
+    Επιλογή μονάδων!
+
+    <div>
+    Τύπος:
+    </div>
+    <div>
+    OTA:
+    </div>
+
+</script>
+
+<script type="text/ng-template" id="parts/params-product.html">
+    <section class="search">
+    <dl><dt>{% trans 'Products' %}:</dt>
+        <dd>[['foo' ]]</dd>
+    </dl>
+    <div ng-show="true">
+        <h3>{% trans 'Criteria' %}</h3>
+        <div class="criterion" ng-repeat="crit in criteria">
+            <a class="del-criterion" ng-click="removeFromArray(criteria, crit)"><span class="famfam active famfam-delete"></span>{% trans 'Remove' %}</a>
+        </div>
+        <div class="add-criterion">
+            <a ng-click="" ><span class="famfam active famfam-plus"></span>{% trans 'Add criterion...' %}</a>
+        </div>
+    </div>
+    </section>
+</script>
+
+<script type="text/ng-template" id="parts/params-equipment.html">
+    {# Equipment search includes Departments, Products, Procurements etc. #}
+    <section class="search">
+    <dl><dt>{% trans 'Equipment' %}:</dt>
+         <dd>[['foo' ]]</dd>
+    </dl>
+
+    <div ng-controller="paramsCtrl">
+        <div ng-include="'parts/params-product.html'"></div>
+    </div>
+    </section>
+
+</script>
+
 <script type="text/javascript">
     var reportsApp = angular.module('reportsApp', [])
         .config(['$interpolateProvider', function($interpolateProvider) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
+        }]);
+    reportsApp.controller('mainCtrl', ['$log', '$scope',function($log, $scope) {
+            $log.debug("mainCtrl:", $scope);
+        }]);
+
+    reportsApp.controller('reportsTypeCtrl', ['$log', '$scope',function($log, $scope) {
+            $log.debug("reportsTypeCtrl:", $scope);
+
+            $scope.view_short = false;
+            $scope.type_name = '?';
+
+            $scope.available_types = {{ available_types }};
+
+            $scope.selectType = function(t) {
+                    $log.debug("Selecting type:", t.id);
+                    if (! t.id)
+                        return;
+                    $scope.current = t;
+                    $scope.view_short = true;
+                };
+        }]);
+
+    reportsApp.controller('paramsCtrl', ['$log', '$scope',function($log, $scope) {
+            $log.debug("paramsCtrl:", $scope);
+        }]);
+
+    reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
+            $log.debug("resultCtrl:", $scope);
         }]);
 </script>
 {% endblock %}
