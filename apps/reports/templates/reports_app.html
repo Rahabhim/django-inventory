@@ -4,24 +4,12 @@
 
 {% block stylesheets %}
     {{ block.super }}
-    <style type="text/css">
-    section.search {
-        border: thin solid #808080;
-        }
-    
-    section.search div{
-        border: thin solid #a0a0a0;
-    }
-
-    section.search div.add-criterion {
-        border: none;
-    }
-    </style>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/reports-widgets.css" type="text/css" media="screen" />
 {% endblock %}
 
 {% block web_theme_javascript %}
     <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/angular.min.js"></script>
-
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/ui-bootstrap-tpls-0.10.0.min.js"></script>
 {% endblock %}
 
 {% block web_theme_sidebar %}
@@ -32,19 +20,42 @@
 {%block angular_app %} ng-app="reportsApp" {% endblock %}
 {% block content %}
 <div id="ng-main-app">
-    <div class="content">
-        <h1>{% trans 'Report settings' %}<span class="famfam active famfam-report"></span></h1>
+    <div class="content" ng-controller="mainCtrl">
+        <h1>{% trans 'Report builder' %}</h1>
         
+
+        <tabset>
+            <tab heading="{% trans 'Report type' %}" active="tabs.type">
+                <h3>{% trans 'Please select one of the available report types:' %}</h3>
+                <div>
+                    <div class="button-selection" ng-repeat="t in available_types" ng-click="selectType(t)">
+                        <span class="famfam active" ng-class="t.famfam"></span>[[ t.name ]]
+                    </div>
+                </div>
+            </tab>
+
+            <tab heading="{% trans 'Parameters' %}" active="tabs.params" disabled="!reportType">
+                <h3>{% trans 'Search criteria for '%}[[ reportType.name ]] </h3>
+                <div ng-controller="paramsCtrl" class="params-form">
+                    <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
+                </div>
+            </tab>
+            <tab heading="{% trans 'Formatting' %}" active="tabs.format" disabled="!reportType">
+            </tab>
+            <tab heading="{% trans 'Preview' %}" active="tabs.format" disabled="!reportType">
+            </tab>
+            <tab heading="{% trans 'Full results' %}" active="tabs.format" disabled="!reportType">
+            </tab>
+        </tabset>
+
+    <!--
+        <span class="famfam active famfam-report"></span>
         <div class="block" ng-controller="reportsTypeCtrl">
             <h2>{% trans 'Type of report' %}</h2>
             <div ng-show="view_short">
                 <h3 ng-click="view_short=false"><span class="famfam active" ng-class="current.famfam"></span>[[ current.name ]]</h3>
             </div>
-            <div ng-show="!view_short">
-                <div class="button-selection" ng-repeat="t in available_types" ng-click="selectType(t)">
-                    <span class="famfam active" ng-class="t.famfam"></span>[[ t.name ]]
-                </div>
-            </div>
+            
 
             <div ng-if="view_short && current" ng-include="'parts/params-'+ current.id +'.html'">
             </div>
@@ -60,24 +71,27 @@
         <h1>{% trans 'Result' %}</h1>
 
         <hr/>
+    -->
     </div>
-
 </div>
 
 {% endblock %}
 
 {% block web_theme_footer %}
     {{ block.super }}
-<script type="text/ng-template" id="parts/params-department.html">
-    Επιλογή μονάδων!
+<script type="text/ng-template" id="parts/field-model.html">
+    <dl ng-repeat="field in field.fields">
+        <dt>[[ field.name ]]</dt>
+        <dd ng-if="!field.expanded"> [[ field.data]] <a ng-click="field.expanded=true">[+]</a></dd>
+        <dd ng-if="field.expanded" class="expanded">
+            <div>Details...<a ng-click="field.expanded=false">[-]</a></div>
+            <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
+        </dd>
+    </dl>
+</script>
 
-    <div>
-    Τύπος:
-    </div>
-    <div>
-    OTA:
-    </div>
-
+<script type="text/ng-template" id="parts/field-char.html">
+    <input type="char" ng-model="field.data"></input>
 </script>
 
 <script type="text/ng-template" id="parts/params-product.html">
@@ -112,13 +126,31 @@
 </script>
 
 <script type="text/javascript">
-    var reportsApp = angular.module('reportsApp', [])
+    var reportsApp = angular.module('reportsApp', ['ui.bootstrap'])
         .config(['$interpolateProvider', function($interpolateProvider) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
         }]);
-    reportsApp.controller('mainCtrl', ['$log', '$scope',function($log, $scope) {
+    reportsApp.controller('mainCtrl', ['$log', '$scope', '$http',function($log, $scope, $http) {
             $log.debug("mainCtrl:", $scope);
+            $scope.reportType = false;
+            $scope.available_types = {{ available_types }};
+            $scope.tabs = { 'type': true, 'params': false, 'format': false, 'preview': false, 'results': false };
+            $scope.selectType = function(t) {
+                    $log.debug("Selecting type:", t.id);
+                    if (! t.id)
+                        return;
+                    $scope.reportType = t;
+                    $scope.tabs.params = true;
+
+                    if (!t.fields){
+                        $log.debug("Must fetch grammar for", t.id);
+                        $http.get('grammar/'+t.id).success(function(data) {
+                                $log.debug("Grammar data:", data);
+                                angular.extend(t, data);
+                            });
+                        }
+                };
         }]);
 
     reportsApp.controller('reportsTypeCtrl', ['$log', '$scope',function($log, $scope) {
@@ -126,20 +158,15 @@
 
             $scope.view_short = false;
             $scope.type_name = '?';
-
-            $scope.available_types = {{ available_types }};
-
-            $scope.selectType = function(t) {
-                    $log.debug("Selecting type:", t.id);
-                    if (! t.id)
-                        return;
-                    $scope.current = t;
-                    $scope.view_short = true;
-                };
         }]);
 
     reportsApp.controller('paramsCtrl', ['$log', '$scope',function($log, $scope) {
             $log.debug("paramsCtrl:", $scope);
+            $scope.field = false;
+            $scope.$parent.$watch('reportType', function(rt){
+                    $log.debug("reportType changed:", rt);
+                    $scope.field = rt;
+                });
         }]);
 
     reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
