@@ -82,7 +82,6 @@ class Item(models.Model):
             null=True, blank=True, on_delete=models.PROTECT,
             help_text=_("The procurement at which this item was initially obtained"))
 
-    # δυναμικό πεδίο: attributes και τύπος
     class Meta:
         ordering = ['property_number']
         verbose_name = _(u"asset")
