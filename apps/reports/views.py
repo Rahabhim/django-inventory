@@ -93,6 +93,22 @@ class CJFilter_String(CJFilter):
         ret['widget'] = 'char'
         return ret
 
+class CJFilter_contains(CJFilter):
+    """ Filter for an array that must contain *all of* the specified criteria
+
+        "sub" is the filter for each of the criteria, but will be repeated N times
+        and request to satisfy all of those N contents.
+    """
+    def __init__(self, sub_filter, **kwargs):
+        assert isinstance(sub_filter, CJFilter), repr(sub_filter)
+        self.sub = sub_filter
+        super(CJFilter_contains, self).__init__(**kwargs)
+
+    def getGrammar(self):
+        ret = super(CJFilter_contains, self).getGrammar()
+        ret['widget'] = 'contains'
+        ret['sub'] = self.sub.getGrammar()
+        return ret
 
 location_filter = CJFilter_Model('common.Location')
 manuf_filter = CJFilter_Model('products.Manufacturer')
@@ -106,10 +122,18 @@ product_filter = CJFilter_Model('products.ItemTemplate',
             }
     )
 
+item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
+    fields = {
+        'item_template': product_filter,
+        },
+    famfam_icon = 'computer',
+    )
+
 item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {
             'location': location_filter,
             'item_template': product_filter,
+            'item_group': CJFilter_contains(item_templ_c_filter, title=_('containing'), sequence=25),
             },
     famfam_icon = 'computer',
     )
