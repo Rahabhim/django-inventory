@@ -28,7 +28,7 @@
             <tab heading="{% trans 'Report type' %}" active="tabs.type">
                 <h3>{% trans 'Please select one of the available report types:' %}</h3>
                 <div>
-                    <div class="button-selection" ng-repeat="t in available_types" ng-click="selectType(t)">
+                    <div class="button-selection" ng-repeat="t in available_types|seqSort" ng-click="selectType(t)">
                         <span class="famfam active" ng-class="t.famfam"></span>[[ t.name ]]
                     </div>
                 </div>
@@ -80,7 +80,7 @@
 {% block web_theme_footer %}
     {{ block.super }}
 <script type="text/ng-template" id="parts/field-model.html">
-    <dl ng-repeat="field in field.fields">
+    <dl ng-repeat="field in field.fields|seqSort">
         <dt ng-click="field.expanded = !field.expanded">
             <span class="famfam active" ng-class="{'famfam-wrench': field.expanded, 'famfam-resultset_next': !field.expanded}"></span>
             [[ field.name ]]
@@ -188,5 +188,22 @@
     reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
             $log.debug("resultCtrl:", $scope);
         }]);
+
+    /* We need an explicit sort filter, because our input is an object, rather than
+        an array. Then, we hard-code the 'sequence' criterion
+    */
+    reportsApp.filter('seqSort', ['$log', function($log) {
+        return function(input){
+            if (!input)
+                return [];
+
+            var ret = [];
+            angular.forEach(input, function(f) {
+                ret.push(f);
+                });
+            ret.sort(function(a, b) { return a.sequence - b.sequence });
+            return ret;
+        }
+    }]);
 </script>
 {% endblock %}
