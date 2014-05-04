@@ -81,10 +81,12 @@
     {{ block.super }}
 <script type="text/ng-template" id="parts/field-model.html">
     <dl ng-repeat="field in field.fields">
-        <dt>[[ field.name ]]</dt>
-        <dd ng-if="!field.expanded"> [[ field.data]] <a ng-click="field.expanded=true">[+]</a></dd>
+        <dt ng-click="field.expanded = !field.expanded">
+            <span class="famfam active" ng-class="{'famfam-wrench': field.expanded, 'famfam-resultset_next': !field.expanded}"></span>
+            [[ field.name ]]
+        </dt>
+        <dd ng-if="!field.expanded"> [[ formatParmsData(field) ]]</dd>
         <dd ng-if="field.expanded" class="expanded">
-            <div>Details...<a ng-click="field.expanded=false">[-]</a></div>
             <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
         </dd>
     </dl>
@@ -167,6 +169,20 @@
                     $log.debug("reportType changed:", rt);
                     $scope.field = rt;
                 });
+            $scope.formatParmsData = function(field) {
+                    if (field.data)
+                        return '"' +field.data.toString() + '"';
+                    if (field.fields){
+                        var criteria = [];
+                        angular.forEach(field.fields, function(fld, k) {
+                            var c = $scope.formatParmsData(fld);
+                            if (c)
+                                criteria.push(fld.name +': ' + c);
+                            });
+                        if (criteria.length)
+                            return '[' + criteria.join(', ') + ']';
+                    }
+                };
         }]);
 
     reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
