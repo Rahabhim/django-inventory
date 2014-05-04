@@ -23,6 +23,7 @@ class CJFilter(object):
     """
     title = ''
     _instances = []
+    sequence = 10
 
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -32,7 +33,7 @@ class CJFilter(object):
         pass
 
     def getGrammar(self):
-        return {'name': self.title }
+        return {'name': self.title, 'sequence': self.sequence }
 
     def getQuery(self, name, domain):
         """Constructs a Django Q object, according to `domain` (as from client)
@@ -40,9 +41,9 @@ class CJFilter(object):
             @param name field name
         """
         raise NotImplementedError
-    
+
     def to_main_report(self, idn):
-        ret = {'id': idn, 'name': self.title }
+        ret = {'id': idn, 'name': self.title, 'sequence': self.sequence }
         if getattr(self, 'famfam_icon', None):
             ret['famfam'] = 'famfam-' + self.famfam_icon
 
@@ -85,7 +86,7 @@ class CJFilter_Model(CJFilter):
         return ret
 
 class CJFilter_String(CJFilter):
-    pass
+    sequence = 9
 
     def getGrammar(self):
         ret = super(CJFilter_String, self).getGrammar()
@@ -98,8 +99,9 @@ manuf_filter = CJFilter_Model('products.Manufacturer')
 manuf_filter.fields['name'] = CJFilter_String(title=_('name'))
 
 product_filter = CJFilter_Model('products.ItemTemplate',
+    sequence=20,
     fields = {
-            'name': CJFilter_String(title=_('name')),
+            'name': CJFilter_String(title=_('name'), sequence=1),
             'manufacturer': manuf_filter,
             }
     )
