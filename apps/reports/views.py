@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.http import HttpResponseNotFound, HttpResponse
+from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.utils.functional import Promise
 from django.db import models
@@ -93,6 +94,22 @@ class CJFilter_String(CJFilter):
         ret['widget'] = 'char'
         return ret
 
+class CJFilter_lookup(CJFilter_Model):
+    """Select *one* of some related model, with an autocomplete field
+    """
+
+    def __init__(self, model, lookup, **kwargs):
+        self.lookup = lookup
+        self.fields = {}
+        super(CJFilter_lookup, self).__init__(model, **kwargs)
+
+    def getGrammar(self):
+        ret = super(CJFilter_lookup, self).getGrammar()
+        del ret['fields']
+        ret['widget'] = 'lookup'
+        ret['lookup'] = reverse('ajax_lookup', args=[self.lookup,])
+        return ret
+
 class CJFilter_contains(CJFilter):
     """ Filter for an array that must contain *all of* the specified criteria
 
@@ -111,8 +128,7 @@ class CJFilter_contains(CJFilter):
         return ret
 
 location_filter = CJFilter_Model('common.Location')
-manuf_filter = CJFilter_Model('products.Manufacturer')
-manuf_filter.fields['name'] = CJFilter_String(title=_('name'))
+manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer')
 
 product_filter = CJFilter_Model('products.ItemTemplate',
     sequence=20,

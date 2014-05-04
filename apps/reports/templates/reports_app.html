@@ -100,6 +100,12 @@
     ???
 </script>
 
+<script type="text/ng-template" id="parts/field-lookup.html">
+    <input ng-model="field.data" type="text" autocomplete="off"
+        typeahead="d as d.repr for d in getLookup(field.lookup, $viewValue)"
+        typeahead-editable="false">
+</script>
+
 <script type="text/ng-template" id="parts/field-contains.html">
     <div ng-repeat="field in field.contains_data">
         {% trans 'containing:' %}
@@ -177,7 +183,8 @@
             $scope.type_name = '?';
         }]);
 
-    reportsApp.controller('paramsCtrl', ['$log', '$scope',function($log, $scope) {
+    reportsApp.controller('paramsCtrl', ['$log', '$scope','$http',
+        function($log, $scope, $http) {
             $log.debug("paramsCtrl:", $scope);
             $scope.field = false;
             $scope.$parent.$watch('reportType', function(rt){
@@ -209,6 +216,17 @@
                 var i = parent_field.contains_data.indexOf(field);
                 if (i >= 0)
                     parent_field.contains_data.splice(i, 1);
+                };
+
+            $scope.getLookup = function(lookup, val) {
+                return $http.get(lookup, {'params': {'term': val }})
+                    .then(function(response) {
+                        if (response.status == 200)
+                            return response.data;
+                        else
+                            $log.error("lookup response:", response);
+                            return [];
+                        });
                 };
         }]);
 
