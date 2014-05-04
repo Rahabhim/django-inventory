@@ -96,6 +96,18 @@
     <input type="char" ng-model="field.data"></input>
 </script>
 
+
+<script type="text/ng-template" id="parts/field-contains.html">
+    <div ng-repeat="field in field.contains_data">
+        {% trans 'containing:' %}
+        <a ng-click="removeContains(field, $parent.field)">{% trans 'Remove' %}</a>
+        <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
+    </div>
+    <div>
+        <a ng-click="addContains(field)">{% trans 'Add more...' %}</a>
+    </div>
+</script>
+
 <script type="text/ng-template" id="parts/params-product.html">
     <section class="search">
     <dl><dt>{% trans 'Products' %}:</dt>
@@ -182,6 +194,18 @@
                         if (criteria.length)
                             return '[' + criteria.join(', ') + ']';
                     }
+                };
+
+            $scope.addContains = function(field) {
+                if (!field.contains_data)
+                    field.contains_data = [];
+                field.contains_data.push(angular.copy(field.sub));
+                };
+            $scope.removeContains = function(field, parent_field) {
+                $log.debug("remove", field, "from", parent_field);
+                var i = parent_field.contains_data.indexOf(field);
+                if (i >= 0)
+                    parent_field.contains_data.splice(i, 1);
                 };
         }]);
 
