@@ -191,10 +191,13 @@
                     $log.debug("reportType changed:", rt);
                     $scope.field = rt;
                 });
-            $scope.formatParmsData = function(field) {
-                    if (field.data)
-                        return '"' +field.data.toString() + '"';
-                    if (field.fields){
+
+            var formatFns = {
+                    'char': function(field) {
+                        if (field.data)
+                            return '"' +field.data.toString() + '"';
+                        },
+                    'model': function(field) {
                         var criteria = [];
                         angular.forEach(field.fields, function(fld, k) {
                             var c = $scope.formatParmsData(fld);
@@ -203,7 +206,18 @@
                             });
                         if (criteria.length)
                             return '[' + criteria.join(', ') + ']';
-                    }
+                        },
+                    'lookup': function(field) {
+                        if (field.data)
+                            return field.data.repr;
+                        },
+                };
+            $scope.formatParmsData = function(field) {
+                    var fn = formatFns[field.widget];
+                    if (!fn)
+                        $log.debug("No format function for", field.widget);
+                    else
+                        return fn(field);
                 };
 
             $scope.addContains = function(field) {
