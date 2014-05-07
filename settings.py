@@ -220,6 +220,7 @@ LOGIN_EXEMPT_URLS = (
     r'^favicon\.ico$',
     r'^about\.html$',
     r'^legal/', # allow the entire /legal/* subsection
+    r'^help/', # all help is public, too
     )
 
 if AUTH_BACKEND == 'auth_passwd':

@@ -24,29 +24,29 @@
 	</head>
 	<body>
         <div id="container">
-            {% if user.is_anonymous %}
-                <div id="box">
-                    {% block content_plain %}{% endblock %}
-                </div>
-            {% endif %}
-            {% if not user.is_anonymous %}
+            {% block content_plain %}
                 <div id="header">
                     <h1><a href="{% url home %}">{% block web_theme_project_name %}{% endblock %}</a></h1>
                         <div id="user-navigation">
+                            {% if not user.is_anonymous %}
                             <ul class="wat-cf">
                                 {% block web_theme_user_navigation %}{% endblock %}
                             </ul>
+                            {% endif %}
                         </div>
                     <div id="main-navigation">
+                        {% if not user.is_anonymous %}
                         <ul class="wat-cf">
                             {% block web_theme_main_navigation %}{% endblock %}
                         </ul>
+                        {% endif %}
                     </div>
                 </div>
                 <div id="header-line"></div>
                 <div id="wrapper" class="wat-cf">
                     <div id="main">
                         <div class="block" id="block-text">
+                            {% if not user.is_anonymous %}
                             {% block web_theme_secondary_navigation %}{% endblock %}
                             {% if messages %}
                                 <div class="inner">
@@ -60,6 +60,7 @@
                                 </div>
                             {% endif %}
                             {% block web_theme_messages %}{% endblock %}
+                            {% endif %}
                             {% block web_theme_content %}{% endblock %}
                         </div>
                         {% block web_theme_footer %}{% endblock %}
@@ -68,7 +69,7 @@
                         {% block web_theme_sidebar %}{% endblock %}
                     </div>
                 </div>
-            {% endif %}
+            {% endblock %}
         </div>
     </body>
 </html>

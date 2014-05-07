@@ -13,8 +13,10 @@ sub_topic_modes = {'app': [ ('model', _("Models")), ('view', _("Views"))],
 def help_display_view(request, object_id):
     topic = get_object_or_404(HelpTopic, pk=object_id)
     user_can_edit = False
-    if topic.active or request.user.is_staff:
+    if request.user.is_staff:
         user_can_edit = True
+    elif topic.active:
+        pass
     else:
         raise PermissionDenied
 
@@ -30,10 +32,9 @@ def help_display_view(request, object_id):
             context_instance=RequestContext(request))
 
 def help_index_view(request, key=None, mode=None):
-    
-    data = {'topics': HelpTopic.objects.by_request(request), 
+    data = {'topics': HelpTopic.objects.by_request(request),
                 'key':key, 'mode': mode}
-    
+
     if key is None:
         if mode is None:
             data['our_topics'] = data['topics'].filter(mode='app')
