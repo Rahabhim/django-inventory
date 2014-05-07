@@ -92,6 +92,12 @@
     </dl>
 </script>
 
+<script type="text/ng-template" id="parts/field-model-product.html">
+    <div ng-controller="productParamsCtrl">
+        <div ng-include="'parts/field-model.html'"></div>
+    </div>
+</script>
+
 <script type="text/ng-template" id="parts/field-char.html">
     <input type="char" ng-model="field.data"></input>
 </script>
@@ -211,7 +217,12 @@
                         if (field.data)
                             return field.data.repr;
                         },
+                    'attribs': function(field) {
+                        return "";
+                        },
                 };
+            formatFns['model-product'] = formatFns['model'];
+
             $scope.formatParmsData = function(field) {
                     var fn = formatFns[field.widget];
                     if (!fn)
@@ -244,6 +255,21 @@
                 };
         }]);
 
+    reportsApp.controller('productParamsCtrl', ['$log', '$scope',function($log, $scope) {
+            $log.debug("productParamsCtrl:", $scope);
+
+            $scope.$watch('field.fields.category.data', function(cat_data) {
+                $log.debug("Category data changed:", cat_data);
+                var fields = $scope.field.fields;
+                if (fields && fields.attributes) {
+                    if ((!cat_data) && )
+                        fields.attributes.hide = true;
+                    else
+                        fields.attributes.hide = false;
+                    }
+                });
+        }]);
+
     reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
             $log.debug("resultCtrl:", $scope);
         }]);
@@ -258,6 +284,8 @@
 
             var ret = [];
             angular.forEach(input, function(f) {
+                if (f.hide)
+                    return;
                 ret.push(f);
                 });
             ret.sort(function(a, b) { return a.sequence - b.sequence });
