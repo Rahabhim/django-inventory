@@ -86,6 +86,13 @@ class CJFilter_Model(CJFilter):
             ret['fields'][k] = field.getGrammar()
         return ret
 
+class CJFilter_Product(CJFilter_Model):
+
+    def getGrammar(self):
+        ret = super(CJFilter_Product, self).getGrammar()
+        ret['widget'] = 'model-product'
+        return ret
+
 class CJFilter_String(CJFilter):
     sequence = 9
 
@@ -127,14 +134,29 @@ class CJFilter_contains(CJFilter):
         ret['sub'] = self.sub.getGrammar()
         return ret
 
+class CJFilter_attribs(CJFilter_Model):
+    #def __init__(self, sub_filter, **kwargs):
+    #    assert isinstance(sub_filter, CJFilter), repr(sub_filter)
+    #    self.sub = sub_filter
+    #    super(CJFilter_contains, self).__init__(**kwargs)
+
+    def getGrammar(self):
+        ret = super(CJFilter_attribs, self).getGrammar()
+        ret['widget'] = 'attribs'
+        # ret['sub'] = self.sub.getGrammar()
+        return ret
+
+
 location_filter = CJFilter_Model('common.Location')
 manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer')
 
-product_filter = CJFilter_Model('products.ItemTemplate',
+product_filter = CJFilter_Product('products.ItemTemplate',
     sequence=20,
     fields = {
             'name': CJFilter_String(title=_('name'), sequence=1),
+            'category': CJFilter_lookup('products.ItemCategory', 'categories', sequence=5),
             'manufacturer': manuf_filter,
+            'attributes': CJFilter_attribs('products.ItemTemplateAttributes', sequence=15),
             }
     )
 
