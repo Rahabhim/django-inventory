@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.utils.functional import Promise
 from django.db import models
+from django.db.models.query import QuerySet
 import json
 from django.utils.safestring import SafeString
 
@@ -15,6 +16,8 @@ class JsonEncoderS(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Promise):
             return unicode(obj)
+        elif isinstance(obj, QuerySet):
+            return list(obj)
         return super(JsonEncoderS, self).default(obj)
 
 # ----------- Filters ----------------
@@ -220,5 +223,27 @@ def reports_grammar_view(request, rep_type):
         return HttpResponseNotFound("Grammar for type %s not found" % rep_type)
     content = json.dumps(rt.getGrammar(), cls=JsonEncoderS)
     return HttpResponse(content, content_type='application/json')
+
+def reports_cat_grammar_view(request, cat_id):
+    """Return the category-specific grammar (is_bundle and attributes)
+    """
+    from products.models import ItemCategory
+    category = get_object_or_404(ItemCategory, pk=cat_id)
+    ret = {'is_bundle': category.is_bundle, 'is_group': category.is_group,
+            }
+    if category.is_bundle or category.is_group:
+        cmc = []
+        for mc in category.may_contain.all():
+            cmc.append((mc.category.id, mc.category.name))
+        if cmc:
+            ret['may_contain'] = cmc
+
+    ret['attributes'] = []
+    for attr in category.attributes.all():
+        ret['attributes'].append({'aid': attr.id, 'name': attr.name,
+                'values': attr.values.values_list('id', 'value')})
+
+    return HttpResponse(json.dumps(ret, cls=JsonEncoderS),
+                        content_type='application/json')
 
 # eof

@@ -123,6 +123,15 @@
     </div>
 </script>
 
+<script type="text/ng-template" id="parts/field-attribs.html">
+    <div ng-repeat="attr in field.attribs">
+        <label ng-bind="attr.name"></label>
+        <select ng-model="field.data[attr.aid]" ng-options="d[0] as d[1] for d in attr.values">
+            <option value=""></option>
+        </select>
+    </div>
+</script>
+
 <script type="text/ng-template" id="parts/params-product.html">
     <section class="search">
     <dl><dt>{% trans 'Products' %}:</dt>
@@ -218,6 +227,17 @@
                             return field.data.repr;
                         },
                     'attribs': function(field) {
+                        var criteria = [];
+                        angular.forEach(field.attribs, function(attr) {
+                            var v = field.data[attr.aid]; // TODO: turn into array
+                            if (!v)
+                                return;
+                            for(var i=0;i<attr.values.length; i++)
+                                if (attr.values[i][0] == v)
+                                    criteria.push(attr.name+'='+attr.values[i][1]);
+                            });
+                        if (criteria.length)
+                            return criteria.join(',');
                         return "";
                         },
                 };
@@ -244,7 +264,7 @@
                 };
 
             $scope.getLookup = function(lookup, val) {
-                return $http.get(lookup, {'params': {'term': val }})
+                return $http.get(lookup, {'params': {'term': val } })
                     .then(function(response) {
                         if (response.status == 200)
                             return response.data;
@@ -253,21 +273,40 @@
                             return [];
                         });
                 };
+            $scope.setItemContains = function() {}; // stub
         }]);
 
-    reportsApp.controller('productParamsCtrl', ['$log', '$scope',function($log, $scope) {
+    reportsApp.controller('productParamsCtrl', ['$log', '$scope', '$http', function($log, $scope, $http) {
             $log.debug("productParamsCtrl:", $scope);
 
             $scope.$watch('field.fields.category.data', function(cat_data) {
                 $log.debug("Category data changed:", cat_data);
                 var fields = $scope.field.fields;
-                if (fields && fields.attributes) {
-                    if ((!cat_data) && )
+                if (cat_data) {
+                    $http.get('./cat-grammar/'+cat_data.pk).then(function(response) {
+                        if (response.status == 200){
+                            var d = response.data;
+                            if (d.is_group || d.is_bundle)
+                                $scope.$parent.setItemContains(d.may_contain);
+                            if (d.attributes && d.attributes.length){
+                                fields.attributes.hide = false;
+                                fields.attributes.attribs = d.attributes;
+                                fields.attributes.data = {};
+                            }
+                        }
+                        else
+                            $log.warn("Bad http response:", response)
+                        });
+
+                } else {
+                    /* no category selected, cleanup attributes and sibling "containing" */
+                    if (fields && fields.attributes){
                         fields.attributes.hide = true;
-                    else
-                        fields.attributes.hide = false;
+                        fields.attributes.data = false;
+                        }
+                    $scope.$parent.setItemContains(false);
                     }
-                });
+            });
         }]);
 
     reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
