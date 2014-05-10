@@ -53,9 +53,20 @@
                     </table>
                 </div>
             </tab>
-            <tab heading="{% trans 'Preview' %}" active="tabs.format" disabled="!reportType">
+            <tab heading="{% trans 'Preview' %}" active="tabs.preview" disabled="!reportType">
+                <h3>Results</h3>
+                <div ng-controller="previewCtrl">
+                    {% if request.user.is_superuser %}
+                        <div>Domain: [[ cur_domain ]]
+                        </div>
+                    {% endif %}
+                    <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
+                    <div ng-if="!wait_results"> ( results )
+                    </div>
+                </div>
             </tab>
-            <tab heading="{% trans 'Full results' %}" active="tabs.format" disabled="!reportType">
+            <tab heading="{% trans 'Full results' %}" active="tabs.results" disabled="!reportType">
+                <h3> full results</h3>
             </tab>
         </tabset>
 
@@ -200,6 +211,45 @@
                             });
                         }
                 };
+
+            var domainFns = {
+                /* Domain functions return an expression part for some field
+                
+                  The expression part is like ['op', <rhs>]
+                */
+                'model' : function(rt) {
+                        var dom = [];
+                        angular.forEach(rt.fields, function(rt2, n2) {
+                            var dfn = domainFns[rt2.widget];
+                            if (dfn === undefined)
+                                dfn = domainFns['model']
+                            var dom2 = dfn(rt2, n2);
+                                if (dom2 && dom2.length)
+                                    dom.push([n2].concat(dom2)) ;
+                            });
+                        if (dom.length)
+                            return ['in', dom];
+                        return false;
+                    },
+                'char': function(rt, name) {
+                        if (rt.data)
+                            return ['=', rt.data];
+                    },
+                'lookup': function(rt, name) {
+                        if (rt.data)
+                            return ['=', parseInt(rt.data.pk)];
+                    },
+                'attribs': function(rt, name) {
+                        $log.debug("Atribs=> dom:", rt);
+                        return ['attribs...'];
+                    },
+                };
+            domainFns['model-product'] = domainFns['model'];
+            $scope.getCurDomain = function(){
+                if (!$scope.reportType)
+                    return [];
+                return domainFns['model']($scope.reportType);
+                };
         }]);
 
     reportsApp.controller('reportsTypeCtrl', ['$log', '$scope',function($log, $scope) {
@@ -342,6 +392,28 @@
                 };
             $scope.$parent.$watch('reportType.fields', recalcFmtTable);
         }]);
+
+    reportsApp.controller('previewCtrl', ['$log', '$scope', '$timeout', function($log, $scope, $timeout) {
+            $log.debug("previewCtrl:", $scope);
+            $scope.wait_results = true;
+            $scope.cur_domain = '?';
+
+            var fetchResults = function(show) {
+                $scope.wait_results = true;
+                if (!show){
+                    $scope.results = false;
+                    return;
+                }
+
+                $scope.cur_domain = $scope.$parent.getCurDomain();
+
+                $timeout(function() {
+                    $scope.wait_results = false;
+                    }, 2000);
+                };
+            $scope.$parent.$watch('tabs.preview', fetchResults);
+        }]);
+
     reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
             $log.debug("resultCtrl:", $scope);
         }]);
