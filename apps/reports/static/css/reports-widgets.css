@@ -947,3 +947,27 @@ section.search div.add-criterion {
     display: block;
     margin-left: 10px;
 }
+
+.formatting-form table {
+    border: 1px solid black;
+}
+.formatting-form table td {
+    border: 1px solid gray;
+}
+
+.formatting-form table th {
+    font-size: 90% ;
+}
+
+.preview-results table {
+    border: 1px solid black;
+}
+
+.preview-results table th {
+    border-bottom: 1px solid black;
+}
+
+.preview-results table td{
+    border-right : 1px solid #808080;
+}
+
