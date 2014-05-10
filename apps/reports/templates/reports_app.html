@@ -81,30 +81,6 @@
             </tab>
         </tabset>
 
-    <!--
-        <span class="famfam active famfam-report"></span>
-        <div class="block" ng-controller="reportsTypeCtrl">
-            <h2>{% trans 'Type of report' %}</h2>
-            <div ng-show="view_short">
-                <h3 ng-click="view_short=false"><span class="famfam active" ng-class="current.famfam"></span>[[ current.name ]]</h3>
-            </div>
-            
-
-            <div ng-if="view_short && current" ng-include="'parts/params-'+ current.id +'.html'">
-            </div>
-        </div>
-
-        
-        <div class="block" ng-show="show_params" ng-controller="paramsCtrl">
-            <h2>{% trans 'Parameters' %}<h2>
-        </div>
-    </div>
-    <hr/>
-    <div class="content" ng-show="show_result" ng-controller="resultCtrl">
-        <h1>{% trans 'Result' %}</h1>
-
-        <hr/>
-    -->
     </div>
 </div>
 
@@ -163,37 +139,6 @@
             <option value=""></option>
         </select>
     </div>
-</script>
-
-<script type="text/ng-template" id="parts/params-product.html">
-    <section class="search">
-    <dl><dt>{% trans 'Products' %}:</dt>
-        <dd>[['foo' ]]</dd>
-    </dl>
-    <div ng-show="true">
-        <h3>{% trans 'Criteria' %}</h3>
-        <div class="criterion" ng-repeat="crit in criteria">
-            <a class="del-criterion" ng-click="removeFromArray(criteria, crit)"><span class="famfam active famfam-delete"></span>{% trans 'Remove' %}</a>
-        </div>
-        <div class="add-criterion">
-            <a ng-click="" ><span class="famfam active famfam-plus"></span>{% trans 'Add criterion...' %}</a>
-        </div>
-    </div>
-    </section>
-</script>
-
-<script type="text/ng-template" id="parts/params-equipment.html">
-    {# Equipment search includes Departments, Products, Procurements etc. #}
-    <section class="search">
-    <dl><dt>{% trans 'Equipment' %}:</dt>
-         <dd>[['foo' ]]</dd>
-    </dl>
-
-    <div ng-controller="paramsCtrl">
-        <div ng-include="'parts/params-product.html'"></div>
-    </div>
-    </section>
-
 </script>
 
 <script type="text/javascript">
