@@ -61,7 +61,18 @@
                         </div>
                     {% endif %}
                     <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
-                    <div ng-if="!wait_results"> ( results )
+                    <div ng-if="result_data">
+                        <table class="preview-results">
+                            <tr class="head">
+                                <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
+                            </tr>
+                            <tr ng-repeat="row in result_data">
+                                <td ng-repeat="fc in field_cols">[[ row[fc.id] ]]</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <h4 ng-if="result_alert">Error [[ result_status ]] </h4>
+                    <div ng-if="result_alert" ng-bind-html="result_alert">
                     </div>
                 </div>
             </tab>
@@ -241,7 +252,7 @@
                     },
                 'attribs': function(rt, name) {
                         $log.debug("Atribs=> dom:", rt);
-                        return ['attribs...'];
+                        // return ['attribs...'];
                     },
                 };
             domainFns['model-product'] = domainFns['model'];
@@ -393,23 +404,54 @@
             $scope.$parent.$watch('reportType.fields', recalcFmtTable);
         }]);
 
-    reportsApp.controller('previewCtrl', ['$log', '$scope', '$timeout', function($log, $scope, $timeout) {
+    reportsApp.controller('previewCtrl', ['$log', '$scope', '$http', '$timeout', '$sce',
+        function($log, $scope, $http, $timeout, $sce) {
             $log.debug("previewCtrl:", $scope);
             $scope.wait_results = true;
+            $scope.result_status = 0;
+            $scope.result_alert = false;
             $scope.cur_domain = '?';
+            $scope.result_data = false;
 
             var fetchResults = function(show) {
                 $scope.wait_results = true;
-                if (!show){
-                    $scope.results = false;
+                $scope.result_status = 0;
+                $scope.result_alert = false;
+                $scope.result_data = false;
+                $scope.field_cols = [];
+
+                if (!(show && $scope.reportType)){
                     return;
                 }
 
                 $scope.cur_domain = $scope.$parent.getCurDomain();
 
-                $timeout(function() {
-                    $scope.wait_results = false;
-                    }, 2000);
+                angular.forEach($scope.reportType.fields, function(field, field_name) {
+                    if (field.hide)
+                        return;
+                    $scope.field_cols.push({id: field.id || field_name, name: field.name, sequence: field.sequence});
+                    });
+                $scope.field_cols.sort(function(a, b) { return a.sequence - b.sequence; });
+
+                $http.post('./results-preview/' + $scope.reportType.id,
+                        {'model': $scope.reportType.id,
+                        'domain': $scope.cur_domain,
+                        'fields': false,
+                        'group_by': false,
+                        }
+                    )
+                    .success(function(data) {
+                        $log.debug("Preview data came:", data);
+                        $scope.wait_results = false;
+                        $scope.result_data = data;
+                    })
+                    .error(function(data, status, headers) {
+                        $scope.wait_results = false;
+                        $scope.result_status = status;
+                        
+                        $scope.result_alert = $sce.trustAsHtml(data);
+                        $log.debug("alert:", data, $scope.result_alert);
+                        });
                 };
             $scope.$parent.$watch('tabs.preview', fetchResults);
         }]);

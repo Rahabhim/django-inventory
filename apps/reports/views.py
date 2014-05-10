@@ -2,10 +2,9 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, render_to_response, get_object_or_404
-from django.http import HttpResponseNotFound, HttpResponse
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseNotFound, HttpResponse, HttpResponseNotAllowed
 from django.core.urlresolvers import reverse
-from django.template import RequestContext
 from django.utils.functional import Promise
 from django.db import models
 from django.db.models.query import QuerySet
@@ -53,6 +52,9 @@ class CJFilter(object):
 
         return ret
 
+    def getResults(self, request, **kwargs):
+        raise NotImplementedError(self.__class__.__name__)
+
 class CJFilter_Model(CJFilter):
     """ Search for records of some Model
     
@@ -88,6 +90,18 @@ class CJFilter_Model(CJFilter):
         for k, field in self.fields.items():
             ret['fields'][k] = field.getGrammar()
         return ret
+
+    def getResults(self, request, domain, fields=False, group_by=False, **kwargs):
+        objects = self._model_inst.objects
+        if getattr(objects, 'by_request'):
+            objects = objects.by_request(request)
+
+        if domain:
+            pass # TODO
+        if not fields:
+            fields = self.fields.keys()
+            fields.sort(key=lambda f: self.fields[f].sequence)
+        return objects.values('id', *fields)
 
 class CJFilter_Product(CJFilter_Model):
 
@@ -245,5 +259,25 @@ def reports_cat_grammar_view(request, cat_id):
 
     return HttpResponse(json.dumps(ret, cls=JsonEncoderS),
                         content_type='application/json')
+
+def reports_get_preview(request, rep_type):
+    """Return a subset of results, for some report
+    """
+    _reports_init_cache()
+    
+    rt = _reports_cache['main_types'].get(rep_type, False)
+    if not rt:
+        return HttpResponseNotFound("Report type %s not found" % rep_type)
+    
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST',])
+
+    req_data = json.loads(request.body)
+    assert (req_data['model'] == rep_type), "invalid model: %r" % req_data['model']
+    res = rt.getResults(request, **req_data)
+    if isinstance(res, QuerySet):
+        res = res[:10]
+    content = json.dumps(res, cls=JsonEncoderS)
+    return HttpResponse(content, content_type='application/json')
 
 # eof

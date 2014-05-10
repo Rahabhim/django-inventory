@@ -7,6 +7,7 @@ urlpatterns = patterns('reports.views',
     url(r'^grammar/(?P<rep_type>\w+)$', 'reports_grammar_view', (), name='reports_grammar_view'),
     url(r'^cat-grammar/(?P<cat_id>\d+)$', 'reports_cat_grammar_view', (), name='reports_cat_grammar_view'),
     url(r'^parts/params-(?P<part_id>\w+).html$', 'reports_parts_params_view', (), name='reports_parts_params_view'),
+    url(r'^results-preview/(?P<rep_type>\w+)$', 'reports_get_preview', (), name='reports_get_preview'),
     )
 
 #eof
