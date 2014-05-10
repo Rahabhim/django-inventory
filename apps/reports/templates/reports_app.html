@@ -41,6 +41,17 @@
                 </div>
             </tab>
             <tab heading="{% trans 'Formatting' %}" active="tabs.format" disabled="!reportType">
+                <h3>{% trans 'Formatting style' %}</h3>
+                <!-- Vertical pos: groupping 
+                    Horizontal pos: order of columns
+                -->
+                <div class="formatting-form" ng-controller="formattingCtrl">
+                    <table >
+                        <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length ]]"></tr>
+                        <tr><th>group 1</th><td ng-repeat="field in fmtTable">[[ field.name ]]</td></tr>
+                        <tr><th>Add group...</th><td colspan="[[ fmtTable.length ]]">{% trans 'drag here to add group...' %}</td></tr>
+                    </table>
+                </div>
             </tab>
             <tab heading="{% trans 'Preview' %}" active="tabs.format" disabled="!reportType">
             </tab>
@@ -309,6 +320,28 @@
             });
         }]);
 
+    reportsApp.controller('formattingCtrl', ['$log', '$scope',function($log, $scope) {
+            $log.debug("formattingCtrl:", $scope);
+            $scope.fmtTable = false;
+            var recalcFmtTable = function(fields) {
+                $scope.fmtTable = [];
+                if (!fields)
+                    return;
+
+                angular.forEach(fields, function(field) {
+                        if (field.fmt === undefined)
+                            field.fmt = {group: 1, order: 1};
+                        if (field.fmt.group > 0)
+                            $scope.fmtTable.push(field);
+                    });
+                $scope.fmtTable.sort(function(a, b) {
+                        return (a.fmt.group - b.fmt.group)
+                            || (a.fmt.order - b.fmt.order)
+                            || (a.sequence - b.sequence);
+                    });
+                };
+            $scope.$parent.$watch('reportType.fields', recalcFmtTable);
+        }]);
     reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
             $log.debug("resultCtrl:", $scope);
         }]);
