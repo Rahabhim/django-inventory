@@ -143,9 +143,10 @@
 
 <script type="text/javascript">
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap'])
-        .config(['$interpolateProvider', function($interpolateProvider) {
+        .config(['$interpolateProvider', '$httpProvider', function($interpolateProvider, $httpProvider) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
+            $httpProvider.defaults.headers.post['X-CSRFToken'] = "{{ csrf_token }}";
         }]);
     reportsApp.controller('mainCtrl', ['$log', '$scope', '$http',function($log, $scope, $http) {
             $log.debug("mainCtrl:", $scope);
