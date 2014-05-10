@@ -170,7 +170,7 @@ manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer')
 product_filter = CJFilter_Product('products.ItemTemplate',
     sequence=20,
     fields = {
-            'name': CJFilter_String(title=_('name'), sequence=1),
+            'description': CJFilter_String(title=_('name'), sequence=1),
             'category': CJFilter_lookup('products.ItemCategory', 'categories', sequence=5),
             'manufacturer': manuf_filter,
             'attributes': CJFilter_attribs('products.ItemTemplateAttributes', sequence=15),
@@ -188,7 +188,7 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {
             'location': location_filter,
             'item_template': product_filter,
-            'item_group': CJFilter_contains(item_templ_c_filter, title=_('containing'), sequence=25),
+            'itemgroup': CJFilter_contains(item_templ_c_filter, title=_('containing'), sequence=25),
             },
     famfam_icon = 'computer',
     )
