@@ -111,6 +111,29 @@ class CJFilter_Model(CJFilter):
             fields.sort(key=lambda f: self.fields[f].sequence)
         return objects.values('id', *fields)
 
+    def getQuery(self, request, name, domain):
+        """query filter against /our/ model
+
+            @params domain a 3-item list/tuple, domain expression segment
+        """
+        if domain[1] == '=':
+            if not isinstance(domain[2], (int, long)):
+                raise TypeError("RHS must be integer, not %r" % domain[2])
+            return { name+'__pk': domain[2] }
+        elif domain[1] == 'in' and all([isinstance(x, (long, int)) for x in domain[2]]):
+            return { name+'__pk__in': domain[2] }
+        elif domain[1] == 'in':
+            objects = self._model_inst.objects
+            if getattr(objects, 'by_request'):
+                objects = objects.by_request(request)
+            flt = self._calc_domain(request, domain[2])
+            if flt:
+                assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
+                objects = objects.filter(flt)
+            return { name + '__in': objects }
+        else:
+            raise ValueError("Invalid operator for model: %r" % domain[1])
+
     def _calc_domain(self, request, domain):
         """ Parse a _list_ of domain expressions into a Query filter
         """
