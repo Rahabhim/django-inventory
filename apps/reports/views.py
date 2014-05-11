@@ -38,7 +38,7 @@ class CJFilter(object):
     def getGrammar(self):
         return {'name': self.title, 'sequence': self.sequence }
 
-    def getQuery(self, name, domain):
+    def getQuery(self, request, name, domain):
         """Constructs a Django Q object, according to `domain` (as from client)
 
             @param name field name
@@ -98,7 +98,7 @@ class CJFilter_Model(CJFilter):
 
         if domain:
             if isinstance(domain, list) and domain[0] == 'in':
-                flt = self._calc_domain(domain[1])
+                flt = self._calc_domain(request, domain[1])
                 if flt:
                     assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
                     objects = objects.filter(flt)
@@ -111,7 +111,7 @@ class CJFilter_Model(CJFilter):
             fields.sort(key=lambda f: self.fields[f].sequence)
         return objects.values('id', *fields)
 
-    def _calc_domain(self, domain):
+    def _calc_domain(self, request, domain):
         """ Parse a _list_ of domain expressions into a Query filter
         """
         ret = []
@@ -122,7 +122,7 @@ class CJFilter_Model(CJFilter):
                 continue
             if isinstance(d, (tuple, list)) and len(d) == 3:
                 field = self.fields[d[0]] # KeyError means we're asking for wrong field!
-                ff = field.getQuery(d[0], d)
+                ff = field.getQuery(request, d[0], d)
                 if isinstance(ff, models.Q):
                     pass
                 elif isinstance(ff, dict):
@@ -176,7 +176,7 @@ class CJFilter_String(CJFilter):
         ret['widget'] = 'char'
         return ret
 
-    def getQuery(self, name, domain):
+    def getQuery(self, request, name, domain):
         if isinstance(domain, (list, tuple)) and len(domain) == 3:
             if domain[1] == '=':
                 return { domain[0]: domain[2] }
