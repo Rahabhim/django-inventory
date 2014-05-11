@@ -364,8 +364,13 @@ def reports_get_preview(request, rep_type):
     req_data = json.loads(request.body)
     assert (req_data['model'] == rep_type), "invalid model: %r" % req_data['model']
     res = rt.getResults(request, **req_data)
+
     if isinstance(res, QuerySet):
-        res = res[:10]
+        res = {'results': res[:10],
+                'count': res.count(),
+                }
+    else:
+        raise TypeError("Bad result type: %s" % type(res))
     content = json.dumps(res, cls=JsonEncoderS)
     return HttpResponse(content, content_type='application/json')
 
