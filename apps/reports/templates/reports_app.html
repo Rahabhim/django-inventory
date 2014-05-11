@@ -190,7 +190,7 @@
                     },
                 'char': function(rt, name) {
                         if (rt.data)
-                            return ['=', rt.data];
+                            return [rt.data_op || 'icontains', rt.data];
                     },
                 'lookup': function(rt, name) {
                         if (rt.data)
