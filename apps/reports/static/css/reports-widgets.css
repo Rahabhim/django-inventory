@@ -971,3 +971,6 @@ section.search div.add-criterion {
     border-right : 1px solid #808080;
 }
 
+.tab-content {
+    min-height: 250px;
+}
