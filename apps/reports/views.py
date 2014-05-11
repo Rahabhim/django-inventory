@@ -97,11 +97,69 @@ class CJFilter_Model(CJFilter):
             objects = objects.by_request(request)
 
         if domain:
-            pass # TODO
-        if not fields:
+            if isinstance(domain, list) and domain[0] == 'in':
+                flt = self._calc_domain(domain[1])
+                if flt:
+                    assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
+                    objects = objects.filter(flt)
+            else:
+                raise ValueError("Domain must be like: [in, [...]]")
+        if fields:
+            pass # TODO convert fields to django-like exprs
+        else:  # not fields
             fields = self.fields.keys()
             fields.sort(key=lambda f: self.fields[f].sequence)
         return objects.values('id', *fields)
+
+    def _calc_domain(self, domain):
+        """ Parse a _list_ of domain expressions into a Query filter
+        """
+        ret = []
+        op_stack = []
+        for d in domain:
+            if d in ('!', '|', '&'):
+                op_stack.append(d)
+                continue
+            if isinstance(d, (tuple, list)) and len(d) == 3:
+                field = self.fields[d[0]] # KeyError means we're asking for wrong field!
+                ff = field.getQuery(d[0], d)
+                if isinstance(ff, models.Q):
+                    pass
+                elif isinstance(ff, dict):
+                    ff = models.Q(**ff)
+                else:
+                    raise TypeError("Bad query: %r" % ff)
+
+                ret.append(ff)
+            else:
+                raise ValueError("Invalid domain expression: %r" % d)
+            while len(op_stack) and len(ret):
+                if op_stack[-1] == '!':
+                    r = ret.pop()
+                    ret.append(~r)
+                    op_stack.pop()
+                    continue
+                if len(ret) < 2:
+                    break
+                op = op_stack.pop()
+                b = ret.pop()
+                a = ret.pop()
+                if op == '&':
+                    ret.append(a & b)
+                elif op == '|':
+                    ret.append(a | b)
+                else:
+                    raise RuntimeError("Invalid operator %r in op_stack" % op_stack[-1])
+        if len(op_stack):
+            raise RuntimeError("Remaining operators: %r in op_stack" % op_stack)
+        if not ret:
+            return models.Q()
+        while len(ret) > 1:
+            b = ret.pop()
+            a = ret.pop()
+            ret.append(a & b)
+
+        return ret[0]
 
 class CJFilter_Product(CJFilter_Model):
 
@@ -117,6 +175,14 @@ class CJFilter_String(CJFilter):
         ret = super(CJFilter_String, self).getGrammar()
         ret['widget'] = 'char'
         return ret
+
+    def getQuery(self, name, domain):
+        if isinstance(domain, (list, tuple)) and len(domain) == 3:
+            if domain[1] == '=':
+                return { domain[0]: domain[2] }
+            elif domain[1] in ('contains', 'icontains'):
+                return {domain[0]+'__' + domain[1]: domain[2]}
+        raise TypeError("Bad domain: %r", domain)
 
 class CJFilter_lookup(CJFilter_Model):
     """Select *one* of some related model, with an autocomplete field
