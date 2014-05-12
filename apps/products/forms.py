@@ -113,7 +113,7 @@ class ItemTemplateRequestForm_base(forms.ModelForm):
 
         This is taken from PO_Wizard step 3a
     """
-
+    description = forms.fields.CharField(label=_(u"product name"))
     url = forms.fields.CharField(max_length=256, required=False, label=_(u'Product URL'),
             help_text=_("Please enter the URL of the manufacturer for this product"))
 

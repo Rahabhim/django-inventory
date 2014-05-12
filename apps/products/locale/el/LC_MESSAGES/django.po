@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-20 20:00+0200\n"
-"PO-Revision-Date: 2014-03-09 10:04+0200\n"
+"POT-Creation-Date: 2014-05-12 21:59+0300\n"
+"PO-Revision-Date: 2014-05-12 22:00+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -113,7 +113,7 @@ msgstr "επεξεργασία κατασκευαστή"
 msgid "delete manufacturer"
 msgstr "διαγραφή κατασκευαστή"
 
-#: __init__.py:74 models.py:232 views.py:23
+#: __init__.py:74 models.py:233 views.py:23
 msgid "templates"
 msgstr "προϊόντα"
 
@@ -142,6 +142,10 @@ msgstr ""
 #: forms.py:33 models.py:222
 msgid "standard parts"
 msgstr "προεπιλεγμένα εξαρτήματα"
+
+#: forms.py:116
+msgid "product name"
+msgstr "όνομα προϊόντος"
 
 #: forms.py:117
 msgid "Product URL"
@@ -369,7 +373,7 @@ msgstr "γονικό"
 msgid "template"
 msgstr "προϊόν"
 
-#: models.py:218 templates/product_itemparts.html:69
+#: models.py:218
 msgid "Quantity"
 msgstr "Ποσότητα"
 
@@ -503,7 +507,7 @@ msgstr "Απαραίτητα εξαρτήματα"
 msgid "Part selection area"
 msgstr "Χώρος εισαγωγής στοιχείων"
 
-#: templates/product_itemparts.html:30 templates/product_itemparts.html:88
+#: templates/product_itemparts.html:30 templates/product_itemparts.html:102
 msgid "Add"
 msgstr "Προσθήκη"
 
@@ -519,17 +523,15 @@ msgstr "Σύνθετη αναζήτηση με βάση τα παρακάτω σ
 msgid "Manufacturer:"
 msgstr "Κατασκευαστής:"
 
-#: templates/product_itemparts.html:64
-msgid "Product:"
-msgstr "Προϊόν:"
-
-#: templates/product_itemparts.html:66
-msgid "Not found"
-msgstr "Δεν βρέθηκε"
-
-#: templates/product_itemparts.html:75
+#: templates/product_itemparts.html:89
 msgid "Less needed parts"
 msgstr "Επιπλέον εξαρτήματα"
+
+#~ msgid "Product:"
+#~ msgstr "Προϊόν:"
+
+#~ msgid "Not found"
+#~ msgstr "Δεν βρέθηκε"
 
 #~ msgid "view all"
 #~ msgstr "Προβολή όλων"
