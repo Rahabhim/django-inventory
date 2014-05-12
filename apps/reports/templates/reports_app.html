@@ -70,6 +70,7 @@
                                 <td ng-repeat="fc in field_cols">[[ row[fc.id] ]]</td>
                             </tr>
                         </table>
+                        <div class="count">{% trans "Number of results:" %} [[ result_count ]]</div>
                     </div>
                     <h4 ng-if="result_alert">Error [[ result_status ]] </h4>
                     <div ng-if="result_alert" ng-bind-html="result_alert">
