@@ -105,10 +105,11 @@ class CJFilter_Model(CJFilter):
             else:
                 raise ValueError("Domain must be like: [in, [...]]")
         if fields:
-            pass # TODO convert fields to django-like exprs
+            # convert fields to django-like exprs
+            fields = map(lambda x: x.replace('.', '__'), fields)
         else:  # not fields
             fields = self.fields.keys()
-            fields.sort(key=lambda f: self.fields[f].sequence)
+            # fields.sort(key=lambda f: self.fields[f].sequence) # done at JS side
         return objects.values('id', *fields)
 
     def getQuery(self, request, name, domain):
@@ -218,7 +219,7 @@ class CJFilter_lookup(CJFilter_Model):
 
     def getGrammar(self):
         ret = super(CJFilter_lookup, self).getGrammar()
-        del ret['fields']
+        # del ret['fields']
         ret['widget'] = 'lookup'
         ret['lookup'] = reverse('ajax_lookup', args=[self.lookup,])
         return ret
@@ -253,14 +254,21 @@ class CJFilter_attribs(CJFilter_Model):
         return ret
 
 
-location_filter = CJFilter_Model('common.Location')
-manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer')
+location_filter = CJFilter_Model('common.Location',
+    fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+        }
+    )
+manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer',
+    fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+        }
+    )
 
 product_filter = CJFilter_Product('products.ItemTemplate',
     sequence=20,
     fields = {
             'description': CJFilter_String(title=_('name'), sequence=1),
-            'category': CJFilter_lookup('products.ItemCategory', 'categories', sequence=5),
+            'category': CJFilter_lookup('products.ItemCategory', 'categories', sequence=5,
+                    fields={'name':  CJFilter_String(title=_('name'), sequence=1),} ),
             'manufacturer': manuf_filter,
             'attributes': CJFilter_attribs('products.ItemTemplateAttributes', sequence=15),
             }
@@ -349,6 +357,14 @@ def reports_cat_grammar_view(request, cat_id):
     return HttpResponse(json.dumps(ret, cls=JsonEncoderS),
                         content_type='application/json')
 
+def _expand_keys(dd):
+    """ expand dictionary keys from Django double-underscore to dot
+    """
+    ret = {}
+    for k, v in dd.items():
+        ret[k.replace('__', '.')] = v
+    return ret
+
 def reports_get_preview(request, rep_type):
     """Return a subset of results, for some report
     """
@@ -366,7 +382,7 @@ def reports_get_preview(request, rep_type):
     res = rt.getResults(request, **req_data)
 
     if isinstance(res, QuerySet):
-        res = {'results': res[:10],
+        res = {'results': map(_expand_keys, res[:10]),
                 'count': res.count(),
                 }
     else:
