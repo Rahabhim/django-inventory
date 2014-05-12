@@ -10,6 +10,8 @@
 {% block web_theme_javascript %}
     <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/angular.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/ui-bootstrap-tpls-0.10.0.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/f3-movable.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/f3-draggable.min.js"></script>
 {% endblock %}
 
 {% block web_theme_sidebar %}
@@ -46,12 +48,51 @@
                     Horizontal pos: order of columns
                 -->
                 <div class="formatting-form" ng-controller="formattingCtrl">
-                    <table >
-                        <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length ]]"></tr>
-                        <tr><th>group 1</th><td ng-repeat="field in fmtTable">[[ field.name ]]</td></tr>
-                        <tr><th>Add group...</th><td colspan="[[ fmtTable.length ]]">{% trans 'drag here to add group...' %}</td></tr>
+                    <table id="fmt-form-table">
+                        <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length ]]">Columns...</tr>
+                        <tr ng-repeat="fname in reportGroups" ng-init="field=fieldByPath(fname)"><th>{% trans 'Group' %} [[ $index + 1 ]]</th>
+                            <td ng-draggable="true" ng-drag-model="field" ng-click-send="field" ng-click-align="field-fmt-palette">[[field.full_name]]</td></tr>
+                        <tr class="add-group"><th>{% trans 'Add group...' %}</th>
+                            <td colspan="[[ fmtTable.length ]]" ng-droppable="true" ng-ondrop="addGroup(dragItem)">{% trans 'drag here to add group...' %}</td></tr>
+                        <tr><th>{% trans 'detailed:'%}</th><td ng-repeat="field in fmtTable" ng-draggable="true" ng-drag-model="field">
+                            <a ng-click-send="field" ng-click-align="field-fmt-palette">[[ field.full_name ]]</a></td>
+                        </tr>
+                        
                     </table>
+                    <div id="fmt-trash" ng-droppable="true" ng-ondrop="removeField(dragItem)">
+                        <span class="famfam active famfam-trash"></span>
+                        {% trans 'Drag any field here to hide/ungroup' %}
+                    </div>
                 </div>
+                <div move-hook id="field-fmt-palette" style="min-width: 300px;"
+                        move-hook-yoffset="-2"
+                        under="fmt-form-table" ng-click-receive="field">
+                    <div class="popover bottom" style="display: block" >
+                        <div class="arrow" style="left: 20px"></div>
+                        <div class="popover-inner">
+                            <h3 class="popover-title">{% trans 'Field:'%} [[ field.name ]]
+                                <a ng-click="close()" style="float:right;" title="close">&times;</a>
+                            </h3>
+                            <div class="popover-content">
+                                [[ field.full_path ]]
+                                <div ng-if="field.hide">{% trans 'Hidden' %}</div>
+                                <div>Pos: [[ field.sequence ]]</div>
+                                <div ng-if="field.fields">
+                                    Display: [[ field.fmt.display ]]
+
+                                    <div class="more-fields">
+                                        Additional fields:
+                                        <div ng-repeat="field2 in field.fields" 
+                                            ng-draggable="true" ng-drag-model="field2">
+                                            [[ field2.name ]]
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </tab>
             <tab heading="{% trans 'Preview' %}" active="tabs.preview" disabled="!reportType">
                 <h3>Results</h3>
@@ -143,7 +184,7 @@
 </script>
 
 <script type="text/javascript">
-    var reportsApp = angular.module('reportsApp', ['ui.bootstrap'])
+    var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
         .config(['$interpolateProvider', '$httpProvider', function($interpolateProvider, $httpProvider) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
@@ -152,6 +193,7 @@
     reportsApp.controller('mainCtrl', ['$log', '$scope', '$http',function($log, $scope, $http) {
             $log.debug("mainCtrl:", $scope);
             $scope.reportType = false;
+            $scope.reportGroups = [];
             $scope.available_types = {{ available_types }};
             $scope.tabs = { 'type': true, 'params': false, 'format': false, 'preview': false, 'results': false };
             $scope.selectType = function(t) {
@@ -159,6 +201,7 @@
                     if (! t.id)
                         return;
                     $scope.reportType = t;
+                    $scope.reportGroups = [];
                     $scope.tabs.params = true;
 
                     if (!t.fields){
@@ -207,6 +250,19 @@
                 if (!$scope.reportType)
                     return [];
                 return domainFns['model']($scope.reportType);
+                };
+            /** Get field object by some dot-delimited path */
+            $scope.fieldByPath = function(path) {
+                var ps = path.split('.');
+                ps.reverse();
+                var ret = $scope.reportType;
+                while(ps.length){
+                    if (!ret.fields)
+                        return;
+                    ret = ret.fields[ps.pop()];
+                    if (!ret) return;
+                    }
+                return ret;
                 };
         }]);
 
@@ -331,25 +387,65 @@
     reportsApp.controller('formattingCtrl', ['$log', '$scope',function($log, $scope) {
             $log.debug("formattingCtrl:", $scope);
             $scope.fmtTable = false;
-            var recalcFmtTable = function(fields) {
+            var fillFieldPaths = function(field, key){
+                if (!field.full_path){
+                    field.full_name = this.name_prefix + field.name;
+                    field.full_path = this.fld_prefix + key;
+                }
+                if (field.fields)
+                    angular.forEach(field.fields, fillFieldPaths,
+                            { name_prefix: field.full_name + ' / ',
+                              fld_prefix: field.full_path+ '.'
+                            });
+            };
+            var recalcFmtTable = function(fields, fld_prefix) {
                 $scope.fmtTable = [];
                 if (!fields)
                     return;
 
-                angular.forEach(fields, function(field) {
-                        if (field.fmt === undefined)
-                            field.fmt = {group: 1, order: 1};
+                angular.forEach(fields, function(field, key) {
+                        if (field.fmt === undefined) {
+                            field.fmt = {group: 1, sequence: field.sequence, order: false};
+                            if (field.fields && field.fields['name'])
+                                field.fmt.display = 'name';
+                        }
                         if (field.fmt.group > 0)
                             $scope.fmtTable.push(field);
                     });
+                angular.forEach(fields, fillFieldPaths, {name_prefix: '', fld_prefix: ''});
+
                 $scope.fmtTable.sort(function(a, b) {
                         return (a.fmt.group - b.fmt.group)
-                            || (a.fmt.order - b.fmt.order)
+                            || (a.fmt.sequence - b.fmt.sequence)
                             || (a.sequence - b.sequence);
                     });
                 };
             $scope.$parent.$watch('reportType.fields', recalcFmtTable);
+
+            $scope.addGroup = function(dragItem) {
+                    $log.debug("addGroup", dragItem, "to", $scope.reportGroups);
+                    var grp_idx = $scope.reportGroups.indexOf(dragItem.full_path)
+                    if (grp_idx >=0){
+                        // move to bottom of groupping
+                        $scope.reportGroups.splice(grp_idx, 1);
+                    }
+                    /* TODO: check that parents of this field are not already in groups */
+                    $scope.reportGroups.push(dragItem.full_path);
+                    return true;
+                };
+            $scope.removeField = function(dragItem) {
+                    var grp_idx = $scope.reportGroups.indexOf(dragItem.full_path);
+                    if (grp_idx >= 0) {
+                        $scope.reportGroups.splice(grp_idx, 1);
+                    }
+                    else {
+                        // not groupped, just hide the field
+                        dragItem.fmt.hide = true;
+                        }
+                    return true;
+                };
         }]);
+
 
     reportsApp.controller('previewCtrl', ['$log', '$scope', '$http', '$timeout', '$sce',
         function($log, $scope, $http, $timeout, $sce) {
@@ -372,25 +468,38 @@
                 }
 
                 $scope.cur_domain = $scope.$parent.getCurDomain();
-
-                angular.forEach($scope.reportType.fields, function(field, field_name) {
-                    if (field.hide)
+                var req_fields = [];
+                var calc_get_fields = function(field, field_name) {
+                    if (field.hide || !field.fmt)
                         return;
-                    $scope.field_cols.push({id: field.id || field_name, name: field.name, sequence: field.sequence});
-                    });
+                    var disp = '';
+                    if (field.fmt.display)
+                        disp = '.' + field.fmt.display;
+                    req_fields.push(field_name + disp);
+                    $scope.field_cols.push({id: field_name + disp,
+                                name: field.name,
+                                sequence: field.fmt.sequence || field.sequence});
+                    if (field.fields && field.fmt.sub_fields)
+                        angular.forEach(field.fmt.sub_fields, function(sf_name) {
+                            get_fields(field_name + '.' + sf_name, field.fields[sf_name]);
+                            });
+                    };
+
+                angular.forEach($scope.reportType.fields, calc_get_fields);
                 $scope.field_cols.sort(function(a, b) { return a.sequence - b.sequence; });
 
                 $http.post('./results-preview/' + $scope.reportType.id,
                         {'model': $scope.reportType.id,
                         'domain': $scope.cur_domain,
-                        'fields': false,
-                        'group_by': false,
+                        'fields': req_fields,
+                        'group_by': $scope.reportGroups,
                         }
                     )
                     .success(function(data) {
                         $log.debug("Preview data came:", data);
                         $scope.wait_results = false;
-                        $scope.result_data = data;
+                        $scope.result_data = data.results;
+                        $scope.result_count = data.count;
                     })
                     .error(function(data, status, headers) {
                         $scope.wait_results = false;
