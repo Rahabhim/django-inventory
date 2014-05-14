@@ -102,16 +102,11 @@
                         </div>
                     {% endif %}
                     <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
-                    <div ng-if="result_data">
-                        <table class="preview-results">
-                            <tr class="head">
-                                <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
-                            </tr>
-                            <tr ng-repeat="row in result_data">
-                                <td ng-repeat="fc in field_cols">[[ row[fc.id] ]]</td>
-                            </tr>
-                        </table>
-                        <div class="count">{% trans "Number of results:" %} [[ result_count ]]</div>
+                    <div ng-if="results">
+                        <div ng-controller="previewGroupedCtl">
+                            <div ng-include="'parts/preview-results.html'">???</div>
+                            <div class="count">{% trans "Number of results:" %} [[ results[0].__count ]]</div>
+                        </div>
                     </div>
                     <h4 ng-if="result_alert">Error [[ result_status ]] </h4>
                     <div ng-if="result_alert" ng-bind-html="result_alert">
@@ -180,6 +175,30 @@
         <select ng-model="field.data[attr.aid]" ng-options="d[0] as d[1] for d in attr.values">
             <option value=""></option>
         </select>
+    </div>
+</script>
+
+<script type="text/ng-template" id="parts/preview-results.html">
+    <div ng-if="cur_results.group_by">
+        Grouped: [[ group_level ]]
+        <div ng-repeat="cur_group in cur_results.values">
+            <h4> [[ cur_group['name'] ]]: [[ cur_group.__count ]]</h4>
+            <div ng-controller="previewGroupedCtl">
+                <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
+            </div>
+        </div>
+
+        
+    </div>
+    <div ng-if="!(cur_results.group_by)">
+        <table class="preview-results">
+            <tr class="head">
+                <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
+            </tr>
+            <tr ng-repeat="row in cur_results.values|filter:group_filter">
+                <td ng-repeat="fc in field_cols">[[ row[fc.id] ]]</td>
+            </tr>
+        </table>
     </div>
 </script>
 
@@ -454,14 +473,16 @@
             $scope.result_status = 0;
             $scope.result_alert = false;
             $scope.cur_domain = '?';
-            $scope.result_data = false;
+            $scope.results = false;
 
             var fetchResults = function(show) {
                 $scope.wait_results = true;
                 $scope.result_status = 0;
                 $scope.result_alert = false;
-                $scope.result_data = false;
+                $scope.results = false;
                 $scope.field_cols = [];
+                $scope.group_level = 0;
+                $scope.group_filter = {};
 
                 if (!(show && $scope.reportType)){
                     return;
@@ -498,8 +519,13 @@
                     .success(function(data) {
                         $log.debug("Preview data came:", data);
                         $scope.wait_results = false;
-                        $scope.result_data = data.results;
-                        $scope.result_count = data.count;
+                        if (data.count){
+                            $scope.results = [{'group_level': 0, __count: data.count},
+                                        {'group_level': 1, 'group_by': false,
+                                        'values': data.results }];
+                        } else {
+                            $scope.results = data;
+                        }
                     })
                     .error(function(data, status, headers) {
                         $scope.wait_results = false;
@@ -510,6 +536,18 @@
                         });
                 };
             $scope.$parent.$watch('tabs.preview', fetchResults);
+        }]);
+
+    reportsApp.controller('previewGroupedCtl', ['$scope', '$log', function($scope, $log) {
+            // Must be kept minimal, we will have many instances of this ctrl.
+            $scope.group_level = $scope.$parent.group_level + 1;
+            $scope.cur_results = $scope.$parent.results[$scope.group_level];
+            $scope.group_filter = {};
+            if ($scope.$parent.cur_group){
+                angular.forEach($scope.$parent.cur_results.group_by, function(group_by){
+                        $scope.group_filter[group_by] = $scope.$parent.cur_group[group_by];
+                    });
+            }
         }]);
 
     reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {

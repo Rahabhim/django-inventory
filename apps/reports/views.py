@@ -91,7 +91,14 @@ class CJFilter_Model(CJFilter):
             ret['fields'][k] = field.getGrammar()
         return ret
 
-    def getResults(self, request, domain, fields=False, group_by=False, **kwargs):
+    def _get_field(self, fname, *fpath):
+        f = self.fields[fname]
+        if fpath:
+            return f._get_field(*fpath)
+        else:
+            return f
+
+    def getResults(self, request, domain, fields=False, group_by=False, limit=False, **kwargs):
         objects = self._model_inst.objects
         if getattr(objects, 'by_request'):
             objects = objects.by_request(request)
@@ -106,11 +113,58 @@ class CJFilter_Model(CJFilter):
                 raise ValueError("Domain must be like: [in, [...]]")
         if fields:
             # convert fields to django-like exprs
-            fields = map(lambda x: x.replace('.', '__'), fields)
+            fields2 = map(lambda x: x.replace('.', '__'), fields)
         else:  # not fields
-            fields = self.fields.keys()
+            fields2 = self.fields.keys()
             # fields.sort(key=lambda f: self.fields[f].sequence) # done at JS side
-        return objects.values('id', *fields)
+        if group_by:
+            group_fields = {}
+            gvalues = []
+            gorder_by = []
+            ret = [{ 'group_level': 0, 'count': objects.count(), "values": []},]
+            for gb in group_by:
+                field = self._get_field(*(gb.split('.')))
+                if not field:
+                    raise KeyError("Invalid field %s for model %s" %(gb, self._model))
+                gbf = []
+                for f in fields:
+                    if f.startswith(gb+'.'):
+                        gbf.append(f[len(gb)+1:])
+                group_fields[gb] = field, gbf
+                oby = gb.replace('.', '__')
+                gvalues.append(oby)
+                if isinstance(field, CJFilter_Model):
+                    oby2 = oby + '__id'
+                    gorder_by.append(oby2) # avoid natural order
+                    if oby2 not in fields2:
+                        fields2.append(oby2)
+                else:
+                    gorder_by.append(oby)
+                
+                # now, get some results:
+                grp_results = objects.order_by(*gorder_by).values(*gvalues).annotate(items_count=models.Count('pk'))
+                if limit:
+                    grp_results = grp_results[:limit]
+                grp_rdict1 = dict([(gd[oby], gd['items_count']) for gd in grp_results if gd['items_count']])
+                del grp_results
+                vals = []
+                for g in field._model_inst.objects.filter(pk__in=grp_rdict1.keys()).values('id', *gbf):
+                    g2 = _expand_keys(g)
+                    g2[gb+'.id'] = g2.pop('id')
+                    g2['__count'] = grp_rdict1[g['id']]
+                    vals.append(g2)
+                ret.append({'group_level': len(gvalues),
+                            'group_by': map(lambda x: x.replace('__', '.'), gorder_by),
+                            'values': vals })
+            # last, the detailed results
+            if limit:
+                objects = objects[:limit]
+            ret.append({'group_level': len(gvalues)+1,
+                    'values': map(_expand_keys, objects.values('id', *fields2))})
+            return ret
+
+        else:
+            return objects.values('id', *fields2)
 
     def getQuery(self, request, name, domain):
         """query filter against /our/ model
@@ -379,12 +433,16 @@ def reports_get_preview(request, rep_type):
 
     req_data = json.loads(request.body)
     assert (req_data['model'] == rep_type), "invalid model: %r" % req_data['model']
+
+    req_data.setdefault('limit', 10)
     res = rt.getResults(request, **req_data)
 
     if isinstance(res, QuerySet):
         res = {'results': map(_expand_keys, res[:10]),
                 'count': res.count(),
                 }
+    elif isinstance(res, list):
+        pass
     else:
         raise TypeError("Bad result type: %s" % type(res))
     content = json.dumps(res, cls=JsonEncoderS)
