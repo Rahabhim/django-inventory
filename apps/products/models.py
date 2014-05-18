@@ -29,6 +29,7 @@ class ItemCategory(models.Model):
 
     class Meta:
         verbose_name=_("item category")
+        verbose_name_plural = _("item categories")
         ordering = ['name',]
 
     @property
@@ -109,6 +110,7 @@ class Manufacturer(Partner):
     class Meta:
         ordering = ['name']
         verbose_name = _("manufacturer")
+        verbose_name_plural = _("manufacturers")
 
     @models.permalink
     def get_absolute_url(self):

@@ -25,6 +25,7 @@ class Partner(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = _("partner")
+        verbose_name_plural = _("partners")
 
     def __unicode__(self):
         return self.name
@@ -151,7 +152,7 @@ class Sequence(models.Model):
 
     class Meta:
         verbose_name = _("sequence")
-        verbose_name = _("sequences")
+        verbose_name_plural = _("sequences")
 
     def get_next(self):
         # doing it *without* any lock!
