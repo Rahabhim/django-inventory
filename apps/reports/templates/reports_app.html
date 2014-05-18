@@ -158,6 +158,12 @@
         typeahead-editable="false">
 </script>
 
+<script type="text/ng-template" id="parts/field-selection.html">
+    <select ng-model="field.data" ng-options="d[0] as d[1] for d in field.selection">
+        <option value="">{% trans '(none)'%}</option>
+    </select>
+</script>
+
 <script type="text/ng-template" id="parts/field-contains.html">
     <div ng-repeat="field in field.contains_data">
         {% trans 'containing:' %}
@@ -259,6 +265,10 @@
                         if (rt.data)
                             return ['=', parseInt(rt.data.pk)];
                     },
+                'selection': function(rt, name) {
+                        if (rt.data)
+                            return ['=', parseInt(rt.data)];
+                    },
                 'attribs': function(rt, name) {
                         $log.debug("Atribs=> dom:", rt);
                         // return ['attribs...'];
@@ -319,6 +329,13 @@
                     'lookup': function(field) {
                         if (field.data)
                             return field.data.repr;
+                        },
+                    'selection': function(field) {
+                        if (field.data){
+                            for(var i in field.selection)
+                                if(field.selection[i][0] == field.data)
+                                    return field.selection[i][1];
+                            }
                         },
                     'attribs': function(field) {
                         var criteria = [];

@@ -278,6 +278,22 @@ class CJFilter_lookup(CJFilter_Model):
         ret['lookup'] = reverse('ajax_lookup', args=[self.lookup,])
         return ret
 
+class CJFilter_Choices(CJFilter_Model):
+    """ Like lookup, but offer all the choices in the grammar
+    """
+    filter_expr = None
+
+    def getGrammar(self):
+        ret = super(CJFilter_Model, self).getGrammar()
+        ret['widget'] = 'selection'
+        objects = self._model_inst.objects
+        if True:
+            objects = objects.all()
+        if self.filter_expr:
+            objects = objects.filter(**self.filter_expr)
+        ret['selection'] = [(o.id, unicode(o)) for o in objects]
+        return ret
+
 class CJFilter_contains(CJFilter):
     """ Filter for an array that must contain *all of* the specified criteria
 
