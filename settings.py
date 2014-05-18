@@ -194,6 +194,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
 AJAX_LOOKUP_CHANNELS = {
     'department': ('company.lookups', 'DepartmentLookup'),
+    'department_type': ('company.lookups', 'DepartmentTypeLookup'),
     'location': ('company.lookups', 'LocationLookup'), # searches by department!
     'location_by_role': ('company.lookups', 'RoleLocationLookup'),
     'departments_list': ('company.lookups', 'DeptListLookup'),

@@ -4,7 +4,7 @@
 
 from django.db import models
 from django.http import HttpResponseForbidden
-from models import Department
+from models import Department, DepartmentType
 from common.models import Location
 from common.api import LookupChannel, role_from_request
 
@@ -114,5 +114,15 @@ class DeptListLookup(LookupChannel):
     def get_result(self,obj):
         """ The text result of autocompleting the code """
         return obj.code
+
+class DepartmentTypeLookup(LookupChannel):
+    model = DepartmentType
+    search_field = 'name'
+
+    def get_query(self,q,request):
+        if not request.user.is_authenticated():
+            raise HttpResponseForbidden()
+        # put a hard limit on results
+        return super(DepartmentTypeLookup, self).get_query(q, request)[:10]
 
 #eof
