@@ -81,7 +81,7 @@ class CJFilter_Model(CJFilter):
             app, name = self._model.split('.', 1)
             self._model_inst = models.get_model(app, name)
         if not self.title:
-            self.title = self._model_inst._meta.verbose_name_plural
+            self.title = self._model_inst._meta.verbose_name  # _plural
 
     def getGrammar(self):
         ret = super(CJFilter_Model, self).getGrammar()
@@ -310,11 +310,13 @@ class CJFilter_attribs(CJFilter_Model):
 
 location_filter = CJFilter_Model('common.Location',
     fields={'name':  CJFilter_String(title=_('name'), sequence=1),
-        }
+        },
+    famfam_icon='map',
     )
 manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer',
     fields={'name':  CJFilter_String(title=_('name'), sequence=1),
-        }
+        },
+    famfam_icon='status_online',
     )
 
 product_filter = CJFilter_Product('products.ItemTemplate',
@@ -325,7 +327,8 @@ product_filter = CJFilter_Product('products.ItemTemplate',
                     fields={'name':  CJFilter_String(title=_('name'), sequence=1),} ),
             'manufacturer': manuf_filter,
             'attributes': CJFilter_attribs('products.ItemTemplateAttributes', sequence=15),
-            }
+            },
+    famfam_icon='camera',
     )
 
 item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
