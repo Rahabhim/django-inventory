@@ -324,8 +324,25 @@ class CJFilter_attribs(CJFilter_Model):
         return ret
 
 
+department_filter = CJFilter_Model('company.Department', sequence=5,
+    fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+            'code': CJFilter_String(title=_('code'), sequence=2),
+            'dept_type': CJFilter_lookup('company.DepartmentType', 'department_type',
+                        fields={'name':  CJFilter_String(title=_('name'), sequence=1), }
+                ),
+            'nom_name':  CJFilter_String(title=_('Nom Name'), sequence=15),
+            'ota_name':  CJFilter_String(title=_('OTA Name'), sequence=16),
+            'parent': CJFilter_lookup('company.Department', 'department',
+                title=_("parent department"),
+                fields={'name':  CJFilter_String(title=_('name'), sequence=1),}),
+            },
+    famfam_icon='building',
+    )
 location_filter = CJFilter_Model('common.Location',
     fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+            'department': department_filter,
+            'template': CJFilter_Choices('common.LocationTemplate',
+                    fields={'name': CJFilter_String(title=_('name'), sequence=1), }),
         },
     famfam_icon='map',
     )
@@ -380,6 +397,8 @@ def _reports_init_cache():
     _reports_cache['main_types'] = {
             'items': item_templ_filter,
             'products': product_filter,
+            'department': department_filter,
+            'location': location_filter,
             }
 
     _reports_cache['available_types'] = [ rt.to_main_report(k) for k, rt in _reports_cache['main_types'].items()]
