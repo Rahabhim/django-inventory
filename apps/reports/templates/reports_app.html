@@ -15,7 +15,19 @@
 {% endblock %}
 
 {% block web_theme_sidebar %}
-    {% block sidebar %}{% endblock %}
+    {% block sidebar %}
+        <div class="block">
+                <h3>{% trans 'Actions' %}</h3>
+            <ul class="navigation">
+                <li><a ng-click="reportLoad()"><span class="famfam active famfam-folder"></span>
+                        {% trans 'Load' %}</a></li>
+                <li ng-show="needs_save"><a ng-click="reportSave()"><span class="famfam active famfam-disk"></span>
+                        {% trans 'Save' %}</a></li>
+                <li ng-show="can_delete"><a ng-click="reportDelete()"><span class="famfam active famfam-bin"></span>
+                        {% trans 'Delete' %}</a></li>
+            </ul>
+        </div>
+    {% endblock %}
     {% help_for "view" "sidebar" sidebar=1 %}
 {% endblock %}
 
@@ -207,6 +219,58 @@
         </table>
     </div>
 </script>
+<script type="text/ng-template" id="parts/file-load.html">
+    <div class="modal-header">
+        <button style="float: right;" class="btn btn-link btn-mini" ng-click="$dismiss()">&times;</button>
+        <h3>{% trans 'Load saved report' %}</h3>
+    </div>
+    <div class="modal-body">
+        <div>{% blocktrans %}Select a report to load{% endblocktrans %}</div>
+        <div style="overflow: auto;">
+            <div ng-repeat="r in reports">
+                <span class="famfam active famfam-report"></span><a ng-click="$close(r.id)">[[ r.title ]]</a>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="$dismiss()" class="btn btn-primary">{% trans 'Cancel' %}</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="parts/file-save.html">
+    <div class="modal-header">
+        <button style="float: right;" class="btn btn-link btn-mini" ng-click="$dismiss()">&times;</button>
+        <h3>{% trans 'Save report' %}</h3>
+    </div>
+    <div class="modal-body">
+        <div>{% trans 'Title' %}: <input ng-model="report.title" type="text"></div>
+        {% if user.is_staff %}
+        <div>
+            <input type="checkbox" ng-model="report.public"><label>{% trans 'Public' %}</label>
+        </div>
+        {% endif %}
+    </div>
+    <div class="modal-footer">
+        <button ng-show="has_btn && report.title" ng-click="do_save()" class="btn btn-success">{% trans 'Save' %}</button>
+        <button ng-show="has_btn" ng-click="$dismiss()" class="btn btn-primary">{% trans 'Cancel' %}</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="parts/file-delete.html">
+    <div class="modal-header">
+        <button style="float: right;" class="btn btn-link btn-mini" ng-click="$dismiss()">&times;</button>
+        <h3>{% trans 'Delete report' %}</h3>
+    </div>
+    <div class="modal-body">
+        <h4> [[ report.title ]]</h4>
+        <div>{% blocktrans %}Do you really want to delete this report?{% endblocktrans %}</div>
+        
+    </div>
+    <div class="modal-footer">
+        <button ng-click="$close(report_id)" class="btn btn-delete">{% trans 'Delete' %}</button>
+        <button ng-click="$dismiss()" class="btn btn-primary">{% trans 'Cancel' %}</button>
+    </div>
+</script>
 
 <script type="text/javascript">
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
@@ -215,7 +279,8 @@
             $interpolateProvider.endSymbol(']]');
             $httpProvider.defaults.headers.post['X-CSRFToken'] = "{{ csrf_token }}";
         }]);
-    reportsApp.controller('mainCtrl', ['$log', '$scope', '$http',function($log, $scope, $http) {
+    reportsApp.controller('mainCtrl', ['$log', '$scope', '$http', '$modal',
+        function($log, $scope, $http, $modal) {
             $log.debug("mainCtrl:", $scope);
             $scope.reportType = false;
             $scope.reportGroups = [];
@@ -293,6 +358,170 @@
                     }
                 return ret;
                 };
+
+            var _getFieldData_one = function(field) {
+                    var r = {};
+                    if (field.data_op)
+                        r['op'] = field.data_op;
+                    if (field.data)
+                        r['data'] = field.data;
+                    if (field.fmt)
+                        r['fmt'] = field.fmt;
+                    if (field.fields)
+                        r['fields'] = getFieldData(field.fields);
+                    if (field.contains_data){
+                        r['contains'] = [];
+                        angular.forEach(field.contains_data, function(item){
+                            r['contains'].push(_getFieldData_one(item));
+                            });
+                    }
+                    return r;
+                };
+            var getFieldData = function(fields) {
+                // extract the volatile field data from field.data
+                var ret = {};
+                angular.forEach(fields, function(field, key){
+                    ret[key] = _getFieldData_one(field);
+                    });
+                return ret;
+                };
+
+            var _setFieldData_one = function(src, target){
+                if (src.op)
+                    target.data_op = src.op;
+                if (src.data)
+                    target.data = src.data;
+                if (src.fmt)
+                    target.fmt = src.fmt;
+                if (src.fields)
+                    setFieldData(src.fields, target.fields);
+                if (src.contains){
+                    target.contains_data = [];
+                    angular.forEach(src.contains, function(item) {
+                        var t_item = angular.copy(target.sub);
+                        _setFieldData_one(item, t_item);
+                        target.contains_data.push(t_item);
+                        });
+                    }
+                };
+            var setFieldData = function(fields, target){
+                angular.forEach(fields, function(field, key){
+                    _setFieldData_one(field, target[key]);
+                    });
+                };
+
+            $scope.$root.reportLoad = function() {
+                var minst = $modal.open({
+                    templateUrl: 'parts/file-load.html',
+                    controller: ['reports', '$scope', function(reports, $scope) {
+                            $scope.reports = reports;
+                        }],
+                    windowClass: 'load-dlg',
+                    backdrop: 'static',
+                    resolve: { 'reports': function() {
+                        return $http.get('back/list')
+                            .then(function(response){
+                                if (response.status == 200)
+                                    return response.data;
+                                else{
+                                    $log.error("list response:", response);
+                                    throw Error(response.status);
+                                    }
+                                });
+                            }
+                        }});
+
+                minst.result.then(function(rid) { 
+                        $log.debug("Load report:", rid);
+                        $http.get('back/load', {'params': {'id': rid}})
+                            .success(function(data){
+                                $log.debug("load data came:", data);
+                                $scope.reportType = data.grammar;
+                                $scope.reportType.saved_id = data.id;
+                                $scope.reportType.id = data.model;
+                                $scope.reportType.public = data.public;
+                                $scope.reportType.title = data.title;
+                                $scope.reportGroups = data.data.groups || [];
+
+                                setFieldData(data.data.fields, $scope.reportType.fields);
+                                $scope.$root.needs_save = false;
+                                $scope.$root.can_delete = true;
+                                })
+                            .error(function(data, status, headers) {
+                                    $log.debug("Load error:", data, status);
+                                    });
+                    });
+                };
+
+            $scope.$root.reportSave = function() {
+                var minst = $modal.open({
+                    templateUrl: 'parts/file-save.html',
+                    controller: ['$scope', 'report', 'reportGroups', '$timeout',
+                      function($scope, report, reportGroups, $timeout) {
+                        $scope.has_btn = true;
+                        $scope.message = '';
+                        $scope.report = report;
+                        $scope.reportGroups = reportGroups;
+                        $scope.do_save = function() {
+                            // serialize reportType + reportGroups into data for report
+                            var ser = { 'title': $scope.report.title,
+                                        'model': $scope.report.id,
+                                        'public': $scope.report.public || false,
+                                        'data': {'groups': reportGroups,
+                                                'fields': getFieldData($scope.report.fields) },
+                                        };
+                            if ($scope.report.saved_id)
+                                ser['id'] = $scope.report.saved_id;
+                            $scope.has_btn = false;
+                            $http.post('back/save', ser)
+                                .success(function(data) {
+                                    $log.debug("Saved report:", data);
+                                    $scope.message = 'OK';
+                                    $scope.report.saved_id = data.id;
+                                    $scope.$root.can_delete = true;
+                                    $timeout($scope.$dismiss, 1000);
+                                })
+                                .error(function(data, status, headers) {
+                                    $log.debug("Error:", data, status);
+                                    });
+                            };
+                        }],
+                    windowClass: 'save-dlg',
+                    backdrop: 'static',
+                    resolve: { 'report': function() { return $scope.reportType; },
+                                'reportGroups': function() { return $scope.reportGroups },
+                        }});
+
+                minst.result.then(function() { $log.debug("Modal closed!") });
+
+
+                };
+
+            $scope.$root.reportDelete = function() {
+                var minst = $modal.open({
+                    templateUrl: 'parts/file-delete.html',
+                    controller: ['report_id', '$scope', function(report_id, $scope) {
+                            $scope.report_id = report_id;
+                        }],
+                    windowClass: 'delete-dlg',
+                    backdrop: 'static',
+                    resolve: { 'report_id': function() { return $scope.reportType.saved_id; }
+                        }});
+
+                minst.result.then(function(rid) {
+                    if (rid)
+                        $http.post('back/delete', {'id': rid, 'confirm': true})
+                            .success(function() {
+                                $scope.reportType = false;
+                                $scope.reportGroups = false;
+                                $scope.$root.can_delete = false;
+                                $scope.$root.needs_save = false;
+                                })
+                            .error(function(data, status, headers) {
+                                    $log.debug("Error:", data, status);
+                                    });
+                    });
+                };
         }]);
 
     reportsApp.controller('reportsTypeCtrl', ['$log', '$scope',function($log, $scope) {
@@ -309,6 +538,8 @@
             $scope.$parent.$watch('reportType', function(rt){
                     $log.debug("reportType changed:", rt);
                     $scope.field = rt;
+                    if (rt)
+                        $scope.$root.needs_save = true;
                 });
 
             var formatFns = {
