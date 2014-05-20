@@ -11,6 +11,8 @@ from django.db.models.query import QuerySet
 import json
 from django.utils.safestring import SafeString
 
+from models import SavedReport
+
 class JsonEncoderS(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Promise):
@@ -485,5 +487,87 @@ def reports_get_preview(request, rep_type):
         raise TypeError("Bad result type: %s" % type(res))
     content = json.dumps(res, cls=JsonEncoderS)
     return HttpResponse(content, content_type='application/json')
+
+def reports_back_list_view(request):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    res = SavedReport.objects.by_request(request).distinct().values('id', 'title', 'rmodel')
+    content = json.dumps(res, cls=JsonEncoderS)
+    return HttpResponse(content, content_type='application/json')
+
+def reports_back_load_view(request):
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(['GET',])
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    _reports_init_cache()
+    if not request.GET.get('id', False):
+        raise HttpResponseNotFound("No ID in GET")
+    report = get_object_or_404(SavedReport.objects.by_request(request), pk=request.GET['id'])
+
+    rt = _reports_cache['main_types'].get(report.rmodel, False)
+    if not rt:
+        return HttpResponseNotFound("Grammar for type %s not found" % report.rmodel)
+
+    ret = {'id': report.id, 'title': report.title, 'model': report.rmodel,
+            'public': not bool(report.owner),
+            'grammar': rt.getGrammar(), 'data': json.loads(report.params)}
+    content = json.dumps(ret, cls=JsonEncoderS)
+    return HttpResponse(content, content_type='application/json')
+
+
+def reports_back_save_view(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST',])
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    req_data = json.loads(request.body)
+
+    # Staff can create public reports, all other users only private ones
+    if request.user.is_staff and req_data['public']:
+        req_data['owner'] = None
+    elif not req_data['public']:
+        req_data['owner'] = request.user
+    else:
+        raise PermissionDenied()
+    
+    report = None
+    if req_data.get('id', None):
+        report = get_object_or_404(SavedReport.objects.by_request(request), pk=req_data['id'])
+    else:
+        report = SavedReport()
+    
+    report.title = req_data['title']
+    report.owner = req_data['owner']
+    report.rmodel = req_data['model']
+    report.params = json.dumps(req_data['data'])
+    report.save()
+    return HttpResponse(json.dumps({'id': report.id }), content_type='application/json')
+
+def reports_back_del_view(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST',])
+    if not request.user.is_authenticated:
+        print "not auth!"
+        raise PermissionDenied
+
+    req_data = json.loads(request.body)
+    if not req_data.get('confirm', None):
+        raise PermissionDenied()
+
+    report = get_object_or_404(SavedReport.objects.by_request(request), pk=req_data['id'])
+
+    # Staff can delete public reports, all other users only private ones
+    if (request.user.is_staff or request.user.is_superuser) and not report.owner:
+        pass
+    elif request.user == report.owner:
+        pass
+    else:
+        raise PermissionDenied()
+
+    report.delete()
+    return HttpResponse(_("Report deleted"), content_type='text/plain')
 
 # eof

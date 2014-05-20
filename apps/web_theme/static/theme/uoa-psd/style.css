@@ -197,6 +197,7 @@ input.checkbox {
   border-bottom: none;
 }
 
+#sidebar ul.navigation li a,
 #sidebar ul.navigation li a:link,#sidebar ul.navigation li a:visited {
   padding: 5px 10px;
   color:#6a6a6a;
