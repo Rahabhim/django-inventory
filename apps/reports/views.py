@@ -422,12 +422,16 @@ def get_rtype_name(rep_type):
 # ------------------ Views -------------
 
 def reports_app_view(request, object_id=None):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
     _reports_init_cache()
     return render(request, 'reports_app.html',
             {'available_types': SafeString(json.dumps(_reports_cache['available_types'], cls=JsonEncoderS)),
             })
 
 def reports_parts_params_view(request, part_id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
     _reports_init_cache()
     if part_id not in _reports_cache['main_types']:
         return HttpResponseNotFound("Part for type %s not found" % part_id)
@@ -435,6 +439,8 @@ def reports_parts_params_view(request, part_id):
     return render(request, 'params-%s.html' % part_id, {})
 
 def reports_grammar_view(request, rep_type):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
     _reports_init_cache()
     
     rt = _reports_cache['main_types'].get(rep_type, False)
@@ -447,6 +453,8 @@ def reports_cat_grammar_view(request, cat_id):
     """Return the category-specific grammar (is_bundle and attributes)
     """
     from products.models import ItemCategory
+    if not request.user.is_authenticated:
+        raise PermissionDenied
     category = get_object_or_404(ItemCategory, pk=cat_id)
     ret = {'is_bundle': category.is_bundle, 'is_group': category.is_group,
             }
@@ -476,6 +484,8 @@ def _expand_keys(dd):
 def reports_get_preview(request, rep_type):
     """Return a subset of results, for some report
     """
+    if not request.user.is_authenticated:
+        raise PermissionDenied
     _reports_init_cache()
     
     rt = _reports_cache['main_types'].get(rep_type, False)
