@@ -102,8 +102,10 @@ class CJFilter_Model(CJFilter):
 
     def getResults(self, request, domain, fields=False, group_by=False, limit=False, **kwargs):
         objects = self._model_inst.objects
-        if getattr(objects, 'by_request'):
+        if getattr(objects, 'by_request', None):
             objects = objects.by_request(request)
+        else:
+            objects = objects.all()
 
         if domain:
             if isinstance(domain, list) and domain[0] == 'in':
@@ -181,8 +183,10 @@ class CJFilter_Model(CJFilter):
             return { name+'__pk__in': domain[2] }
         elif domain[1] == 'in':
             objects = self._model_inst.objects
-            if getattr(objects, 'by_request'):
+            if getattr(objects, 'by_request', None):
                 objects = objects.by_request(request)
+            else:
+                objects = objects.all()
             flt = self._calc_domain(request, domain[2])
             if flt:
                 assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
