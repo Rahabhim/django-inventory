@@ -405,6 +405,16 @@ def _reports_init_cache():
 
     _reports_cache['available_types'] = [ rt.to_main_report(k) for k, rt in _reports_cache['main_types'].items()]
 
+
+def get_rtype_name(rep_type):
+    """ Get the human-readable name for some report type
+    """
+    _reports_init_cache()
+    rt = _reports_cache['main_types'].get(rep_type, False)
+    if not rt:
+        raise KeyError("No report type: %s" % rep_type)
+    return rt.title
+
 # ------------------ Views -------------
 
 def reports_app_view(request, object_id=None):
