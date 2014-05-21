@@ -15,7 +15,7 @@ urlpatterns = patterns('reports.views',
     url(r'^list$', GenericBloatedListView.as_view(
                 queryset=SavedReport.objects.by_request,
                 list_filters=[title_filter, model_filter],
-                extra_columns=[ {'name':_(u'Model'), 'attribute': 'model'},
+                extra_columns=[ {'name':_(u'Report Model'), 'attribute': 'fmt_model'},
                             ],
                 title=_(u'list of saved reports')),
             name='reports_list_view'),
