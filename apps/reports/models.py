@@ -31,7 +31,7 @@ class SavedReport(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('reports_app_view') + ('?id=%d' % self.id)
+        return reverse('reports_app_view') + ('#?id=%d' % self.id)
 
     def fmt_model(self):
         from views import get_rtype_name

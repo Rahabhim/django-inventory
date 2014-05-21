@@ -274,13 +274,15 @@
 
 <script type="text/javascript">
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
-        .config(['$interpolateProvider', '$httpProvider', function($interpolateProvider, $httpProvider) {
+        .config(['$interpolateProvider', '$httpProvider', '$locationProvider',
+          function($interpolateProvider, $httpProvider, $locationProvider) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
             $httpProvider.defaults.headers.post['X-CSRFToken'] = "{{ csrf_token }}";
+            $locationProvider.html5Mode(false);
         }]);
-    reportsApp.controller('mainCtrl', ['$log', '$scope', '$http', '$modal',
-        function($log, $scope, $http, $modal) {
+    reportsApp.controller('mainCtrl', ['$log', '$scope', '$location', '$http', '$modal',
+        function($log, $scope, $location, $http, $modal) {
             $log.debug("mainCtrl:", $scope);
             $scope.reportType = false;
             $scope.reportGroups = [];
@@ -291,6 +293,8 @@
                     if (! t.id)
                         return;
                     $scope.reportType = t;
+                    $location.search('id'); // reset it
+                    $scope.$root.can_delete = false;
                     $scope.reportGroups = [];
                     $scope.tabs.params = true;
 
@@ -410,6 +414,29 @@
                     });
                 };
 
+            var _loadReport = function(rid) { 
+                        $log.debug("Load report:", rid);
+                        $http.get('back/load', {'params': {'id': rid}})
+                            .success(function(data){
+                                $log.debug("load data came:", data);
+                                $scope.reportType = data.grammar;
+                                $scope.reportType.saved_id = data.id;
+                                $location.search('id', data.id);
+                                $scope.reportType.id = data.model;
+                                $scope.reportType.public = data.public;
+                                $scope.reportType.title = data.title;
+                                $scope.reportGroups = data.data.groups || [];
+
+                                setFieldData(data.data.fields, $scope.reportType.fields);
+                                $scope.$root.needs_save = false;
+                                $scope.$root.can_delete = true;
+                                })
+                            .error(function(data, status, headers) {
+                                    $log.debug("Load error:", data, status);
+                                    $location.search('id');
+                                    });
+                    };
+
             $scope.$root.reportLoad = function() {
                 var minst = $modal.open({
                     templateUrl: 'parts/file-load.html',
@@ -431,26 +458,7 @@
                             }
                         }});
 
-                minst.result.then(function(rid) { 
-                        $log.debug("Load report:", rid);
-                        $http.get('back/load', {'params': {'id': rid}})
-                            .success(function(data){
-                                $log.debug("load data came:", data);
-                                $scope.reportType = data.grammar;
-                                $scope.reportType.saved_id = data.id;
-                                $scope.reportType.id = data.model;
-                                $scope.reportType.public = data.public;
-                                $scope.reportType.title = data.title;
-                                $scope.reportGroups = data.data.groups || [];
-
-                                setFieldData(data.data.fields, $scope.reportType.fields);
-                                $scope.$root.needs_save = false;
-                                $scope.$root.can_delete = true;
-                                })
-                            .error(function(data, status, headers) {
-                                    $log.debug("Load error:", data, status);
-                                    });
-                    });
+                minst.result.then(_loadReport);
                 };
 
             $scope.$root.reportSave = function() {
@@ -522,6 +530,14 @@
                                     });
                     });
                 };
+            $scope.$watch(function() { return $location.search().id; },
+                function(report_id){
+                    if (!report_id)
+                        return;
+                    if (report_id == $scope.reportType.saved_id)
+                        return;
+                    _loadReport(report_id);
+                });
         }]);
 
     reportsApp.controller('reportsTypeCtrl', ['$log', '$scope',function($log, $scope) {
