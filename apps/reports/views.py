@@ -126,16 +126,20 @@ class CJFilter_Model(CJFilter):
             gvalues = []
             gorder_by = []
             ret = [{ 'group_level': 0, 'count': objects.count(), "values": []},]
+
+            # First pass: resolve the fields that need to be used for groupping
             for gb in group_by:
                 field = self._get_field(*(gb.split('.')))
+
                 if not field:
                     raise KeyError("Invalid field %s for model %s" %(gb, self._model))
+
                 gbf = []
                 for f in fields:
                     if f.startswith(gb+'.'):
                         gbf.append(f[len(gb)+1:])
-                group_fields[gb] = field, gbf
                 oby = gb.replace('.', '__')
+                group_fields[gb] = field, gbf, oby
                 gvalues.append(oby)
                 if isinstance(field, CJFilter_Model):
                     oby2 = oby + '__id'
@@ -144,30 +148,56 @@ class CJFilter_Model(CJFilter):
                         fields2.append(oby2)
                 else:
                     gorder_by.append(oby)
-                
-                # now, get some results:
-                grp_results = objects.order_by(*gorder_by).values(*gvalues).annotate(items_count=models.Count('pk'))
+
+            # Second pass: get all /detailed/ results
+            if True:
+                obs2 = objects
                 if limit:
-                    grp_results = grp_results[:limit]
-                grp_rdict1 = dict([(gd[oby], gd['items_count']) for gd in grp_results if gd['items_count']])
+                    obs2 = objects[:limit]
+
+                detailed_results = obs2.values('id', *fields2)
+                # all_ids = [o.id for o in detailed_results]
+
+            # Third pass: get results for each level of groupping
+            i = 0
+            while i < len(group_by):
+                gb = group_by[i]
+                i += 1
+                go_by = gorder_by[:i]
+                gvals = gvalues[:i]
+                field, gbf, oby = group_fields[gb]
+
+                # now, get some results:
+                grp_results = obs2.values(*gvals).annotate(count=models.Count('id'))
+                print "grp_results:", grp_results
+                grp_rdict1 = {}
+                for gr in grp_results:
+                    grp_rdict1[gr[oby]] = gr['count']
+
                 del grp_results
+
                 vals = []
                 for g in field._model_inst.objects.filter(pk__in=grp_rdict1.keys()).values('id', *gbf):
                     g2 = _expand_keys(g)
                     g2[gb+'.id'] = g2.pop('id')
                     g2['__count'] = grp_rdict1[g['id']]
                     vals.append(g2)
-                ret.append({'group_level': len(gvalues),
-                            'group_by': map(lambda x: x.replace('__', '.'), gorder_by),
+
+                ret.append({'group_level': i,
+                            'group_by': map(lambda x: x.replace('__', '.'), go_by),
                             'values': vals })
+
             # last, the detailed results
-            if limit:
-                objects = objects[:limit]
             ret.append({'group_level': len(gvalues)+1,
-                    'values': map(_expand_keys, objects.values('id', *fields2))})
+                    'values': map(_expand_keys, detailed_results)})
+
             return ret
 
+            # We query on the foreign field now, and paginate that to limit the results
+            # grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
         else:
+            if limit:
+                objects = objects[:limit]
             return objects.values('id', *fields2)
 
     def getQuery(self, request, name, domain):
@@ -217,6 +247,7 @@ class CJFilter_Model(CJFilter):
                 ret.append(ff)
             else:
                 raise ValueError("Invalid domain expression: %r" % d)
+
             while len(op_stack) and len(ret):
                 if op_stack[-1] == '!':
                     r = ret.pop()
@@ -502,7 +533,7 @@ def reports_get_preview(request, rep_type):
     res = rt.getResults(request, **req_data)
 
     if isinstance(res, QuerySet):
-        res = {'results': map(_expand_keys, res[:10]),
+        res = {'results': map(_expand_keys, res),
                 'count': res.count(),
                 }
     elif isinstance(res, list):

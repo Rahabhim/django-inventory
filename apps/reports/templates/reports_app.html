@@ -213,7 +213,7 @@
             <tr class="head">
                 <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
             </tr>
-            <tr ng-repeat="row in cur_results.values|filter:group_filter">
+            <tr ng-repeat="row in cur_results.values|filter:rowsFilter">
                 <td ng-repeat="fc in field_cols">[[ row[fc.id] ]]</td>
             </tr>
         </table>
@@ -638,7 +638,6 @@
             $log.debug("productParamsCtrl:", $scope);
 
             $scope.$watch('field.fields.category.data', function(cat_data) {
-                $log.debug("Category data changed:", cat_data);
                 var fields = $scope.field.fields;
                 if (cat_data) {
                     $http.get('./cat-grammar/'+cat_data.pk).then(function(response) {
@@ -746,7 +745,7 @@
                 $scope.results = false;
                 $scope.field_cols = [];
                 $scope.group_level = 0;
-                $scope.group_filter = {};
+                $scope.rowsFilter = function() { return true; }
 
                 if (!(show && $scope.reportType)){
                     return;
@@ -796,7 +795,6 @@
                         $scope.result_status = status;
                         
                         $scope.result_alert = $sce.trustAsHtml(data);
-                        $log.debug("alert:", data, $scope.result_alert);
                         });
                 };
             $scope.$parent.$watch('tabs.preview', fetchResults);
@@ -806,11 +804,19 @@
             // Must be kept minimal, we will have many instances of this ctrl.
             $scope.group_level = $scope.$parent.group_level + 1;
             $scope.cur_results = $scope.$parent.results[$scope.group_level];
-            $scope.group_filter = {};
             if ($scope.$parent.cur_group){
+                var group_filter = {};
+            
                 angular.forEach($scope.$parent.cur_results.group_by, function(group_by){
-                        $scope.group_filter[group_by] = $scope.$parent.cur_group[group_by];
+                        group_filter[group_by] = $scope.$parent.cur_group[group_by];
                     });
+                $scope.rowsFilter = function(row) {
+                    for(var k in group_filter){
+                        if(row[k] != group_filter[k])
+                            return false;
+                    }
+                    return true;
+                };
             }
         }]);
 
