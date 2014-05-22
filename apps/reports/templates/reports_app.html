@@ -859,7 +859,6 @@ if (typeof String.prototype.startsWith != 'function') {
                     .error(function(data, status, headers) {
                         $scope.wait_results = false;
                         $scope.result_status = status;
-                        
                         $scope.result_alert = $sce.trustAsHtml(data);
                         });
                 };

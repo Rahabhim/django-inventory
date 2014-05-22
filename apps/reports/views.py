@@ -60,7 +60,7 @@ class CJFilter(object):
 
 class CJFilter_Model(CJFilter):
     """ Search for records of some Model
-    
+
         The `model` is a reference to some django model, like `<app>.<Model>`,
         same syntax as ForeignKey resolver.
 
@@ -75,7 +75,7 @@ class CJFilter_Model(CJFilter):
 
     def real_init(self):
         """Lazy initialization of filter parameters, will look into Model
-        
+
             This cannot be done during `__init__()` because it would access
             some other Django models, propably not loaded yet, while this
             application is instantiated
@@ -482,14 +482,14 @@ def reports_parts_params_view(request, part_id):
     _reports_init_cache()
     if part_id not in _reports_cache['main_types']:
         return HttpResponseNotFound("Part for type %s not found" % part_id)
-    
+
     return render(request, 'params-%s.html' % part_id, {})
 
 def reports_grammar_view(request, rep_type):
     if not request.user.is_authenticated:
         raise PermissionDenied
     _reports_init_cache()
-    
+
     rt = _reports_cache['main_types'].get(rep_type, False)
     if not rt:
         return HttpResponseNotFound("Grammar for type %s not found" % rep_type)
@@ -534,11 +534,11 @@ def reports_get_preview(request, rep_type):
     if not request.user.is_authenticated:
         raise PermissionDenied
     _reports_init_cache()
-    
+
     rt = _reports_cache['main_types'].get(rep_type, False)
     if not rt:
         return HttpResponseNotFound("Report type %s not found" % rep_type)
-    
+
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST',])
 
@@ -603,13 +603,13 @@ def reports_back_save_view(request):
         req_data['owner'] = request.user
     else:
         raise PermissionDenied()
-    
+
     report = None
     if req_data.get('id', None):
         report = get_object_or_404(SavedReport.objects.by_request(request), pk=req_data['id'])
     else:
         report = SavedReport()
-    
+
     report.title = req_data['title']
     report.owner = req_data['owner']
     report.rmodel = req_data['model']
@@ -621,7 +621,6 @@ def reports_back_del_view(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST',])
     if not request.user.is_authenticated:
-        print "not auth!"
         raise PermissionDenied
 
     req_data = json.loads(request.body)
