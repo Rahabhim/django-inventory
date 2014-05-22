@@ -62,8 +62,18 @@
                 <div class="formatting-form" ng-controller="formattingCtrl">
                     <table id="fmt-form-table">
                         <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length ]]">Columns...</tr>
-                        <tr ng-repeat="fname in reportGroups" ng-init="field=fieldByPath(fname)"><th>{% trans 'Group' %} [[ $index + 1 ]]</th>
-                            <td ng-draggable="true" ng-drag-model="field" ng-click-send="field" ng-click-align="field-fmt-palette">[[field.full_name]]</td></tr>
+                        <tr ng-repeat="fname in reportGroups" ng-init="field=fieldByPath(fname)">
+                            <th>{% trans 'Group' %} [[ $index + 1 ]]</th>
+                            <td ng-draggable="true" ng-drag-model="field"
+                                ng-click-send="field" ng-click-align="field-fmt-palette"
+                                ng-droppable="true" ng-ondrop="addToGroup(field, dragItem)"
+                                 class="add-after">[[field.full_name]]</td>
+                            <td ng-repeat="field2 in get_fmt_fields(field)"
+                                ng-draggable="true" ng-click-send="field2"
+                                ng-droppable="true" ng-ondrop="addToGroup(field, dragItem, field2)"
+                                class="add-after"
+                                ng-click-align="field-fmt-palette">[[field2.name]]</td>
+                        </tr>
                         <tr class="add-group"><th>{% trans 'Add group...' %}</th>
                             <td colspan="[[ fmtTable.length ]]" ng-droppable="true" ng-ondrop="addGroup(dragItem)">{% trans 'drag here to add group...' %}</td></tr>
                         <tr><th>{% trans 'detailed:'%}</th><td ng-repeat="field in fmtTable" ng-draggable="true" ng-drag-model="field">
@@ -114,7 +124,7 @@
                         </div>
                     {% endif %}
                     <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
-                    <div ng-if="results">
+                    <div ng-if="results" class="preview-results">
                         <div ng-controller="previewGroupedCtl">
                             <div ng-include="'parts/preview-results.html'">???</div>
                             <div class="count">{% trans "Number of results:" %} [[ results[0].__count ]]</div>
@@ -198,15 +208,17 @@
 
 <script type="text/ng-template" id="parts/preview-results.html">
     <div ng-if="cur_results.group_by">
-        Grouped: [[ group_level ]]
-        <div ng-repeat="cur_group in cur_results.values">
-            <h4> [[ cur_group['name'] ]]: [[ cur_group.__count ]]</h4>
+        <div class="group" ng-repeat="cur_group in cur_results.values|filter:rowsFilter">
+            <h4><span ng-repeat="fc in groupped_fields[group_level-1]|seqSort"> [[ cur_group[fc.id] ]]</span>
+                : [[ cur_group.__count ]]</h4>
             <div ng-controller="previewGroupedCtl">
                 <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
             </div>
         </div>
-
-        
+        <div class="group">
+            <!-- In preview, there may be more groups, results -->
+            <h4>... </h4>
+        </div>
     </div>
     <div ng-if="!(cur_results.group_by)">
         <table class="preview-results">
@@ -273,6 +285,11 @@
 </script>
 
 <script type="text/javascript">
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.slice(0, str.length) == str;
+  };
+}
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
         .config(['$interpolateProvider', '$httpProvider', '$locationProvider',
           function($interpolateProvider, $httpProvider, $locationProvider) {
@@ -350,10 +367,10 @@
                 return domainFns['model']($scope.reportType);
                 };
             /** Get field object by some dot-delimited path */
-            $scope.fieldByPath = function(path) {
+            $scope.fieldByPath = function(path, ffrom) {
                 var ps = path.split('.');
                 ps.reverse();
-                var ret = $scope.reportType;
+                var ret = ffrom || $scope.reportType;
                 while(ps.length){
                     if (!ret.fields)
                         return;
@@ -715,6 +732,36 @@
                     $scope.reportGroups.push(dragItem.full_path);
                     return true;
                 };
+            $scope.get_fmt_fields = function(field) {
+                    var ret = [];
+                    angular.forEach(field.fmt.sub_fields, function(sfn) {
+                            ret.push($scope.fieldByPath(sfn, field));
+                        });
+                    ret.sort(function(a,b) {
+                            return (a.fmt.sequence - b.fmt.sequence)
+                            || (a.sequence - b.sequence);
+                        });
+                    return ret;
+                };
+            $scope.addToGroup = function(grp_field, dragItem, fld_after){
+                if (!dragItem.full_path.startsWith(grp_field.full_path+'.'))
+                    return false;
+                
+                var rem_path = dragItem.full_path.slice(grp_field.full_path.length+1);
+                if (!grp_field.fmt)
+                    grp_field.fmt = {group: 1, sequence: field.sequence, order: false};
+                if (!grp_field.fmt.sub_fields)
+                    grp_field.fmt.sub_fields = [];
+                var i = grp_field.fmt.sub_fields.indexOf(rem_path);
+                if (i == -1){
+                    grp_field.fmt.sub_fields.push(rem_path);
+                    return true;
+                }
+                else if (i > 0){
+                }
+                return false;
+
+                };
             $scope.removeField = function(dragItem) {
                     var grp_idx = $scope.reportGroups.indexOf(dragItem.full_path);
                     if (grp_idx >= 0) {
@@ -722,6 +769,8 @@
                     }
                     else {
                         // not groupped, just hide the field
+                        if (!dragItem.fmt)
+                            dragItem.fmt = {group: 1, sequence: field.sequence, order: false};
                         dragItem.fmt.hide = true;
                         }
                     return true;
@@ -737,6 +786,7 @@
             $scope.result_alert = false;
             $scope.cur_domain = '?';
             $scope.results = false;
+            $scope.grp_fields = false;
 
             var fetchResults = function(show) {
                 $scope.wait_results = true;
@@ -744,8 +794,10 @@
                 $scope.result_alert = false;
                 $scope.results = false;
                 $scope.field_cols = [];
+                $scope.groupped_fields = {};
                 $scope.group_level = 0;
-                $scope.rowsFilter = function() { return true; }
+                $scope.grp_fields = [];
+                $scope.rowsFilter = function() { return true; };
 
                 if (!(show && $scope.reportType)){
                     return;
@@ -753,19 +805,33 @@
 
                 $scope.cur_domain = $scope.$parent.getCurDomain();
                 var req_fields = [];
-                var calc_get_fields = function(field, field_name) {
+                var calc_get_fields = function(field, key, ggroup) {
                     if (field.hide || !field.fmt)
                         return;
-                    var disp = '';
+                    var disp = field.full_path;
                     if (field.fmt.display)
-                        disp = '.' + field.fmt.display;
-                    req_fields.push(field_name + disp);
-                    $scope.field_cols.push({id: field_name + disp,
+                        disp += '.' + field.fmt.display;
+                    req_fields.push(disp);
+
+                    if (!ggroup){
+                        ggroup = $scope.field_cols;
+                        // see if field logically belongs to any of the groups
+                        for(var i in $scope.reportGroups)
+                            if(field.full_path.startsWith($scope.reportGroups[i])){
+                                if (!$scope.groupped_fields[i])
+                                    $scope.groupped_fields[i] = [];
+                                ggroup = $scope.groupped_fields[i];
+                                break;
+                            }
+                    }
+                    ggroup.push({id: disp,
                                 name: field.name,
                                 sequence: field.fmt.sequence || field.sequence});
                     if (field.fields && field.fmt.sub_fields)
                         angular.forEach(field.fmt.sub_fields, function(sf_name) {
-                            get_fields(field_name + '.' + sf_name, field.fields[sf_name]);
+                            var field2 = $scope.fieldByPath(sf_name, field);
+                            if (field2)
+                                calc_get_fields(field2, sf_name, ggroup);
                             });
                     };
 

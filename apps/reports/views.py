@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models.query import QuerySet
 import json
 from django.utils.safestring import SafeString
+from collections import defaultdict
 
 from models import SavedReport
 
@@ -121,10 +122,12 @@ class CJFilter_Model(CJFilter):
         else:  # not fields
             fields2 = self.fields.keys()
             # fields.sort(key=lambda f: self.fields[f].sequence) # done at JS side
+
         if group_by:
             group_fields = {}
             gvalues = []
             gorder_by = []
+            gb_values_cache = {}
             ret = [{ 'group_level': 0, 'count': objects.count(), "values": []},]
 
             # First pass: resolve the fields that need to be used for groupping
@@ -160,6 +163,7 @@ class CJFilter_Model(CJFilter):
 
             # Third pass: get results for each level of groupping
             i = 0
+            gb_filter = {}
             while i < len(group_by):
                 gb = group_by[i]
                 i += 1
@@ -167,21 +171,33 @@ class CJFilter_Model(CJFilter):
                 gvals = gvalues[:i]
                 field, gbf, oby = group_fields[gb]
 
-                # now, get some results:
-                grp_results = obs2.values(*gvals).annotate(count=models.Count('id'))
-                print "grp_results:", grp_results
-                grp_rdict1 = {}
-                for gr in grp_results:
-                    grp_rdict1[gr[oby]] = gr['count']
+                # get possible values from limited objects:
+                gb_vals = list(set([o[0] for o in obs2.values_list(oby)]))
+                if limit:
+                    gb_filter[oby+'__in'] = gb_vals
 
-                del grp_results
+                # now, get some results:
+                grp_results = objects.filter(**gb_filter).order_by(*go_by).values(*gvals).annotate(count=models.Count('pk'))
+
+                vals_group = {}
+                for g in field._model_inst.objects.filter(pk__in=gb_vals).values('id', *gbf):
+                    g2 = {}
+                    for k, v in g.items():
+                        g2[gb + '.' + k] = v
+                    vals_group[g['id']] = g2
+
+                gb_values_cache[gb] = vals_group
 
                 vals = []
-                for g in field._model_inst.objects.filter(pk__in=grp_rdict1.keys()).values('id', *gbf):
-                    g2 = _expand_keys(g)
-                    g2[gb+'.id'] = g2.pop('id')
-                    g2['__count'] = grp_rdict1[g['id']]
-                    vals.append(g2)
+                for gr in grp_results:
+                    row = {}
+                    for k, v in gr.items():
+                        if k == 'count':
+                            row['__count'] = v
+                        else:
+                            k = k.replace('__', '.')
+                            row.update(gb_values_cache[k][v])
+                    vals.append(row)
 
                 ret.append({'group_level': i,
                             'group_by': map(lambda x: x.replace('__', '.'), go_by),
