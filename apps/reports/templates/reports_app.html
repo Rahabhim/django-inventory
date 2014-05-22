@@ -35,7 +35,7 @@
 {% block content %}
 <div id="ng-main-app">
     <div class="content" ng-controller="mainCtrl">
-        <h1>{% trans 'Report builder' %}</h1>
+        <h1>{% trans 'Report builder' %} [[ reportType.title || reportType.name ]]</h1>
         
 
         <tabset>
