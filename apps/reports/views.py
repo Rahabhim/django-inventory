@@ -101,7 +101,8 @@ class CJFilter_Model(CJFilter):
         else:
             return f
 
-    def getResults(self, request, domain, fields=False, group_by=False, limit=False, **kwargs):
+    def getResults(self, request, domain, fields=False, group_by=False,
+                    limit=False, show_detail=True, **kwargs):
         objects = self._model_inst.objects
         if getattr(objects, 'by_request', None):
             objects = objects.by_request(request)
@@ -204,8 +205,9 @@ class CJFilter_Model(CJFilter):
                             'values': vals })
 
             # last, the detailed results
-            ret.append({'group_level': len(gvalues)+1,
-                    'values': map(_expand_keys, detailed_results)})
+            if show_detail:
+                ret.append({'group_level': len(gvalues)+1,
+                        'values': map(_expand_keys, detailed_results)})
 
             return ret
 
