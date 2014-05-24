@@ -1095,6 +1095,10 @@ section.search div.add-criterion {
     font-size: 90% ;
 }
 
+.preview-results .group {
+    padding-left: 2em;
+}
+
 .preview-results table {
     border: 1px solid black;
 }
