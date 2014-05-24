@@ -549,7 +549,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 };
             $scope.$watch(function() { return $location.search().id; },
                 function(report_id){
-                    if (!report_id)
+                    if ((!report_id) || (report_id === true))
                         return;
                     if (report_id == $scope.reportType.saved_id)
                         return;
