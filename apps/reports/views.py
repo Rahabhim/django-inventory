@@ -135,7 +135,7 @@ class CJFilter_Model(CJFilter):
             gvalues = []
             gorder_by = []
             gb_values_cache = {}
-            ret = [{ 'group_level': 0, 'count': objects.count(), "values": []},]
+            ret = [{ 'group_level': 0, '_count': objects.count(), "values": []},]
 
             # First pass: resolve the fields that need to be used for groupping
             for gb in group_by:
@@ -200,7 +200,7 @@ class CJFilter_Model(CJFilter):
                     row = {}
                     for k, v in gr.items():
                         if k == 'count':
-                            row['__count'] = v
+                            row['_count'] = v
                         else:
                             k = k.replace('__', '.')
                             row.update(gb_values_cache[k][v])
