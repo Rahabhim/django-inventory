@@ -35,6 +35,9 @@ class CJFilter(object):
         self.__dict__.update(kwargs)
         CJFilter._instances.append(self)
 
+    def __repr__(self):
+        return "<%s >" % self.__class__.__name__
+
     def real_init(self):
         pass
 
@@ -46,7 +49,7 @@ class CJFilter(object):
 
             @param name field name
         """
-        raise NotImplementedError
+        raise NotImplementedError(self.__class__.__name__)
 
     def to_main_report(self, idn):
         ret = {'id': idn, 'name': self.title, 'sequence': self.sequence }
@@ -72,6 +75,9 @@ class CJFilter_Model(CJFilter):
         self._model_inst = None
         self.fields = kwargs.pop('fields', {})
         super(CJFilter_Model, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self._model)
 
     def real_init(self):
         """Lazy initialization of filter parameters, will look into Model
@@ -370,6 +376,9 @@ class CJFilter_contains(CJFilter):
         assert isinstance(sub_filter, CJFilter), repr(sub_filter)
         self.sub = sub_filter
         super(CJFilter_contains, self).__init__(**kwargs)
+
+    def __repr__(self):
+        return "<%s (%s)>" % (self.__class__.__name__, repr(self.sub))
 
     def getGrammar(self):
         ret = super(CJFilter_contains, self).getGrammar()
