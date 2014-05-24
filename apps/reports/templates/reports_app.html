@@ -711,14 +711,12 @@ if (typeof String.prototype.startsWith != 'function') {
                             if (field.fields && field.fields['name'])
                                 field.fmt.display = 'name';
                         }
-                        if (field.fmt.group > 0)
-                            $scope.fmtTable.push(field);
+                        $scope.fmtTable.push(field);
                     });
                 angular.forEach(fields, fillFieldPaths, {name_prefix: '', fld_prefix: ''});
 
                 $scope.fmtTable.sort(function(a, b) {
-                        return (a.fmt.group - b.fmt.group)
-                            || (a.fmt.sequence - b.fmt.sequence)
+                        return (a.fmt.sequence - b.fmt.sequence)
                             || (a.sequence - b.sequence);
                     });
                 };
@@ -737,7 +735,8 @@ if (typeof String.prototype.startsWith != 'function') {
                 };
             $scope.get_fmt_fields = function(field) {
                     var ret = [];
-                    angular.forEach(field.fmt.sub_fields, function(sfn) {
+                    if (field.fmt)
+                        angular.forEach(field.fmt.sub_fields, function(sfn) {
                             ret.push($scope.fieldByPath(sfn, field));
                         });
                     ret.sort(function(a,b) {
