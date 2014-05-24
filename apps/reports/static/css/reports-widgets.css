@@ -1114,6 +1114,13 @@ section.search div.add-criterion {
 .tab-content {
     min-height: 250px;
 }
+#fmt-form-table tr.no-details td {
+    text-decoration: line-through;
+}
+#fmt-form-table tr th input[type="checkbox"] {
+    width: auto;
+    margin-right: 2px;
+}
 
 #field-fmt-palette .popover-content .more-fields div {
     border: 1px solid #808080;

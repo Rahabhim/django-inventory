@@ -76,7 +76,7 @@
                         </tr>
                         <tr class="add-group"><th>{% trans 'Add group...' %}</th>
                             <td colspan="[[ fmtTable.length ]]" ng-droppable="true" ng-ondrop="addGroup(dragItem)">{% trans 'drag here to add group...' %}</td></tr>
-                        <tr><th>{% trans 'detailed:'%}</th><td ng-repeat="field in fmtTable" ng-draggable="true" ng-drag-model="field">
+                        <tr ng-class="{'no-details': !reportType.show_detail}"><th><input type="checkbox" ng-model="reportType.show_detail">{% trans 'detailed:'%}</th><td ng-repeat="field in fmtTable" ng-draggable="true" ng-drag-model="field">
                             <a ng-click-send="field" ng-click-align="field-fmt-palette">[[ field.full_name ]]</a></td>
                         </tr>
                         
@@ -220,7 +220,7 @@
             <h4>... </h4>
         </div>
     </div>
-    <div ng-if="!(cur_results.group_by)">
+    <div ng-if="cur_results && !(cur_results.group_by)">
         <table class="preview-results">
             <tr class="head">
                 <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
@@ -445,6 +445,7 @@ if (typeof String.prototype.startsWith != 'function') {
                                 $scope.reportType.id = data.model;
                                 $scope.reportType.public = data.public;
                                 $scope.reportType.title = data.title;
+                                $scope.reportType.show_detail = data.data.show_detail;
                                 $scope.reportGroups = data.data.groups || [];
 
                                 setFieldData(data.data.fields, $scope.reportType.fields);
@@ -496,7 +497,9 @@ if (typeof String.prototype.startsWith != 'function') {
                                         'model': $scope.report.id,
                                         'public': $scope.report.public || false,
                                         'data': {'groups': reportGroups,
-                                                'fields': getFieldData($scope.report.fields) },
+                                                'fields': getFieldData($scope.report.fields),
+                                                'show_detail': $scope.report.show_detail
+                                                },
                                         };
                             if ($scope.report.saved_id)
                                 ser['id'] = $scope.report.saved_id;
@@ -856,6 +859,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         {'model': $scope.reportType.id,
                         'domain': $scope.cur_domain,
                         'fields': req_fields,
+                        'show_detail': $scope.reportType.show_detail,
                         'group_by': $scope.reportGroups,
                         }
                     )
