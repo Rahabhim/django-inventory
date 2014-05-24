@@ -807,37 +807,49 @@ if (typeof String.prototype.startsWith != 'function') {
 
                 $scope.cur_domain = $scope.$parent.getCurDomain();
                 var req_fields = [];
-                var calc_get_fields = function(field, key, ggroup) {
-                    if (field.hide || !field.fmt)
+                var calc_get_fields = function(field, key) {
+                    if (field.hide)
                         return;
-                    var disp = field.full_path;
-                    if (field.fmt.display)
-                        disp += '.' + field.fmt.display;
-                    req_fields.push(disp);
-
+                    var req2 = this.req;
+                    // ggroup is where the field shall be displayed,
+                    // may be empty for non-visible sub-fields
+                    var ggroup = this.ggroup;
                     if (!ggroup){
-                        ggroup = $scope.field_cols;
                         // see if field logically belongs to any of the groups
                         for(var i in $scope.reportGroups)
                             if(field.full_path.startsWith($scope.reportGroups[i])){
                                 if (!$scope.groupped_fields[i])
                                     $scope.groupped_fields[i] = [];
                                 ggroup = $scope.groupped_fields[i];
+                                if (!field.fmt)
+                                    $scope.setFieldFmt(field);
                                 break;
                             }
                     }
-                    ggroup.push({id: disp,
+                    if (req2 && field.fmt){
+                        var disp = field.full_path;
+                        if (field.fmt.display)
+                            disp += '.' + field.fmt.display;
+                        req_fields.push(disp);
+                        if (ggroup)
+                            ggroup.push({id: disp,
                                 name: field.name,
                                 sequence: field.fmt.sequence || field.sequence});
-                    if (field.fields && field.fmt.sub_fields)
-                        angular.forEach(field.fmt.sub_fields, function(sf_name) {
-                            var field2 = $scope.fieldByPath(sf_name, field);
-                            if (field2)
-                                calc_get_fields(field2, sf_name, ggroup);
+                    }
+
+                    if (field.fields)
+                        angular.forEach(field.fields, function(field2, sf_name) {
+                            var b = {req:false, group: ggroup};
+                            if (field.fmt && field.fmt.sub_fields
+                                    && (field.fmt.sub_fields.indexOf(sf_name) >=0))
+                                b.req = true;
+                            angular.bind(b, calc_get_fields)(field2, sf_name);
                             });
+
                     };
 
-                angular.forEach($scope.reportType.fields, calc_get_fields);
+                angular.forEach($scope.reportType.fields, calc_get_fields,
+                                {req: true, ggroup: $scope.field_cols});
                 $scope.field_cols.sort(function(a, b) { return a.sequence - b.sequence; });
 
                 $http.post('./results-preview/' + $scope.reportType.id,
