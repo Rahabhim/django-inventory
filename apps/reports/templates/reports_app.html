@@ -379,6 +379,9 @@ if (typeof String.prototype.startsWith != 'function') {
                     }
                 return ret;
                 };
+            $scope.setFieldFmt = function(field) {
+                    field.fmt = {sequence: field.sequence, order: false};
+                };
 
             var _getFieldData_one = function(field) {
                     var r = {};
@@ -704,7 +707,7 @@ if (typeof String.prototype.startsWith != 'function') {
 
                 angular.forEach(fields, function(field, key) {
                         if (field.fmt === undefined) {
-                            field.fmt = {group: 1, sequence: field.sequence, order: false};
+                            $scope.setFieldFmt(field);
                             if (field.fields && field.fields['name'])
                                 field.fmt.display = 'name';
                         }
@@ -749,7 +752,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 
                 var rem_path = dragItem.full_path.slice(grp_field.full_path.length+1);
                 if (!grp_field.fmt)
-                    grp_field.fmt = {group: 1, sequence: field.sequence, order: false};
+                    $scope.setFieldFmt(grp_field);
                 if (!grp_field.fmt.sub_fields)
                     grp_field.fmt.sub_fields = [];
                 var i = grp_field.fmt.sub_fields.indexOf(rem_path);
@@ -770,7 +773,7 @@ if (typeof String.prototype.startsWith != 'function') {
                     else {
                         // not groupped, just hide the field
                         if (!dragItem.fmt)
-                            dragItem.fmt = {group: 1, sequence: field.sequence, order: false};
+                            $scope.setFieldFmt(dragItem);
                         dragItem.fmt.hide = true;
                         }
                     return true;
