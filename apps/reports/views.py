@@ -224,7 +224,9 @@ class CJFilter_Model(CJFilter):
             @params domain a 3-item list/tuple, domain expression segment
         """
         if domain[1] == '=':
-            if not isinstance(domain[2], (int, long)):
+            if (domain[2] is True) or (domain[2] is False):
+                return { name + '__isnull': not domain[2]}
+            elif not isinstance(domain[2], (int, long)):
                 raise TypeError("RHS must be integer, not %r" % domain[2])
             return { name+'__pk': domain[2] }
         elif domain[1] == 'in' and all([isinstance(x, (long, int)) for x in domain[2]]):
@@ -299,6 +301,15 @@ class CJFilter_Product(CJFilter_Model):
     def getGrammar(self):
         ret = super(CJFilter_Product, self).getGrammar()
         ret['widget'] = 'model-product'
+        return ret
+
+class CJFilter_isset(CJFilter):
+    title = _('Is set')
+    sequence = 2
+
+    def getGrammar(self):
+        ret = super(CJFilter_isset, self).getGrammar()
+        ret['widget'] = 'isset'
         return ret
 
 class CJFilter_String(CJFilter):
@@ -380,7 +391,8 @@ class CJFilter_attribs(CJFilter_Model):
 
 
 department_filter = CJFilter_Model('company.Department', sequence=5,
-    fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+    fields={ '_': CJFilter_isset(sequence=0),
+            'name':  CJFilter_String(title=_('name'), sequence=1),
             'code': CJFilter_String(title=_('code'), sequence=2),
             'dept_type': CJFilter_lookup('company.DepartmentType', 'department_type',
                         fields={'name':  CJFilter_String(title=_('name'), sequence=1), }
