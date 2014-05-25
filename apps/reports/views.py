@@ -147,7 +147,7 @@ class CJFilter_Model(CJFilter):
                 gbf = []
                 for f in fields:
                     if f.startswith(gb+'.'):
-                        gbf.append(f[len(gb)+1:])
+                        gbf.append(f[len(gb)+1:].replace('.', '__'))
                 oby = gb.replace('.', '__')
                 group_fields[gb] = field, gbf, oby
                 gvalues.append(oby)
@@ -163,7 +163,7 @@ class CJFilter_Model(CJFilter):
             if True:
                 obs2 = objects
                 if limit:
-                    obs2 = objects[:limit]
+                    obs2 = objects.order_by(*gorder_by)[:limit]
 
                 detailed_results = obs2.values('id', *fields2)
                 # all_ids = [o.id for o in detailed_results]
@@ -190,7 +190,7 @@ class CJFilter_Model(CJFilter):
                 for g in field._model_inst.objects.filter(pk__in=gb_vals).values('id', *gbf):
                     g2 = {}
                     for k, v in g.items():
-                        g2[gb + '.' + k] = v
+                        g2[gb + '.' + k.replace('__', '.')] = v
                     vals_group[g['id']] = g2
 
                 gb_values_cache[gb] = vals_group
