@@ -318,6 +318,9 @@ class CJFilter_isset(CJFilter):
         ret['widget'] = 'isset'
         return ret
 
+    def getQuery(self, request, name, domain):
+        return {}
+
 class CJFilter_String(CJFilter):
     sequence = 9
 
