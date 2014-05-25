@@ -13,6 +13,7 @@ from django.utils.safestring import SafeString
 from collections import defaultdict
 
 from models import SavedReport
+from common.api import user_is_staff
 
 class JsonEncoderS(json.JSONEncoder):
     def default(self, obj):
@@ -443,7 +444,7 @@ location_filter = CJFilter_Model('common.Location',
             'template': CJFilter_Choices('common.LocationTemplate',
                     fields={'name': CJFilter_String(title=_('name'), sequence=1), }),
         },
-    famfam_icon='map',
+    famfam_icon='map', condition=user_is_staff,
     )
 manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer',
     fields={'name':  CJFilter_String(title=_('name'), sequence=1),
@@ -504,6 +505,21 @@ def _reports_init_cache():
 
     _reports_cache['available_types'] = [ rt.to_main_report(k) for k, rt in _reports_cache['main_types'].items()]
 
+def get_allowed_rtypes(context):
+    """Return list of allowed report types
+
+        @param context like in (obj,context) parameters of menu conditions
+    """
+    _reports_init_cache()
+    ret = []
+    for k, rt in _reports_cache['main_types'].items():
+        if getattr(rt, 'condition', None):
+            if rt.condition(None, context):
+                pass
+            else:
+                continue
+        ret.append(k)
+    return ret
 
 def get_rtype_name(rep_type):
     """ Get the human-readable name for some report type
@@ -520,8 +536,11 @@ def reports_app_view(request, object_id=None):
     if not request.user.is_authenticated:
         raise PermissionDenied
     _reports_init_cache()
+    context = {'request': request, 'user': request.user}
+    allowed_types = get_allowed_rtypes(context)
+    avail = filter(lambda r: r['id'] in allowed_types, _reports_cache['available_types'])
     return render(request, 'reports_app.html',
-            {'available_types': SafeString(json.dumps(_reports_cache['available_types'], cls=JsonEncoderS)),
+            {'available_types': SafeString(json.dumps(avail, cls=JsonEncoderS)),
             })
 
 def reports_parts_params_view(request, part_id):

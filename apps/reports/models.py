@@ -3,12 +3,17 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 
+
 class SavedReportManager(models.Manager):
     def by_request(self, request):
+        from views import get_allowed_rtypes
+
         if request.user.is_staff or request.user.is_superuser:
             return self.all()
         else:
-            return self.filter(owner=request.user)
+            context = {'request': request, 'user': request.user}
+            return self.filter(models.Q(owner=request.user)|models.Q(owner__isnull=True)) \
+                    .filter(rmodel__in=get_allowed_rtypes(context))
 
 class SavedReport(models.Model):
     """ Settings for a report, in JSON

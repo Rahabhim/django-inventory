@@ -21,7 +21,7 @@
             <ul class="navigation">
                 <li><a ng-click="reportLoad()"><span class="famfam active famfam-folder"></span>
                         {% trans 'Load' %}</a></li>
-                <li ng-show="needs_save"><a ng-click="reportSave()"><span class="famfam active famfam-disk"></span>
+                <li ng-show="needs_save && can_save"><a ng-click="reportSave()"><span class="famfam active famfam-disk"></span>
                         {% trans 'Save' %}</a></li>
                 <li ng-show="needs_save && can_delete"><a ng-click="reportSaveCopy()"><span class="famfam active famfam-disk_multiple"></span>
                         {% trans 'Save copy' %}</a></li>
@@ -290,6 +290,7 @@
             <input type="checkbox" ng-model="report.public"><label>{% trans 'Public' %}</label>
         </div>
         {% endif %}
+        <alert ng-show="message" ng-bind="message"></alert>
     </div>
     <div class="modal-footer">
         <button ng-show="has_btn && report.title" ng-click="do_save()" class="btn btn-success">{% trans 'Save' %}</button>
@@ -319,6 +320,7 @@ if (typeof String.prototype.startsWith != 'function') {
     return this.slice(0, str.length) == str;
   };
 }
+var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
 
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
         .config(['$interpolateProvider', '$httpProvider', '$locationProvider',
@@ -533,6 +535,7 @@ if (typeof String.prototype.startsWith != 'function') {
 
                                 setFieldData(data.data.fields, $scope.reportType.fields);
                                 $scope.$root.needs_save = false;
+                                $scope.$root.can_save = user_super || !data.public;
                                 $scope.$root.can_delete = true;
                                 })
                             .error(function(data, status, headers) {
@@ -599,6 +602,10 @@ if (typeof String.prototype.startsWith != 'function') {
                                 })
                                 .error(function(data, status, headers) {
                                     $log.debug("Error:", data, status);
+                                    if (status == 403)
+                                        $scope.message = "Permission denied";
+                                    else
+                                        $scope.message = "Error: " + status;
                                     });
                             };
                         }],
@@ -636,6 +643,7 @@ if (typeof String.prototype.startsWith != 'function') {
                                 $scope.reportGroups = false;
                                 $scope.$root.can_delete = false;
                                 $scope.$root.needs_save = false;
+                                $scope.$root.can_save = true;
                                 })
                             .error(function(data, status, headers) {
                                     $log.debug("Error:", data, status);
