@@ -745,6 +745,12 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.$watch('field.fields.category.data', function(cat_data) {
                 var fields = $scope.field.fields;
                 if (cat_data) {
+                        // Avoid http get if we close/open the attributes node.
+                        // But this will still need to be set at the beginning
+                    if (fields.attributes.cat_pk == cat_data.pk)
+                        return;
+
+                    var old_data = fields.attributes.data;
                     $http.get('./cat-grammar/'+cat_data.pk).then(function(response) {
                         if (response.status == 200){
                             var d = response.data;
@@ -754,17 +760,23 @@ if (typeof String.prototype.startsWith != 'function') {
                                 fields.attributes.hide = false;
                                 fields.attributes.attribs = d.attributes;
                                 fields.attributes.data = {};
+                                fields.attributes.cat_pk = cat_data.pk;
+                                if (old_data)
+                                    angular.forEach(d.attributes, function(attr){
+                                        if (old_data[attr.aid])
+                                            fields.attributes.data[attr.aid] = old_data[attr.aid];
+                                        });
                             }
                         }
                         else
                             $log.warn("Bad http response:", response)
                         });
-
                 } else {
                     /* no category selected, cleanup attributes and sibling "containing" */
                     if (fields && fields.attributes){
                         fields.attributes.hide = true;
                         fields.attributes.data = false;
+                        fields.attributes.cat_pk = false;
                         }
                     $scope.$parent.setItemContains(false);
                     }
