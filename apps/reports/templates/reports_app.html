@@ -346,8 +346,15 @@ if (typeof String.prototype.startsWith != 'function') {
                             if (dfn === undefined)
                                 dfn = domainFns['model']
                             var dom2 = dfn(rt2, n2);
-                                if (dom2 && dom2.length)
+                            if (dom2 && dom2.length){
+                                if (dom2[0] == '&') {
+                                    angular.forEach(dom2[1], function(dom3) {
+                                        dom.push([n2, '=',].concat(dom3));
+                                        });
+                                }
+                                else
                                     dom.push([n2].concat(dom2)) ;
+                                }
                             });
                         if ((dom.length == 1) && (dom[0][0] == '_'))
                             return [ '=', dom[0][2]];
@@ -368,8 +375,39 @@ if (typeof String.prototype.startsWith != 'function') {
                             return ['=', parseInt(rt.data)];
                     },
                 'attribs': function(rt, name) {
+                        if (!rt.data)
+                            return;
                         $log.debug("Atribs=> dom:", rt);
-                        // return ['attribs...'];
+                        var rval = [];
+                        angular.forEach(rt.data, function(val) {
+                                rval.push(val);
+                            });
+                        if (rval.length)
+                            return ['&', rval];
+                    },
+                'contains': function(rt, name) {
+                        if (!rt.contains_data)
+                            return;
+                        var rdom = [];
+                        angular.forEach(rt.contains_data, function(rt2) {
+                            var dfn = domainFns[rt2.widget];
+                            if (dfn === undefined)
+                                dfn = domainFns['model']
+                            var dom2 = dfn(rt2, name);
+                            if (!(dom2 && dom2.length))
+                                return;
+                            if (dom2[0] == 'in' || dom2[0] == '='){
+                                rdom.push(dom2[1]) ;
+                            }
+                            else if (dom2[0] == '&') {
+                                angular.forEach(dom2[1], function(dom3) {
+                                    rdom.push(dom3);
+                                    });
+                            }
+                            else
+                                $log.warn("Cannot use domain", dom2, "for", name);
+                            });
+                        return ['&', rdom];
                     },
                 'isset': function(rt, name) {
                         if (rt.data){
@@ -644,6 +682,17 @@ if (typeof String.prototype.startsWith != 'function') {
                         if (criteria.length)
                             return criteria.join(',');
                         return "";
+                        },
+                    'contains': function(field) {
+                            var criteria = [];
+                            angular.forEach(field.contains_data, function(fld) {
+                                var c = $scope.formatParmsData(fld);
+                                if (c)
+                                    criteria.push('+ ' + c);
+                                });
+                            if (criteria.length)
+                                return criteria.join(', ');
+                            return "";
                         },
                     'isset': function(field) {
                         if (field.data){

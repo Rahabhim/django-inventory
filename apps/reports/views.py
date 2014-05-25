@@ -375,6 +375,7 @@ class CJFilter_contains(CJFilter):
     def __init__(self, sub_filter, **kwargs):
         assert isinstance(sub_filter, CJFilter), repr(sub_filter)
         self.sub = sub_filter
+        self.name_suffix = None
         super(CJFilter_contains, self).__init__(**kwargs)
 
     def __repr__(self):
@@ -386,7 +387,23 @@ class CJFilter_contains(CJFilter):
         ret['sub'] = self.sub.getGrammar()
         return ret
 
+    def getQuery(self, request, name, domain):
+        """query filter against a single entry
+        """
+        if domain[1] == '=':
+            if (domain[2] is True) or (domain[2] is False):
+                return { name + '__isnull': not domain[2]}
+            elif not isinstance(domain[2], (list, tuple)):
+                raise TypeError("RHS must be list, not %r" % domain[2])
+            name2 = name
+            if self.name_suffix:
+                name2 += '__' + self.name_suffix
+            return self.sub.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
+        else:
+            raise ValueError("Invalid operator for contains: %r" % domain[1])
+
 class CJFilter_attribs(CJFilter_Model):
+    name_suffix = 'value'
     #def __init__(self, sub_filter, **kwargs):
     #    assert isinstance(sub_filter, CJFilter), repr(sub_filter)
     #    self.sub = sub_filter
@@ -398,6 +415,9 @@ class CJFilter_attribs(CJFilter_Model):
         # ret['sub'] = self.sub.getGrammar()
         return ret
 
+    def getQuery(self, request, name, domain):
+        name2 = name + '__' + self.name_suffix
+        return super(CJFilter_attribs, self).getQuery(request, name2, domain)
 
 department_filter = CJFilter_Model('company.Department', sequence=5,
     fields={ '_': CJFilter_isset(sequence=0),
@@ -451,7 +471,9 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {
             'location': location_filter,
             'item_template': product_filter,
-            'itemgroup': CJFilter_contains(item_templ_c_filter, title=_('containing'), sequence=25),
+            'itemgroup': CJFilter_contains(item_templ_c_filter,
+                            title=_('containing'), name_suffix='items',
+                            sequence=25),
             },
     famfam_icon = 'computer',
     )
