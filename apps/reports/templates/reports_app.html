@@ -106,13 +106,20 @@
                             </h3>
                             <div class="popover-content">
                                 <div ng-if="field.hide">{% trans 'Hidden' %}</div>
+                                <div ng-show="field.fmt.hide">{% trans 'Hidden' %}
+                                    <a ng-click="field.fmt.hide=false" title="{% trans 'Unhide' %}"><span class="famfam active famfam-eye"></span></a>
+                                </div>
                                 {% if request.user.is_superuser %}
                                 [[ field.full_path ]]
                                 <div>Pos: [[ field.sequence ]]</div>
                                 [[ field.fmt ]]
                                 {% endif %}
                                 <div ng-if="field.fields">
-                                    {% trans 'Display:' %} [[ field.fmt.display ]]
+                                    {% trans 'Display:' %}
+                                    <select ng-model="field.fmt.display"
+                                        ng-options="k as f.name for (k, f) in field.fields">
+                                        <option value=""></option>
+                                    </select>
 
                                     <div class="more-fields">
                                         {% trans 'Additional fields:' %}
@@ -132,8 +139,10 @@
                 <h3>{% trans 'Results' %}</h3>
                 <div ng-controller="previewCtrl">
                     {% if request.user.is_superuser %}
-                        <div>Domain: [[ cur_domain ]]
+                        <div style="word-wrap: break-word">Domain:
+                            [[ cur_domain ]]
                         </div>
+                        <!-- Fields: [[ groupped_fields ]] -->
                     {% endif %}
                     <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
                     <div ng-if="results" class="preview-results">
@@ -310,6 +319,7 @@ if (typeof String.prototype.startsWith != 'function') {
     return this.slice(0, str.length) == str;
   };
 }
+
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
         .config(['$interpolateProvider', '$httpProvider', '$locationProvider',
           function($interpolateProvider, $httpProvider, $locationProvider) {
