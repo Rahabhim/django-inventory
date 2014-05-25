@@ -938,7 +938,6 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.result_alert = false;
             $scope.cur_domain = '?';
             $scope.results = false;
-            $scope.grp_fields = false;
 
             var fetchResults = function(show) {
                 $scope.wait_results = true;
@@ -948,7 +947,6 @@ if (typeof String.prototype.startsWith != 'function') {
                 $scope.field_cols = [];
                 $scope.groupped_fields = {};
                 $scope.group_level = 0;
-                $scope.grp_fields = [];
                 $scope.rowsFilter = function() { return true; };
 
                 if (!(show && $scope.reportType)){
