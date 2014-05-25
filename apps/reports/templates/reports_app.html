@@ -676,6 +676,8 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     $scope.field = rt;
                     if (rt)
                         $scope.$root.needs_save = true;
+                    if (rt && !rt.saved_id)
+                        $scope.$root.can_save = true;
                 });
 
             var formatFns = {
