@@ -23,6 +23,8 @@
                         {% trans 'Load' %}</a></li>
                 <li ng-show="needs_save"><a ng-click="reportSave()"><span class="famfam active famfam-disk"></span>
                         {% trans 'Save' %}</a></li>
+                <li ng-show="needs_save && can_delete"><a ng-click="reportSaveCopy()"><span class="famfam active famfam-disk_multiple"></span>
+                        {% trans 'Save copy' %}</a></li>
                 <li ng-show="can_delete"><a ng-click="reportDelete()"><span class="famfam active famfam-bin"></span>
                         {% trans 'Delete' %}</a></li>
             </ul>
@@ -542,8 +544,12 @@ if (typeof String.prototype.startsWith != 'function') {
                         }});
 
                 minst.result.then(function() { $log.debug("Modal closed!") });
-
-
+                };
+            $scope.$root.reportSaveCopy = function() {
+                $scope.reportType.saved_id = undefined;
+                if ($scope.reportType.title)
+                    $scope.reportType.title += ' (copy)';
+                return $scope.reportSave();
                 };
 
             $scope.$root.reportDelete = function() {
