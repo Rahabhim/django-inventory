@@ -37,7 +37,7 @@
 {% block content %}
 <div id="ng-main-app">
     <div class="content" ng-controller="mainCtrl">
-        <h1>{% trans 'Report builder' %} [[ reportType.title || reportType.name ]]</h1>
+        <h1>{% trans 'Report builder' %}: [[ reportType.title || reportType.name ]]</h1>
         
 
         <tabset>
@@ -56,8 +56,8 @@
                     <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
                 </div>
                 <div class="params-form">
-                    <div>{% trans 'Limit' %}<input type="number" ng-model="reportType.limit"></div>
-                    <div>{% trans 'Preview Limit' %}<input type="number" ng-model="reportType.preview_limit"></div>
+                    <div><label>{% trans 'Limit' %}</label> <input type="number" ng-model="reportType.limit"></div>
+                    <div><label>{% trans 'Preview Limit' %}</label> <input type="number" ng-model="reportType.preview_limit"></div>
                 </div>
             </tab>
             <tab heading="{% trans 'Formatting' %}" active="tabs.format" disabled="!reportType">
