@@ -55,6 +55,10 @@
                 <div ng-controller="paramsCtrl" class="params-form">
                     <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
                 </div>
+                <div class="params-form">
+                    <div>{% trans 'Limit' %}<input type="number" ng-model="reportType.limit"></div>
+                    <div>{% trans 'Preview Limit' %}<input type="number" ng-model="reportType.preview_limit"></div>
+                </div>
             </tab>
             <tab heading="{% trans 'Formatting' %}" active="tabs.format" disabled="!reportType">
                 <h3>{% trans 'Formatting style' %}</h3>
@@ -501,12 +505,17 @@ if (typeof String.prototype.startsWith != 'function') {
                             .success(function(data){
                                 $log.debug("load data came:", data);
                                 $scope.reportType = data.grammar;
-                                $scope.reportType.saved_id = data.id;
+                                var upd = {
+                                        id: data.model,
+                                        saved_id: data.id,
+                                        public: data.public,
+                                        title: data.title,
+                                        show_detail: data.data.show_detail,
+                                        limit: data.data.limit,
+                                        preview_limit: data.data.preview_limit || 10
+                                        };
+                                angular.extend($scope.reportType, upd);
                                 $location.search('id', data.id);
-                                $scope.reportType.id = data.model;
-                                $scope.reportType.public = data.public;
-                                $scope.reportType.title = data.title;
-                                $scope.reportType.show_detail = data.data.show_detail;
                                 $scope.reportGroups = data.data.groups || [];
 
                                 setFieldData(data.data.fields, $scope.reportType.fields);
@@ -559,7 +568,9 @@ if (typeof String.prototype.startsWith != 'function') {
                                         'public': $scope.report.public || false,
                                         'data': {'groups': reportGroups,
                                                 'fields': getFieldData($scope.report.fields),
-                                                'show_detail': $scope.report.show_detail
+                                                'show_detail': $scope.report.show_detail,
+                                                'limit': $scope.report.limit,
+                                                'preview_limit': $scope.report.preview_limit
                                                 },
                                         };
                             if ($scope.report.saved_id)
@@ -958,6 +969,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         'fields': req_fields,
                         'show_detail': $scope.reportType.show_detail,
                         'group_by': $scope.reportGroups,
+                        'limit': $scope.reportType.preview_limit || 10
                         }
                     )
                     .success(function(data) {
