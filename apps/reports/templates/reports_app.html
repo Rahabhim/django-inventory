@@ -98,15 +98,18 @@
                                 <a ng-click="close()" style="float:right;" title="close">&times;</a>
                             </h3>
                             <div class="popover-content">
-                                [[ field.full_path ]]
                                 <div ng-if="field.hide">{% trans 'Hidden' %}</div>
+                                {% if request.user.is_superuser %}
+                                [[ field.full_path ]]
                                 <div>Pos: [[ field.sequence ]]</div>
+                                [[ field.fmt ]]
+                                {% endif %}
                                 <div ng-if="field.fields">
-                                    Display: [[ field.fmt.display ]]
+                                    {% trans 'Display:' %} [[ field.fmt.display ]]
 
                                     <div class="more-fields">
-                                        Additional fields:
-                                        <div ng-repeat="field2 in field.fields" 
+                                        {% trans 'Additional fields:' %}
+                                        <div ng-repeat="field2 in field.fields"
                                             ng-draggable="true" ng-drag-model="field2">
                                             [[ field2.name ]]
                                         </div>
@@ -119,7 +122,7 @@
 
             </tab>
             <tab heading="{% trans 'Preview' %}" active="tabs.preview" disabled="!reportType">
-                <h3>Results</h3>
+                <h3>{% trans 'Results' %}</h3>
                 <div ng-controller="previewCtrl">
                     {% if request.user.is_superuser %}
                         <div>Domain: [[ cur_domain ]]
