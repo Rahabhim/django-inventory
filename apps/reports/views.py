@@ -356,7 +356,7 @@ class CJFilter_Choices(CJFilter_Model):
     filter_expr = None
 
     def getGrammar(self):
-        ret = super(CJFilter_Model, self).getGrammar()
+        ret = super(CJFilter_Choices, self).getGrammar()
         ret['widget'] = 'selection'
         objects = self._model_inst.objects
         if True:
