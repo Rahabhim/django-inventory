@@ -311,7 +311,7 @@ class CJFilter_Product(CJFilter_Model):
         return ret
 
 class CJFilter_isset(CJFilter):
-    title = _('Is set')
+    title = _('Non-zero')
     sequence = 2
 
     def getGrammar(self):
