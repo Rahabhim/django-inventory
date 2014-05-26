@@ -51,7 +51,7 @@
             </tab>
 
             <tab heading="{% trans 'Parameters' %}" active="tabs.params" disabled="!reportType">
-                <h3>{% trans 'Search criteria for '%}[[ reportType.name ]] </h3>
+                <h3>{% trans 'Search criteria for '%}: [[ reportType.name ]] </h3>
                 <div ng-controller="paramsCtrl" class="params-form">
                     <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
                 </div>
