@@ -972,7 +972,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     // ggroup is where the field shall be displayed,
                     // may be empty for non-visible sub-fields
                     var ggroup = this.ggroup;
-                    if (!ggroup){
+                    if ((!ggroup)|| (ggroup === $scope.field_cols)){
                         // see if field logically belongs to any of the groups
                         for(var i in $scope.reportGroups)
                             if(field.full_path.startsWith($scope.reportGroups[i])){
