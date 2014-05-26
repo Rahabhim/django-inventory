@@ -314,12 +314,10 @@ class CJFilter_Product(CJFilter_Model):
 class CJFilter_isset(CJFilter):
     title = _('Non-zero')
     sequence = 2
-    hide = True
 
     def getGrammar(self):
         ret = super(CJFilter_isset, self).getGrammar()
         ret['widget'] = 'isset'
-        ret['hide'] = self.hide
         return ret
 
     def getQuery(self, request, name, domain):
