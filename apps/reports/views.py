@@ -188,11 +188,12 @@ class CJFilter_Model(CJFilter):
                 grp_results = objects.filter(**gb_filter).order_by(*go_by).values(*gvals).annotate(count=models.Count('pk'))
 
                 vals_group = {}
-                for g in field._model_inst.objects.filter(pk__in=gb_vals).values('id', *gbf):
-                    g2 = {}
-                    for k, v in g.items():
-                        g2[gb + '.' + k.replace('__', '.')] = v
-                    vals_group[g['id']] = g2
+                if isinstance(field, CJFilter_Model):
+                    for g in field._model_inst.objects.filter(pk__in=gb_vals).values('id', *gbf):
+                        g2 = {}
+                        for k, v in g.items():
+                            g2[gb + '.' + k.replace('__', '.')] = v
+                        vals_group[g['id']] = g2
 
                 gb_values_cache[gb] = vals_group
 
@@ -204,7 +205,7 @@ class CJFilter_Model(CJFilter):
                             row['_count'] = v
                         else:
                             k = k.replace('__', '.')
-                            row.update(gb_values_cache[k][v])
+                            row.update(gb_values_cache[k].get(v, {k: v}))
                     vals.append(row)
 
                 ret.append({'group_level': i,
