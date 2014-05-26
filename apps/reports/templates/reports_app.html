@@ -845,7 +845,8 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                             if (field.fields && field.fields['name'])
                                 field.fmt.display = 'name';
                         }
-                        $scope.fmtTable.push(field);
+                        if ($scope.reportGroups.indexOf(field.full_path) == -1)
+                            $scope.fmtTable.push(field);
                     });
                 angular.forEach(fields, fillFieldPaths, {name_prefix: '', fld_prefix: ''});
 
@@ -855,6 +856,10 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     });
                 };
             $scope.$parent.$watch('reportType.fields', recalcFmtTable);
+            $scope.$parent.$watch('reportGroups', function() {
+                if ($scope.reportType.fields)
+                    recalcFmtTable($scope.reportType.fields);
+                });
 
             $scope.addGroup = function(dragItem) {
                     $log.debug("addGroup", dragItem, "to", $scope.reportGroups);
