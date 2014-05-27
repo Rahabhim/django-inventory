@@ -13,6 +13,8 @@ from views import LocationListView, location_do_activate, location_do_deactivate
 
 generic_name_filter = {'name': 'name', 'title': _('name'), 'destination':'name__icontains'}
 
+vat_num_filter = {'name': 'vat_number', 'title': _('VAT number'), 'destination': 'vat_number'}
+
 urlpatterns = patterns('common.views',
     url(r'^about/$', direct_to_template, { 'template' : 'about.html'}, 'about'),
 )
@@ -46,7 +48,7 @@ urlpatterns += patterns('',
                 title=_("Supplier details"), queryset=Supplier.objects.all()),
             name='supplier_view'),
     url(r'^supplier/list/$', GenericBloatedListView.as_view(queryset=Supplier.objects.by_request,
-            list_filters=[generic_name_filter],
+            list_filters=[generic_name_filter, vat_num_filter],
             extra_context=dict(title=_(u'Suppliers'))), name='supplier_list'),
     url(r'^supplier/create/$', GenericCreateView.as_view(form_class=SupplierForm), name='supplier_create'),
     url(r'^supplier/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( form_class=SupplierForm, ), name='supplier_update'),
