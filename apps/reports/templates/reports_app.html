@@ -83,8 +83,11 @@
                         <tr class="add-group"><th>{% trans 'Add group...' %}</th>
                             <td colspan="[[ fmtTable.length ]]" ng-droppable="true" ng-ondrop="addGroup(dragItem)">{% trans 'drag here to add group...' %}</td></tr>
                         <tr ng-class="{'no-details': !reportType.show_detail}"><th><input type="checkbox" ng-model="reportType.show_detail">{% trans 'detailed:'%}</th>
-                            <td ng-repeat="field in fmtTable"><div ng-draggable="true" ng-drag-model="field">
-                                <a ng-click-send="field" ng-click-align="field-fmt-palette">[[ field.full_name ]]</a>
+                            <td ng-repeat="field in fmtTable|seqSort">
+                                <div ng-draggable="true" ng-drag-model="field"
+                                    ng-droppable="true" ng-ondrop="addToField(dragItem, field)"
+                                    class="add-after">
+                                    <a ng-click-send="field" ng-click-align="field-fmt-palette">[[ field.full_name ]]</a>
                                 </div>
                             </td>
                         </tr>
@@ -111,7 +114,7 @@
                                 </div>
                                 {% if request.user.is_superuser %}
                                 [[ field.full_path ]]
-                                <div>Pos: [[ field.sequence ]]</div>
+                                <div>Pos: <input type="number" style="width: 4em;" ng-model="field.fmt.sequence"></div>
                                 [[ field.fmt ]]
                                 {% endif %}
                                 <div ng-if="field.fields">
@@ -142,7 +145,6 @@
                         <div style="word-wrap: break-word">Domain:
                             [[ cur_domain ]]
                         </div>
-                        <!-- Fields: [[ groupped_fields ]] -->
                     {% endif %}
                     <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
                     <div ng-if="results" class="preview-results">
@@ -460,7 +462,8 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                 return ret;
                 };
             $scope.setFieldFmt = function(field) {
-                    field.fmt = {sequence: field.sequence, order: false};
+                if(!field.fmt)
+                    field.fmt = {sequence: field.sequence, order: false, hide: false};
                 };
 
             var _getFieldData_one = function(field) {
@@ -834,12 +837,12 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                               fld_prefix: field.full_path+ '.'
                             });
             };
-            var recalcFmtTable = function(fields, fld_prefix) {
+            var recalcFmtTable = function() {
                 $scope.fmtTable = [];
-                if (!fields)
+                if (!$scope.reportType.fields)
                     return;
 
-                angular.forEach(fields, function(field, key) {
+                angular.forEach($scope.reportType.fields, function(field, key) {
                         if (field.fmt === undefined) {
                             $scope.setFieldFmt(field);
                             if (field.fields && field.fields['name'])
@@ -847,19 +850,22 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                         }
                         if ($scope.reportGroups.indexOf(field.full_path) == -1)
                             $scope.fmtTable.push(field);
-                    });
-                angular.forEach(fields, fillFieldPaths, {name_prefix: '', fld_prefix: ''});
-
-                $scope.fmtTable.sort(function(a, b) {
-                        return (a.fmt.sequence - b.fmt.sequence)
-                            || (a.sequence - b.sequence);
+                        if (field.fmt.sub_fields)
+                            angular.forEach(field.fmt.sub_fields, function(sf_name) {
+                                var field2 = $scope.fieldByPath(sf_name, field);
+                                if (field2 && ($scope.reportGroups.indexOf(field2.full_path) == -1))
+                                    $scope.fmtTable.push(field2);
+                                });
                     });
                 };
-            $scope.$parent.$watch('reportType.fields', recalcFmtTable);
-            $scope.$parent.$watch('reportGroups', function() {
-                if ($scope.reportType.fields)
-                    recalcFmtTable($scope.reportType.fields);
-                });
+            var recalcFmtTable_full = function() {
+                if (!$scope.reportType)
+                    return;
+                angular.forEach($scope.reportType.fields, fillFieldPaths, {name_prefix: '', fld_prefix: ''});
+                recalcFmtTable();
+                };
+            $scope.$parent.$watch('reportType.fields', recalcFmtTable_full);
+            $scope.$parent.$watch('reportGroups', recalcFmtTable);
 
             $scope.addGroup = function(dragItem) {
                     $log.debug("addGroup", dragItem, "to", $scope.reportGroups);
@@ -884,6 +890,49 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                         });
                     return ret;
                 };
+
+            var _calc_qmd_from = function(field, mto, qmd) {
+                    if (field.fmt) {
+                        if (field.sequence >= mto)
+                            qmd.push(field);
+                        if (field.fmt.sub_fields)
+                            angular.forEach(field.fmt.sub_fields, function(sf_name) {
+                                var field2 = $scope.fieldByPath(sf_name, field);
+                                if (field2)
+                                    _calc_qmd_from(field2, mto, qmd);
+                                });
+                    }
+                    else if (field.sequence >= mto) {
+                        qmd.push(field);
+                    }
+                };
+
+            var _arrange_fields = function(new_field, qmd, m_orig){
+                var mfrom = m_orig, mto = m_orig+1;
+                while(mfrom < mto){
+                    for(var i=0; i< qmd.length; i++){
+                        if (qmd[i] === undefined) continue;
+                        var seq;
+                        if (qmd[i].fmt)
+                            seq = qmd[i].fmt.sequence;
+                        else
+                            seq = qmd[i].sequence;
+
+                        if (seq == mfrom){
+                            $scope.setFieldFmt(qmd[i]);
+                            qmd[i].fmt.sequence = mto;
+                            qmd[i] = undefined; // don't touch that again
+                            mto ++;
+                            break;
+                        }
+                    }
+                    mfrom ++;
+                }
+                if (!new_field.fmt)
+                    $scope.setFieldFmt(new_field);
+                new_field.fmt.sequence = m_orig;
+            };
+
             $scope.addToGroup = function(grp_field, dragItem, fld_after){
                 if (!dragItem)
                     return;
@@ -895,18 +944,64 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     $scope.setFieldFmt(grp_field);
                 if (!grp_field.fmt.sub_fields)
                     grp_field.fmt.sub_fields = [];
+
+                var m_orig = 1;
+                var qmd = [];
+                if (fld_after){
+                    if (fld_after.fmt)
+                        m_orig = fld_after.fmt.sequence;
+                    else
+                        m_orig = fld_after.sequence;
+                    m_orig ++;
+                }
+                _calc_qmd_from(grp_field, m_orig, qmd);
+
                 var i = grp_field.fmt.sub_fields.indexOf(rem_path);
                 if (i == -1){
                     if (dragItem.fmt && dragItem.fmt.hide)
                         dragItem.fmt.hide = false;
                     grp_field.fmt.sub_fields.push(rem_path);
-                    return true;
+                    _arrange_fields(dragItem, qmd, m_orig);
                 }
                 else if (i > 0){
+                    // move field before some others.
+                    _arrange_fields(dragItem, qmd, m_orig);
                 }
-                return false;
+                else
+                    return false;
 
+                recalcFmtTable();
+                return true;
+            };
+
+            $scope.addToField = function(dragItem, fld_after) {
+                if (!dragItem)
+                    return false;
+                if (dragItem.full_path.indexOf('.') != -1)
+                    // a sub_field can only be appended to its parent field
+                    return $scope.addToGroup(fld_after, dragItem);
+                
+                var grp_idx = $scope.reportGroups.indexOf(dragItem.full_path);
+                if (grp_idx != -1)
+                    $scope.reportGroups.splice(grp_idx, 1);
+                // now, rearrange sequence of fields
+                var m_orig = 1;
+                var qmd = [];
+                if (fld_after){
+                    if (fld_after.fmt)
+                        m_orig = fld_after.fmt.sequence;
+                    else
+                        m_orig = fld_after.sequence;
+                    m_orig ++;
+                }
+                angular.forEach($scope.reportType.fields, function(field) {
+                    _calc_qmd_from(field, m_orig, qmd);
+                    });
+                _arrange_fields(dragItem, qmd, m_orig);
+                recalcFmtTable();
+                return true;
                 };
+        
             $scope.removeField = function(dragItem) {
                     if (!dragItem)
                         return;
@@ -929,6 +1024,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                             var fidx = parent.fmt.sub_fields.indexOf(name_p.join('.'));
                             if (fidx >= 0){
                                 parent.fmt.sub_fields.splice(fidx, 1);
+                                recalcFmtTable();
                                 return true;
                                 }
                         }
@@ -940,6 +1036,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                             $scope.setFieldFmt(dragItem);
                         dragItem.fmt.hide = true;
                         }
+                    recalcFmtTable();
                     return true;
                 };
         }]);
@@ -1004,7 +1101,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
 
                     if (field.fields)
                         angular.forEach(field.fields, function(field2, sf_name) {
-                            var b = {req:false, group: ggroup};
+                            var b = {req:false, ggroup: ggroup};
                             if (field.fmt && field.fmt.sub_fields
                                     && (field.fmt.sub_fields.indexOf(sf_name) >=0))
                                 b.req = true;
@@ -1015,6 +1112,8 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
 
                 angular.forEach($scope.reportType.fields, calc_get_fields,
                                 {req: true, ggroup: $scope.field_cols});
+
+                // $log.debug("Fields:", $scope.reportType.fields, $scope.field_cols, $scope.groupped_fields);
                 $scope.field_cols.sort(function(a, b) { return a.sequence - b.sequence; });
 
                 $http.post('./results-preview/' + $scope.reportType.id,
@@ -1027,7 +1126,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                         }
                     )
                     .success(function(data) {
-                        $log.debug("Preview data came:", data);
+                        // $log.debug("Preview data came:", data);
                         $scope.wait_results = false;
                         if (data.count){
                             $scope.results = [{'group_level': 0, _count: data.count},
@@ -1036,6 +1135,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                         } else {
                             $scope.results = data;
                         }
+                        //  $log.debug("Results:", $scope.results);
                     })
                     .error(function(data, status, headers) {
                         $scope.wait_results = false;
@@ -1056,6 +1156,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                 angular.forEach($scope.$parent.cur_results.group_by, function(group_by){
                         group_filter[group_by] = $scope.$parent.cur_group[group_by];
                     });
+                // $log.debug("group_filter:", group_filter);
                 $scope.rowsFilter = function(row) {
                     for(var k in group_filter){
                         if(row[k] != group_filter[k])
@@ -1084,7 +1185,11 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     return;
                 ret.push(f);
                 });
-            ret.sort(function(a, b) { return a.sequence - b.sequence });
+            ret.sort(function(a, b) {
+                if ((a.fmt !== undefined) && (b.fmt !== undefined))
+                    return (a.fmt.sequence - b.fmt.sequence);
+                return a.sequence - b.sequence 
+                });
             return ret;
         }
     }]);
