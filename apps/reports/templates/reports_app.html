@@ -334,13 +334,11 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
         }]);
     reportsApp.controller('mainCtrl', ['$log', '$scope', '$location', '$http', '$modal',
         function($log, $scope, $location, $http, $modal) {
-            $log.debug("mainCtrl:", $scope);
             $scope.reportType = false;
             $scope.reportGroups = [];
             $scope.available_types = {{ available_types }};
             $scope.tabs = { 'type': true, 'params': false, 'format': false, 'preview': false, 'results': false };
             $scope.selectType = function(t) {
-                    $log.debug("Selecting type:", t.id);
                     if (! t.id)
                         return;
                     $scope.reportType = t;
@@ -841,7 +839,6 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                 $scope.fmtTable = [];
                 if (!$scope.reportType.fields)
                     return;
-
                 angular.forEach($scope.reportType.fields, function(field, key) {
                         if (field.fmt === undefined) {
                             $scope.setFieldFmt(field);
@@ -1044,7 +1041,6 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
 
     reportsApp.controller('previewCtrl', ['$log', '$scope', '$http', '$timeout', '$sce',
         function($log, $scope, $http, $timeout, $sce) {
-            $log.debug("previewCtrl:", $scope);
             $scope.wait_results = true;
             $scope.result_status = 0;
             $scope.result_alert = false;
