@@ -159,9 +159,22 @@
                 </div>
             </tab>
             <tab heading="{% trans 'Full results' %}" active="tabs.results" disabled="!reportType">
-                <h3> full results</h3>
+                <h3>{% trans 'Full results' %}</h3>
+                <div ng-controller="resultCtrl">
+                    <p>{% blocktrans%} You can get the results in the following formats (in a new window) {% endblocktrans %}</p>
+                    <ul>
+                        <li><a ng-click="getResults('html')">HTML page</a></li>
+                        <li><a ng-click="getResults('pdf')">PDF document</a></li>
+                        <li><a ng-click="getResults('csv')">CSV list</a></li>
+                    </ul>
+                </div>
             </tab>
         </tabset>
+
+    <form ng-non-bindable id="results_form" method="POST" target="_blank" action=".">
+        {% csrf_token %}
+        <input type="hidden" name="data" value="">
+    </form>
 
     </div>
 </div>
@@ -1038,6 +1051,56 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                 };
         }]);
 
+    var _calc_result_fields = function($scope,
+                                req_fields, field_cols, groupped_fields ){
+            var calc_get_fields = function(field, key) {
+                if (field.hide || (field.widget == 'isset'))
+                    return;
+                var req2 = this.req;
+                // ggroup is where the field shall be displayed,
+                // may be empty for non-visible sub-fields
+                var ggroup = this.ggroup;
+                if ((!ggroup)|| (ggroup === field_cols)){
+                    // see if field logically belongs to any of the groups
+                    for(var i in $scope.reportGroups)
+                        if(field.full_path.startsWith($scope.reportGroups[i])){
+                            if (field.full_path == $scope.reportGroups[i])
+                                req2 = true;
+                            if (!groupped_fields[i])
+                                groupped_fields[i] = [];
+                            ggroup = groupped_fields[i];
+                            if (!field.fmt)
+                                $scope.setFieldFmt(field);
+                            break;
+                        }
+                }
+                if (req2 && field.fmt){
+                    var disp = field.full_path;
+                    if (field.fmt.display)
+                        disp += '.' + field.fmt.display;
+                    req_fields.push(disp);
+                    if (ggroup && !field.fmt.hide)
+                        ggroup.push({id: disp,
+                            name: field.name,
+                            sequence: field.fmt.sequence || field.sequence});
+                }
+
+                if (field.fields)
+                    angular.forEach(field.fields, function(field2, sf_name) {
+                        var b = {req:false, ggroup: ggroup};
+                        if (field.fmt && field.fmt.sub_fields
+                                && (field.fmt.sub_fields.indexOf(sf_name) >=0))
+                            b.req = true;
+                        angular.bind(b, calc_get_fields)(field2, sf_name);
+                        });
+                };
+
+            angular.forEach($scope.reportType.fields, calc_get_fields,
+                            {req: true, ggroup: field_cols});
+
+            // $log.debug("Fields:", $scope.reportType.fields, $scope.field_cols, $scope.groupped_fields);
+            field_cols.sort(function(a, b) { return a.sequence - b.sequence; });
+        };
 
     reportsApp.controller('previewCtrl', ['$log', '$scope', '$http', '$timeout', '$sce',
         function($log, $scope, $http, $timeout, $sce) {
@@ -1063,54 +1126,9 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
 
                 $scope.cur_domain = $scope.$parent.getCurDomain();
                 var req_fields = [];
-                var calc_get_fields = function(field, key) {
-                    if (field.hide || (field.widget == 'isset'))
-                        return;
-                    var req2 = this.req;
-                    // ggroup is where the field shall be displayed,
-                    // may be empty for non-visible sub-fields
-                    var ggroup = this.ggroup;
-                    if ((!ggroup)|| (ggroup === $scope.field_cols)){
-                        // see if field logically belongs to any of the groups
-                        for(var i in $scope.reportGroups)
-                            if(field.full_path.startsWith($scope.reportGroups[i])){
-                                if (field.full_path == $scope.reportGroups[i])
-                                    req2 = true;
-                                if (!$scope.groupped_fields[i])
-                                    $scope.groupped_fields[i] = [];
-                                ggroup = $scope.groupped_fields[i];
-                                if (!field.fmt)
-                                    $scope.setFieldFmt(field);
-                                break;
-                            }
-                    }
-                    if (req2 && field.fmt){
-                        var disp = field.full_path;
-                        if (field.fmt.display)
-                            disp += '.' + field.fmt.display;
-                        req_fields.push(disp);
-                        if (ggroup && !field.fmt.hide)
-                            ggroup.push({id: disp,
-                                name: field.name,
-                                sequence: field.fmt.sequence || field.sequence});
-                    }
+                _calc_result_fields($scope,
+                                req_fields, $scope.field_cols, $scope.groupped_fields);
 
-                    if (field.fields)
-                        angular.forEach(field.fields, function(field2, sf_name) {
-                            var b = {req:false, ggroup: ggroup};
-                            if (field.fmt && field.fmt.sub_fields
-                                    && (field.fmt.sub_fields.indexOf(sf_name) >=0))
-                                b.req = true;
-                            angular.bind(b, calc_get_fields)(field2, sf_name);
-                            });
-
-                    };
-
-                angular.forEach($scope.reportType.fields, calc_get_fields,
-                                {req: true, ggroup: $scope.field_cols});
-
-                // $log.debug("Fields:", $scope.reportType.fields, $scope.field_cols, $scope.groupped_fields);
-                $scope.field_cols.sort(function(a, b) { return a.sequence - b.sequence; });
 
                 $http.post('./results-preview/' + $scope.reportType.id,
                         {'model': $scope.reportType.id,
@@ -1153,6 +1171,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                         group_filter[group_by] = $scope.$parent.cur_group[group_by];
                     });
                 // $log.debug("group_filter:", group_filter);
+
                 $scope.rowsFilter = function(row) {
                     for(var k in group_filter){
                         if(row[k] != group_filter[k])
@@ -1163,8 +1182,39 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
             }
         }]);
 
-    reportsApp.controller('resultCtrl', ['$log', '$scope',function($log, $scope) {
+    reportsApp.controller('resultCtrl', ['$log', '$scope','$timeout', function($log, $scope, $timeout) {
             $log.debug("resultCtrl:", $scope);
+            /* results_form is a regular html element (NOT angular form), which
+                we update in a traditional JS way and then trigger its "submit"
+            */
+            var num_submit = 0;
+            $scope.getResults = function(mode) {
+                if (!$scope.reportType)
+                    return;
+                // we clone the form, because we need to submit it again and again
+                var form = angular.element("#results_form").clone();
+                num_submit ++;
+                form[0].id = "results_form_"+num_submit;
+                form[0].action = "results."+ mode;
+
+                var field_cols=[], groupped_fields={}, req_fields = [];
+                _calc_result_fields($scope, req_fields, field_cols, groupped_fields);
+
+                var data = {'model': $scope.reportType.id,
+                        'domain': $scope.$parent.getCurDomain(),
+                        'fields': req_fields,
+                        'show_detail': $scope.reportType.show_detail,
+                        'group_by': $scope.reportGroups,
+                        'limit': $scope.reportType.limit,
+                        'field_cols': field_cols,
+                        'groupped_fields': groupped_fields
+                        }
+                form.find("input[name='data']")[0].value = angular.toJson(data);
+                $timeout(function(){ form[0].submit(); });
+                // a little later, cleanup the cloned form:
+                $timeout(function() {form.remove(); }, 100);
+                return true;
+                };
         }]);
 
     /* We need an explicit sort filter, because our input is an object, rather than

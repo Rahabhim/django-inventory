@@ -1,0 +1,23 @@
+{% extends "base-bare.html" %}
+{% load i18n %}
+
+{% block title %}
+        Report title!
+{% endblock %}
+{% block web_theme_project_name %}Report Title{% endblock %}
+
+{% block content %}
+    <h2>Report!</h2>
+
+{% if flat_results %}
+    {% with flat_results as cur_results %}
+        {% include "sub_results.html" %}
+    {% endwith %}
+{% elif groupped_results %}
+{% with grp_level=1 %}
+    {% include "grp_results.html" %}
+{% endwith %}
+{% else %}
+    <p class="error"> Internal error: no results!</p>
+{% endif %}
+{% endblock %}

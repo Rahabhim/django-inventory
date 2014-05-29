@@ -708,4 +708,53 @@ def reports_back_del_view(request):
     report.delete()
     return HttpResponse(_("Report deleted"), content_type='text/plain')
 
+def _pre_render_report(request):
+    """Decode request parameters and prepare a report to be rendered
+    """
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    
+    _reports_init_cache()
+    if request.method == 'POST':
+        report_data = json.loads(request.POST['data'])
+    #elif request.method == 'GET':
+        # Won't work, we need the algorithm of the JS part for domains, fields
+        #report = get_object_or_404(SavedReport.objects.by_request(request), \
+                        #pk=request.GET['id'])
+
+        #report_data = {'id': report.id, 'title': report.title, 'model': report.rmodel,
+            #'public': not bool(report.owner),
+            #'data': json.loads(report.params)}
+    else:
+        return HttpResponseNotAllowed(['POST']) # +GET ?
+    
+    report_model = report_data.pop('model')
+    rt = _reports_cache['main_types'].get(report_model, False)
+    if not rt:
+        return HttpResponseNotFound("Report type %s not found" % report_model)
+
+    fin = {'report_data': report_data,
+            'field_cols': report_data.pop('field_cols'),
+            'groupped_fields': report_data.pop('groupped_fields'),
+        }
+
+    res = rt.getResults(request, **(report_data))
+    if isinstance(res, QuerySet):
+        fin['flat_results'] = res
+    elif isinstance(res, list):
+        fin['groupped_results'] = res
+
+    return fin
+
+def reports_results_html(request):
+    """Retrieve results, rendered in a html page
+    """
+    return render(request, 'reports_results.html', _pre_render_report(request))
+
+def reports_results_pdf(request):
+    raise NotImplementedError
+
+def reports_results_csv(request):
+    raise NotImplementedError
+
 # eof
