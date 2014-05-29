@@ -23,7 +23,12 @@ urlpatterns = patterns('reports.views',
     url(r'^cat-grammar/(?P<cat_id>\d+)$', 'reports_cat_grammar_view', (), name='reports_cat_grammar_view'),
     url(r'^parts/params-(?P<part_id>\w+).html$', 'reports_parts_params_view', (), name='reports_parts_params_view'),
     url(r'^results-preview/(?P<rep_type>\w+)$', 'reports_get_preview', (), name='reports_get_preview'),
-    
+
+    # Results, in static POST responses
+    url(r'^results.html$', 'reports_results_html', (), name='reports_results_html'),
+    url(r'^results.pdf', 'reports_results_pdf', (), name='reports_results_pdf'),
+    url(r'^results.csv', 'reports_results_csv', (), name='reports_results_csv'),
+
     # back API
     url(r'^back/list', 'reports_back_list_view', (), name='reports_back_list_view'),
     url(r'^back/load', 'reports_back_load_view', (), name='reports_back_load_view'),

@@ -1,0 +1,16 @@
+{% load report_tags %}
+
+<table>
+    <tr>
+        {% for fc in field_cols %}
+        <th>{{ fc.name|title }}</th>
+        {% endfor %}
+    </tr>
+
+    {% for row in cur_results %}
+    <tr>{% for fc in field_cols %}
+        <td>{{ row|dvalue:fc.id }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
