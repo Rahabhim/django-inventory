@@ -8,7 +8,7 @@ from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.utils import simplejson
@@ -695,8 +695,12 @@ class GenericDeleteView(_PermissionsMixin, django_gv.DeleteView):
         self.object = self.get_object()
         try:
             self.object.delete()
-        except ProtectedError:
-            messages.error(request, _("The item %s cannot be deleted because it is referenced by other records") % unicode(self.object))
+        except ProtectedError, e:
+           return render(request, 'generic_delete_failed.html',
+                    { 'object': self.object,
+                      'object_url': self.object.get_absolute_url(),
+                      'protected_objects': e.protected_objects
+                      })
         return HttpResponseRedirect(self.get_success_url())
 
 class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
