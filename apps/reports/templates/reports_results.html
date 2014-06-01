@@ -10,11 +10,11 @@
     <h2>Report!</h2>
 
 {% if flat_results %}
-    {% with flat_results as cur_results %}
+    {% with cur_results=flat_results %}
         {% include "sub_results.html" %}
     {% endwith %}
 {% elif groupped_results %}
-{% with grp_level=1 %}
+{% with group_level=0 %}
     {% include "grp_results.html" %}
 {% endwith %}
 {% else %}

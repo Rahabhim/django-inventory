@@ -1262,6 +1262,7 @@ body.modal-open,
 
 .preview-results table th {
     border-bottom: 1px solid black;
+    text-transform: capitalize;
 }
 
 .preview-results table td{

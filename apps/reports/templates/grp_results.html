@@ -1,12 +1,26 @@
 {% load report_tags %}
-FIXME!
-{% for cur_group in groupped_results|grp_filter %}
-    <div class="group" >
-        <h4><span ng-repeat="fc in groupped_fields[group_level-1]|seqSort">[[ cur_group[fc.id] ]] </span>
-            : [[ cur_group._count ]]</h4>
-        <div ng-controller="previewGroupedCtl">
-            <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
-        </div>
-    </div>
 
-{% endfor %}
+{% group_recurse %}
+    <h4>
+        {% for fc in cur_grp_fields %}
+        <span>{{ cur_row|attrib:fc.id }}</span>
+        : {{ cur_row|dvalue:"_count" }}
+        {% endfor %}
+    </h4>
+
+{% group_leaf %}
+    <table>
+        <tr>
+            {% for fc in field_cols %}
+            <th>{{ fc.name|title }}</th>
+            {% endfor %}
+        </tr>
+
+        {% for row in cur_results %}
+        <tr>{% for fc in field_cols %}
+            <td>{{ row|dvalue:fc.id }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+{% end_group_recurse %}
