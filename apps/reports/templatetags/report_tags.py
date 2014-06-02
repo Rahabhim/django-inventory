@@ -36,7 +36,7 @@ def attrib(value, arg):
 
 @register.filter
 def dvalue(value, arg):
-    arg = arg.replace('.', '__')
+    # arg = arg.replace('.', '__')
     return return_attrib(value, arg)
 
 
