@@ -2,12 +2,12 @@
 {% load i18n %}
 
 {% block title %}
-        Report title!
+        {{ report_data.title }}
 {% endblock %}
-{% block web_theme_project_name %}Report Title{% endblock %}
+{% block web_theme_project_name %}{{ report_data.title }}{% endblock %}
 
 {% block content %}
-    <h2>Report!</h2>
+    <h2>{{ report_data.title }}</h2>
 
 {% if flat_results %}
     {% with cur_results=flat_results %}
