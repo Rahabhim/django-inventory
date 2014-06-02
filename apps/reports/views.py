@@ -424,6 +424,12 @@ class CJFilter_attribs(CJFilter_Model):
         name2 = name + '__' + self.name_suffix
         return super(CJFilter_attribs, self).getQuery(request, name2, domain)
 
+class CJFilter_attribs_multi(CJFilter_attribs):
+    def getGrammar(self):
+        ret = super(CJFilter_attribs_multi, self).getGrammar()
+        ret['widget'] = 'attribs_multi'
+        return ret
+
 department_filter = CJFilter_Model('company.Department', sequence=5,
     fields={ '_': CJFilter_isset(sequence=0),
             'name':  CJFilter_String(title=_('name'), sequence=1),
@@ -460,7 +466,7 @@ product_filter = CJFilter_Product('products.ItemTemplate',
             'category': CJFilter_lookup('products.ItemCategory', 'categories', sequence=5,
                     fields={'name':  CJFilter_String(title=_('name'), sequence=1),} ),
             'manufacturer': manuf_filter,
-            'attributes': CJFilter_attribs('products.ItemTemplateAttributes', sequence=15),
+            'attributes': CJFilter_attribs_multi('products.ItemTemplateAttributes', sequence=15),
             },
     famfam_icon='camera',
     )

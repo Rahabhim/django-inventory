@@ -250,6 +250,23 @@
     </div>
 </script>
 
+<script type="text/ng-template" id="parts/field-attribs_multi.html">
+    <div ng-repeat="attr in field.attribs">
+        <div ng-controller="attribsCtrl">
+            <label ng-bind="attr.name"></label>
+            <span ng-repeat="fd in data">
+                <a ng-click="setCurEdit($index)" ng-show="cur_edit!=$index">[[ visibleName(fd, attr.values) ]]</a>
+                <select ng-show="cur_edit == $index" ng-model="data[$index]" ng-options="d[0] as d[1] for d in remainingValues(data, $index)">
+                    <option value=""></option>
+                </select>
+            </span>
+            + <select ng-show="cur_edit==-1" ng-model="new_item" ng-options="d[0] as d[1] for d in remainingValues(data, -1)">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+</script>
+
 <script type="text/ng-template" id="parts/preview-results.html">
     <div ng-if="cur_results.group_by">
         <div class="group" ng-repeat="cur_group in cur_results.values|filter:rowsFilter">
@@ -387,6 +404,12 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                                         dom.push([n2, '=',].concat(dom3));
                                         });
                                 }
+                                else if (dom2[0] == '&in') {
+                                    angular.forEach(dom2[1], function(dom3) {
+                                        if (dom3 && dom3.length)
+                                            dom.push([n2, 'in', dom3]);
+                                        });
+                                }
                                 else
                                     dom.push([n2].concat(dom2)) ;
                                 }
@@ -419,6 +442,16 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                             });
                         if (rval.length)
                             return ['&', rval];
+                    },
+                'attribs_multi': function(rt, name) {
+                        if (!rt.data)
+                            return;
+                        var rval = [];
+                        angular.forEach(rt.data, function(val) {
+                                rval.push(val);
+                            });
+                        if (rval.length)
+                            return ['&in', rval];
                     },
                 'contains': function(rt, name) {
                         if (!rt.contains_data)
@@ -723,12 +756,31 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     'attribs': function(field) {
                         var criteria = [];
                         angular.forEach(field.attribs, function(attr) {
-                            var v = field.data[attr.aid]; // TODO: turn into array
+                            var v = field.data[attr.aid];
                             if (!v)
                                 return;
                             for(var i=0;i<attr.values.length; i++)
                                 if (attr.values[i][0] == v)
                                     criteria.push(attr.name+'='+attr.values[i][1]);
+                            });
+                        if (criteria.length)
+                            return criteria.join(',');
+                        return "";
+                        },
+                    'attribs_multi': function(field) {
+                        var criteria = [];
+                        angular.forEach(field.attribs, function(attr) {
+                            var varr = field.data[attr.aid];
+                            if (!varr)
+                                return;
+                            var crit2 = [];
+                            for(var o=0;o<varr.length;o++){
+                                for(var i=0;i<attr.values.length; i++)
+                                    if (attr.values[i][0] == varr[o])
+                                        crit2.push(attr.values[i][1]);
+                                }
+                            if (crit2.length)
+                                criteria.push(attr.name+'='+ crit2.join('/'))
                             });
                         if (criteria.length)
                             return criteria.join(',');
@@ -832,6 +884,57 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     $scope.$parent.setItemContains(false);
                     }
             });
+        }]);
+    reportsApp.controller('attribsCtrl', ['$log', '$scope', function($log, $scope) {
+            $scope.cur_edit = -1;
+            $scope.new_item = false;
+            if (!$scope.$parent.field.data[$scope.$parent.attr.aid])
+                    $scope.$parent.field.data[$scope.$parent.attr.aid] = [];
+
+            $scope.$parent.$watchCollection('field.data[attr.aid]', function(adata) {
+                $scope.data = adata;
+                if ($scope.cur_edit < 0) // shortcut, avoid processing twice
+                    return;
+                // triggered when selection changes, items are added or removed
+                for(var i=0;i<adata.length;i++)
+                    if (!adata[i])
+                        adata.splice(i--,1); // cleanup empty values (in place)
+                $scope.cur_edit = -1;
+                });
+            $scope.$watch('new_item', function() {
+                    if (!$scope.new_item)
+                        return;
+
+                    $scope.data.push($scope.new_item);
+                    $scope.new_item = false;
+                    $scope.cur_edit = -1;
+                });
+
+            /** list the possible values /except/ for those in sibling array positions
+            */
+            $scope.remainingValues = function(data, index){
+                var ret = [];
+                angular.forEach($scope.attr.values, function(av){
+                    if (data){
+                        var idx = data.indexOf(av[0]);
+                        if ((idx >= 0) && (idx != index))
+                            return;
+                        }
+                    ret.push(av);
+                    });
+                return ret;
+            }
+            $scope.visibleName = function(value, options) {
+                for(var i=0; i<options.length; i++)
+                    if (options[i][0] == value)
+                        return options[i][1];
+                $log.warn("oops, no value", value, "in", options);
+                return value; // fallback, return at least the numeric value
+            };
+            $scope.setCurEdit = function(idx){
+                // ensure we are working on this particular scope
+                $scope.cur_edit = idx;
+            };
         }]);
 
     reportsApp.controller('formattingCtrl', ['$log', '$scope',function($log, $scope) {
@@ -948,7 +1051,6 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     return;
                 if (!dragItem.full_path.startsWith(grp_field.full_path+'.'))
                     return false;
-                
                 var rem_path = dragItem.full_path.slice(grp_field.full_path.length+1);
                 if (!grp_field.fmt)
                     $scope.setFieldFmt(grp_field);
