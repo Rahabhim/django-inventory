@@ -746,7 +746,7 @@ def _pre_render_report(request):
 
     res = rt.getResults(request, **(report_data))
     if isinstance(res, QuerySet):
-        fin['flat_results'] = res
+        fin['flat_results'] = map(_expand_keys, res)
     elif isinstance(res, list):
         fin['groupped_results'] = res
 
