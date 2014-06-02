@@ -70,6 +70,8 @@ class GroupNode(Node):
         self.grp_leaf = grp_leaf
 
     def _render_group(self, group_level, rows_filter, context):
+        if group_level + 1 >= len(context['groupped_results']):
+            return
         group = context['groupped_results'][group_level+1]
         context.push()
         context['cur_group'] = group
