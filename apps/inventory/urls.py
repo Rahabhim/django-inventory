@@ -4,10 +4,16 @@ from django.utils.translation import ugettext_lazy as _
 
 from generic_views.views import GenericDeleteView, \
                                 generic_detail, generic_list, \
+                                GenericBloatedListView, \
                                 GenericCreateView, GenericUpdateView, \
                                 CartOpenView, CartCloseView, AddToCartView, RemoveFromCartView
 
 from models import Inventory, InventoryGroup, InventoryItem
+
+from company.models import Department
+from company.lookups import _department_filter_q
+from common.api import user_is_staff
+from django.db.models import Q
 
 from forms import InventoryForm, InventoryItemForm, \
                  InventoryItemForm_inline
@@ -17,12 +23,22 @@ def check_inventory(inventory):
     """
     return inventory.date_val is None and inventory.validate_user is None
 
+inv_name_filter = {'name': 'name', 'title': _('name'), 'destination': 'name'}
+
+inv_state_filter = {'name':'state', 'title': _(u'state'),
+            'choices':'inventory.InventoryGroup.state' , 'destination':'state'}
+
+inv_department_filter = {'name': 'dept', 'title': _('department'),
+            'condition': user_is_staff,
+            'destination': lambda q: Q(department__in=Department.objects.filter(_department_filter_q(q))) }
+
 urlpatterns = patterns('inventory.views',
-    url(r'^inventory/list/$', generic_list, dict({'queryset':InventoryGroup.objects.by_request}, 
-                extra_context=dict(title=_(u'inventories'), 
+    url(r'^inventory/list/$', GenericBloatedListView.as_view(queryset=InventoryGroup.objects.by_request,
+                list_filters=[inv_name_filter, inv_state_filter, inv_department_filter],
+                extra_context=dict(title=_(u'inventories'),
                 extra_columns=[{'name':_(u'department'), 'attribute':'department'},
-                        {'name': _('state'), 'attribute': 'get_state_display'}])),
-                'inventory_list'),
+                        {'name': _('state'), 'attribute': 'get_state_display', 'order_attribute': 'state'}])),
+                name='inventory_list'),
     url(r'^inventory/pending_list/$', generic_list, dict({
                     'queryset': lambda r: InventoryGroup.objects.by_request(r)\
                             .filter(state__in=('draft', 'pending'))}, 
