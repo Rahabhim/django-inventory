@@ -578,6 +578,8 @@ class PO_Step5(WizardForm):
             po_instance.items_into_moves(mapped_items, request, \
                         self.cleaned_data['location'].department, \
                         self.cleaned_data['location'])
+        po_instance.prune_items(mapped_items)
+
         if msg:
             return '5'
 
@@ -636,6 +638,7 @@ class PO_Step5m(WizardForm):
 
             po_instance.items_into_moves(mapped_items, request, \
                         departments, False)
+        po_instance.prune_items(mapped_items)
 
         return True
 

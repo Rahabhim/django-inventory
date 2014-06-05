@@ -474,6 +474,26 @@ class PurchaseOrder(models.Model):
                     citem.save()
         return True
 
+    def prune_items(self, mapped_items):
+        # Count and remove items not described by current lines
+        all_ids = []
+        for tdict in mapped_items.values():
+            for objs in tdict.values():
+                for o in objs:
+                    if o.item_id:
+                        all_ids.append(o.item_id)
+
+        for move in self.movements.all():
+            if move.state != 'draft':
+                continue
+            for it in move.items.all():
+                if it.id not in all_ids and not it.location:
+                    it.delete()
+            if not move.items.count():
+                move.delete()
+
+        return
+
     def get_cart_name(self):
         """ Returns the "shopping-cart" name of this model
         """

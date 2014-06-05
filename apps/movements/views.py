@@ -367,6 +367,7 @@ def purchase_order_receive(request, object_id):
                 return redirect(request.path.rstrip('?'), object_id=object_id)
 
             purchase_order.items_into_moves(mapped_items, request, dept, master_loc)
+            purchase_order.prune_items(mapped_items)
 
             # reload the request in the browser, but get rid of any "action" arguments!
             return redirect(request.path.rstrip('?'), object_id=object_id)
@@ -701,6 +702,7 @@ def purchase_order_copy(request, object_id):
                             for tmpl_id, objs in it_tmpls.items():
                                 loc_its.setdefault(tmpl_id, []).extend(objs)
                         new_po.items_into_moves(mapped_items, request, new_po.department, False)
+                    new_po.prune_items(mapped_items)
                 except Exception, e:
                     messages.error(request, unicode(e), fail_silently=True)
                     continue
