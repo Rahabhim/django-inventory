@@ -554,6 +554,7 @@ class PO_Step5(WizardForm):
         request = wizard.request
         if not po_instance.pk:
             raise RuntimeError("PO instance must be saved by step 5")
+        lock = po_instance.lock_process()
         try:
             mapped_items = po_instance.map_items()
         except ValueError, ve:
@@ -594,9 +595,12 @@ class PO_Step5m(WizardForm):
         if not po_instance.pk:
             raise RuntimeError("PO instance must be saved by step 5")
         try:
+            lock = po_instance.lock_process()
             mapped_items = po_instance.map_items()
         except ValueError, ve:
             messages.error(request, unicode(ve), fail_silently=True)
+            return '5'
+        except RuntimeError:
             return '5'
 
         # check that user can create POs for every department requested

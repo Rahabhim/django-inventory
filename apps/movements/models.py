@@ -134,6 +134,23 @@ class _map_item(object):
         ret += '>'
         return ret
 
+class _ProcessLock(object):
+    def __init__(self, p_order):
+        self.prev_state = p_order.state
+        if self.prev_state == 'processing':
+            raise RuntimeError("Lock asserted twice")
+        self.p_order = p_order
+        p_order.state = 'processing'
+        p_order.save()
+
+    def __del__(self):
+        try:
+            if self.p_order.state == 'processing':
+                self.p_order.state = self.prev_state
+                self.p_order.save()
+        except Exception:
+            logger.exception("Cannot restore purchase order state:")
+
 class PurchaseOrder(models.Model):
     objects = PurchaseOrderManager()
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
@@ -144,7 +161,10 @@ class PurchaseOrder(models.Model):
     supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'), on_delete=models.PROTECT)
     issue_date = models.DateField(verbose_name=_(u'issue date'))
     required_date = models.DateField(null=True, blank=True, verbose_name=_(u'date required'))
-    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
+    state = models.CharField(max_length=16, default='draft',
+                choices=[('draft', _('Draft')), ('pending', _('Pending')),
+                        ('done', _('Done')), ('reject', _('Rejected')),
+                        ('processing', _('In process'))])
     #active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     status = models.ForeignKey(PurchaseOrderStatus, null=True, blank=True, verbose_name=_(u'status'), on_delete=models.PROTECT)
@@ -164,6 +184,15 @@ class PurchaseOrder(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.id)])
+
+    def lock_process(self):
+        """Asserts a lock for processing, deflecting parallel requests
+
+            It will change the state to "processing" and then return a "lock"
+            object. Once the "lock" object is deleted, the PO state will return
+            to its previous value.
+        """
+        return _ProcessLock(self)
 
     def clean(self):
         """Before saving the Movement, update checkpoint_src to the last validated one
@@ -314,6 +343,8 @@ class PurchaseOrder(models.Model):
         """
 
         the_moves = {}
+        if self.state != 'processing':
+            raise RuntimeError("State must be processing, not %s" % self.state)
         def _get_move(loc_kind, department):
             if (loc_kind, department.id) in the_moves:
                 return the_moves[(loc_kind, department.id)]
