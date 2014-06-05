@@ -345,6 +345,7 @@ class PurchaseOrder(models.Model):
         the_moves = {}
         if self.state != 'processing':
             raise RuntimeError("State must be processing, not %s" % self.state)
+
         def _get_move(loc_kind, department):
             if (loc_kind, department.id) in the_moves:
                 return the_moves[(loc_kind, department.id)]
@@ -472,6 +473,7 @@ class PurchaseOrder(models.Model):
                     citem.bundled_in.add(igroup)
                     citem.is_bundled = True
                     citem.save()
+
         return True
 
     def prune_items(self, mapped_items):
