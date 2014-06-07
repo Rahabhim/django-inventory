@@ -3,6 +3,7 @@
 # Only a few rights reserved
 
 from models import ItemTemplate, Manufacturer, ItemCategory
+from django.db.models import Q
 from common.api import LookupChannel
 
 class ItemTemplateLookup(LookupChannel):
@@ -32,7 +33,8 @@ class ProductPartLookup(LookupChannel):
         kwargs = {}
         if category:
             kwargs['category__pk'] = int(category)
-        return self.model.objects.filter(approved=True, part_number=q, **kwargs)[:self.max_length]
+        return self.model.objects.filter(Q(part_number=q)|Q(pn_aliases__part_number=q)) \
+                .filter(approved=True, **kwargs).distinct()[:self.max_length]
 
 class ProductSpecsLookup(LookupChannel):
     """Locate product by specs

@@ -230,6 +230,14 @@ class ItemTemplateAttributes(models.Model):
         verbose_name_plural = _("attributes")
         ordering = ['value__atype__sequence', 'value__atype__name']
 
+class ItemTemplateNumAlias(models.Model):
+    parent = models.ForeignKey(ItemTemplate, verbose_name=_("parent"), related_name="pn_aliases", on_delete=models.CASCADE)
+    part_number = models.CharField(verbose_name=_(u"part number"), max_length=32, null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("alias part number")
+        verbose_name_plural = _("alias part numbers")
+
 register(ItemTemplate, _(u'templates'), ['description', 'brand', 'model', 'part_number', 'notes'])
 
 #eof
