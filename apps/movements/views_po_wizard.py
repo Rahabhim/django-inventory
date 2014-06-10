@@ -165,6 +165,8 @@ class PO_Step3(WizardForm):
         if not our_data['item_template']:
             messages.error(wizard.request, _("You must select some product! Please try again"))
             return '2'
+        if our_data['item_template'].category.is_group and (our_data['quantity'] > 1):
+            our_data['quantity'] = 1
 
         if not our_data.get('line_num', False):
             # we have to compute an unique id for the new line_num
