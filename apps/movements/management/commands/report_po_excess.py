@@ -66,6 +66,21 @@ class Command(BaseCommand):
                                 po.id, move.id, move.checkpoint_dest)
                         excess_items = None
                         break
+                if num_excess and po.map_has_left(mapped_items):
+                    log.warning("PO #%d has excess items, but is also missing some, not wise to modify", po.id)
+                    if show_detail:
+                        print "Excess items:"
+                        for ei in excess_items:
+                            print u"    + %d %s %s #%d" % (ei.item_template.id, ei, ei.serial_number or '', ei.id)
+                        print "Missing items:"
+                        for tdict in mapped_items.values():
+                            for it_id, objs in tdict.items():
+                                for o in objs:
+                                    if not o.item_id:
+                                        print "    - %s     %s" % (it_id, o.serial)
+                    excess_items = None
+                    continue
+
                 if num_excess:
                     print "PO #%d %s has %d excess items" % (po.id, po, num_excess)
                     if show_detail:
@@ -83,6 +98,6 @@ class Command(BaseCommand):
                         print "Excess items DELETED!"
 
             except ValueError, ve:
-                log.warning("Cannot map items: %s", ve)
+                log.warning("Cannot map items for PO %#d: %s", po.id, ve)
 
 #eof
