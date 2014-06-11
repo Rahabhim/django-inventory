@@ -292,7 +292,7 @@ class PurchaseOrder(models.Model):
                 rec_qty -= 1
 
         logger.debug('map_items(): second stage for %s', self.id)
-        def _consume(item, loc_kind):
+        def _consume(item, loc_kind, relax_serial=False):
             """ given a movement item, find which part of 'ret' it can be mapped to
             """
             assert item.qty == 1, item.qty
@@ -304,12 +304,16 @@ class PurchaseOrder(models.Model):
                     # already mapped
                     continue
                 if mo.serial != item.serial_number:
-                    continue
+                    if mo.serial is None and relax_serial:
+                        pass
+                    else:
+                        continue
                 mo.item_id = item.id
                 return True
 
             return False
 
+        not_consumed = []
         for move in self.movements.prefetch_related('items').all(): # requires Django 1.4
             # Prefetching the items is crucial, it will reduce Queries done
             if move.location_dest.usage == 'production':
@@ -327,6 +331,17 @@ class PurchaseOrder(models.Model):
                     if _consume(item, ''):
                         continue
                 logger.debug("Movement %d, item not consumed in %s: %r", move.id, loc_kind, item)
+                if item.serial_number:
+                    not_consumed.append((item, loc_kind))
+
+        # after all items have been tried, repeat non-consumed ones with
+        # relaxed serial number check. This will catch ones that have been
+        # edited through Asset Edit, after the PO has been processed
+        for item, loc_kind in not_consumed:
+            if _consume(item, loc_kind, relax_serial=True):
+                continue
+            elif loc_kind not in ('bdl', ''):
+                _consume(item, '')
 
         return ret
 
