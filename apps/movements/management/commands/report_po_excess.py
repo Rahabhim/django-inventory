@@ -22,14 +22,19 @@ class Command(BaseCommand):
                 help="Number of POs to compute"),
             make_option('-d', '--detail', action="store_true", default=False,
                 help="List excess items, in detail"),
+            make_option('--delete', action="store_true", default=False,
+                help="Delete excess items. DANGEROUS! Will only work if explicit list of PO IDs is given as arguments"),
         )
 
     def handle(self, *args, **options):
         log = logging.getLogger('apps.movements.commands')
 
+        do_delete = False
         pos = PurchaseOrder.objects.order_by('id')
         if args:
             pos = pos.filter(pk__in=map(int, args))
+            if options.get('delete'):
+                do_delete = True
         elif options.get('offset'):
             pos = pos.filter(pk__gt=int(options['offset']))
 
@@ -72,6 +77,10 @@ class Command(BaseCommand):
                             print "Excess items:"
                             for ei in excess_items:
                                 print "    %s #%d" % (ei, ei.id)
+                    if do_delete:
+                        for it in excess_items:
+                            it.delete()
+                        print "Excess items DELETED!"
 
             except ValueError, ve:
                 log.warning("Cannot map items: %s", ve)
