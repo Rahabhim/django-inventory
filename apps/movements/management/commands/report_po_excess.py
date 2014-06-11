@@ -56,6 +56,11 @@ class Command(BaseCommand):
                             num_excess += 1
                             excess_items.append(it)
 
+                    if num_excess and move.checkpoint_dest is not None:
+                        log.error("PO #%d has excess items, but move #%d is validated in %s",
+                                po.id, move.id, move.checkpoint_dest)
+                        excess_items = None
+                        break
                 if num_excess:
                     print "PO #%d %s has %d excess items" % (po.id, po, num_excess)
                     if show_detail:
