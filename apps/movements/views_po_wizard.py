@@ -145,6 +145,7 @@ class PO_Step3(WizardForm):
                         filter(products__category=category, products__approved=True).\
                         annotate(num_products=Count('products')).order_by('name')
             self.category_id = category.id
+            self.category_is_group = category.is_group
         # self.initial['product_attributes']['all'] = []
 
 
