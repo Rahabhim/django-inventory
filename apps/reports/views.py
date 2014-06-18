@@ -11,6 +11,7 @@ from django.db.models.query import QuerySet
 import json
 from django.utils.safestring import SafeString
 from collections import defaultdict
+from django.core.exceptions import ObjectDoesNotExist
 
 from models import SavedReport
 from common.api import user_is_staff
@@ -31,6 +32,7 @@ class CJFilter(object):
     title = ''
     _instances = []
     sequence = 10
+    _post_fn = None
 
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -124,12 +126,22 @@ class CJFilter_Model(CJFilter):
                     objects = objects.filter(flt)
             else:
                 raise ValueError("Domain must be like: [in, [...]]")
+        post_fns = {}
         if fields:
             # convert fields to django-like exprs
-            fields2 = map(lambda x: x.replace('.', '__'), fields)
+            fields2 = []
+            for fn in fields:
+                fields2.append(fn.replace('.', '__'))
+                fpath = fn.split('.')
+                fld = self._get_field(*fpath)
+                if fld._post_fn:
+                    post_fns[fn.replace('.', '__')] = fld._post_fn
         else:  # not fields
             fields2 = self.fields.keys()
             # fields.sort(key=lambda f: self.fields[f].sequence) # done at JS side
+            for fn, fld in self.fields.items():
+                if fld._post_fn:
+                    post_fns[fn] = fld._post_fn
 
         if group_by:
             group_fields = {}
@@ -168,6 +180,8 @@ class CJFilter_Model(CJFilter):
 
                 detailed_results = obs2.values('id', *fields2)
                 # all_ids = [o.id for o in detailed_results]
+                for fn, _post_fn in post_fns.items():
+                    _post_fn(fn, detailed_results, obs2)
 
             # Third pass: get results for each level of groupping
             i = 0
@@ -410,6 +424,20 @@ class CJFilter_contains(CJFilter):
             return self.sub.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
         else:
             raise ValueError("Invalid operator for contains: %r" % domain[1])
+
+    def _post_fn(self, fname, results, qset):
+        """annotate `results` with computed value for our field `fname`
+        
+            @param qset a QuerySet, whose .values() produced `results`
+        """
+        ids = [v['id'] for v in results]
+        itemgroup = models.get_model('assets', 'ItemGroup') # FIXME make configurable
+        imap = {} # id=> value map
+        for ig in itemgroup.objects.filter(pk__in=ids).prefetch_related('items'):
+            cnts = [unicode(cnt) for cnt in ig.items.all()]
+            imap[ig.id] = cnts
+        for row in results:
+            row[fname] = imap.get(row['id'], None)
 
 class CJFilter_attribs(CJFilter_Model):
     name_suffix = 'value'

@@ -287,7 +287,12 @@
                 <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
             </tr>
             <tr ng-repeat="row in cur_results.values|filter:rowsFilter">
-                <td ng-repeat="fc in field_cols">[[ row[fc.id] ]]</td>
+                <td ng-repeat="fc in field_cols">
+                    <span ng-if="fc.widget != 'contains'" ng-bind="row[fc.id]"></span>
+                    <ul ng-if="fc.widget == 'contains'">
+                        <li ng-repeat="cnt in row[fc.id]">[[cnt]]</li>
+                    </ul>
+                </td>
             </tr>
         </table>
     </div>
@@ -1184,6 +1189,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     if (ggroup && !field.fmt.hide)
                         ggroup.push({id: disp,
                             name: field.name,
+                            widget: field.widget,
                             sequence: field.fmt.sequence || field.sequence});
                 }
 

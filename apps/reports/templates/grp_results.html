@@ -18,7 +18,13 @@
 
         {% for row in cur_results %}
         <tr>{% for fc in field_cols %}
-            <td>{{ row|dvalue:fc.id }}</td>
+            <td>{% if fc.widget == 'contains' %}<ul>
+                {% for l in row|dvalue:fc.id %}
+                    <li>{{ l }}</li>
+                {% endfor %}
+                </ul>
+                {% else %}{{ row|dvalue:fc.id }}{% endif %}
+            </td>
             {% endfor %}
         </tr>
         {% endfor %}
