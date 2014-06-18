@@ -222,9 +222,13 @@ class CJFilter_Model(CJFilter):
             # We query on the foreign field now, and paginate that to limit the results
             # grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
         else:
+            count = objects.count()
             if limit:
                 objects = objects[:limit]
-            return objects.values('id', *fields2)
+            detailed_results = objects.values('id', *fields2)
+            for fn, _post_fn in post_fns.items():
+                _post_fn(fn, detailed_results, objects)
+            return detailed_results, count
 
     def getQuery(self, request, name, domain):
         """query filter against /our/ model
@@ -622,9 +626,9 @@ def reports_get_preview(request, rep_type):
     req_data.setdefault('limit', 10)
     res = rt.getResults(request, **req_data)
 
-    if isinstance(res, QuerySet):
-        res = {'results': map(_expand_keys, res),
-                'count': res.count(),
+    if isinstance(res, tuple) and isinstance(res[0], QuerySet):
+        res = {'results': map(_expand_keys, res[0]),
+                'count': res[1],
                 }
     elif isinstance(res, list):
         pass
@@ -745,8 +749,9 @@ def _pre_render_report(request):
         }
 
     res = rt.getResults(request, **(report_data))
-    if isinstance(res, QuerySet):
-        fin['flat_results'] = map(_expand_keys, res)
+    if isinstance(res, tuple) and isinstance(res[0], QuerySet):
+        fin['flat_results'] = map(_expand_keys, res[0])
+        fin['count'] = res[1]
     elif isinstance(res, list):
         fin['groupped_results'] = res
 
