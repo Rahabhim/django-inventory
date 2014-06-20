@@ -148,6 +148,22 @@ class PO_Step3(WizardForm):
             self.category_is_group = category.is_group
         # self.initial['product_attributes']['all'] = []
 
+    def _check_serials(self, wizard, serial_nos):
+        """ validate that serials are sane
+        """
+        serials = []
+        ok = True
+        for s in serial_nos.replace('\n', ',').split(','):
+            s = s.strip()
+            if s:
+                if s in serials:
+                    messages.error(wizard.request, _("Serial number %s is entered twice!") % s)
+                    ok = False
+                elif len(s) >= 64:
+                    messages.error(wizard.request, _("Serial %s is too long. Perhaps you didn't split it.") % s[:20])
+                    ok = False
+                serials.append(s)
+        return ok
 
     def save_data(self, wizard):
         our_data = self.cleaned_data.copy()
@@ -160,6 +176,8 @@ class PO_Step3(WizardForm):
         for ufield in ('product_number', 'manufacturer', \
                         'item_template2', 'product_attributes'):
             our_data.pop(ufield, None)
+        if not self._check_serials(wizard, our_data['serials']):
+            return '3'
         aitems = step4_data.setdefault('4-items',[])
         ItemsGroupField.post_validate(our_data)
 
