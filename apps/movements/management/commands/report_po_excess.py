@@ -65,6 +65,7 @@ class Command(BaseCommand):
                         log.error("PO #%d has excess items, but move #%d is validated in %s",
                                 po.id, move.id, move.checkpoint_dest)
                         excess_items = None
+                        num_excess = 0
                         break
                 if num_excess and po.map_has_left(mapped_items):
                     log.warning("PO #%d has excess items, but is also missing some, not wise to modify", po.id)
@@ -92,7 +93,7 @@ class Command(BaseCommand):
                             print "Excess items:"
                             for ei in excess_items:
                                 print "    %s #%d" % (ei, ei.id)
-                    if do_delete:
+                    if do_delete and excess_items:
                         for it in excess_items:
                             it.delete()
                         print "Excess items DELETED!"
