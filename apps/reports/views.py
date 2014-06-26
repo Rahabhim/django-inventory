@@ -41,6 +41,17 @@ class CJFilter(object):
     def __repr__(self):
         return "<%s >" % self.__class__.__name__
 
+    def copy(self, **kwargs):
+        """Copy of the Filter instance, with some attributes modified
+        """
+        kkw = {}
+        for k, v in self.__dict__.items():
+            if k.startswith('_'):
+                continue
+            kkw[k] = v
+        kkw.update(**kwargs)
+        return self.__class__(**kkw)
+
     def real_init(self):
         pass
 
@@ -74,13 +85,13 @@ class CJFilter_Model(CJFilter):
         per model field.
     """
     def __init__(self, model, **kwargs):
-        self._model = model
+        self.model = model
         self._model_inst = None
         self.fields = kwargs.pop('fields', {})
         super(CJFilter_Model, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self._model)
+        return "<%s: %s>" % (self.__class__.__name__, self.model)
 
     def real_init(self):
         """Lazy initialization of filter parameters, will look into Model
@@ -90,7 +101,7 @@ class CJFilter_Model(CJFilter):
             application is instantiated
         """
         if not self._model_inst:
-            app, name = self._model.split('.', 1)
+            app, name = self.model.split('.', 1)
             self._model_inst = models.get_model(app, name)
         if not self.title:
             self.title = self._model_inst._meta.verbose_name  # _plural
@@ -155,7 +166,7 @@ class CJFilter_Model(CJFilter):
                 field = self._get_field(*(gb.split('.')))
 
                 if not field:
-                    raise KeyError("Invalid field %s for model %s" %(gb, self._model))
+                    raise KeyError("Invalid field %s for model %s" %(gb, self.model))
 
                 gbf = []
                 for f in fields:
@@ -397,17 +408,17 @@ class CJFilter_contains(CJFilter):
     """
     def __init__(self, sub_filter, **kwargs):
         assert isinstance(sub_filter, CJFilter), repr(sub_filter)
-        self.sub = sub_filter
+        self.sub_filter = sub_filter
         self.name_suffix = None
         super(CJFilter_contains, self).__init__(**kwargs)
 
     def __repr__(self):
-        return "<%s (%s)>" % (self.__class__.__name__, repr(self.sub))
+        return "<%s (%s)>" % (self.__class__.__name__, repr(self.sub_filter))
 
     def getGrammar(self):
         ret = super(CJFilter_contains, self).getGrammar()
         ret['widget'] = 'contains'
-        ret['sub'] = self.sub.getGrammar()
+        ret['sub'] = self.sub_filter.getGrammar()
         return ret
 
     def getQuery(self, request, name, domain):
@@ -421,7 +432,7 @@ class CJFilter_contains(CJFilter):
             name2 = name
             if self.name_suffix:
                 name2 += '__' + self.name_suffix
-            return self.sub.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
+            return self.sub_filter.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
         else:
             raise ValueError("Invalid operator for contains: %r" % domain[1])
 
