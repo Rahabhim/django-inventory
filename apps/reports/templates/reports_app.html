@@ -441,7 +441,7 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     },
                 'selection': function(rt, name) {
                         if (rt.data)
-                            return ['=', parseInt(rt.data)];
+                            return ['=', rt.data];
                     },
                 'attribs': function(rt, name) {
                         if (!rt.data)
