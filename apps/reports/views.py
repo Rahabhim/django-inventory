@@ -545,6 +545,15 @@ manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer',
     famfam_icon='status_online',
     )
 
+users_filter = CJFilter_Model('auth.User', sequence=40,
+    fields= {'first_name': CJFilter_String(title=_('first name'), sequence=1),
+            'last_name': CJFilter_String(title=_('last name'), sequence=2),
+            'username': CJFilter_String(title=_('user name'), sequence=5),
+            'email': CJFilter_String(title=_('email'), sequence=10),
+            },
+    famfam_icon='user', condition=user_is_staff,
+    )
+
 product_filter = CJFilter_Product('products.ItemTemplate',
     sequence=20,
     fields = {
