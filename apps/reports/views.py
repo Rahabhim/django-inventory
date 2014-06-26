@@ -386,13 +386,13 @@ class CJFilter_lookup(CJFilter_Model):
         ret['lookup'] = reverse('ajax_lookup', args=[self.lookup,])
         return ret
 
-class CJFilter_Choices(CJFilter_Model):
+class CJFilter_ModelChoices(CJFilter_Model):
     """ Like lookup, but offer all the choices in the grammar
     """
     filter_expr = None
 
     def getGrammar(self):
-        ret = super(CJFilter_Choices, self).getGrammar()
+        ret = super(CJFilter_ModelChoices, self).getGrammar()
         ret['widget'] = 'selection'
         objects = self._model_inst.objects
         if True:
@@ -493,7 +493,7 @@ department_filter = CJFilter_Model('company.Department', sequence=5,
 location_filter = CJFilter_Model('common.Location',
     fields={'name':  CJFilter_String(title=_('name'), sequence=1),
             'department': department_filter,
-            'template': CJFilter_Choices('common.LocationTemplate',
+            'template': CJFilter_ModelChoices('common.LocationTemplate',
                     fields={'name': CJFilter_String(title=_('name'), sequence=1), }),
         },
     famfam_icon='map', condition=user_is_staff,
