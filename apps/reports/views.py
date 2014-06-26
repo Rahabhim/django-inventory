@@ -402,6 +402,47 @@ class CJFilter_ModelChoices(CJFilter_Model):
         ret['selection'] = [(o.id, unicode(o)) for o in objects]
         return ret
 
+class CJFilter_choices(CJFilter):
+    """ Plain choices, taken from a model field
+    """
+    def __init__(self, model, field, **kwargs):
+        self.model = model
+        self.field = field
+        self._field_inst = None
+        super(CJFilter_choices, self).__init__(**kwargs)
+
+    def real_init(self):
+        """Lazy initialization of field, will look into Model
+        """
+        if not self._field_inst:
+            app, name = self.model.split('.', 1)
+            model_inst = models.get_model(app, name)
+            self._field_inst = model_inst._meta.get_field(self.field)
+        if not self.title:
+            self.title = self._field_inst.verbose_name
+
+    def getGrammar(self):
+        ret = super(CJFilter_choices, self).getGrammar()
+        ret['widget'] = 'selection'
+        ret['selection'] = [(k, unicode(s)) for k,s in self._field_inst.choices]
+        return ret
+
+    def getQuery(self, request, name, domain):
+        if isinstance(domain, (list, tuple)) and len(domain) == 3:
+            if domain[1] == '=':
+                return { domain[0]: domain[2] }
+            elif domain[1] == 'in':
+                return { domain[0] + '__in': domain[2] }
+        raise TypeError("Bad domain: %r", domain)
+
+    def _post_fn(self, fname, results, qset):
+        choices = {}
+        for k,s in self._field_inst.choices:
+            choices[k] = unicode(s)
+        for row in results:
+            row[fname] = choices.get(row[fname], row[fname])
+
+
 class CJFilter_contains(CJFilter):
     """ Filter for an array that must contain *all of* the specified criteria
 
