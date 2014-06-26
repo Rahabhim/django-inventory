@@ -566,6 +566,32 @@ product_filter = CJFilter_Product('products.ItemTemplate',
     famfam_icon='camera',
     )
 
+contract_filter = CJFilter_lookup('procurements.Contract', 'contracts',
+    fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+            'delegate': CJFilter_Model('procurements.Delegate',
+                fields={ 'name':  CJFilter_String(title=_('name'), sequence=1),
+                }
+            )
+        },
+    famfam_icon='basket',
+    )
+
+purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
+    fields={ 'user_id': CJFilter_String(title=_("user defined id"), sequence=1),
+            'create_user': users_filter.copy(title=_("created by")),
+            'validate_user': users_filter.copy(title=_("validated by")),
+            'supplier': CJFilter_lookup('common.Supplier', 'supplier_name',
+                fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+                        'vat_number':  CJFilter_String(title=_('VAT number'), sequence=10),
+                    }
+                ),
+            #'issue_date': CJFilter_date,
+            'state': CJFilter_choices('movements.PurchaseOrder', 'state', title=_('state')),
+            'department': department_filter,
+        },
+    condition=user_is_staff, famfam_icon='cart_go'
+    )
+
 item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {
         'item_template': product_filter,
@@ -580,6 +606,7 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
             'itemgroup': CJFilter_contains(item_templ_c_filter,
                             title=_('containing'), name_suffix='items',
                             sequence=25),
+            'src_contract': contract_filter,
             },
     famfam_icon = 'computer',
     )
@@ -603,6 +630,7 @@ def _reports_init_cache():
             'products': product_filter,
             'department': department_filter,
             'location': location_filter,
+            'purchase_order': purchaseorder_filter,
             }
 
     _reports_cache['available_types'] = [ rt.to_main_report(k) for k, rt in _reports_cache['main_types'].items()]
