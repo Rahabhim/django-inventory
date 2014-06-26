@@ -263,6 +263,8 @@ class CJFilter_Model(CJFilter):
         if domain[1] == '=':
             if (domain[2] is True) or (domain[2] is False):
                 return { name + '__isnull': not domain[2]}
+            elif isinstance(domain[2], basestring) and domain[2].isdigit():
+                return { name+'__pk': int(domain[2]) }
             elif not isinstance(domain[2], (int, long)):
                 raise TypeError("RHS must be integer, not %r" % domain[2])
             return { name+'__pk': domain[2] }
