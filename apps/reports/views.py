@@ -631,7 +631,7 @@ purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
     fields={ 'user_id': CJFilter_String(title=_("user defined id"), sequence=1),
             'create_user': users_filter.copy(title=_("created by"), staff_only=True),
             'validate_user': users_filter.copy(title=_("validated by"), staff_only=True),
-            'supplier': CJFilter_lookup('common.Supplier', 'supplier_name',
+            'supplier': CJFilter_lookup('common.Supplier', 'supplier_vat',
                 fields={'name':  CJFilter_String(title=_('name'), sequence=1),
                         'vat_number':  CJFilter_String(title=_('VAT number'), sequence=10),
                     }
