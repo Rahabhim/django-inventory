@@ -57,7 +57,7 @@ class InventoryGroupManager(models.Manager):
                 if request.session.get('current_user_role', False):
                     role_id = request.session['current_user_role']
                     role = request.user.dept_roles.get(pk=role_id)
-                    q = q | Q(department=role.department)
+                    q = Q(department=role.department)
                 return self.filter(q).distinct()
         except Exception:
             logger.exception("cannot filter:")
@@ -191,7 +191,7 @@ class InventoryManager(models.Manager):
                 if request.session.get('current_user_role', False):
                     role_id = request.session['current_user_role']
                     role = request.user.dept_roles.get(pk=role_id)
-                    q = q | Q(location__department=role.department)
+                    q = Q(location__department=role.department)
                 return self.filter(q).distinct()
         except Exception:
             logger.exception("cannot filter:")

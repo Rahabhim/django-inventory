@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-09 11:48+0300\n"
+"POT-Creation-Date: 2014-06-08 10:49+0300\n"
 "PO-Revision-Date: 2014-04-09 11:49+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -65,11 +65,11 @@ msgstr "προϊόν"
 msgid "return to inventory"
 msgstr "επιστροφή στην απογραφή"
 
-#: __init__.py:60 urls.py:29
+#: __init__.py:60 urls.py:45
 msgid "pending inventories"
 msgstr "Εκκρεμείς Απογραφές"
 
-#: __init__.py:76 models.py:86 models.py:219 urls.py:22
+#: __init__.py:76 models.py:86 models.py:219 urls.py:38
 msgid "inventories"
 msgstr "Απογραφές"
 
@@ -121,7 +121,7 @@ msgstr "Ακυρωμένη"
 msgid "inventory number"
 msgstr "Αρ. πρωτοκόλλου"
 
-#: models.py:71 urls.py:23 urls.py:30 urls.py:37
+#: models.py:71 urls.py:31 urls.py:39 urls.py:46 urls.py:53
 msgid "department"
 msgstr "μονάδα"
 
@@ -129,7 +129,7 @@ msgstr "μονάδα"
 msgid "date validated"
 msgstr "ημερομηνία επικύρωσης"
 
-#: models.py:75 models.py:211 urls.py:24 urls.py:31 urls.py:38
+#: models.py:75 models.py:211 urls.py:28 urls.py:40 urls.py:47 urls.py:54
 msgid "state"
 msgstr "κατάσταση"
 
@@ -137,7 +137,7 @@ msgstr "κατάσταση"
 msgid "Signed file"
 msgstr "Υπογεγραμμένο αρχείο"
 
-#: models.py:85 models.py:218 models.py:446 urls.py:48 urls.py:51 urls.py:54
+#: models.py:85 models.py:218 models.py:446 urls.py:64 urls.py:67 urls.py:70
 #: views.py:121
 msgid "inventory"
 msgstr "απογραφή"
@@ -241,7 +241,7 @@ msgstr "κατάσταση"
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:435 urls.py:65
+#: models.py:435 urls.py:81
 msgid "inventory item"
 msgstr "Εξοπλισμός"
 
@@ -249,15 +249,19 @@ msgstr "Εξοπλισμός"
 msgid "inventory items"
 msgstr "Εξοπλισμός"
 
-#: urls.py:36
+#: urls.py:26
+msgid "name"
+msgstr "όνομα"
+
+#: urls.py:52
 msgid "inventories pending validation"
 msgstr "Απογραφές προς επικύρωση"
 
-#: urls.py:42
+#: urls.py:58
 msgid "open new inventory"
 msgstr "Δημιουργία νέας Απογραφής"
 
-#: urls.py:61
+#: urls.py:77
 msgid "items"
 msgstr "εξοπλισμός"
 
@@ -445,9 +449,6 @@ msgstr "ΣΗΜΕΙΩΣΕΙΣ"
 
 #~ msgid "Location:"
 #~ msgstr "Τοποθεσία:"
-
-#~ msgid "name"
-#~ msgstr "όνομα"
 
 #~ msgid "date"
 #~ msgstr "ημερομηνία"

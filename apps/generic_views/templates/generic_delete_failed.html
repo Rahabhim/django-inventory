@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %} :: {% if delete_view %}{% trans 'Confirm delete' %}{% else %}{% trans 'Confirm' %}{% endif %}{% endblock %}
+
+{% block sidebar %}
+    {% for subtemplate in subtemplates %}
+        {% include subtemplate %}
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    <div id="box">
+      <div class="block" id="block-login">
+        <h2>{% trans 'Could not delete item' %}</h2>
+        <div class="content login">
+        
+            <p class="error" >
+            {% blocktrans %}The item {{ object }} cannot be deleted because it is referenced by other records:
+            {% endblocktrans %}
+            </p>
+            <ul>
+                {% for pobj in protected_objects|slice:":10" %}
+                <li><a href="{{ pobj.get_absolute_url }}">{{ pobj }}</a></li>
+                {% endfor %}
+            </ul>
+
+            <div class="group navform wat-cf submit_button">
+              <a href="{{ object_url }}" class="button">
+                {% trans 'Back' %}
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+{% endblock %}

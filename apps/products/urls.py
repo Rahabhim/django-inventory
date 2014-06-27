@@ -19,6 +19,7 @@ from models import ItemTemplate, ItemCategory, Manufacturer, \
 from forms import ItemTemplateForm, ItemTemplateForm_view, \
         ItemCategoryForm, ItemCategoryForm_view, ItemCategoryContainForm, \
         ItemPartsFormD_inline, \
+        ItemPNAliasForm_inline, ItemPNAliasFormD_inline, \
         ItemCategoryContainForm_view, \
         ManufacturerForm, ManufacturerForm_view, \
         ProductAttributeForm, ProductAttributeForm_view, \
@@ -38,7 +39,8 @@ attrib_cat_filter = { 'name': 'category', 'title': _(u'category'),
 
 product_name_filter = {'name': 'name', 'title': _('name'),
             'destination': ('description__icontains', 'model__icontains',
-                            'part_number', 'attributes__value__value__icontains')}
+                            'part_number', 'pn_aliases__part_number',
+                            'attributes__value__value__icontains')}
 
 approved_filter = {'name': 'active', 'title': _('approved'), 'destination': 'approved',
         'choices': [('', '*'), (1, _('Approved')), (0, _('Not Approved'))],
@@ -82,7 +84,7 @@ urlpatterns = patterns('products.views',
     url(r'^template/(?P<pk>\d+)/update/$', GenericUpdateView.as_view( \
             form_class=ItemTemplateForm,
             template_name= 'product_form.html',
-            inline_fields= {},
+            inline_fields={'pn_aliases': ItemPNAliasForm_inline, },
             extra_context={'object_name':_(u'item template')}),
             name='template_update' ),
     url(r'^template/(?P<pk>\d+)/delete/$', GenericDeleteView.\
@@ -96,7 +98,8 @@ urlpatterns = patterns('products.views',
     url(r'^template/(?P<object_id>\d+)/photos/$', generic_photos, {'model':ItemTemplate, 'max_photos':inventory_settings.MAX_TEMPLATE_PHOTOS, 'extra_context':{'object_name':_(u'item template')}}, 'template_photos'),
     url(r'^template/(?P<pk>\d+)/$', GenericDetailView.as_view(form_class=ItemTemplateForm_view,
                     template_name= 'product_form.html',
-                    inline_fields={'attributes': ItemTemplateAttributesForm,
+                    inline_fields={ 'pn_aliases': ItemPNAliasFormD_inline,
+                                'attributes': ItemTemplateAttributesForm,
                                 'parts': ItemPartsFormD_inline},
                     queryset=ItemTemplate.objects.all(),
                     extra_context={'object_name':_(u'item template'), \

@@ -134,6 +134,23 @@ class _map_item(object):
         ret += '>'
         return ret
 
+class _ProcessLock(object):
+    def __init__(self, p_order):
+        self.prev_state = p_order.state
+        if self.prev_state == 'processing':
+            raise RuntimeError("Lock asserted twice")
+        self.p_order = p_order
+        p_order.state = 'processing'
+        p_order.save()
+
+    def __del__(self):
+        try:
+            if self.p_order.state == 'processing':
+                self.p_order.state = self.prev_state
+                self.p_order.save()
+        except Exception:
+            logger.exception("Cannot restore purchase order state:")
+
 class PurchaseOrder(models.Model):
     objects = PurchaseOrderManager()
     user_id = models.CharField(max_length=32, null=True, blank=True, verbose_name=_(u'user defined id'))
@@ -144,7 +161,10 @@ class PurchaseOrder(models.Model):
     supplier = models.ForeignKey(Supplier, verbose_name=_(u'supplier'), on_delete=models.PROTECT)
     issue_date = models.DateField(verbose_name=_(u'issue date'))
     required_date = models.DateField(null=True, blank=True, verbose_name=_(u'date required'))
-    state = models.CharField(max_length=16, default='draft', choices=[('draft', _('Draft')), ('pending', _('Pending')), ('done', _('Done')), ('reject', _('Rejected'))])
+    state = models.CharField(max_length=16, default='draft',
+                choices=[('draft', _('Draft')), ('pending', _('Pending')),
+                        ('done', _('Done')), ('reject', _('Rejected')),
+                        ('processing', _('In process'))])
     #active = models.BooleanField(default=True, verbose_name=_(u'active'))
     notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     status = models.ForeignKey(PurchaseOrderStatus, null=True, blank=True, verbose_name=_(u'status'), on_delete=models.PROTECT)
@@ -164,6 +184,15 @@ class PurchaseOrder(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('purchase_order_view', [str(self.id)])
+
+    def lock_process(self):
+        """Asserts a lock for processing, deflecting parallel requests
+
+            It will change the state to "processing" and then return a "lock"
+            object. Once the "lock" object is deleted, the PO state will return
+            to its previous value.
+        """
+        return _ProcessLock(self)
 
     def clean(self):
         """Before saving the Movement, update checkpoint_src to the last validated one
@@ -263,7 +292,7 @@ class PurchaseOrder(models.Model):
                 rec_qty -= 1
 
         logger.debug('map_items(): second stage for %s', self.id)
-        def _consume(item, loc_kind):
+        def _consume(item, loc_kind, relax_serial=False):
             """ given a movement item, find which part of 'ret' it can be mapped to
             """
             assert item.qty == 1, item.qty
@@ -275,12 +304,16 @@ class PurchaseOrder(models.Model):
                     # already mapped
                     continue
                 if mo.serial != item.serial_number:
-                    continue
+                    if mo.serial is None and relax_serial:
+                        pass
+                    else:
+                        continue
                 mo.item_id = item.id
                 return True
 
             return False
 
+        not_consumed = []
         for move in self.movements.prefetch_related('items').all(): # requires Django 1.4
             # Prefetching the items is crucial, it will reduce Queries done
             if move.location_dest.usage == 'production':
@@ -298,6 +331,17 @@ class PurchaseOrder(models.Model):
                     if _consume(item, ''):
                         continue
                 logger.debug("Movement %d, item not consumed in %s: %r", move.id, loc_kind, item)
+                if item.serial_number:
+                    not_consumed.append((item, loc_kind))
+
+        # after all items have been tried, repeat non-consumed ones with
+        # relaxed serial number check. This will catch ones that have been
+        # edited through Asset Edit, after the PO has been processed
+        for item, loc_kind in not_consumed:
+            if _consume(item, loc_kind, relax_serial=True):
+                continue
+            elif loc_kind not in ('bdl', ''):
+                _consume(item, '')
 
         return ret
 
@@ -314,6 +358,9 @@ class PurchaseOrder(models.Model):
         """
 
         the_moves = {}
+        if self.state != 'processing':
+            raise RuntimeError("State must be processing, not %s" % self.state)
+
         def _get_move(loc_kind, department):
             if (loc_kind, department.id) in the_moves:
                 return the_moves[(loc_kind, department.id)]
@@ -441,7 +488,28 @@ class PurchaseOrder(models.Model):
                     citem.bundled_in.add(igroup)
                     citem.is_bundled = True
                     citem.save()
+
         return True
+
+    def prune_items(self, mapped_items):
+        # Count and remove items not described by current lines
+        all_ids = []
+        for tdict in mapped_items.values():
+            for objs in tdict.values():
+                for o in objs:
+                    if o.item_id:
+                        all_ids.append(o.item_id)
+
+        for move in self.movements.all():
+            if move.state != 'draft':
+                continue
+            for it in move.items.all():
+                if it.id not in all_ids and not it.location:
+                    it.delete()
+            if not move.items.count():
+                move.delete()
+
+        return
 
     def get_cart_name(self):
         """ Returns the "shopping-cart" name of this model

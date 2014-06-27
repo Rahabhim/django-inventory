@@ -60,7 +60,8 @@
     <div class="content">
    {% if more_items_count %}
 	<div id="create_moves_form">
-	<form method="GET" >
+	<form method="POST">
+        {% csrf_token %}
 	  <p>{% trans 'There are still items received that have not been acknowledged in a movement.' %}</p>
           <p>{% trans 'Do you want a new movement for these received items?' %}</p>
             {% if ask_location %}
@@ -96,7 +97,8 @@ jQuery(document).ready(function($){
         {% if object.state == 'draft' or object.state == 'pending' %}
             {% if confirm_ask %}
         <div id="confirm_form">
-        <form method="GET" class="form" >
+        <form method="POST" class="form" >
+           {% csrf_token %}
           <p>{% blocktrans %}Do you want to mark all movements as done and close this Purchase Order? {% endblocktrans %}</p>
           <div class="group navform wat-cf">
             <input type="hidden" name="do_confirm" value="1" />

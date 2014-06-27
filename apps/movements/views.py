@@ -328,14 +328,16 @@ def purchase_order_receive(request, object_id):
         messages.error(request, msg, fail_silently=True)
         return redirect(url_after_this)
 
-    if request.method == 'POST':
-        raise NotImplementedError
-    else:
+    if True:
+        # purchase_order.state = 'processing'
         try:
+            lock = purchase_order.lock_process()
             mapped_items = purchase_order.map_items()
         except ValueError, ve:
             messages.error(request, unicode(ve), fail_silently=True)
             return redirect(url_after_this)
+        except RuntimeError:
+            lock = False
 
         form = PurchaseOrderForm_short_view(instance=purchase_order)
         dept = None
@@ -347,16 +349,17 @@ def purchase_order_receive(request, object_id):
             pass
 
         items_left = purchase_order.map_has_left(mapped_items)
-        new_reference = request.GET.get('reference_ask', False)
+        new_reference = request.POST.get('reference_ask', False)
 
-        if items_left and request.GET.get('do_create', False):
+        if items_left and lock and request.method == 'POST' \
+                    and request.POST.get('do_create', False):
             if request.user.is_superuser and settings.DEVELOPMENT:
                 pass
             elif not active_role.has_perm('movements.receive_purchaseorder'):
                 messages.error(request,_('You do not have permission to receive the order'), fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
-            if request.GET.get('location_ask', False):
-                master_loc = Location.objects.get(pk=request.GET['location_ask'])
+            if request.POST.get('location_ask', False):
+                master_loc = Location.objects.get(pk=request.POST['location_ask'])
             elif dept:
                 master_loc = Location.objects.filter(active=True, department=dept)[:1][0]
             else:
@@ -364,10 +367,12 @@ def purchase_order_receive(request, object_id):
                 return redirect(request.path.rstrip('?'), object_id=object_id)
 
             purchase_order.items_into_moves(mapped_items, request, dept, master_loc)
+            purchase_order.prune_items(mapped_items)
 
             # reload the request in the browser, but get rid of any "action" arguments!
             return redirect(request.path.rstrip('?'), object_id=object_id)
-        elif (not items_left) and request.GET.get('do_confirm', False):
+        elif (not items_left) and lock and request.method == 'POST' \
+                    and request.POST.get('do_confirm', False):
             if request.user.is_superuser and settings.DEVELOPMENT:
                 pass
             elif not (active_role and active_role.has_perm('movements.validate_purchaseorder')):
@@ -497,6 +502,7 @@ def purchase_order_receive(request, object_id):
                     form_attrs['confirm_ask'] = False
                     break
 
+        del lock
         return render_to_response('po_transfer_ask.html', form_attrs, context_instance=RequestContext(request))
 
     raise RuntimeError
@@ -696,6 +702,7 @@ def purchase_order_copy(request, object_id):
                             for tmpl_id, objs in it_tmpls.items():
                                 loc_its.setdefault(tmpl_id, []).extend(objs)
                         new_po.items_into_moves(mapped_items, request, new_po.department, False)
+                    new_po.prune_items(mapped_items)
                 except Exception, e:
                     messages.error(request, unicode(e), fail_silently=True)
                     continue

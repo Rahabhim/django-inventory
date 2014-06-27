@@ -142,11 +142,28 @@ class PO_Step3(WizardForm):
             category = None
         if category:
             self.fields['manufacturer'].queryset = Manufacturer.objects.\
-                        filter(products__category=category).\
+                        filter(products__category=category, products__approved=True).\
                         annotate(num_products=Count('products')).order_by('name')
             self.category_id = category.id
+            self.category_is_group = category.is_group
         # self.initial['product_attributes']['all'] = []
 
+    def _check_serials(self, wizard, serial_nos):
+        """ validate that serials are sane
+        """
+        serials = []
+        ok = True
+        for s in serial_nos.replace('\n', ',').split(','):
+            s = s.strip()
+            if s:
+                if s in serials:
+                    messages.error(wizard.request, _("Serial number %s is entered twice!") % s)
+                    ok = False
+                elif len(s) >= 64:
+                    messages.error(wizard.request, _("Serial %s is too long. Perhaps you didn't split it.") % s[:20])
+                    ok = False
+                serials.append(s)
+        return ok
 
     def save_data(self, wizard):
         our_data = self.cleaned_data.copy()
@@ -159,12 +176,16 @@ class PO_Step3(WizardForm):
         for ufield in ('product_number', 'manufacturer', \
                         'item_template2', 'product_attributes'):
             our_data.pop(ufield, None)
+        if not self._check_serials(wizard, our_data['serials']):
+            return '3'
         aitems = step4_data.setdefault('4-items',[])
         ItemsGroupField.post_validate(our_data)
 
         if not our_data['item_template']:
             messages.error(wizard.request, _("You must select some product! Please try again"))
             return '2'
+        if our_data['item_template'].category.is_group and (our_data['quantity'] > 1):
+            our_data['quantity'] = 1
 
         if not our_data.get('line_num', False):
             # we have to compute an unique id for the new line_num
@@ -554,6 +575,7 @@ class PO_Step5(WizardForm):
         request = wizard.request
         if not po_instance.pk:
             raise RuntimeError("PO instance must be saved by step 5")
+        lock = po_instance.lock_process()
         try:
             mapped_items = po_instance.map_items()
         except ValueError, ve:
@@ -577,6 +599,8 @@ class PO_Step5(WizardForm):
             po_instance.items_into_moves(mapped_items, request, \
                         self.cleaned_data['location'].department, \
                         self.cleaned_data['location'])
+        po_instance.prune_items(mapped_items)
+
         if msg:
             return '5'
 
@@ -594,9 +618,12 @@ class PO_Step5m(WizardForm):
         if not po_instance.pk:
             raise RuntimeError("PO instance must be saved by step 5")
         try:
+            lock = po_instance.lock_process()
             mapped_items = po_instance.map_items()
         except ValueError, ve:
             messages.error(request, unicode(ve), fail_silently=True)
+            return '5'
+        except RuntimeError:
             return '5'
 
         # check that user can create POs for every department requested
@@ -632,6 +659,7 @@ class PO_Step5m(WizardForm):
 
             po_instance.items_into_moves(mapped_items, request, \
                         departments, False)
+        po_instance.prune_items(mapped_items)
 
         return True
 

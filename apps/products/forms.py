@@ -4,7 +4,7 @@ from generic_views.forms import DetailForm, InlineModelForm, \
             ROModelChoiceField, DetailPlainForeignWidget #, ColumnsDetailWidget
 from models import ItemTemplate, Manufacturer, ItemCategory, ItemCategoryContain, \
             ProductAttribute, ProductAttributeValue, ItemTemplateAttributes, \
-            ItemTemplatePart
+            ItemTemplatePart, ItemTemplateNumAlias
 from django.utils.translation import ugettext_lazy as _
 from form_fields import CategoriesAttributesField
 from ajax_select.fields import AutoCompleteSelectField
@@ -142,6 +142,14 @@ class ItemTemplateRequestForm(ItemTemplateRequestForm_base):
             logger.exception("Helpdesk request fail:")
             messages.error(self._request, _("The data you have entered has been saved, but the Helpdesk has NOT been notified, due to an internal error."))
         return ret
+
+class ItemPNAliasForm_inline(InlineModelForm):
+    class Meta:
+        model = ItemTemplateNumAlias
+
+class ItemPNAliasFormD_inline(DetailForm):
+    class Meta:
+        model = ItemTemplateNumAlias
 
 class ItemPartsForm_inline(InlineModelForm):
     item_template = AutoCompleteSelectField('product', show_help_text=False, required=False,

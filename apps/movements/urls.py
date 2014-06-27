@@ -28,6 +28,9 @@ from common.api import user_is_staff
 __hush = [Contract,]
 
 from company import make_mv_location
+from django.db.models import Q
+from company.models import Department
+from company.lookups import _department_filter_q
 from main import cart_utils
 import views
 
@@ -40,6 +43,9 @@ stype_filter = {'name':'stype', 'title':_(u'type'),
             'choices':'movements.Movement.stype' , 'destination':'stype',
             'condition': user_is_staff }
 
+po_department_filter = {'name': 'dept', 'title': _('department'),
+            'condition': user_is_staff,
+            'destination': lambda q: Q(department__in=Department.objects.filter(_department_filter_q(q)))}
 
 location_io_filter = {'name': 'location_src', 'title': _('Location'), 
             'destination': make_mv_location('location_src', 'location_dest')}
@@ -115,7 +121,7 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/state/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=PurchaseOrderStatus, success_url="purchase_order_state_list", extra_context=dict(object_name=_(u'purchase order status'))), name='purchase_order_state_delete'),
 
     url(r'^purchase/order/list/$', views.PurchaseOrderListView.as_view( \
-                list_filters=[po_active_filter, contract_filter, supplier_filter]),
+                list_filters=[po_department_filter, po_active_filter, contract_filter, supplier_filter]),
             name='purchase_order_list'),
     url(r'^purchase/order/pending_list/$', views.PurchaseOrderListView.as_view( \
                 queryset=lambda r: PurchaseOrder.objects.by_request(r).filter(state__in=('draft', 'pending')).distinct()), 

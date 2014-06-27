@@ -174,7 +174,7 @@ class IGW_Attribute(StrAndUnicode):
 
     @property
     def manufs(self):
-        return Manufacturer.objects.filter(products__category=self._obj.category)\
+        return Manufacturer.objects.filter(products__category=self._obj.category, products__approved=True)\
                 .annotate(num_products=Count('products')).order_by('name')
 
     @property
