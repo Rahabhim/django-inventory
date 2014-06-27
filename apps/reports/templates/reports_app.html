@@ -226,6 +226,22 @@
     </select>
 </script>
 
+<script type="text/ng-template" id="parts/field-date.html">
+    <select ng-model="field.data_op" ng-change="adapt_date(field)">
+        <option value=""></option>
+        <option value="=">=</option>
+        <option value="&gt;">&gt;</option>
+        <option value="&gt;=">&gt;=</option>
+        <option value="&lt;">&lt;</option>
+        <option value="&lt;=">&lt;=</option>
+        <option value="between">{% trans 'Between' %}</option>
+    </select>
+    <input type="text" ng-if="field.data_op && field.data_op != 'between'" ng-model="field.data"
+            datepicker-popup="dd/MM/yyyy">
+    <input type="text" ng-if="field.data_op == 'between'" ng-model="field.data[0]" datepicker-popup="dd/MM/yyyy">
+    <input type="text" ng-if="field.data_op == 'between'" ng-model="field.data[1]" datepicker-popup="dd/MM/yyyy">
+</script>
+
 <script type="text/ng-template" id="parts/field-lookup.html">
     <input ng-model="field.data" type="text" autocomplete="off"
         typeahead="d as d.repr for d in getLookup(field.lookup, $viewValue)"
@@ -376,14 +392,19 @@ var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" 
 
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
         .config(['$interpolateProvider', '$httpProvider', '$locationProvider',
-          function($interpolateProvider, $httpProvider, $locationProvider) {
+                'datepickerConfig', 'datepickerPopupConfig',
+          function($interpolateProvider, $httpProvider, $locationProvider,
+                    datepickerConfig, datepickerPopupConfig) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
             $httpProvider.defaults.headers.post['X-CSRFToken'] = "{{ csrf_token }}";
             $locationProvider.html5Mode(false);
+
+            datepickerConfig.showWeeks = false;
+            datepickerPopupConfig.showButtonBar = false;
         }]);
-    reportsApp.controller('mainCtrl', ['$log', '$scope', '$location', '$http', '$modal',
-        function($log, $scope, $location, $http, $modal) {
+    reportsApp.controller('mainCtrl', ['$log', '$scope', '$location', '$http', '$modal', '$filter',
+        function($log, $scope, $location, $http, $modal, $filter) {
             $scope.reportType = false;
             $scope.reportGroups = [];
             $scope.available_types = {{ available_types }};
@@ -406,6 +427,7 @@ var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" 
                         }
                 };
 
+            var date2iso = $filter('date2iso');
             var domainFns = {
                 /* Domain functions return an expression part for some field
                 
@@ -449,6 +471,14 @@ var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" 
                             return [ '=', true];
                         else if (rt.data == 'false')
                             return ['=', false];
+                    },
+                'date': function(rt, name){
+                        if(rt.data_op == 'between'){
+                            return [ rt.data_op, [date2iso(rt.data[0]), date2iso(rt.data[1])]];
+                        }
+                        else if (rt.data_op && rt.data){
+                            return [rt.data_op, date2iso(rt.data)];
+                        }
                     },
                 'lookup': function(rt, name) {
                         if (rt.data)
@@ -762,6 +792,14 @@ var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" 
                         if (field.data)
                             return bool_words[field.data];
                         },
+                    'date': function(field) {
+                        if (field.data){
+                            if (field.data_op == 'between')
+                                return "@(" + field.data[0] + ", " + field.data[1] + ")";
+                            else
+                                return field.data_op + ' ' + field.data;
+                            }
+                        },
                     'model': function(field) {
                         var criteria = [];
                         angular.forEach(field.fields, function(fld, k) {
@@ -870,6 +908,13 @@ var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" 
                         });
                 };
             $scope.setItemContains = function() {}; // stub
+
+            $scope.adapt_date = function(field){
+                if (field.data_op == 'between' && !angular.isArray(field.data))
+                    field.data = [field.data, ''];
+                else if (field.data_op != 'between' && angular.isArray(field.data))
+                    field.data = field.data[0];
+                };
         }]);
 
     reportsApp.controller('productParamsCtrl', ['$log', '$scope', '$http', function($log, $scope, $http) {
@@ -1390,5 +1435,19 @@ var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" 
             return ret;
         }
     }]);
+
+    reportsApp.filter('date2iso', ['$filter', function($filter) {
+        var dateFilter = $filter('date');
+        return function(d) {
+            if (angular.isDate(d))
+                // an ISO string would convert the date to UTC, and could show a different
+                // day than current locale. We ignore the locale and send the date as-is
+                return dateFilter(d, 'yyyy-MM-dd');
+            else
+                return d;
+            };
+        }]);
+
+
 </script>
 {% endblock %}

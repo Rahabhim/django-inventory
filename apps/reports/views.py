@@ -9,6 +9,7 @@ from django.utils.functional import Promise
 from django.db import models
 from django.db.models.query import QuerySet
 import json
+import datetime
 from django.utils.safestring import SafeString
 from collections import defaultdict
 from django.core.exceptions import ObjectDoesNotExist
@@ -22,6 +23,8 @@ class JsonEncoderS(json.JSONEncoder):
             return unicode(obj)
         elif isinstance(obj, QuerySet):
             return list(obj)
+        elif isinstance(obj, datetime.date):
+            return obj.strftime('%Y-%m-%d')
         return super(JsonEncoderS, self).default(obj)
 
 # ----------- Filters ----------------
@@ -372,6 +375,38 @@ class CJFilter_String(CJFilter):
                 return {domain[0]+'__' + domain[1]: domain[2]}
         raise TypeError("Bad domain: %r", domain)
 
+def to_date(d):
+    if isinstance(d, basestring):
+        return datetime.datetime.strptime(d, '%Y-%m-%d').date()
+    elif isinstance(d, (datetime.date)):
+        return d
+    else:
+        raise TypeError("Date from %s" % type(d))
+
+class CJFilter_date(CJFilter):
+    _query_ops = { '=': '', '>': '__gt', '<': '__lt',
+            '>=': '__gte', '<=': '__lte',
+            }
+
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_date, self).getGrammar(is_staff)
+        ret['widget'] = 'date'
+        return ret
+
+    def getQuery(self, request, name, domain):
+        if isinstance(domain, (list, tuple)) and len(domain) == 3:
+            if domain[1] == 'between':
+                ret = {}
+                if domain[2][0]:
+                    ret[domain[0] +'__gte'] = to_date(domain[2][0])
+                if domain[2][1]:
+                    ret[domain[0] + '__lte'] = to_date(domain[2][1])
+                return ret
+            elif domain[1] in self._query_ops:
+                lhs = domain[0] + self._query_ops[domain[1]]
+                return { lhs: to_date(domain[2]) }
+
+        raise TypeError("Bad domain: %r", domain)
 
 class CJFilter_Boolean(CJFilter):
 
