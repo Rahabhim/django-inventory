@@ -218,6 +218,14 @@
     </select>
 </script>
 
+<script type="text/ng-template" id="parts/field-boolean.html">
+    <select ng-model="field.data">
+        <option value="">*</option>
+        <option value="true">{% trans 'True' %}</option>
+        <option value="false">{% trans 'False' %}</option>
+    </select>
+</script>
+
 <script type="text/ng-template" id="parts/field-lookup.html">
     <input ng-model="field.data" type="text" autocomplete="off"
         typeahead="d as d.repr for d in getLookup(field.lookup, $viewValue)"
@@ -364,6 +372,7 @@ if (typeof String.prototype.startsWith != 'function') {
   };
 }
 var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
+var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" };
 
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
         .config(['$interpolateProvider', '$httpProvider', '$locationProvider',
@@ -434,6 +443,12 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                 'char': function(rt, name) {
                         if (rt.data)
                             return [rt.data_op || 'icontains', rt.data];
+                    },
+                'boolean': function(rt, name){
+                        if (rt.data == 'true')
+                            return [ '=', true];
+                        else if (rt.data == 'false')
+                            return ['=', false];
                     },
                 'lookup': function(rt, name) {
                         if (rt.data)
@@ -742,6 +757,10 @@ var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
                     'char': function(field) {
                         if (field.data)
                             return '"' +field.data.toString() + '"';
+                        },
+                    'boolean': function(field) {
+                        if (field.data)
+                            return bool_words[field.data];
                         },
                     'model': function(field) {
                         var criteria = [];

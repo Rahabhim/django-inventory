@@ -372,6 +372,20 @@ class CJFilter_String(CJFilter):
                 return {domain[0]+'__' + domain[1]: domain[2]}
         raise TypeError("Bad domain: %r", domain)
 
+
+class CJFilter_Boolean(CJFilter):
+
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_Boolean, self).getGrammar(is_staff)
+        ret['widget'] = 'boolean'
+        return ret
+
+    def getQuery(self, request, name, domain):
+        if isinstance(domain, (list, tuple)) and len(domain) == 3:
+            if domain[1] == '=':
+                return { domain[0]: domain[2] }
+        raise TypeError("Bad domain: %r", domain)
+
 class CJFilter_lookup(CJFilter_Model):
     """Select *one* of some related model, with an autocomplete field
     """
