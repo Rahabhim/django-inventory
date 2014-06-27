@@ -55,7 +55,7 @@ class CJFilter(object):
     def real_init(self):
         pass
 
-    def getGrammar(self):
+    def getGrammar(self, is_staff=False):
         return {'name': self.title, 'sequence': self.sequence }
 
     def getQuery(self, request, name, domain):
@@ -106,12 +106,14 @@ class CJFilter_Model(CJFilter):
         if not self.title:
             self.title = self._model_inst._meta.verbose_name  # _plural
 
-    def getGrammar(self):
-        ret = super(CJFilter_Model, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_Model, self).getGrammar(is_staff)
         ret['widget'] = 'model'
         ret['fields'] = {}
         for k, field in self.fields.items():
-            ret['fields'][k] = field.getGrammar()
+            if getattr(field, 'staff_only', False) and not is_staff:
+                continue
+            ret['fields'][k] = field.getGrammar(is_staff)
         return ret
 
     def _get_field(self, fname, *fpath):
@@ -337,8 +339,8 @@ class CJFilter_Model(CJFilter):
 
 class CJFilter_Product(CJFilter_Model):
 
-    def getGrammar(self):
-        ret = super(CJFilter_Product, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_Product, self).getGrammar(is_staff)
         ret['widget'] = 'model-product'
         return ret
 
@@ -346,8 +348,8 @@ class CJFilter_isset(CJFilter):
     title = _('Non-zero')
     sequence = 2
 
-    def getGrammar(self):
-        ret = super(CJFilter_isset, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_isset, self).getGrammar(is_staff)
         ret['widget'] = 'isset'
         return ret
 
@@ -357,8 +359,8 @@ class CJFilter_isset(CJFilter):
 class CJFilter_String(CJFilter):
     sequence = 9
 
-    def getGrammar(self):
-        ret = super(CJFilter_String, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_String, self).getGrammar(is_staff)
         ret['widget'] = 'char'
         return ret
 
@@ -379,8 +381,8 @@ class CJFilter_lookup(CJFilter_Model):
         self.fields = {}
         super(CJFilter_lookup, self).__init__(model, **kwargs)
 
-    def getGrammar(self):
-        ret = super(CJFilter_lookup, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_lookup, self).getGrammar(is_staff)
         # del ret['fields']
         ret['widget'] = 'lookup'
         ret['lookup'] = reverse('ajax_lookup', args=[self.lookup,])
@@ -391,8 +393,8 @@ class CJFilter_ModelChoices(CJFilter_Model):
     """
     filter_expr = None
 
-    def getGrammar(self):
-        ret = super(CJFilter_ModelChoices, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_ModelChoices, self).getGrammar(is_staff)
         ret['widget'] = 'selection'
         objects = self._model_inst.objects
         if True:
@@ -421,8 +423,8 @@ class CJFilter_choices(CJFilter):
         if not self.title:
             self.title = self._field_inst.verbose_name
 
-    def getGrammar(self):
-        ret = super(CJFilter_choices, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_choices, self).getGrammar(is_staff)
         ret['widget'] = 'selection'
         ret['selection'] = [(k, unicode(s)) for k,s in self._field_inst.choices]
         return ret
@@ -458,10 +460,10 @@ class CJFilter_contains(CJFilter):
     def __repr__(self):
         return "<%s (%s)>" % (self.__class__.__name__, repr(self.sub_filter))
 
-    def getGrammar(self):
-        ret = super(CJFilter_contains, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_contains, self).getGrammar(is_staff=False)
         ret['widget'] = 'contains'
-        ret['sub'] = self.sub_filter.getGrammar()
+        ret['sub'] = self.sub_filter.getGrammar(is_staff)
         return ret
 
     def getQuery(self, request, name, domain):
@@ -500,10 +502,9 @@ class CJFilter_attribs(CJFilter_Model):
     #    self.sub = sub_filter
     #    super(CJFilter_contains, self).__init__(**kwargs)
 
-    def getGrammar(self):
-        ret = super(CJFilter_attribs, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_attribs, self).getGrammar(is_staff)
         ret['widget'] = 'attribs'
-        # ret['sub'] = self.sub.getGrammar()
         return ret
 
     def getQuery(self, request, name, domain):
@@ -511,8 +512,8 @@ class CJFilter_attribs(CJFilter_Model):
         return super(CJFilter_attribs, self).getQuery(request, name2, domain)
 
 class CJFilter_attribs_multi(CJFilter_attribs):
-    def getGrammar(self):
-        ret = super(CJFilter_attribs_multi, self).getGrammar()
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_attribs_multi, self).getGrammar(is_staff)
         ret['widget'] = 'attribs_multi'
         return ret
 
@@ -690,7 +691,7 @@ def reports_grammar_view(request, rep_type):
     rt = _reports_cache['main_types'].get(rep_type, False)
     if not rt:
         return HttpResponseNotFound("Grammar for type %s not found" % rep_type)
-    content = json.dumps(rt.getGrammar(), cls=JsonEncoderS)
+    content = json.dumps(rt.getGrammar(request.user.is_staff), cls=JsonEncoderS)
     return HttpResponse(content, content_type='application/json')
 
 def reports_cat_grammar_view(request, cat_id):
@@ -780,7 +781,7 @@ def reports_back_load_view(request):
 
     ret = {'id': report.id, 'title': report.title, 'model': report.rmodel,
             'public': not bool(report.owner),
-            'grammar': rt.getGrammar(), 'data': json.loads(report.params)}
+            'grammar': rt.getGrammar(request.user.is_staff), 'data': json.loads(report.params)}
     content = json.dumps(ret, cls=JsonEncoderS)
     return HttpResponse(content, content_type='application/json')
 
