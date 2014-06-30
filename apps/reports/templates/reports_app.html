@@ -226,6 +226,14 @@
     </select>
 </script>
 
+<script type="text/ng-template" id="parts/field-has_sth.html">
+    <select ng-model="field.data">
+        <option value="">*</option>
+        <option value="true">{% trans 'Has' %}</option>
+        <option value="false">{% trans "Doesn't have" %}</option>
+    </select>
+</script>
+
 <script type="text/ng-template" id="parts/field-date.html">
     <select ng-model="field.data_op" ng-change="adapt_date(field)">
         <option value=""></option>
@@ -389,6 +397,7 @@ if (typeof String.prototype.startsWith != 'function') {
 }
 var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
 var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" };
+var bool_words_has = { 'true': "{% trans 'has' %}", 'false': "{% trans "doesn't have" %}" };
 
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
         .config(['$interpolateProvider', '$httpProvider', '$locationProvider',
@@ -543,6 +552,7 @@ var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" 
                     },
                 };
             domainFns['model-product'] = domainFns['model'];
+            domainFns['has_sth'] = domainFns['boolean'];
             $scope.getCurDomain = function(){
                 if (!$scope.reportType)
                     return [];
@@ -791,6 +801,10 @@ var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" 
                     'boolean': function(field) {
                         if (field.data)
                             return bool_words[field.data];
+                        },
+                    'has_sth': function(field) {
+                        if (field.data)
+                            return bool_words_has[field.data];
                         },
                     'date': function(field) {
                         if (field.data){
