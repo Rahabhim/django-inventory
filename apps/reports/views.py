@@ -713,6 +713,20 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     famfam_icon = 'computer',
     )
 
+inventories_filter = CJFilter_Model('inventory.InventoryGroup', title=_('inventories'),
+    fields={
+        'name': CJFilter_String(title=_('name'), sequence=1),
+        'department': department_filter,
+        'date_act': CJFilter_date(title=_("date performed")),
+        'date_val': CJFilter_date(title=_("date validated")),
+        'state': CJFilter_choices('inventory.InventoryGroup', 'state', title=_('state')),
+        'create_user': users_filter.copy(title=_("created by"), staff_only=True),
+        'validate_user': users_filter.copy(title=_("validated by"), staff_only=True),
+    },
+    condition=user_is_staff,
+    famfam_icon='package'
+    )
+
 # ---------------- Cache ---------------
 
 _reports_cache = {}
@@ -733,6 +747,7 @@ def _reports_init_cache():
             'department': department_filter,
             'location': location_filter,
             'purchase_order': purchaseorder_filter,
+            'inventories': inventories_filter,
             }
 
     _reports_cache['available_types'] = [ rt.to_main_report(k) for k, rt in _reports_cache['main_types'].items()]
