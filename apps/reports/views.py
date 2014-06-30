@@ -147,13 +147,14 @@ class CJFilter_Model(CJFilter):
             # convert fields to django-like exprs
             fields2 = []
             for fn in fields:
-                fields2.append(fn.replace('.', '__'))
+                if not fn.startswith('_'):
+                    fields2.append(fn.replace('.', '__'))
                 fpath = fn.split('.')
                 fld = self._get_field(*fpath)
                 if fld._post_fn:
                     post_fns[fn.replace('.', '__')] = fld._post_fn
         else:  # not fields
-            fields2 = self.fields.keys()
+            fields2 = filter(lambda f: not f.startswith('_'), self.fields.keys())
             # fields.sort(key=lambda f: self.fields[f].sequence) # done at JS side
             for fn, fld in self.fields.items():
                 if fld._post_fn:
@@ -421,6 +422,42 @@ class CJFilter_Boolean(CJFilter):
                 return { domain[0]: domain[2] }
         raise TypeError("Bad domain: %r", domain)
 
+class CJFilter_dept_has_assets(CJFilter_Boolean):
+    """Special filter that finds only Departments with/without assets
+    """
+    staff_only = True    # by default, this field is too expensive to compute
+
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_dept_has_assets, self).getGrammar(is_staff)
+        ret['widget'] = 'has_sth'
+        return ret
+
+    def getQuery(self, request, name, domain):
+        from company.models import Department
+        if isinstance(domain, (list, tuple)) and len(domain) == 3 \
+                and (domain[1] == '='):
+            q = models.Q(location__item__isnull=False)
+            if domain[2]:
+                # pass through Q, to get unique results
+                return models.Q(id__in=Department.objects.filter(q))
+            else:
+                # we cannot just say "location__item__isnull=True", because
+                # it would take Departments having /one/ of their locations
+                # empty. So, we invert the result set of those having any
+                # assets.
+                return ~models.Q(id__in=Department.objects.filter(q))
+        raise TypeError("Bad domain: %r", domain)
+
+    def _post_fn(self, fname, results, qset):
+        from company.models import Department
+        # use Department.objects again, because qset is already sliced
+        depts_with = set(Department.objects.filter(id__in=qset). \
+                    filter(location__item__isnull=False).distinct()\
+                    .values_list('id', flat=True))
+
+        for row in results:
+            row[fname] = bool(row['id'] in depts_with)
+
 class CJFilter_lookup(CJFilter_Model):
     """Select *one* of some related model, with an autocomplete field
     """
@@ -586,6 +623,7 @@ department_filter = CJFilter_Model('company.Department', sequence=5,
             'dept_type': CJFilter_lookup('company.DepartmentType', 'department_type',
                         fields={'name':  CJFilter_String(title=_('name'), sequence=1), }
                 ),
+            '_has_assets': CJFilter_dept_has_assets(title=_("has assets"), sequence=5),
             'nom_name':  CJFilter_String(title=_('Nom Name'), sequence=15),
             'ota_name':  CJFilter_String(title=_('OTA Name'), sequence=16),
             'parent': CJFilter_lookup('company.Department', 'department',
