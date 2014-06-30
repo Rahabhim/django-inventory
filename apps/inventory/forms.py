@@ -2,7 +2,7 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from ajax_select.fields import AutoCompleteSelectField
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.contrib.auth.models import User
 
 from common.api import role_from_request
@@ -43,6 +43,15 @@ class InventoryForm(RModelForm):
         except ObjectDoesNotExist:
             pass
         UnAutoCompleteField(self.fields, 'department', request, use_radio=False)
+
+    def clean(self):
+        from assets.models import Item
+        cleaned_data = super(InventoryForm, self).clean()
+
+        if cleaned_data.get('department'):
+            if not Item.objects.filter(location__department=cleaned_data['department']).exists():
+                raise ValidationError(_("There are no assets in any of this Department locations, cannot make an inventory"))
+        return cleaned_data
 
 class InventoryValidateForm(forms.ModelForm):
     class Meta:
