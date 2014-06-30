@@ -560,6 +560,19 @@ class CJFilter_attribs(CJFilter_Model):
         name2 = name + '__' + self.name_suffix
         return super(CJFilter_attribs, self).getQuery(request, name2, domain)
 
+    def _post_fn(self, fname, results, qset):
+        imap = {}
+        for prod in qset.prefetch_related('attributes'):
+            if prod.attributes.exists():
+                val = []
+                for attr in prod.attributes.all():
+                    val.append(attr.value.value)
+                imap[prod.id] = ', '.join(val)
+            else:
+                imap[prod.id] = ''
+        for row in results:
+            row[fname] = imap.get(row['id'], None)
+
 class CJFilter_attribs_multi(CJFilter_attribs):
     def getGrammar(self, is_staff=False):
         ret = super(CJFilter_attribs_multi, self).getGrammar(is_staff)
