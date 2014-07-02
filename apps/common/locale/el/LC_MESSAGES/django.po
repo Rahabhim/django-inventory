@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-20 20:00+0200\n"
+"POT-Creation-Date: 2014-07-02 16:52+0300\n"
 "PO-Revision-Date: 2014-03-09 10:06+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -41,7 +41,7 @@ msgstr "σύνδεση με προϊόντα"
 msgid "related purchase orders"
 msgstr "Σχετικές παραλαβές εξοπλισμού"
 
-#: __init__.py:21 models.py:91 models.py:168 urls.py:24 views.py:33
+#: __init__.py:21 models.py:91 models.py:168 urls.py:28 views.py:33
 msgid "locations"
 msgstr "τοποθεσίες"
 
@@ -65,7 +65,7 @@ msgstr "απενεργοποίηση"
 msgid "location"
 msgstr "τοποθεσία"
 
-#: __init__.py:55 models.py:61 urls.py:31 urls.py:40
+#: __init__.py:55 models.py:61 urls.py:35 urls.py:44
 msgid "location templates"
 msgstr "πρότυπα τοποθεσιών"
 
@@ -73,7 +73,7 @@ msgstr "πρότυπα τοποθεσιών"
 msgid "create new location template"
 msgstr "δημιουργία προτύπου τοποθεσίας"
 
-#: models.py:19 models.py:53 models.py:77 models.py:138 views.py:16
+#: models.py:19 models.py:53 models.py:77 models.py:138 urls.py:14 views.py:16
 msgid "name"
 msgstr "όνομα"
 
@@ -169,11 +169,11 @@ msgstr "Ενεργό"
 msgid "Inactive"
 msgstr "Ανενεργό"
 
-#: models.py:125
+#: models.py:125 urls.py:16
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: models.py:129 models.py:169 urls.py:50
+#: models.py:129 models.py:169 urls.py:55
 msgid "supplier"
 msgstr "προμηθευτής"
 
@@ -201,11 +201,11 @@ msgstr "Συμπλήρωση αριθμών"
 msgid "sequences"
 msgstr "Ακολουθίες"
 
-#: urls.py:44
+#: urls.py:48
 msgid "Supplier details"
 msgstr "Λεπτομέρειες προμηθευτή"
 
-#: urls.py:47
+#: urls.py:52
 msgid "Suppliers"
 msgstr "Προμηθευτές"
 
