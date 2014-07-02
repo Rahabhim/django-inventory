@@ -451,7 +451,16 @@ class CJFilter_dept_has_assets(CJFilter_Boolean):
     def _post_fn(self, fname, results, qset):
         from company.models import Department
         # use Department.objects again, because qset is already sliced
-        depts_with = set(Department.objects.filter(id__in=qset). \
+        all_ids = qset.values_list('id', flat=True)
+        # Django is smart enough to keep `all_ids` decorated with the
+        # original query, so that filter(id__in=all_ids) will be
+        # implemented using a nested sub-query.
+        #
+        # But MySQL isn't.
+        # http://dev.mysql.com/doc/refman/5.5/en/subquery-restrictions.html
+        # A nested sub-query, in MySQL, cannot have LIMIT. So, we need
+        # to force Django to use a plain list of IDs
+        depts_with = set(Department.objects.filter(id__in=list(all_ids)). \
                     filter(location__item__isnull=False).distinct()\
                     .values_list('id', flat=True))
 
