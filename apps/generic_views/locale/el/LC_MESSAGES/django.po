@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-02 16:52+0300\n"
+"POT-Creation-Date: 2014-07-02 16:56+0300\n"
 "PO-Revision-Date: 2014-06-08 11:34+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -54,21 +54,21 @@ msgstr "Γίνεται ήδη επιλογή εξοπλισμού."
 msgid "The cart is not open."
 msgstr "Δεν βρίσκεστε σε κατάσταση επιλογής εξοπλισμού."
 
-#: views.py:856
+#: views.py:855
 #, python-format
 msgid "Item %s could not be found."
 msgstr "Δεν βρίσκεται ο εξοπλισμός %s."
 
-#: views.py:867
+#: views.py:866
 msgid "Could not alter item"
 msgstr "Δεν γίνεται να τροποποιηθεί το αντικείμενο"
 
-#: views.py:875
+#: views.py:874
 #, python-format
 msgid "%(item)s added to %(cart)s"
 msgstr "%(item)s προστέθηκε στη μετακίνηση %(cart)s"
 
-#: views.py:881
+#: views.py:880
 #, python-format
 msgid "%(item)s removed from %(cart)s"
 msgstr "%(item)s αφαιρέθηκε από τη μετακίνηση %(cart)s"

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-25 17:40+0300\n"
-"PO-Revision-Date: 2014-05-25 18:01+0300\n"
+"POT-Creation-Date: 2014-07-02 16:57+0300\n"
+"PO-Revision-Date: 2014-07-02 17:00+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -45,7 +45,7 @@ msgstr "αποθηκευμένη αναφορά"
 msgid "saved reports"
 msgstr "αποθηκευμένες αναφορές"
 
-#: urls.py:8 templates/reports_app.html:287
+#: urls.py:8 templates/reports_app.html:362
 msgid "Title"
 msgstr "Τίτλος"
 
@@ -61,41 +61,103 @@ msgstr "Μοντέλο Αναφοράς"
 msgid "list of saved reports"
 msgstr "λίστα αποθηκευμένων αναφορών"
 
-#: views.py:318
-msgid "Is set"
-msgstr "Έχει τιμή"
+#: views.py:352
+msgid "Non-zero"
+msgstr "Με τιμή"
 
-#: views.py:436 views.py:439 views.py:445 views.py:450 views.py:453
-#: views.py:458 views.py:466 views.py:468
+#: views.py:621 views.py:624 views.py:631 views.py:636 views.py:639
+#: views.py:644 views.py:661 views.py:663 views.py:672 views.py:674
+#: views.py:686 views.py:718
 msgid "name"
 msgstr "όνομα"
 
-#: views.py:437
+#: views.py:622
 msgid "code"
 msgstr "κωδικός"
 
-#: views.py:441
+#: views.py:626
+#, fuzzy
+msgid "has assets"
+msgstr "εξοπλισμός"
+
+#: views.py:627
 msgid "Nom Name"
 msgstr "Νομαρχία"
 
-#: views.py:442
+#: views.py:628
 msgid "OTA Name"
 msgstr "ΟΤΑ"
 
-#: views.py:444
-#, fuzzy
+#: views.py:630
 msgid "parent department"
 msgstr "Προϊστάμενο τμήμα"
 
-#: views.py:475 views.py:482
+#: views.py:650
+msgid "first name"
+msgstr "Μικρό όνομα"
+
+#: views.py:651
+msgid "last name"
+msgstr "Επώνυμο"
+
+#: views.py:652
+#, fuzzy
+msgid "user name"
+msgstr "όνομα"
+
+#: views.py:653
+msgid "email"
+msgstr "email"
+
+#: views.py:666
+msgid "approved"
+msgstr "Εγκεκριμένο"
+
+#: views.py:682
+msgid "user defined id"
+msgstr "Αρ. Τιμολογίου/εντολής"
+
+#: views.py:683 views.py:723
+msgid "created by"
+msgstr "Δημιουργήθηκε από"
+
+#: views.py:684 views.py:724
+msgid "validated by"
+msgstr "Επικύρωση από"
+
+#: views.py:687
+msgid "VAT number"
+msgstr "ΑΦΜ"
+
+#: views.py:690
+msgid "issue date"
+msgstr "Ημερομηνία έκδοσης"
+
+#: views.py:691 views.py:722
+msgid "state"
+msgstr "κατάσταση"
+
+#: views.py:697 views.py:704
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: views.py:487
+#: views.py:709
 msgid "containing"
 msgstr "να περιέχει"
 
-#: views.py:717
+#: views.py:716
+msgid "inventories"
+msgstr "Απογραφές"
+
+#: views.py:720
+msgid "date performed"
+msgstr "ημερομηνία εκτέλεσης"
+
+#: views.py:721
+msgid "date validated"
+msgstr "ημερομηνία επικύρωσης"
+
+#: views.py:955
 msgid "Report deleted"
 msgstr "Η αναφορά διαγράφηκε"
 
@@ -107,7 +169,7 @@ msgstr "Ενέργειες"
 msgid "Load"
 msgstr "Φόρτωση"
 
-#: templates/reports_app.html:25 templates/reports_app.html.py:296
+#: templates/reports_app.html:25 templates/reports_app.html.py:371
 msgid "Save"
 msgstr "Αποθήκευση"
 
@@ -115,7 +177,7 @@ msgstr "Αποθήκευση"
 msgid "Save copy"
 msgstr "Αποθήκευση αντιγράφου"
 
-#: templates/reports_app.html:29 templates/reports_app.html.py:312
+#: templates/reports_app.html:29 templates/reports_app.html.py:387
 msgid "Delete"
 msgstr "Διαγραφή"
 
@@ -171,100 +233,146 @@ msgstr "Σύρτε εδώ για να δημιουργηθεί ομάδα..."
 msgid "detailed:"
 msgstr "λεπτομέρειες:"
 
-#: templates/reports_app.html:95
+#: templates/reports_app.html:98
 msgid "Drag any field here to hide/ungroup"
 msgstr "Σύρτε εδώ για να κρύψετε/αποομαδοποιήσετε ένα πεδίο"
 
-#: templates/reports_app.html:104
+#: templates/reports_app.html:107
 msgid "Field:"
 msgstr "Πεδίο:"
 
-#: templates/reports_app.html:108 templates/reports_app.html.py:109
+#: templates/reports_app.html:111 templates/reports_app.html.py:112
 msgid "Hidden"
 msgstr "Κρυμμένο"
 
-#: templates/reports_app.html:110
+#: templates/reports_app.html:113
 msgid "Unhide"
 msgstr "Επανεμφάνιση"
 
-#: templates/reports_app.html:118
+#: templates/reports_app.html:121
 msgid "Display:"
 msgstr "Εμφάνιση:"
 
-#: templates/reports_app.html:125
+#: templates/reports_app.html:128
 msgid "Additional fields:"
 msgstr "Επιπλέον πεδία:"
 
-#: templates/reports_app.html:138
+#: templates/reports_app.html:141
 msgid "Preview"
 msgstr "Προεπισκόπηση"
 
-#: templates/reports_app.html:139
+#: templates/reports_app.html:142
 msgid "Results"
 msgstr "Αποτελέσματα"
 
-#: templates/reports_app.html:147
+#: templates/reports_app.html:149
 msgid "Please wait, calculating preview..."
 msgstr "Παρακαλώ περιμένετε για να ετοιμαστεί η προεπισκόπηση..."
 
-#: templates/reports_app.html:151
+#: templates/reports_app.html:153
 msgid "Number of results:"
 msgstr "Αρ. Αποτελεσμάτων:"
 
-#: templates/reports_app.html:159
+#: templates/reports_app.html:161 templates/reports_app.html.py:162
 msgid "Full results"
 msgstr "Πλήρη Αποτελέσματα"
 
-#: templates/reports_app.html:201
+#: templates/reports_app.html:164
+msgid " You can get the results in the following formats (in a new window) "
+msgstr "Μπορείτε να πάρετε τα αποτελέσματα στις εξής μορφές (σε νέο παράθυρο)"
+
+#: templates/reports_app.html:216
 msgid "Empty"
 msgstr "χωρίς"
 
-#: templates/reports_app.html:202
+#: templates/reports_app.html:217
 msgid "Set"
 msgstr "να έχει"
 
-#: templates/reports_app.html:214
+#: templates/reports_app.html:224
+msgid "True"
+msgstr "Αληθές"
+
+#: templates/reports_app.html:225
+msgid "False"
+msgstr "Ψευδές"
+
+#: templates/reports_app.html:232
+msgid "Has"
+msgstr "Έχει"
+
+#: templates/reports_app.html:233
+msgid "Doesn't have"
+msgstr "Δεν έχει"
+
+#: templates/reports_app.html:245
+msgid "Between"
+msgstr "Από-εως"
+
+#: templates/reports_app.html:261
 msgid "(none)"
 msgstr "(κανένα)"
 
-#: templates/reports_app.html:220
+#: templates/reports_app.html:267
 msgid "containing:"
 msgstr "να περιέχει:"
 
-#: templates/reports_app.html:221
+#: templates/reports_app.html:268
 msgid "Remove"
 msgstr "Αφαίρεση"
 
-#: templates/reports_app.html:225
+#: templates/reports_app.html:272
 msgid "Add more..."
 msgstr "Περισσότερα..."
 
-#: templates/reports_app.html:266
+#: templates/reports_app.html:305
+msgid "Count"
+msgstr "πλήθος"
+
+#: templates/reports_app.html:341
 msgid "Load saved report"
 msgstr "Φόρτωση αποθηκευμένης αναφοράς"
 
-#: templates/reports_app.html:269
+#: templates/reports_app.html:344
 msgid "Select a report to load"
 msgstr "Επιλέξτε μία αναφορά για να φορτωθεί"
 
-#: templates/reports_app.html:277 templates/reports_app.html.py:297
-#: templates/reports_app.html:313
+#: templates/reports_app.html:352 templates/reports_app.html.py:372
+#: templates/reports_app.html:388
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: templates/reports_app.html:284
+#: templates/reports_app.html:359
 msgid "Save report"
 msgstr "Αποθήκευση αναφοράς"
 
-#: templates/reports_app.html:290
+#: templates/reports_app.html:365
 msgid "Public"
 msgstr "Δημόσια"
 
-#: templates/reports_app.html:304
+#: templates/reports_app.html:379
 msgid "Delete report"
 msgstr "Διαγραφή Αναφοράς"
 
-#: templates/reports_app.html:308
+#: templates/reports_app.html:383
 msgid "Do you really want to delete this report?"
 msgstr "Επιθυμείτε πραγματικά τη διαγραφή αυτής της αναφοράς;"
 
+#: templates/reports_app.html:399
+msgid "true"
+msgstr "αληθές"
+
+#: templates/reports_app.html:399
+msgid "false"
+msgstr "ψευδές"
+
+#: templates/reports_app.html:400
+msgid "has"
+msgstr "έχει"
+
+#: templates/reports_app.html:400
+msgid "doesn't have"
+msgstr "δεν έχει"
+
+#~ msgid "Is set"
+#~ msgstr "Έχει τιμή"

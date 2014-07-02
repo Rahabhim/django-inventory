@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-02 16:52+0300\n"
+"POT-Creation-Date: 2014-07-02 16:56+0300\n"
 "PO-Revision-Date: 2013-06-03 09:52+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -65,7 +65,7 @@ msgstr "λίστα συνθέσεων"
 msgid "state"
 msgstr "κατάσταση"
 
-#: __init__.py:53 models.py:89 models.py:170
+#: __init__.py:53 models.py:88 models.py:169
 msgid "assets"
 msgstr "εξοπλισμός"
 
@@ -115,7 +115,7 @@ msgstr "όνομα"
 msgid "exclusive"
 msgstr "αποκλειστική"
 
-#: models.py:21 models.py:169 urls.py:60 urls.py:63
+#: models.py:21 models.py:168 urls.py:60 urls.py:63
 msgid "states"
 msgstr "καταστάσεις"
 
@@ -192,19 +192,19 @@ msgstr "Σύμβαση Παραλαβής"
 msgid "The procurement at which this item was initially obtained"
 msgstr "Η σύμβαση προμήθειας με την οποία παρελήφθη αρχικά ο εξοπλισμός."
 
-#: models.py:88 urls.py:24 urls.py:30 urls.py:42
+#: models.py:87 urls.py:24 urls.py:30 urls.py:42
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:156
+#: models.py:155
 msgid "bundled items"
 msgstr "περιεχόμενα εξαρτήματα"
 
-#: models.py:161
+#: models.py:160
 msgid "item group"
 msgstr "σύνθεση"
 
-#: models.py:162 models.py:171 urls.py:47
+#: models.py:161 models.py:170 urls.py:47
 msgid "item groups"
 msgstr "συνθέσεις"
 
