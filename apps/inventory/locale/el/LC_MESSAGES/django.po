@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-08 10:49+0300\n"
-"PO-Revision-Date: 2014-04-09 11:49+0300\n"
+"POT-Creation-Date: 2014-07-02 16:52+0300\n"
+"PO-Revision-Date: 2014-07-02 16:54+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -73,7 +73,7 @@ msgstr "Εκκρεμείς Απογραφές"
 msgid "inventories"
 msgstr "Απογραφές"
 
-#: forms.py:24 forms.py:55 models.py:77 models.py:213
+#: forms.py:24 forms.py:64 models.py:77 models.py:213
 msgid "created by"
 msgstr "δημιουργήθηκε από"
 
@@ -85,7 +85,15 @@ msgstr "Μονάδα"
 msgid "date performed"
 msgstr "Ημερομηνία εκτέλεσης"
 
-#: forms.py:56 models.py:79 models.py:214
+#: forms.py:53
+msgid ""
+"There are no assets in any of this Department locations, cannot make an "
+"inventory"
+msgstr ""
+"Δεν μπορείτε να καλέσετε την ενέργεια της απογραφής εφόσον δεν έχετε κάνει"
+"εισαγωγή-παραλαβή του εξοπλισμού σας"
+
+#: forms.py:65 models.py:79 models.py:214
 msgid "validated by"
 msgstr "επικύρωση από"
 
