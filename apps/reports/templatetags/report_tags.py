@@ -104,7 +104,7 @@ class GroupNode(Node):
     def _get_rows_filter(self, group_by, cur_row):
         sample = {}
         for f in group_by:
-            sample[f] = cur_row[f]
+            sample[f] = cur_row.get(f, False)
 
         def rfilter(row):
             for k, v in sample.items():
