@@ -752,6 +752,24 @@ inventories_filter = CJFilter_Model('inventory.InventoryGroup', title=_('invento
     famfam_icon='package'
     )
 
+movements_filter = CJFilter_Model('movements.Movement', title=_("movements"),
+    fields={
+        'name': CJFilter_String(title=_('name'), sequence=1),
+        'date_act': CJFilter_date(title=_("date performed")),
+        'date_val': CJFilter_date(title=_("date validated")),
+        'state': CJFilter_choices('movements.Movement', 'state', title=_('state'), sequence=4),
+        'stype': CJFilter_choices('movements.Movement', 'stype', title=_('type'), sequence=5),
+        'create_user': users_filter.copy(title=_("created by"), staff_only=True, sequence=20),
+        'validate_user': users_filter.copy(title=_("validated by"), staff_only=True, sequence=21),
+        'location_src': location_filter.copy(title=_('source location'), sequence=2),
+        'location_dest': location_filter.copy(title=_('destination location'), sequence=3),
+        'items': CJFilter_contains(item_templ_c_filter,
+                            title=_('items'),
+                            sequence=25),
+    },
+    condition=user_is_staff,
+    famfam_icon='computer_go',
+    )
 # ---------------- Cache ---------------
 
 _reports_cache = {}
@@ -773,6 +791,7 @@ def _reports_init_cache():
             'location': location_filter,
             'purchase_order': purchaseorder_filter,
             'inventories': inventories_filter,
+            'movements': movements_filter,
             }
 
     _reports_cache['available_types'] = [ rt.to_main_report(k) for k, rt in _reports_cache['main_types'].items()]
