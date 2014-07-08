@@ -581,11 +581,26 @@ class CJFilter_contains(CJFilter):
         
             @param qset a QuerySet, whose .values() produced `results`
         """
-        ids = [v['id'] for v in results]
-        itemgroup = models.get_model('assets', 'ItemGroup') # FIXME make configurable
+        if getattr(self, 'alt_model', False):
+            qset = models.get_model(self.alt_model[0], self.alt_model[1]) \
+                    .objects.filter(pk__in=[v['id'] for v in results])
+        else:
+            qset2 = qset
         imap = {} # id=> value map
-        for ig in itemgroup.objects.filter(pk__in=ids).prefetch_related('items'):
-            cnts = [unicode(cnt) for cnt in ig.items.all()]
+        for ig in qset2.prefetch_related(self.name_suffix or fname):
+            qset3 = getattr(ig, self.name_suffix or fname)
+            cnts = [] # ordered
+            cnts_c = {} # counters
+            for cnt in qset3.all():
+                uc = unicode(cnt)
+                if uc in cnts_c:
+                    cnts_c[uc] = cnts_c[uc] + 1
+                else:
+                    cnts_c[uc] = 1
+                    cnts.append(uc)
+            for i, uc in enumerate(cnts):
+                if cnts_c[uc] > 1:
+                    cnts[i] = uc + (' x%d' % cnts_c[uc])
             imap[ig.id] = cnts
         for row in results:
             row[fname] = imap.get(row['id'], None)
@@ -715,6 +730,7 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
             'location': location_filter,
             'item_template': product_filter,
             'itemgroup': CJFilter_contains(item_templ_c_filter,
+                            alt_model=('assets', 'ItemGroup'),
                             title=_('containing'), name_suffix='items',
                             sequence=25),
             'src_contract': contract_filter,
