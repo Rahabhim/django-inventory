@@ -26,6 +26,24 @@ class Command(BaseCommand):
                 help="Delete excess items. DANGEROUS! Will only work if explicit list of PO IDs is given as arguments"),
         )
 
+    def _print_detail(self, po, excess_items, mapped_items=False, do_items=True):
+        for poi in po.items.all():
+            print "    %s x%d" %(poi, poi.qty)
+            for boi in poi.bundled_items.all():
+                print "        %s x%d" % (boi, boi.qty)
+        if excess_items:
+            print "Excess items:"
+            for ei in excess_items:
+                print "    %s #%d" % (ei, ei.id)
+
+        if mapped_items:
+            print "Missing items:"
+            for tdict in mapped_items.values():
+                for it_id, objs in tdict.items():
+                    for o in objs:
+                        if not o.item_id:
+                            print "    - %s     %s" % (it_id, o.serial)
+
     def handle(self, *args, **options):
         log = logging.getLogger('apps.movements.commands')
 
@@ -41,7 +59,11 @@ class Command(BaseCommand):
         if options.get('limit'):
             pos = pos[:int(options['limit'])]
 
-        show_detail = options['detail']
+        if options['detail']:
+            print_detail = self._print_detail
+        else:
+            print_detail = lambda *a, **k: None
+
         for po in pos:
             log.info("Processing purchase order: %d", po.id)
             try:
@@ -64,35 +86,19 @@ class Command(BaseCommand):
                     if num_excess and move.checkpoint_dest is not None:
                         log.error("PO #%d has excess items, but move #%d is validated in %s",
                                 po.id, move.id, move.checkpoint_dest)
+                        print_detail(po, excess_items)
                         excess_items = None
                         num_excess = 0
                         break
                 if num_excess and po.map_has_left(mapped_items):
                     log.warning("PO #%d has excess items, but is also missing some, not wise to modify", po.id)
-                    if show_detail:
-                        print "Excess items:"
-                        for ei in excess_items:
-                            print u"    + %d %s %s #%d" % (ei.item_template.id, ei, ei.serial_number or '', ei.id)
-                        print "Missing items:"
-                        for tdict in mapped_items.values():
-                            for it_id, objs in tdict.items():
-                                for o in objs:
-                                    if not o.item_id:
-                                        print "    - %s     %s" % (it_id, o.serial)
+                    print_detail(po, excess_items, mapped_items)
                     excess_items = None
                     continue
 
                 if num_excess:
                     print "PO #%d %s has %d excess items" % (po.id, po, num_excess)
-                    if show_detail:
-                        for poi in po.items.all():
-                            print "    %s x%d" %(poi, poi.qty)
-                            for boi in poi.bundled_items.all():
-                                print "        %s x%d" % (boi, boi.qty)
-                        if excess_items:
-                            print "Excess items:"
-                            for ei in excess_items:
-                                print "    %s #%d" % (ei, ei.id)
+                    print_detail(po, excess_items)
                     if do_delete and excess_items:
                         for it in excess_items:
                             it.delete()
