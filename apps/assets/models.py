@@ -103,9 +103,9 @@ class Item(models.Model):
         states = ', '.join([itemstate.state.name for itemstate in ItemState.objects.states_for_item(self)])
 
         if self.property_number:
-            return "#%s, %s %s" % (self.property_number, self.item_template, states and "(%s)" % states)
+            return u'#%s, %s %s' % (self.property_number, unicode(self.item_template), states and "(%s)" % states)
         else:
-            return "%s %s" % (self.item_template, states and "(%s)" % states)
+            return u'%s %s' % (unicode(self.item_template), states and "(%s)" % states)
 
     def states(self):
         return [State.objects.get(pk=id) for id in self.itemstate_set.all().values_list('state', flat=True)]
