@@ -429,6 +429,11 @@ input.checkbox {
     width: 99%; /* or auto? */
 }
 
+form.form .filter_form {
+    overflow: inherit;
+    padding: 10px 0 !important;
+}
+
 .form .filter_form > div {
     display: inline-block;
     min-width: 15em;
@@ -602,6 +607,10 @@ ul.list li .left  {
   min-width: 15%;
   color:inherit;
   font-weight:bold;
+}
+
+#bl_list_form table thead tr {
+    border-bottom: 3px solid #dddddd;
 }
 
 .columns-detail td, .table td {
