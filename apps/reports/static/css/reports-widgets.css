@@ -924,7 +924,7 @@ section.search div.add-criterion {
   cursor: not-allowed;
   background-color: transparent;
   background-image: none;
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  /*filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);*/
 }
 
 .popover {
@@ -1149,6 +1149,14 @@ body.modal-open,
   border-bottom: 1px solid #e5e5e5;
 }
 
+.modal-header a:link, a:visited {
+    color: rgb(0, 127, 187);
+    text-decoration: none;
+}
+.modal-header a, a:hover, a:active {
+    color: #00A2EE;
+}
+
 .modal-header .close {
   margin-top: -2px;
 }
@@ -1257,16 +1265,40 @@ body.modal-open,
 }
 
 .preview-results table {
-    border: 1px solid black;
+    border: 1px solid black; /*-*/
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px #999999;
+}
+
+
+.preview-results table tr:nth-child(odd) {
+    background-color: #e0e0e0;
+}
+
+.preview-results table tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.preview-results table tr:nth-child(1) {
+    background-color: #ffffff;
 }
 
 .preview-results table th {
-    border-bottom: 1px solid black;
+    border-bottom: 3px solid #ddd;
+    font-size: 1.1em;
+    padding: 5px;
     text-transform: capitalize;
 }
 
 .preview-results table td{
-    border-right : 1px solid #808080;
+    border-right: 2px solid #ddd;
+    padding: 5px;
+}
+
+.preview-results td:last-child {
+    border-right: medium none;
 }
 
 .tab-content {
