@@ -2,6 +2,8 @@ Django Inventory
 =============
 
 Django based inventory and asset control.
+Heavily modified and adapted to Hellenic School network http://www.sch.gr
+
  
 ![screenshot](http://img814.imageshack.us/img814/5088/screenshot1fz.png)
 ![screenshot2](http://img443.imageshack.us/img443/1486/screenshot2wu.png)
@@ -11,16 +13,15 @@ Features
 ---
 
 * Object oriented approach to asset and inventory management.
-* CSV import utility.
-* Per asset or per item type photos and information.
-* Match suppliers to item types.
-* Site wide search capability.
-* User defined states (broken, in repairs, etc) for assets.
+* Double-ledger system, full traceability of assets
+* Department/Location structure of storage
+* Procurement wizard, guide the user to enter Purchase Orders
+* LDAP, CAS2 integration
+* Locking inventories, which prohibit modifications on earlier dates
 * An item can be defined as a supply to another item.
 * Assign assets to one or more individuals.
-* User photos.
-* Group assets, inventories or user per locations.
-* Purchase request and purchase orders.
+* Online documentation system for any screen/entity
+* Flexible reporting system, with Cube-like functionality
 
 
 Requirements
@@ -46,4 +47,5 @@ Author
 ------
 
 Roberto Rosario - [Twitter](http://twitter.com/#siloraptor) [E-mail](roberto.rosario.gonzalez at gmail)
+Panos Christeas - [E-Mail](xrg at linux.gr)
 
