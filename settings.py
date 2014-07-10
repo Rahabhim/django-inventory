@@ -47,6 +47,9 @@ LOGGING = {
             'handlers': ['console', ],
             'level': 'INFO',
             },
+        'command': {
+            'handlers': ['console', ],
+            },
         }
     }
 
