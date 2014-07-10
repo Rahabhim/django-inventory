@@ -392,7 +392,7 @@ class PurchaseOrder(models.Model):
                             { 'dept': unicode(department), 'loc': unicode(ltmpl) }
                     messages.error(request, msg, fail_silently=True)
                     return None
-            movement, c = Movement.objects.get_or_create(stype='in',
+            movement, c = Movement.objects.get_or_create(stype='in', state='draft',
                     location_src=lsrcs[0], location_dest=ldests[0],
                     purchase_order=self,
                     defaults=dict(create_user=request.user,date_act=self.issue_date, ))
@@ -446,6 +446,7 @@ class PurchaseOrder(models.Model):
                         else:
                             new_item = Item(item_template_id=tmpl_id)
                         new_item.save()
+                        assert move.state == 'draft', move
                         move.items.add(new_item)
                         o.item_id = new_item.id
 
