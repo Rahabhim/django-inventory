@@ -149,8 +149,8 @@
                     <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
                     <div ng-if="results" class="preview-results">
                         <div ng-controller="previewGroupedCtl">
-                            <div ng-include="'parts/preview-results.html'">???</div>
                             <div class="count">{% trans "Number of results:" %} [[ results[0]._count ]]</div>
+                            <div ng-include="'parts/preview-results.html'">???</div>
                         </div>
                     </div>
                     <h4 ng-if="result_alert">Error [[ result_status ]] </h4>
