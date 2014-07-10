@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-07-02 16:57+0300\n"
-"PO-Revision-Date: 2014-07-02 17:00+0300\n"
+"PO-Revision-Date: 2014-07-09 17:57+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -59,7 +59,7 @@ msgstr "Μοντέλο Αναφοράς"
 
 #: urls.py:20
 msgid "list of saved reports"
-msgstr "λίστα αποθηκευμένων αναφορών"
+msgstr "Λίστα αποθηκευμένων αναφορών"
 
 #: views.py:352
 msgid "Non-zero"
