@@ -582,7 +582,7 @@ class CJFilter_contains(CJFilter):
             @param qset a QuerySet, whose .values() produced `results`
         """
         if getattr(self, 'alt_model', False):
-            qset = models.get_model(self.alt_model[0], self.alt_model[1]) \
+            qset2 = models.get_model(self.alt_model[0], self.alt_model[1]) \
                     .objects.filter(pk__in=[v['id'] for v in results])
         else:
             qset2 = qset
