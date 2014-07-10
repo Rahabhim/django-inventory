@@ -69,7 +69,7 @@
         <td><para style="Table_title">{% trans 'Category' %}</para></td>
       </tr>
     {% for part in object.itemgroup.items.all %}
-        <tr><td><para style="cell">{{ part.item_template.description}}</para></td>
+        <tr><td><para style="cell">{{ part.item_template}}</para></td>
             <td><para style="cell">{{ part.item_template.manufacturer }}</para></td>
             <td><para style="cell">{{ part.item_template.category.name }}</para></td>
         </tr>

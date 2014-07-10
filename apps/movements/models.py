@@ -392,7 +392,7 @@ class PurchaseOrder(models.Model):
                             { 'dept': unicode(department), 'loc': unicode(ltmpl) }
                     messages.error(request, msg, fail_silently=True)
                     return None
-            movement, c = Movement.objects.get_or_create(stype='in',
+            movement, c = Movement.objects.get_or_create(stype='in', state='draft',
                     location_src=lsrcs[0], location_dest=ldests[0],
                     purchase_order=self,
                     defaults=dict(create_user=request.user,date_act=self.issue_date, ))
@@ -446,6 +446,7 @@ class PurchaseOrder(models.Model):
                         else:
                             new_item = Item(item_template_id=tmpl_id)
                         new_item.save()
+                        assert move.state == 'draft', move
                         move.items.add(new_item)
                         o.item_id = new_item.id
 
@@ -942,9 +943,6 @@ class Movement(models.Model):
                           'template': unicode(self.location_dest.template or _('generic')),
                           'allow_tmpl': unicode(item.item_template.category.chained_location) })
 
-        if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
-            all_items.update(src_contract=self.purchase_order.procurement)
-
         return True
 
     def do_close(self, val_user, val_date=None):
@@ -962,6 +960,9 @@ class Movement(models.Model):
         all_items = self.items.all()
         # everything seems OK by now...
         all_items.update(location=self.location_dest)
+        if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
+            all_items.update(src_contract=self.purchase_order.procurement)
+
         if self.stype == 'in':
             for item in all_items:
                 if not item.property_number:
