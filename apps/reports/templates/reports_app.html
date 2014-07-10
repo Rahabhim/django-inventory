@@ -395,28 +395,25 @@ if (typeof String.prototype.startsWith != 'function') {
     return this.slice(0, str.length) == str;
   };
 }
-var user_super = {% if request.user.is_staff %}true {% else %}false{%endif %};
-var bool_words = { 'true': "{% trans 'true' %}", 'false': "{% trans 'false' %}" };
-var bool_words_has = { 'true': "{% trans 'has' %}", 'false': "{% trans "doesn't have" %}" };
 
     var reportsApp = angular.module('reportsApp', ['ui.bootstrap', 'f3.movable', 'f3.draggable'])
         .config(['$interpolateProvider', '$httpProvider', '$locationProvider',
-                'datepickerConfig', 'datepickerPopupConfig',
+                'datepickerConfig', 'datepickerPopupConfig', 'appCSRFtoken',
           function($interpolateProvider, $httpProvider, $locationProvider,
-                    datepickerConfig, datepickerPopupConfig) {
+                    datepickerConfig, datepickerPopupConfig, appCSRFtoken) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
-            $httpProvider.defaults.headers.post['X-CSRFToken'] = "{{ csrf_token }}";
+            $httpProvider.defaults.headers.post['X-CSRFToken'] = appCSRFtoken;
             $locationProvider.html5Mode(false);
 
             datepickerConfig.showWeeks = false;
             datepickerPopupConfig.showButtonBar = false;
         }]);
-    reportsApp.controller('mainCtrl', ['$log', '$scope', '$location', '$http', '$modal', '$filter',
-        function($log, $scope, $location, $http, $modal, $filter) {
+    reportsApp.controller('mainCtrl', ['$log', '$scope', '$location', '$http', '$modal', '$filter', 'appSuperUser', 'appReportTypes',
+        function($log, $scope, $location, $http, $modal, $filter, appSuperUser, appReportTypes) {
             $scope.reportType = false;
             $scope.reportGroups = [];
-            $scope.available_types = {{ available_types }};
+            $scope.available_types = appReportTypes;
             $scope.tabs = { 'type': true, 'params': false, 'format': false, 'preview': false, 'results': false };
             $scope.selectType = function(t) {
                     if (! t.id)
@@ -648,7 +645,7 @@ var bool_words_has = { 'true': "{% trans 'has' %}", 'false': "{% trans "doesn't 
 
                                 setFieldData(data.data.fields, $scope.reportType.fields);
                                 $scope.$root.needs_save = false;
-                                $scope.$root.can_save = user_super || !data.public;
+                                $scope.$root.can_save = appSuperUser || !data.public;
                                 $scope.$root.can_delete = true;
                                 })
                             .error(function(data, status, headers) {
@@ -780,8 +777,8 @@ var bool_words_has = { 'true': "{% trans 'has' %}", 'false': "{% trans "doesn't 
             $scope.type_name = '?';
         }]);
 
-    reportsApp.controller('paramsCtrl', ['$log', '$scope','$http',
-        function($log, $scope, $http) {
+    reportsApp.controller('paramsCtrl', ['$log', '$scope','$http', 'appWords',
+        function($log, $scope, $http, appWords) {
             $log.debug("paramsCtrl:", $scope);
             $scope.field = false;
             $scope.$parent.$watch('reportType', function(rt){
@@ -800,11 +797,11 @@ var bool_words_has = { 'true': "{% trans 'has' %}", 'false': "{% trans "doesn't 
                         },
                     'boolean': function(field) {
                         if (field.data)
-                            return bool_words[field.data];
+                            return appWords[field.data];
                         },
                     'has_sth': function(field) {
                         if (field.data)
-                            return bool_words_has[field.data];
+                            return appWords[ 'has_' + field.data];
                         },
                     'date': function(field) {
                         if (field.data){
@@ -1463,6 +1460,21 @@ var bool_words_has = { 'true': "{% trans 'has' %}", 'false': "{% trans "doesn't 
             };
         }]);
 
+
+reportsApp
+    .constant('appCSRFtoken', "{{ csrf_token }}")
+    .constant('appReportTypes',  {{ available_types }})
+    .constant('appWords', { 
+                    'true': "{% trans 'true' %}",
+                    'false': "{% trans 'false' %}",
+                    'has_true': "{% trans 'has' %}",
+                    'has_false': "{% trans "doesn't have" %}"
+        })
+{% if request.user.is_staff %}
+    .constant('appSuperUser', true)
+{% else %}
+    .constant('appSuperUser', false)
+{% endif %};
 
 </script>
 {% endblock %}
