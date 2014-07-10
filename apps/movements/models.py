@@ -942,9 +942,6 @@ class Movement(models.Model):
                           'template': unicode(self.location_dest.template or _('generic')),
                           'allow_tmpl': unicode(item.item_template.category.chained_location) })
 
-        if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
-            all_items.update(src_contract=self.purchase_order.procurement)
-
         return True
 
     def do_close(self, val_user, val_date=None):
@@ -962,6 +959,9 @@ class Movement(models.Model):
         all_items = self.items.all()
         # everything seems OK by now...
         all_items.update(location=self.location_dest)
+        if self.stype == 'in' and self.purchase_order_id and self.purchase_order.procurement_id:
+            all_items.update(src_contract=self.purchase_order.procurement)
+
         if self.stype == 'in':
             for item in all_items:
                 if not item.property_number:
