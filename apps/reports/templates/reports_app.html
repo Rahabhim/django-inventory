@@ -69,7 +69,12 @@
                     <table id="fmt-form-table">
                         <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length ]]">Columns...</tr>
                         <tr ng-repeat="fname in reportGroups" ng-init="field=fieldByPath(fname)">
-                            <th>{% trans 'Group' %} [[ $index + 1 ]]</th>
+                            <th>{% trans 'Group' %} [[ $index + 1 ]] 
+                                <select ng-model="field.fmt.group_mode">
+                                    <option value="table">{%trans 'Table' %}</option>
+                                    <option value="row">{% trans 'Row' %}</option>
+                                </select>
+                            </th>
                             <td><div ng-draggable="true" ng-drag-model="field"
                                 ng-click-send="field" ng-click-align="field-fmt-palette"
                                 ng-droppable="true" ng-ondrop="addToGroup(field, dragItem)"
@@ -304,7 +309,23 @@
 </script>
 
 <script type="text/ng-template" id="parts/preview-results.html">
-    <div ng-if="cur_results.group_by">
+     <div ng-if="group_mode == 'row'">
+        <div class="group" ng-repeat="cur_group in cur_results.values|filter:rowsFilter">
+            <h4><span ng-repeat="fc in groupped_fields[group_level-1]|seqSort">
+                    <span ng-if="fc.name && fc.name != '-'">[[ fc.name ]]:</span>
+                    [[ cur_group[fc.id] ]]
+                </span>
+                ([[ cur_group._count ]])</h4>
+            <div ng-controller="previewGroupedCtl">
+                <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
+            </div>
+        </div>
+        <div class="group">
+            <!-- In preview, there may be more groups, results -->
+            <h4>... </h4>
+        </div>
+    </div>
+    <div ng-if="group_mode == 'table'">
         <table class="grp_results">
             <tr><th ng-repeat="fc in groupped_fields[group_level-1]|seqSort">[[ fc.name ]]</th><th>{%trans 'Count' %}</th>
             </tr>
@@ -1368,6 +1389,16 @@ if (typeof String.prototype.startsWith != 'function') {
             // Must be kept minimal, we will have many instances of this ctrl.
             $scope.group_level = $scope.$parent.group_level + 1;
             $scope.cur_results = $scope.$parent.results[$scope.group_level];
+            if ($scope.cur_results && $scope.cur_results.group_by){
+                var field = $scope.fieldByPath($scope.reportGroups[$scope.$parent.group_level]);
+                if (field)
+                    $scope.group_mode = field.fmt.group_mode || 'row';
+                else
+                    $scope.group_mode = 'table';
+            }
+            else
+                $scope.group_mode = false;
+
             if ($scope.$parent.cur_group){
                 var group_filter = {};
             
