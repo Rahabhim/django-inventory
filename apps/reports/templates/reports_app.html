@@ -350,11 +350,14 @@
                 <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
             </tr>
             <tr ng-repeat="row in cur_results.values|filter:rowsFilter">
-                <td ng-repeat="fc in field_cols">
-                    <span ng-if="fc.widget != 'contains'" ng-bind="row[fc.id]"></span>
-                    <ul ng-if="fc.widget == 'contains'">
+                <td ng-repeat="fc in field_cols" ng-switch="fc.widget">
+                    <ul ng-switch-when="contains">
                         <li ng-repeat="cnt in row[fc.id]">[[cnt]]</li>
                     </ul>
+                    <span ng-switch-when="date">[[ row[fc.id]|date:'MM/dd/yyyy']]</span>
+                    <span ng-switch-when="boolean">[[ row[fc.id]|fmtBool ]]</span>
+                    <span ng-switch-when="has_sth">[[ row[fc.id]|fmtHasSth ]]</span>
+                    <span ng-switch-default ng-bind="row[fc.id]"></span>
                 </td>
             </tr>
         </table>
@@ -1493,6 +1496,16 @@ if (typeof String.prototype.startsWith != 'function') {
         }
     }]);
 
+    reportsApp.filter('fmtBool', ['appWords', function(appWords) {
+        return function(value){
+            return appWords[value];
+        };
+    }]);
+    reportsApp.filter('fmtHasSth', ['appWords', function(appWords) {
+        return function(value){
+            return appWords['has_' + value];
+        };
+    }]);
     reportsApp.filter('date2iso', ['$filter', function($filter) {
         var dateFilter = $filter('date');
         return function(d) {
