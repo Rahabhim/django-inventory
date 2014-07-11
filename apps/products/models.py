@@ -88,6 +88,7 @@ class ProductAttributeValue(models.Model):
     atype = models.ForeignKey(ProductAttribute, verbose_name=_(u"attribute"), \
                     related_name="values", on_delete=models.PROTECT)
     value = models.CharField(max_length=32, verbose_name=_("value"))
+    value_num = models.FloatField(verbose_name=_("numeric value"), blank=True, null=True)
 
     def __unicode__(self):
         if self.atype.short_name:
