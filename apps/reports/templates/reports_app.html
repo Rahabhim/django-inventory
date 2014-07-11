@@ -112,6 +112,10 @@
                                 <div ng-show="field.fmt.hide">{% trans 'Hidden' %}
                                     <a ng-click="field.fmt.hide=false" title="{% trans 'Unhide' %}"><span class="famfam active famfam-eye"></span></a>
                                 </div>
+                                <div ng-show="!field.fmt.hide">
+                                    {%trans 'Title:' %}
+                                    <input type="text" ng-model="field.fmt.title">
+                                </div>
                                 {% if request.user.is_superuser %}
                                 [[ field.full_path ]]
                                 <div>Pos: <input type="number" style="width: 4em;" ng-model="field.fmt.sequence"></div>
@@ -568,9 +572,24 @@ if (typeof String.prototype.startsWith != 'function') {
                     }
                 return ret;
                 };
+            /** Initialize formatting struct for field
+
+                returns true if the struct was empty and had to be initialized
+            */
             $scope.setFieldFmt = function(field) {
-                if(!field.fmt)
-                    field.fmt = {sequence: field.sequence, order: false, hide: false};
+                if(!field.fmt){
+                    field.fmt = {
+                        title: field.name,
+                        sequence: field.sequence,
+                        order: false,
+                        hide: false
+                    };
+                    return true;
+                }
+                else if (field.fmt.title === undefined)
+                    field.fmt.title = field.name;
+                $log.debug("Field was ready:", field);
+                return false;
                 };
 
             var _getFieldData_one = function(field) {
@@ -1042,8 +1061,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 if (!$scope.reportType.fields)
                     return;
                 angular.forEach($scope.reportType.fields, function(field, key) {
-                        if (field.fmt === undefined) {
-                            $scope.setFieldFmt(field);
+                        if ($scope.setFieldFmt(field)) {
                             if (field.fields && field.fields['name'])
                                 field.fmt.display = 'name';
                         }
@@ -1127,8 +1145,7 @@ if (typeof String.prototype.startsWith != 'function') {
                     }
                     mfrom ++;
                 }
-                if (!new_field.fmt)
-                    $scope.setFieldFmt(new_field);
+                $scope.setFieldFmt(new_field);
                 new_field.fmt.sequence = m_orig;
             };
 
@@ -1138,8 +1155,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 if (!dragItem.full_path.startsWith(grp_field.full_path+'.'))
                     return false;
                 var rem_path = dragItem.full_path.slice(grp_field.full_path.length+1);
-                if (!grp_field.fmt)
-                    $scope.setFieldFmt(grp_field);
+                $scope.setFieldFmt(grp_field);
                 if (!grp_field.fmt.sub_fields)
                     grp_field.fmt.sub_fields = [];
 
@@ -1230,8 +1246,7 @@ if (typeof String.prototype.startsWith != 'function') {
                     }
                     else {
                         // not groupped, just hide the field
-                        if (!dragItem.fmt)
-                            $scope.setFieldFmt(dragItem);
+                        $scope.setFieldFmt(dragItem);
                         dragItem.fmt.hide = true;
                         }
                     recalcFmtTable();
@@ -1257,8 +1272,7 @@ if (typeof String.prototype.startsWith != 'function') {
                             if (!groupped_fields[i])
                                 groupped_fields[i] = [];
                             ggroup = groupped_fields[i];
-                            if (!field.fmt)
-                                $scope.setFieldFmt(field);
+                            $scope.setFieldFmt(field);
                             break;
                         }
                 }
@@ -1270,7 +1284,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         req_fields.push(disp);
                     if (ggroup && !field.fmt.hide)
                         ggroup.push({id: disp,
-                            name: field.name,
+                            name: field.fmt.title || field.name,
                             widget: field.widget,
                             sequence: field.fmt.sequence || field.sequence});
                 }
