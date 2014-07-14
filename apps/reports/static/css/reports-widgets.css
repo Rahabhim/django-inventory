@@ -1226,6 +1226,23 @@ body.modal-open,
 }
 
 /* not from bootstrap */
+.select-report-type .button-selection {
+    border: 2px blue;
+    margin: 4px;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    width: 20em;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    border-top-left-radius: 4px 4px;
+    border-top-right-radius: 4px 4px;
+    border-bottom-right-radius: 4px 4px;
+    border-bottom-left-radius: 4px 4px;
+}
 
 .params-form {
     margin-bottom: 2em;
