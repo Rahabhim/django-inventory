@@ -1031,7 +1031,7 @@ if (typeof String.prototype.startsWith != 'function') {
     reportsApp.controller('attribsCtrl', ['$log', '$scope', function($log, $scope) {
             $scope.cur_edit = -1;
             $scope.new_item = false;
-            if (!$scope.$parent.field.data[$scope.$parent.attr.aid])
+            if (!angular.isArray($scope.$parent.field.data[$scope.$parent.attr.aid]))
                     $scope.$parent.field.data[$scope.$parent.attr.aid] = [];
 
             $scope.$parent.$watchCollection('field.data[attr.aid]', function(adata) {
@@ -1058,7 +1058,7 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.remainingValues = function(data, index){
                 var ret = [];
                 angular.forEach($scope.attr.values, function(av){
-                    if (data){
+                    if (angular.isArray(data)){
                         var idx = data.indexOf(av[0]);
                         if ((idx >= 0) && (idx != index))
                             return;
