@@ -2,12 +2,13 @@
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseNotFound, HttpResponse, HttpResponseNotAllowed
 from django.core.urlresolvers import reverse
 from django.utils.functional import Promise
 from django.db import models
 from django.db.models.query import QuerySet
+from django.contrib import messages
 import json
 import datetime
 from django.utils.safestring import SafeString
@@ -972,6 +973,7 @@ def reports_back_save_view(request):
     report.owner = req_data['owner']
     report.rmodel = req_data['model']
     report.params = json.dumps(req_data['data'])
+    report.stage2 = json.dumps(req_data['stage2'])
     report.save()
     return HttpResponse(json.dumps({'id': report.id }), content_type='application/json')
 
@@ -1007,17 +1009,19 @@ def _pre_render_report(request):
     _reports_init_cache()
     if request.method == 'POST':
         report_data = json.loads(request.POST['data'])
-    #elif request.method == 'GET':
-        # Won't work, we need the algorithm of the JS part for domains, fields
-        #report = get_object_or_404(SavedReport.objects.by_request(request), \
-                        #pk=request.GET['id'])
+    elif request.method == 'GET':
+        # Instead of stage2, we need the pythonic algorithm of the JS part
+        # for domains, fields
+        report = get_object_or_404(SavedReport.objects.by_request(request), \
+                        pk=request.GET['id'])
 
-        #report_data = {'id': report.id, 'title': report.title, 'model': report.rmodel,
-            #'public': not bool(report.owner),
-            #'data': json.loads(report.params)}
+        if not report.stage2:
+            messages.error(request, _("This report has not been saved properly, no stage2 data"))
+            return {}
+        report_data = json.loads(report.stage2)
     else:
-        return HttpResponseNotAllowed(['POST']) # +GET ?
-    
+        return HttpResponseNotAllowed(['POST', 'GET'])
+
     report_model = report_data.pop('model')
     rt = _reports_cache['main_types'].get(report_model, False)
     if not rt:
