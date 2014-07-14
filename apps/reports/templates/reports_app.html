@@ -38,14 +38,15 @@
 <div id="ng-main-app">
     <div class="content" ng-controller="mainCtrl">
         <h1>{% trans 'Report builder' %}: [[ reportType.title || reportType.name ]]</h1>
-        
 
         <tabset>
             <tab heading="{% trans 'Report type' %}" active="tabs.type">
                 <h3>{% trans 'Please select one of the available report types:' %}</h3>
-                <div>
-                    <div class="button-selection" ng-repeat="t in available_types|seqSort" ng-click="selectType(t)">
-                        <span class="famfam active" ng-class="t.famfam"></span>[[ t.name ]]
+                <div class="select-report-type">
+                    <div ng-repeat="t in available_types|seqSort">
+                        <div class="button-selection" ng-class="{'selected': (t.id == reportType.id)}" ng-click="selectType(t)">
+                            <span class="famfam active" ng-class="t.famfam"></span>[[ t.name ]]
+                        </div>
                     </div>
                 </div>
             </tab>
@@ -445,6 +446,8 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.tabs = { 'type': true, 'params': false, 'format': false, 'preview': false, 'results': false };
             $scope.selectType = function(t) {
                     if (! t.id)
+                        return;
+                    if ($scope.reportType)
                         return;
                     $scope.reportType = t;
                     $location.search('id'); // reset it
