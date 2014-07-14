@@ -25,6 +25,7 @@ class SavedReport(models.Model):
                             blank=True, null=True,
                             related_name='+', on_delete=models.CASCADE)
     params = models.TextField(null=True, blank=True, verbose_name=_(u'parameters'))
+    stage2 = models.TextField(null=True, blank=True, verbose_name=_(u'stage2 struct'))
 
     class Meta:
         ordering = ('owner', 'title')

@@ -722,6 +722,19 @@ if (typeof String.prototype.startsWith != 'function') {
                 };
 
             $scope.$root.reportSave = function() {
+                var field_cols=[], groupped_fields={}, req_fields = [];
+                _calc_result_fields($scope, req_fields, field_cols, groupped_fields);
+
+                var stage2 = {'model': $scope.reportType.id,
+                        'title': $scope.reportType.title || $scope.reportType.name,
+                        'domain': $scope.getCurDomain(),
+                        'fields': req_fields,
+                        'show_detail': $scope.reportType.show_detail,
+                        'group_by': $scope.reportGroups,
+                        'limit': $scope.reportType.limit,
+                        'field_cols': field_cols,
+                        'groupped_fields': groupped_fields
+                        };
                 var minst = $modal.open({
                     templateUrl: 'parts/file-save.html',
                     controller: ['$scope', 'report', 'reportGroups', '$timeout',
@@ -741,6 +754,7 @@ if (typeof String.prototype.startsWith != 'function') {
                                                 'limit': $scope.report.limit,
                                                 'preview_limit': $scope.report.preview_limit
                                                 },
+                                        'stage2': stage2
                                         };
                             if ($scope.report.saved_id)
                                 ser['id'] = $scope.report.saved_id;
