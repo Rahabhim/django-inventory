@@ -61,6 +61,12 @@
                     <div><label>{% trans 'Limit' %}</label> <input type="number" ng-model="reportType.limit"></div>
                     <div><label>{% trans 'Preview Limit' %}</label> <input type="number" ng-model="reportType.preview_limit"></div>
                 </div>
+
+                <div id="fmt-notes">
+                    <h3>{% trans 'Notes' %}</h3>
+                    <textarea ng-model="reportType.notes" placeholder="{%trans 'Write your notes, which will be printed in the report' %}">
+                    </textarea>
+                </div>
             </tab>
             <tab heading="{% trans 'Formatting' %}" active="tabs.format" disabled="!reportType">
                 <h3>{% trans 'Formatting style' %}</h3>
@@ -687,6 +693,7 @@ if (typeof String.prototype.startsWith != 'function') {
                                         saved_id: data.id,
                                         public: data.public,
                                         title: data.title,
+                                        notes: data.notes,
                                         show_detail: data.data.show_detail,
                                         limit: data.data.limit,
                                         preview_limit: data.data.preview_limit || 10
@@ -742,6 +749,7 @@ if (typeof String.prototype.startsWith != 'function') {
 
                 var stage2 = {'model': $scope.reportType.id,
                         'title': $scope.reportType.title || $scope.reportType.name,
+                        'notes': $scope.reportType.notes,
                         'domain': $scope.getCurDomain(),
                         'fields': req_fields,
                         'show_detail': $scope.reportType.show_detail,
@@ -761,6 +769,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         $scope.do_save = function() {
                             // serialize reportType + reportGroups into data for report
                             var ser = { 'title': $scope.report.title,
+                                        'notes': $scope.report.notes,
                                         'model': $scope.report.id,
                                         'public': $scope.report.public || false,
                                         'data': {'groups': reportGroups,
@@ -1472,6 +1481,7 @@ if (typeof String.prototype.startsWith != 'function') {
 
                 var data = {'model': $scope.reportType.id,
                         'title': $scope.reportType.title || $scope.reportType.name,
+                        'notes': $scope.reportType.notes,
                         'domain': $scope.$parent.getCurDomain(),
                         'fields': req_fields,
                         'show_detail': $scope.reportType.show_detail,

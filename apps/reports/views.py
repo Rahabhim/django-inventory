@@ -946,8 +946,8 @@ def reports_back_load_view(request):
     if not rt:
         return HttpResponseNotFound("Grammar for type %s not found" % report.rmodel)
 
-    ret = {'id': report.id, 'title': report.title, 'model': report.rmodel,
-            'public': not bool(report.owner),
+    ret = {'id': report.id, 'title': report.title, 'notes': report.notes,
+            'model': report.rmodel, 'public': not bool(report.owner),
             'grammar': rt.getGrammar(request.user.is_staff), 'data': json.loads(report.params)}
     content = json.dumps(ret, cls=JsonEncoderS)
     return HttpResponse(content, content_type='application/json')
@@ -976,6 +976,7 @@ def reports_back_save_view(request):
         report = SavedReport()
 
     report.title = req_data['title']
+    report.notes = req_data.get('notes', None)
     report.owner = req_data['owner']
     report.rmodel = req_data['model']
     report.params = json.dumps(req_data['data'])

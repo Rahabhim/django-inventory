@@ -20,6 +20,7 @@ class SavedReport(models.Model):
     """
     objects = SavedReportManager()
     title = models.CharField(verbose_name=_(u'title'), max_length=64)
+    notes = models.TextField(null=True, blank=True, verbose_name=_(u'notes'))
     rmodel = models.CharField(max_length=64)
     owner = models.ForeignKey('auth.User',verbose_name=_("owner"),
                             blank=True, null=True,
