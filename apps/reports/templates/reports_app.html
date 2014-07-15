@@ -693,6 +693,12 @@ if (typeof String.prototype.startsWith != 'function') {
                                 $scope.$root.needs_save = false;
                                 $scope.$root.can_save = appSuperUser || !data.public;
                                 $scope.$root.can_delete = true;
+                                if ($scope.tabs.type){
+                                    $log.debug("load and switch tab", $scope.tabs);
+                                    // switch tab to "params"
+                                    $scope.tabs.type = false;
+                                    $scope.tabs.params = true;
+                                    }
                                 })
                             .error(function(data, status, headers) {
                                     $log.debug("Load error:", data, status);
