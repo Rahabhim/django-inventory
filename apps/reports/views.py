@@ -835,6 +835,12 @@ def reports_app_view(request, object_id=None):
             {'available_types': SafeString(json.dumps(avail, cls=JsonEncoderS)),
             })
 
+def report_details_view(request, pk=False):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    report = get_object_or_404(SavedReport.objects.by_request(request), pk=pk)
+    return render(request, 'report_details.html', { 'report': report })
+
 def reports_parts_params_view(request, part_id):
     if not request.user.is_authenticated:
         raise PermissionDenied

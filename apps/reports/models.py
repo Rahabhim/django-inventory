@@ -36,8 +36,12 @@ class SavedReport(models.Model):
     def __unicode__(self):
         return self.title
 
-    def get_absolute_url(self):
+    def get_edit_url(self):
         return reverse('reports_app_view') + ('#?id=%d' % self.id)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('report_details_view', [str(self.id)])
 
     def fmt_model(self):
         from views import get_rtype_name
