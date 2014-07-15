@@ -104,7 +104,6 @@
                                 </div>
                             </td>
                         </tr>
-                        
                     </table>
                     <div id="fmt-trash" ng-droppable="true" ng-ondrop="removeField(dragItem)">
                         <span class="famfam active famfam-bin"></span>
@@ -611,6 +610,7 @@ if (typeof String.prototype.startsWith != 'function') {
                     }
                 return ret;
                 };
+
             /** Initialize formatting struct for field
 
                 returns true if the struct was empty and had to be initialized
@@ -627,7 +627,6 @@ if (typeof String.prototype.startsWith != 'function') {
                 }
                 else if (field.fmt.title === undefined)
                     field.fmt.title = field.name;
-                $log.debug("Field was ready:", field);
                 return false;
                 };
 

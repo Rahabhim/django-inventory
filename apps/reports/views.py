@@ -1012,7 +1012,7 @@ def _pre_render_report(request):
     """
     if not request.user.is_authenticated:
         raise PermissionDenied
-    
+
     _reports_init_cache()
     if request.method == 'POST':
         report_data = json.loads(request.POST['data'])
