@@ -8,7 +8,10 @@
 
 {% block content %}
     <h2>{{ report_data.title }}</h2>
-
+<p>{% trans 'Printed at:' %} {{ current_time|date:"SHORT_DATETIME_FORMAT" }}</p>
+{% if report_data.notes %}
+    <p>{{ report_data.notes|linebreaks }}</p>
+{% endif %}
 {% if flat_results %}
     {% with cur_results=flat_results %}
         {% include "sub_results.html" %}
