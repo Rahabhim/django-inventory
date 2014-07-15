@@ -89,7 +89,7 @@
                         <tr class="add-group"><th>{% trans 'Add group...' %}</th>
                             <td colspan="[[ fmtTable.length ]]" ng-droppable="true" ng-ondrop="addGroup(dragItem)">{% trans 'drag here to add group...' %}</td></tr>
                         <tr ng-class="{'no-details': !reportType.show_detail}"><th><input type="checkbox" ng-model="reportType.show_detail">{% trans 'detailed:'%}</th>
-                            <td ng-repeat="field in fmtTable|seqSort">
+                            <td ng-repeat="field in fmtTable|seqSort:true">
                                 <div ng-draggable="true" ng-drag-model="field"
                                     ng-droppable="true" ng-ondrop="addToField(dragItem, field)"
                                     class="add-after">
@@ -102,6 +102,11 @@
                     <div id="fmt-trash" ng-droppable="true" ng-ondrop="removeField(dragItem)">
                         <span class="famfam active famfam-bin"></span>
                         {% trans 'Drag any field here to hide/ungroup' %}
+                        <div class="fields-list">
+                            <div ng-repeat="field in fmtTable|hiddenOnly" ng-draggable="true" ng-drag-model="field">
+                                [[ field.full_name ]]
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div move-hook id="field-fmt-palette" style="min-width: 300px;"
@@ -1241,7 +1246,10 @@ if (typeof String.prototype.startsWith != 'function') {
                 if (dragItem.full_path.indexOf('.') != -1)
                     // a sub_field can only be appended to its parent field
                     return $scope.addToGroup(fld_after, dragItem);
-                
+
+                if (dragItem.fmt && dragItem.fmt.hide)
+                        dragItem.fmt.hide = false;
+
                 var grp_idx = $scope.reportGroups.indexOf(dragItem.full_path);
                 if (grp_idx != -1)
                     $scope.reportGroups.splice(grp_idx, 1);
@@ -1483,13 +1491,15 @@ if (typeof String.prototype.startsWith != 'function') {
         an array. Then, we hard-code the 'sequence' criterion
     */
     reportsApp.filter('seqSort', ['$log', function($log) {
-        return function(input){
+        return function(input, full_hide){
             if (!input)
                 return [];
 
             var ret = [];
             angular.forEach(input, function(f) {
                 if (f.hide)
+                    return;
+                if (full_hide && f.fmt && f.fmt.hide)
                     return;
                 ret.push(f);
                 });
@@ -1501,6 +1511,19 @@ if (typeof String.prototype.startsWith != 'function') {
             return ret;
         }
     }]);
+
+    reportsApp.filter('hiddenOnly', function() {
+        return function(input, full_hide){
+            if (!input)
+                return [];
+            var ret = [];
+            angular.forEach(input, function(f) {
+                if (f.hide || (f.fmt && f.fmt.hide))
+                    ret.push(f);
+                });
+            return ret;
+            }
+        });
 
     reportsApp.filter('seqCount', ['$log', function($log) {
         return function(input, more){
