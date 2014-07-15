@@ -1444,4 +1444,12 @@ body.modal-open,
     margin-right: 2px;
 }
 
+#fmt-notes {
+    margin-top: 2em;
+}
+
+#fmt-notes textarea {
+    width: 100%;
+    min-height: 4em;
+}
 /* eof */
