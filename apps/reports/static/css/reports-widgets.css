@@ -1423,4 +1423,19 @@ body.modal-open,
     color: black;
 }
 
+#fmt-trash .fields-list > div {
+    display: inline-block;
+    border: 1px solid #808080;
+    background: #e0e0e0;
+    padding: 2px;
+    min-width: 10em;
+    margin-bottom: 1px;
+    border-top-left-radius: 4px 4px;
+    border-top-right-radius: 4px 4px;
+    border-bottom-right-radius: 4px 4px;
+    border-bottom-left-radius: 4px 4px;
+    color: #f0e0e0;
+    margin-right: 2px;
+}
+
 /* eof */
