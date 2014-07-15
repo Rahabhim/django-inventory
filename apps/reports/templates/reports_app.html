@@ -68,7 +68,7 @@
                 -->
                 <div class="formatting-form" ng-controller="formattingCtrl">
                     <table id="fmt-form-table">
-                        <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length ]]">Columns...</tr>
+                        <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length ]]">{% trans 'Columns...' %}</tr>
                         <tr ng-repeat="fname in reportGroups" ng-init="field=fieldByPath(fname)">
                             <th>{% trans 'Group' %} [[ $index + 1 ]] 
                                 <select ng-model="field.fmt.group_mode">
