@@ -1034,7 +1034,7 @@ def _pre_render_report(request):
     if not rt:
         return HttpResponseNotFound("Report type %s not found" % report_model)
 
-    fin = {'report_data': report_data,
+    fin = {'report_data': report_data, 'current_time': datetime.datetime.now(),
             'field_cols': report_data.pop('field_cols'),
             'groupped_fields': report_data.pop('groupped_fields'),
         }
