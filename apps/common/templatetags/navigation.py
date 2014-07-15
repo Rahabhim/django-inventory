@@ -212,6 +212,8 @@ def resolve_links(context, links, current_view, current_path, obj=None):
             except NoReverseMatch, err:
                 link['url'] = '#'
                 link['error'] = err
+        elif 'url_fn' in link:
+            link['url'] = link['url_fn'](*args, **kwargs)
         elif 'url' in link:
             link['active'] = link['url'] == current_path
         else:
