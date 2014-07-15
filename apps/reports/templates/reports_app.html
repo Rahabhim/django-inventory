@@ -471,6 +471,8 @@ if (typeof String.prototype.startsWith != 'function') {
                         $http.get('grammar/'+t.id).success(function(data) {
                                 $log.debug("Grammar data:", data);
                                 angular.extend(t, data);
+                                if (t.show_detail === undefined)
+                                    t.show_detail = true;
                             });
                         }
                 };
@@ -697,6 +699,8 @@ if (typeof String.prototype.startsWith != 'function') {
                                         limit: data.data.limit,
                                         preview_limit: data.data.preview_limit || 10
                                         };
+                                if (upd.show_detail === undefined)
+                                    upd.show_detail = true;
                                 angular.extend($scope.reportType, upd);
                                 $location.search('id', data.id);
                                 $scope.reportGroups = data.data.groups || [];
