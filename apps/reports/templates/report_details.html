@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+{% block title %}{%trans "Report" %}{% endblock %}
+
+{% block content %}
+<div class="content" width="90%"  >
+    <h3>{% trans 'Report' %}: {{ report.title }}</h3>
+    <div>
+        <p>{% blocktrans%} You can get the results in the following formats (in a new window) {% endblocktrans %}</p>
+        <ul>
+            <li><a href="{% url reports_results_html %}?id={{report.id}}" target="_blank">HTML page</a></li>
+            <li><a href="{% url reports_results_pdf %}?id={{report.id}}" target="_blank">PDF document</a></li>
+            <li><a href="{% url reports_results_csv %}?id={{report.id}}" target="_blank">CSV list</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
