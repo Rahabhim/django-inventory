@@ -41,8 +41,9 @@
 
         <tabset>
             <tab heading="{% trans 'Report type' %}" active="tabs.type">
-                <h3>{% trans 'Please select one of the available report types:' %}</h3>
-                <div class="select-report-type">
+                <h3 ng-show="!reportType">{% trans 'Please select one of the available report types:' %}</h3>
+                <h3 ng-show="reportType">{% trans 'Selected report type' %}</h3>
+                <div id="select-report-type" ng-class="{'clear': !reportType}">
                     <div ng-repeat="t in available_types|seqSort">
                         <div class="button-selection" ng-class="{'selected': (t.id == reportType.id)}" ng-click="selectType(t)">
                             <span class="famfam active" ng-class="t.famfam"></span>[[ t.name ]]
