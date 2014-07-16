@@ -1357,7 +1357,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 // ggroup is where the field shall be displayed,
                 // may be empty for non-visible sub-fields
                 var ggroup = this.ggroup;
-                if ((!ggroup)|| (ggroup === field_cols)){
+                if (true){
                     // see if field logically belongs to any of the groups
                     for(var i in $scope.reportGroups)
                         if(field.full_path.startsWith($scope.reportGroups[i])){
