@@ -9,6 +9,7 @@ report_create = {'text':_('create new report'), 'view':'reports_app_view',
 
 report_edit = {'text': _('edit report'),
         'url_fn': lambda r: r.get_edit_url(), 'args': ['object'],
+        'hide_text': True,
         'famfam': 'pencil', 'condition': can_edit}
 
 register_links(['reports_list_view',], [report_create], menu_name='sidebar')
