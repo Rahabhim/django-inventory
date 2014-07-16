@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-02 16:56+0300\n"
+"POT-Creation-Date: 2014-07-16 10:22+0300\n"
 "PO-Revision-Date: 2014-07-02 17:01+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -240,7 +240,6 @@ msgstr "Η τοποθεσία έχει εξοπλισμό, δεν μπορεί �
 msgid "Location %s has been deactivated"
 msgstr "Η τοποθεσία \"%s\" απενεργοποιήθηκε"
 
-#: templatetags/navigation.py:304
+#: templatetags/navigation.py:306
 msgid "Multiple Departments"
 msgstr "Πολλαπλές Μονάδες"
-
