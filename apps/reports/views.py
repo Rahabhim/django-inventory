@@ -696,6 +696,7 @@ product_filter = CJFilter_Product('products.ItemTemplate',
     )
 
 contract_filter = CJFilter_lookup('procurements.Contract', 'contracts',
+    title=_('contract'),
     fields={'name':  CJFilter_String(title=_('name'), sequence=1),
             'delegate': CJFilter_Model('procurements.Delegate',
                 fields={ 'name':  CJFilter_String(title=_('name'), sequence=1),
