@@ -1317,6 +1317,14 @@ body.modal-open,
     box-shadow: 0 1px 5px #999999;
 }
 
+table.grp_left_col td.right_part {
+    padding: 0px;
+}
+
+table.grp_left_col td.right_part table.preview-results,
+table.grp_left_col td.right_part table.grp_left_col {
+    border: none;
+}
 
 .preview-results table tr:nth-child(odd) {
     background-color: #e0e0e0;

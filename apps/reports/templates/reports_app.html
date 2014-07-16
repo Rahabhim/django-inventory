@@ -81,6 +81,7 @@
                                 <select ng-model="field.fmt.group_mode">
                                     <option value="table">{%trans 'Table' %}</option>
                                     <option value="row">{% trans 'Row' %}</option>
+                                    <option value="left_col">{%trans "Left column" %}</option>
                                 </select>
                             </th>
                             <td><div ng-draggable="true" ng-drag-model="field"
@@ -353,6 +354,31 @@
                 </td>
             </tr>
             <tr><td colspan="[[ groupped_fields[group_level-1]|seqCount:1]]">...</td>
+            </tr>
+        </table>
+    </div>
+    <div ng-if="group_mode == 'left_col'">
+        <table class="grp_left_col">
+            <tr><th ng-init="fc = groupped_fields[group_level-1][0]">[[ fc.name ]]</th>
+                <th>{%trans 'Results' %}</th>
+            </tr>
+            <tr ng-repeat="cur_group in cur_results.values|filter:rowsFilter">
+                <td class="left_col">
+                    <div ng-repeat="fc in groupped_fields[group_level-1]|seqSort">
+                        <span ng-if="fc.name && fc.name != '-' && !$first">[[ fc.name ]]:</span>
+                        [[ cur_group[fc.id] ]]
+                    </div>
+                    <div class="count">([[ cur_group._count ]])</div>
+                </td>
+                <td class="right_part">
+                    <div ng-controller="previewGroupedCtl">
+                        <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="grp_left_col"> ... </td>
+                <td class="right_part"> ... </td>
             </tr>
         </table>
     </div>
