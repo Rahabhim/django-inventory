@@ -736,7 +736,6 @@ if (typeof String.prototype.startsWith != 'function') {
                                 $scope.$root.can_save = appSuperUser || !data.public;
                                 $scope.$root.can_delete = true;
                                 if ($scope.tabs.type){
-                                    $log.debug("load and switch tab", $scope.tabs);
                                     // switch tab to "params"
                                     $scope.tabs.type = false;
                                     $scope.tabs.params = true;
@@ -889,10 +888,8 @@ if (typeof String.prototype.startsWith != 'function') {
 
     reportsApp.controller('paramsCtrl', ['$log', '$scope','$http', 'appWords',
         function($log, $scope, $http, appWords) {
-            $log.debug("paramsCtrl:", $scope);
             $scope.field = false;
             $scope.$parent.$watch('reportType', function(rt){
-                    $log.debug("reportType changed:", rt);
                     $scope.field = rt;
                     if (rt)
                         $scope.$root.needs_save = true;
@@ -1134,7 +1131,6 @@ if (typeof String.prototype.startsWith != 'function') {
         }]);
 
     reportsApp.controller('formattingCtrl', ['$log', '$scope',function($log, $scope) {
-            $log.debug("formattingCtrl:", $scope);
             $scope.fmtTable = false;
             var fillFieldPaths = function(field, key){
                 if (!field.full_path){
@@ -1491,7 +1487,6 @@ if (typeof String.prototype.startsWith != 'function') {
         }]);
 
     reportsApp.controller('resultCtrl', ['$log', '$scope','$timeout', function($log, $scope, $timeout) {
-            $log.debug("resultCtrl:", $scope);
             /* results_form is a regular html element (NOT angular form), which
                 we update in a traditional JS way and then trigger its "submit"
             */
