@@ -180,23 +180,37 @@
                     </div>
                 </div>
             </tab>
-            <tab heading="{% trans 'Full results' %}" active="tabs.results" disabled="!reportType">
+            <tab heading="{% trans 'Full results' %}" active="tabs.results"
+                disabled="!reportType" select="prepareResultsPost()">
                 <h3>{% trans 'Full results' %}</h3>
                 <div ng-controller="resultCtrl">
                     <p>{% blocktrans%} You can get the results in the following formats (in a new window) {% endblocktrans %}</p>
                     <ul>
-                        <li><a ng-click="getResults('html')">HTML page</a></li>
-                        <li><a ng-click="getResults('pdf')">PDF document</a></li>
-                        <li><a ng-click="getResults('csv')">CSV list</a></li>
+                        <li><form id="results_form_html" class="results_form"
+                                method="POST" target="_blank" action="results.html">
+                            {% csrf_token %}
+                            <input type="hidden" name="data" value="[[rfpost_json]]">
+                            <button type="submit"><span class="famfam active famfam-html"></span>{% trans 'HTML page' %}</button>
+                            </form>
+                        </li>
+                        <li ng-if="false"><form id="results_form_pdf" class="results_form"
+                                method="POST" target="_blank" action="results.pdf">
+                            {% csrf_token %}
+                            <input type="hidden" name="data" value="[[rfpost_json]]">
+                            <button type="submit"><span class="famfam active famfam-pdf">{% trans 'PDF document' %}</button>
+                            </form>
+                        </li>
+                        <li ng-hide="reportGroups && reportGroups.length"><form id="results_form_csv" class="results_form"
+                                method="POST" target="_blank" action="results.csv">
+                            {% csrf_token %}
+                            <input type="hidden" name="data" value="[[rfpost_json]]">
+                            <button type="submit"><span class="famfam active famfam-csv">{% trans 'CSV file' %}</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </tab>
         </tabset>
-
-    <form ng-non-bindable id="results_form" method="POST" target="_blank" action=".">
-        {% csrf_token %}
-        <input type="hidden" name="data" value="">
-    </form>
 
     </div>
 </div>
@@ -877,6 +891,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         return;
                     _loadReport(report_id);
                 });
+            $scope.prepareResultsPost = angular.noop;
         }]);
 
     reportsApp.controller('reportsTypeCtrl', ['$log', '$scope',function($log, $scope) {
@@ -1491,17 +1506,11 @@ if (typeof String.prototype.startsWith != 'function') {
                 we update in a traditional JS way and then trigger its "submit"
             */
             var num_submit = 0;
-            $scope.getResults = function(mode) {
+            $scope.rfpost_json = '';
+
+            $scope.$parent.prepareResultsPost = function() {
                 if (!$scope.reportType)
                     return;
-                // we clone the form, because we need to submit it again and again
-                var oldform = angular.element("#results_form");
-                var form = oldform.clone();
-                num_submit ++;
-                oldform.after(form); // insert in DOM tree
-                form[0].id = "results_form_"+num_submit;
-                form[0].action = "results."+ mode;
-
                 var field_cols=[], groupped_fields={}, req_fields = [];
                 _calc_result_fields($scope, req_fields, field_cols, groupped_fields);
 
@@ -1516,10 +1525,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         'field_cols': field_cols,
                         'groupped_fields': groupped_fields
                         }
-                form.find("input[name='data']")[0].value = angular.toJson(data);
-                form[0].submit();
-                // a little later, cleanup the cloned form:
-                $timeout(function() {form.remove(); }, 100);
+                $scope.rfpost_json = angular.toJson(data);
                 return true;
                 };
         }]);
