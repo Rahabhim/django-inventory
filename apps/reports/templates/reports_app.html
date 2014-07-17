@@ -1495,8 +1495,10 @@ if (typeof String.prototype.startsWith != 'function') {
                 if (!$scope.reportType)
                     return;
                 // we clone the form, because we need to submit it again and again
-                var form = angular.element("#results_form").clone();
+                var oldform = angular.element("#results_form");
+                var form = oldform.clone();
                 num_submit ++;
+                oldform.after(form); // insert in DOM tree
                 form[0].id = "results_form_"+num_submit;
                 form[0].action = "results."+ mode;
 
@@ -1515,7 +1517,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         'groupped_fields': groupped_fields
                         }
                 form.find("input[name='data']")[0].value = angular.toJson(data);
-                $timeout(function(){ form[0].submit(); });
+                form[0].submit();
                 // a little later, cleanup the cloned form:
                 $timeout(function() {form.remove(); }, 100);
                 return true;
