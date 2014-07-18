@@ -121,7 +121,9 @@ class CJFilter_Model(CJFilter):
         return ret
 
     def _get_field(self, fname, *fpath):
-        f = self.fields[fname]
+        f = self.fields.get(fname, None)
+        if f is None:
+            return None
         if fpath:
             return f._get_field(*fpath)
         else:
@@ -148,10 +150,12 @@ class CJFilter_Model(CJFilter):
             # convert fields to django-like exprs
             fields2 = []
             for fn in fields:
-                if not fn.startswith('_'):
-                    fields2.append(fn.replace('.', '__'))
                 fpath = fn.split('.')
                 fld = self._get_field(*fpath)
+                if fld is None:
+                    continue
+                if not fn.startswith('_'):
+                    fields2.append(fn.replace('.', '__'))
                 if fld._post_fn:
                     post_fns[fn.replace('.', '__')] = fld._post_fn
         else:  # not fields
@@ -1023,7 +1027,7 @@ def _pre_render_report(request):
         # Instead of stage2, we need the pythonic algorithm of the JS part
         # for domains, fields
         report = get_object_or_404(SavedReport.objects.by_request(request), \
-                        pk=request.GET['id'])
+                        pk=request.GET.get('id', 0))
 
         if not report.stage2:
             messages.error(request, _("This report has not been saved properly, no stage2 data"))
