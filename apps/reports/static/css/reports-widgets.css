@@ -1295,21 +1295,21 @@ body.modal-open,
     text-align: left;
 }
 
-.preview-results .group {
+.report-results .group {
     padding-left: 2em;
 }
 
-.preview-results .group h4 {
+.report-results .group h4 {
     margin-top: 0.4em;
 }
 
-.preview-results div.count {
+.report-results div.count {
     font-size: 120%;
     margin-top: 0.2em;
     margin-bottom: 0.3em;
 }
 
-.preview-results table {
+.report-results table {
     border: 1px solid black; /*-*/
     width: 100%;
     border-collapse: collapse;
@@ -1321,24 +1321,24 @@ table.grp_left_col td.right_part {
     padding: 0px;
 }
 
-table.grp_left_col td.right_part table.preview-results,
+table.grp_left_col td.right_part table.detail-results,
 table.grp_left_col td.right_part table.grp_left_col {
     border: none;
 }
 
-.preview-results table tr:nth-child(odd) {
+.report-results table tr:nth-child(odd) {
     background-color: #e0e0e0;
 }
 
-.preview-results table tr:nth-child(even) {
+.report-results table tr:nth-child(even) {
     background-color: #ffffff;
 }
 
-.preview-results table tr:nth-child(1) {
+.report-results table tr:nth-child(1) {
     background-color: #ffffff;
 }
 
-.preview-results table th {
+.report-results table th {
     border-bottom: 3px solid #ddd;
     font-size: 1.1em;
     padding: 5px;
@@ -1346,13 +1346,13 @@ table.grp_left_col td.right_part table.grp_left_col {
     text-align: left;
 }
 
-.preview-results table td{
+.report-results table td{
     border-right: 2px solid #ddd;
     padding: 5px;
     vertical-align: top;
 }
 
-.preview-results td:last-child {
+.report-results td:last-child {
     border-right: medium none;
 }
 

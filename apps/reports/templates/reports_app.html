@@ -169,7 +169,7 @@
                         </div>
                     {% endif %}
                     <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
-                    <div ng-if="results" class="preview-results">
+                    <div ng-if="results" class="preview-results report-results">
                         <div ng-controller="previewGroupedCtl">
                             <div class="count">{% trans "Number of results:" %} [[ results[0]._count ]]</div>
                             <div ng-include="'parts/preview-results.html'">???</div>
@@ -185,7 +185,7 @@
                 <h3>{% trans 'Full results' %}</h3>
                 <div ng-controller="resultCtrl">
                     <p>{% blocktrans%} You can get the results in the following formats (in a new window) {% endblocktrans %}</p>
-                    <ul>
+                    <ul class="result-types">
                         <li><form id="results_form_html" class="results_form"
                                 method="POST" target="_blank" action="results.html">
                             {% csrf_token %}
@@ -397,7 +397,7 @@
         </table>
     </div>
     <div ng-if="cur_results && !(cur_results.group_by)">
-        <table class="preview-results">
+        <table class="detail-results">
             <tr class="head">
                 <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
             </tr>
