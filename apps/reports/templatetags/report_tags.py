@@ -44,14 +44,13 @@ class GroupNode(Node):
     """ Renderer for recursive group levels
 
         We only compile this once, no recursive inclusions.
-        Then, render() calls _render_one() recursively, until the
-        last group leve, where "leaf" content is rendered
 
         The template syntax is::
             {% group_recurse %}
-                <h2> some content for each group</h2>
-            {% group_leaf %}
-                <table> the table of detailed entries </table>
+                {% for cur_row in rows %}
+                    <h2> some content for each group</h2>
+                    {{ do_group_recurse }}
+                {% endfor %}
             {% end_group_recurse %}
 
         Which shall render as::
@@ -64,10 +63,9 @@ class GroupNode(Node):
                 </div>
             </div>
     """
-    def __init__(self, grp_list, grp_leaf):
+    def __init__(self, grp_list):
         super(GroupNode, self).__init__()
         self.grp_list = grp_list
-        self.grp_leaf = grp_leaf
 
     def _render_group(self, group_level, rows_filter, context):
         if group_level + 1 >= len(context['groupped_results']):
@@ -75,31 +73,20 @@ class GroupNode(Node):
         group = context['groupped_results'][group_level+1]
         context.push()
         context['cur_group'] = group
-        if group.get('group_by', False):
-            for cur_row in filter(rows_filter, group['values']):
-                # prepare context, render node
-                context.push()
-                context['cur_row'] = cur_row
-                context['cur_grp_fields'] = context['groupped_fields'][str(group_level)]
-                yield mark_safe('<div class="group">')
-                yield self.grp_list.render(context)
-
-                nrf = self._get_rows_filter(group['group_by'], cur_row)
-                for y in self._render_group(group_level+1, nrf, context):
-                    yield y
-
-                yield mark_safe('</div>')
-                context.pop()
-
-        else:
-            # leaf level, only render final results
-            context.push()
-            context['cur_results'] = filter(rows_filter, group['values'])
-            yield self.grp_leaf.render(context)
-            context.pop()
-
+        grp_fields = context['groupped_fields'].get(str(group_level), [])
+        context['cur_grp_fields'] = grp_fields
+        context['do_group_recurse'] = lambda: self._render_group_flat(group_level+1, context)
+        context['cur_results'] = filter(rows_filter, group['values'])
+        yield self.grp_list.render(context)
         context.pop()
         return
+
+    def _render_group_flat(self, group_level, context):
+        nodelist = NodeList()
+        nrf = self._get_rows_filter(context['cur_group']['group_by'], context['cur_row'])
+        for res in self._render_group(group_level, nrf, context):
+            nodelist.append(res)
+        return nodelist.render(context)
 
     def _get_rows_filter(self, group_by, cur_row):
         sample = {}
@@ -123,10 +110,8 @@ class GroupNode(Node):
 
 @register.tag
 def group_recurse(parser, token):
-    grp_list = parser.parse(('group_leaf',))
+    grp_list = parser.parse(('end_group_recurse',))
     parser.delete_first_token()
-    grp_leaf = parser.parse(('end_group_recurse',))
-    parser.delete_first_token()
-    return GroupNode(grp_list, grp_leaf)
+    return GroupNode(grp_list)
 
 #eof

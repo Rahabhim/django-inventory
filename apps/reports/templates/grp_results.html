@@ -1,32 +1,81 @@
+{% load i18n %}
 {% load report_tags %}
 
 {% group_recurse %}
-    <h4>
-        {% for fc in cur_grp_fields %}
-        <span>{{ cur_row|attrib:fc.id }}</span>
-        : {{ cur_row|dvalue:"_count" }}
-        {% endfor %}
-    </h4>
 
-{% group_leaf %}
-    <table>
-        <tr>
-            {% for fc in field_cols %}
-            <th>{{ fc.name|title }}</th>
-            {% endfor %}
-        </tr>
-
-        {% for row in cur_results %}
-        <tr>{% for fc in field_cols %}
-            <td>{% if fc.widget == 'contains' %}<ul>
-                {% for l in row|dvalue:fc.id %}
-                    <li>{{ l }}</li>
+{% if cur_group.group_by %}
+    {% if cur_grp_fields.0.group_mode == 'table' %}
+        <table class="grp_results">
+            {% with cur_grp_fields|dictsort:'sequence' as cur_grp_sorted %}
+            <tr>{% for fc in cur_grp_sorted %}
+                <th>{{ fc.name|title }}</th>
                 {% endfor %}
-                </ul>
-                {% else %}{{ row|dvalue:fc.id }}{% endif %}
-            </td>
+                <th>{% trans 'Count' %}</th>
+            </tr>
+            {% for cur_row in cur_results %}
+            <tr>
+                {% for fc in cur_grp_sorted %}
+                <td >{{ cur_row|attrib:fc.id }}</td>
+                {% endfor %}
+                <td>{{ cur_row|dvalue:'_count' }}</td>
+            </tr>
+            <tr>
+                <td colspan="{{ groupped_fields|length|add:1 }}">
+                    <div>...
+                        {{ do_group_recurse }}
+                    </div>
+                </td>
+            </tr>
             {% endfor %}
-        </tr>
+            {% endwith %}
+        </table>
+    {% elif cur_grp_fields.0.group_mode == 'left_col' %}
+        <table class="grp_left_col">
+            <tr><th>{{ cur_grp_fields.0.name }}</th>
+                <th>{%trans 'Results' %}</th>
+            </tr>
+            {% with cur_grp_fields|dictsort:'sequence' as cur_grp_sorted %}
+            {% for cur_row in cur_results %}
+            <tr>
+                <td class="left_col">
+                    {% for fc in cur_grp_sorted %}
+                    <div>
+                        {% if fc.name and fc.name != '-' and fc != cur_grp_fields.0 %}
+                        <span >{{ fc.name }}:</span>
+                        {% endif %}
+                        {{ cur_row|attrib:fc.id }}
+                    </div>
+                    {% endfor %}
+                    <div class="count">({{ cur_row|dvalue:'_count' }})</div>
+                </td>
+                <td class="right_part">
+                    <div>
+                        {{ do_group_recurse }}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            {% endwith %}
+        </table>
+    {% else %}
+        <div>
+        {% for cur_row in cur_results %}
+            <div class="group">
+            <h4> {% for fc in cur_grp_fields %}
+                <span>{% if fc.name and fc.name != '-' %}<span>{{ fc.name }}:</span>{% endif %}
+                    {{ cur_row|attrib:fc.id }}
+                </span>
+                ({{ cur_row|dvalue:"_count" }})
+                {% endfor %}
+            </h4>
+            <div>
+                {{ do_group_recurse }}
+            </div>
+            </div>
         {% endfor %}
-    </table>
+        </div>
+    {% endif %}
+{% else %}
+    {% include 'sub_results.html' %}
+{% endif %}
 {% end_group_recurse %}

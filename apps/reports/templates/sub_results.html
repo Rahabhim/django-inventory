@@ -1,9 +1,10 @@
+{% load i18n %}
 {% load report_tags %}
 
-<table>
+<table class="detail-results">
     <tr>
         {% for fc in field_cols %}
-        <th>{{ fc.name|title }}</th>
+        <th>{% if fc.name != '-' %}{{ fc.name|title }}{% endif %}</th>
         {% endfor %}
     </tr>
 
@@ -14,6 +15,12 @@
                 <li>{{ l }}</li>
             {% endfor %}
             </ul>
+            {% elif fc.widget == 'date' %}
+            {{ row|dvalue:fc.id}}
+            {% elif fc.widget == 'boolean' %}
+            {% if row|dvalue:fc.id %}{% trans 'True'%}{% else %}{%trans 'False' %}{%endif %}
+            {% elif fc.widget == 'has_sth' %}
+            {% if row|dvalue:fc.id %}{% trans 'has'%}{% else %}{%trans "doesn't have" %}{%endif %}
             {% else %}{{ row|dvalue:fc.id }}{% endif %}
         </td>
         {% endfor %}
