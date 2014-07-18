@@ -14,6 +14,7 @@ import datetime
 from django.utils.safestring import SafeString
 from collections import defaultdict
 from django.core.exceptions import ObjectDoesNotExist
+import csv
 
 from models import SavedReport
 from common.api import user_is_staff
@@ -1063,7 +1064,38 @@ def reports_results_html(request):
 def reports_results_pdf(request):
     raise NotImplementedError
 
+def csv_fmt(val):
+    if val is None:
+        return ''
+    elif isinstance(val, unicode):
+        return val.encode('utf-8')
+    elif isinstance(val, bool):
+        return (val and 'true') or 'false'
+    else:
+        # dates?
+        return str(val)
+
 def reports_results_csv(request):
-    raise NotImplementedError
+    res = _pre_render_report(request)
+    
+    if not 'flat_results' in res:
+        raise NotImplementedError
+    else:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="results.csv"'
+        res['field_cols'].sort(key=lambda fc: fc['sequence'])
+        fnames = []
+        ftitles = []
+        for fc in res['field_cols']:
+            fnames.append(fc['id'])
+            ftitles.append(fc['name'].encode('utf-8'))
+        cw = csv.writer(response)
+        cw.writerow(ftitles)
+        del ftitles
+        cw.writerow(fnames)
+        for r in res['flat_results']:
+            crow = [ csv_fmt(r.get(f)) for f in fnames]
+            cw.writerow(crow)
+        return response
 
 # eof
