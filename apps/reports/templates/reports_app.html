@@ -719,6 +719,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 };
             var setFieldData = function(fields, target){
                 angular.forEach(fields, function(field, key){
+                    if (target[key])
                     _setFieldData_one(field, target[key]);
                     });
                 };
