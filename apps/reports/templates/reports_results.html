@@ -4,7 +4,7 @@
 {% block title %}
         {{ report_data.title }}
 {% endblock %}
-{% block web_theme_project_name %}{{ report_data.title }}{% endblock %}
+{% block web_theme_project_name %}{% trans 'Report builder' %}{% endblock %}
 
 {% block stylesheets %}
     {{ block.super }}
