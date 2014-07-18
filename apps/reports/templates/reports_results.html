@@ -6,12 +6,18 @@
 {% endblock %}
 {% block web_theme_project_name %}{{ report_data.title }}{% endblock %}
 
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/reports-widgets.css" type="text/css" media="screen" />
+{% endblock %}
+
 {% block content %}
     <h2>{{ report_data.title }}</h2>
 <p>{% trans 'Printed at:' %} {{ current_time|date:"SHORT_DATETIME_FORMAT" }}</p>
 {% if report_data.notes %}
     <p>{{ report_data.notes|linebreaks }}</p>
 {% endif %}
+<div class="report-results final">
 {% if flat_results %}
     {% with cur_results=flat_results %}
         {% include "sub_results.html" %}
@@ -23,4 +29,5 @@
 {% else %}
     <p class="error"> Internal error: no results!</p>
 {% endif %}
+</div>
 {% endblock %}
