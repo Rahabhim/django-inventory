@@ -197,14 +197,14 @@
                                 method="POST" target="_blank" action="results.pdf">
                             {% csrf_token %}
                             <input type="hidden" name="data" value="[[rfpost_json]]">
-                            <button type="submit"><span class="famfam active famfam-pdf">{% trans 'PDF document' %}</button>
+                            <button type="submit"><span class="famfam active famfam-page_white_acrobat"></span>{% trans 'PDF document' %}</button>
                             </form>
                         </li>
                         <li ng-hide="reportGroups && reportGroups.length"><form id="results_form_csv" class="results_form"
                                 method="POST" target="_blank" action="results.csv">
                             {% csrf_token %}
                             <input type="hidden" name="data" value="[[rfpost_json]]">
-                            <button type="submit"><span class="famfam active famfam-csv">{% trans 'CSV file' %}</button>
+                            <button type="submit"><span class="famfam active famfam-page_white_database"></span>{% trans 'CSV file' %}</button>
                             </form>
                         </li>
                     </ul>
