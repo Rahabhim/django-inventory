@@ -43,9 +43,15 @@
             <tab heading="{% trans 'Report type' %}" active="tabs.type">
                 <h3 ng-show="!reportType">{% trans 'Please select one of the available report types:' %}</h3>
                 <h3 ng-show="reportType">{% trans 'Selected report type' %}</h3>
+                <div id="warn-report-type" ng-show="show_warning">{% blocktrans %}
+                    By changing the report type, you may lose any configuration you
+                    have done in the other tabs. Please double click to confirm.
+                    {% endblocktrans %}
+                </div>
                 <div id="select-report-type" ng-class="{'clear': !reportType}">
                     <div ng-repeat="t in available_types|seqSort">
-                        <div class="button-selection" ng-class="{'selected': (t.id == reportType.id)}" ng-click="selectType(t)">
+                        <div class="button-selection" ng-class="{'selected': (t.id == reportType.id)}"
+                            ng-click="selectType(t)" ng-dblclick="selectType(t, true)">
                             <span class="famfam active" ng-class="t.famfam"></span>[[ t.name ]]
                         </div>
                     </div>
@@ -489,22 +495,27 @@ if (typeof String.prototype.startsWith != 'function') {
             datepickerConfig.showWeeks = false;
             datepickerPopupConfig.showButtonBar = false;
         }]);
-    reportsApp.controller('mainCtrl', ['$log', '$scope', '$location', '$http', '$modal', '$filter', 'appSuperUser', 'appReportTypes',
-        function($log, $scope, $location, $http, $modal, $filter, appSuperUser, appReportTypes) {
+    reportsApp.controller('mainCtrl', ['$log', '$scope', '$location', '$http',
+                        '$modal', '$filter', '$timeout', 'appSuperUser', 'appReportTypes',
+        function($log, $scope, $location, $http, $modal, $filter, $timeout, appSuperUser, appReportTypes) {
             $scope.reportType = false;
             $scope.reportGroups = [];
             $scope.available_types = appReportTypes;
+            $scope.show_warning = false;
             $scope.tabs = { 'type': true, 'params': false, 'format': false, 'preview': false, 'results': false };
-            $scope.selectType = function(t) {
+            $scope.selectType = function(t, dblclick) {
                     if (! t.id)
                         return;
-                    if ($scope.reportType)
+                    if ($scope.reportType && !dblclick){
+                        $scope.show_warning = true;
+                        $timeout(function() { $scope.show_warning = false;}, 5000);
                         return;
+                    }
                     $scope.reportType = t;
                     $location.search('id'); // reset it
                     $scope.$root.can_delete = false;
                     $scope.reportGroups = [];
-                    $scope.tabs.params = true;
+                    $timeout(function() { $scope.tabs.params = true; }, 1200);
 
                     if (!t.fields){
                         $log.debug("Must fetch grammar for", t.id);
