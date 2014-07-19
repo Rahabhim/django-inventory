@@ -349,7 +349,7 @@
                     [[ cur_group[fc.id] ]]
                 </span>
                 ([[ cur_group._count ]])</h4>
-            <div ng-controller="previewGroupedCtl">
+            <div ng-controller="previewGroupedCtl" ng-init="hide_head=false">
                 <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
             </div>
         </div>
@@ -360,7 +360,7 @@
     </div>
     <div ng-if="group_mode == 'table'">
         <table class="grp_results">
-            <tr><th ng-repeat="fc in groupped_fields[group_level-1]|seqSort">[[ fc.name ]]</th><th>{%trans 'Count' %}</th>
+            <tr ng-if="!hide_head"><th ng-repeat="fc in groupped_fields[group_level-1]|seqSort">[[ fc.name ]]</th><th>{%trans 'Count' %}</th>
             </tr>
             <tr ng-repeat-start="cur_group in cur_results.values|filter:rowsFilter">
                 <td ng-repeat="fc in groupped_fields[group_level-1]|seqSort">[[ cur_group[fc.id] ]]</td>
@@ -368,7 +368,7 @@
             </tr>
             <tr ng-repeat-end>
                 <td colspan="[[ groupped_fields[group_level-1]|seqCount:1]]">
-                    <div ng-controller="previewGroupedCtl">
+                    <div ng-controller="previewGroupedCtl" ng-init="hide_head=false">
                         <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
                     </div>
                 </td>
@@ -379,8 +379,8 @@
     </div>
     <div ng-if="group_mode == 'left_col'">
         <table class="grp_left_col">
-            <tr><th ng-init="fc = groupped_fields[group_level-1][0]">[[ fc.name ]]</th>
-                <th>{%trans 'Results' %}</th>
+            <tr ng-if="!hide_head"><th ng-init="fc = groupped_fields[group_level-1][0]">[[ fc.name ]]</th>
+                <th ng-repeat="fc in right_cols">[[ fc.display_name ]]</th>
             </tr>
             <tr ng-repeat="cur_group in cur_results.values|filter:rowsFilter">
                 <td class="left_col">
@@ -390,21 +390,21 @@
                     </div>
                     <div class="count">([[ cur_group._count ]])</div>
                 </td>
-                <td class="right_part">
-                    <div ng-controller="previewGroupedCtl">
+                <td class="right_part" ng-attr-colspan="[[ right_cols.length]]">
+                    <div ng-controller="previewGroupedCtl" ng-init="hide_head=true">
                         <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
                     </div>
                 </td>
             </tr>
             <tr>
                 <td class="grp_left_col"> ... </td>
-                <td class="right_part"> ... </td>
+                <td class="right_part" ng-attr-colspan="[[ right_cols.length]]"> ... </td>
             </tr>
         </table>
     </div>
     <div ng-if="cur_results && !(cur_results.group_by)">
         <table class="detail-results">
-            <tr class="head">
+            <tr class="head" ng-if="!hide_head">
                 <th ng-repeat="fc in field_cols">[[fc.name ]]</th>
             </tr>
             <tr ng-repeat="row in cur_results.values|filter:rowsFilter">
@@ -1482,10 +1482,12 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.$parent.$watch('tabs.preview', fetchResults);
         }]);
 
-    reportsApp.controller('previewGroupedCtl', ['$scope', '$log', function($scope, $log) {
+    reportsApp.controller('previewGroupedCtl', ['$scope', '$log', '$filter', 'appWords',
+        function($scope, $log, $filter, appWords) {
             // Must be kept minimal, we will have many instances of this ctrl.
             $scope.group_level = $scope.$parent.group_level + 1;
             $scope.cur_results = $scope.$parent.results[$scope.group_level];
+            var right_cols = false;
             if ($scope.cur_results && $scope.cur_results.group_by){
                 var field = $scope.fieldByPath($scope.reportGroups[$scope.$parent.group_level]);
                 if (field)
@@ -1512,6 +1514,64 @@ if (typeof String.prototype.startsWith != 'function') {
                     return true;
                 };
             }
+
+            if ($scope.group_mode == 'left_col'){
+                var ret = [];
+                var seqSortFilter = $filter('seqSort');
+                for(var i=$scope.group_level; i<= $scope.$parent.results.length;i++) {
+                    var cur_results = $scope.$parent.results[i+1];
+                    if (cur_results && cur_results.group_by) {
+                        var field = $scope.fieldByPath($scope.reportGroups[i]);
+                        if (field && field.fmt){
+                            if (field.fmt.group_mode == 'table'){
+                                angular.forEach(seqSortFilter($scope.groupped_fields[i]),
+                                  function(fc) {
+                                    if (fc.display_name === undefined){
+                                        if (fc.name == '-')
+                                            fc.display_name = '';
+                                        else
+                                            fc.display_name = fc.name;
+                                    }
+                                    ret.push(fc);
+                                    });
+                                ret.push({ 'id': '_count', 'display_name': appWords['count']});
+                            }
+                            else if (field.fmt.group_mode == 'left_col'){
+                                var fc = $scope.groupped_fields[i][0];
+                                if (fc.display_name === undefined){
+                                    if (fc.name == '-')
+                                        fc.display_name = '';
+                                    else
+                                        fc.display_name = fc.name;
+                                }
+                                ret.push(fc);
+                                continue;
+                            }
+                            else {
+                                // row mode, insert an empty cell
+                                ret.push({'id': '_results'});
+                            }
+                        }
+                        // everything else (row, no fmt) shall not render fields
+                        break;
+                    }
+                    else if (cur_results) {
+                        //detailed results
+                        angular.forEach($scope.field_cols, function(fc) {
+                            if (fc.display_name === undefined){
+                                if (fc.name == '-')
+                                    fc.display_name = '';
+                                else
+                                    fc.display_name = fc.name;
+                            }
+                            ret.push(fc);
+                        });
+                    }
+                }
+                $log.debug("getRightColumns:", ret);
+                $scope.right_cols = ret;
+            } else
+                $scope.right_cols = [];
         }]);
 
     reportsApp.controller('resultCtrl', ['$log', '$scope','$timeout', function($log, $scope, $timeout) {
@@ -1628,7 +1688,8 @@ reportsApp
                     'true': "{% trans 'true' %}",
                     'false': "{% trans 'false' %}",
                     'has_true': "{% trans 'has' %}",
-                    'has_false': "{% trans "doesn't have" %}"
+                    'has_false': "{% trans "doesn't have" %}",
+                    'count': "{% trans 'Count' %}"
         })
 {% if request.user.is_staff %}
     .constant('appSuperUser', true)
