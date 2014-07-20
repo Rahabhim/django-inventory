@@ -60,8 +60,8 @@
     {% else %}
         <div>
         {% for cur_row in cur_results %}
-            <div class="group">
-            <h4> {% for fc in cur_grp_fields %}
+            <div class="group expanded">
+            <h4 onclick="toggleExpand(this)"><span class="arrow-img">&nbsp;</span>{% for fc in cur_grp_fields %}
                 <span>{% if fc.name and fc.name != '-' %}<span>{{ fc.name }}:</span>{% endif %}
                     {{ cur_row|attrib:fc.id }}
                 </span>
