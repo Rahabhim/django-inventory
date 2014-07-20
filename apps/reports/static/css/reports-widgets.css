@@ -1300,7 +1300,7 @@ body.modal-open,
 }
 
 .report-results .group h4 {
-    margin-top: 0.4em;
+    margin-top: 1.2em;
 }
 
 .report-results div.count {
@@ -1360,6 +1360,13 @@ table.grp_left_col td.right_part table.grp_left_col {
 
 .report-results td:last-child {
     border-right: medium none;
+}
+
+.report-results td.left_col:last-child {
+    border-right: 1px solid black;
+}
+.report-results tr.left_row {
+    border-bottom: 1px solid black;
 }
 
 .tab-content {
