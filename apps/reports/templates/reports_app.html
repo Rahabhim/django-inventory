@@ -196,21 +196,21 @@
                                 method="POST" target="_blank" action="results.html">
                             {% csrf_token %}
                             <input type="hidden" name="data" value="[[rfpost_json]]">
-                            <button type="submit"><span class="famfam active famfam-html"></span>{% trans 'HTML page' %}</button>
+                            <button type="submit" ng-click="countSubmit()"><span class="famfam active famfam-html"></span>{% trans 'HTML page' %}</button>
                             </form>
                         </li>
                         <li ng-if="false"><form id="results_form_pdf" class="results_form"
                                 method="POST" target="_blank" action="results.pdf">
                             {% csrf_token %}
                             <input type="hidden" name="data" value="[[rfpost_json]]">
-                            <button type="submit"><span class="famfam active famfam-page_white_acrobat"></span>{% trans 'PDF document' %}</button>
+                            <button type="submit" ng-click="countSubmit()"><span class="famfam active famfam-page_white_acrobat"></span>{% trans 'PDF document' %}</button>
                             </form>
                         </li>
                         <li ng-hide="reportGroups && reportGroups.length"><form id="results_form_csv" class="results_form"
                                 method="POST" target="_blank" action="results.csv">
                             {% csrf_token %}
                             <input type="hidden" name="data" value="[[rfpost_json]]">
-                            <button type="submit"><span class="famfam active famfam-page_white_database"></span>{% trans 'CSV file' %}</button>
+                            <button type="submit" ng-click="countSubmit()"><span class="famfam active famfam-page_white_database"></span>{% trans 'CSV file' %}</button>
                             </form>
                         </li>
                     </ul>
@@ -1581,6 +1581,19 @@ if (typeof String.prototype.startsWith != 'function') {
             var num_submit = 0;
             $scope.rfpost_json = '';
 
+            var _update_actionStrings = function() {
+                angular.forEach($(".result-types form"), function(form) {
+                    var i = form.action.lastIndexOf('?');
+                    if (i >0) {
+                        form.action = form.action.substr(0, i);
+                    }
+                    form.action += '?';
+                    if ($scope.reportType && $scope.reportType.saved_id)
+                        form.action += 'id=' + $scope.reportType.saved_id + '&';
+                    form.action += 'n=' + num_submit.toString();
+                    });
+            };
+
             $scope.$parent.prepareResultsPost = function() {
                 if (!$scope.reportType)
                     return;
@@ -1599,8 +1612,13 @@ if (typeof String.prototype.startsWith != 'function') {
                         'groupped_fields': groupped_fields
                         }
                 $scope.rfpost_json = angular.toJson(data);
+                _update_actionStrings();
                 return true;
                 };
+            $scope.countSubmit = function() {
+                num_submit++;
+                _update_actionStrings();
+            };
         }]);
 
     /* We need an explicit sort filter, because our input is an object, rather than
