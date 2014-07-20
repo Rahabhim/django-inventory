@@ -48,6 +48,13 @@
     <p>{{ report_data.notes|linebreaks }}</p>
 {% endif %}
 <div class="report-results final">
+    <div class="count">{% trans "Number of results:" %} {{ count }}
+        {% if report_data.limit and report_data.limit < count %}
+        {% with report_data.limit as limit %}
+        {% blocktrans %}( showing only {{ limit }} records ) {% endblocktrans %}
+        {% endwith %}
+        {% endif %}
+    </div>
 {% if flat_results %}
     {% with cur_results=flat_results %}
         {% include "sub_results.html" %}
@@ -57,9 +64,9 @@
         <div><a onclick="expandAll()"><span class="famfam active famfam-magnifier_zoom_in"></span>Εμφάνιση όλων</a></div>
         <div><a onclick="collapseAll()"><span class="famfam active famfam-magifier_zoom_out"></span>Απόκρυψη όλων</a></div>
     </div>
-{% with group_level=0 %}
-    {% include "grp_results.html" %}
-{% endwith %}
+    {% with group_level=0 %}
+        {% include "grp_results.html" %}
+    {% endwith %}
     <div class="links_options">
         <div><a onclick="expandAll()"><span class="famfam active famfam-magnifier_zoom_in"></span>Εμφάνιση όλων</a></div>
         <div><a onclick="collapseAll()"><span class="famfam active famfam-magifier_zoom_out"></span>Απόκρυψη όλων</a></div>
@@ -68,5 +75,6 @@
 {% else %}
     <p class="error"> Internal error: no results!</p>
 {% endif %}
+    <div class="count">{% trans "Number of results:" %} {{ count }}</div>
 </div>
 {% endblock %}

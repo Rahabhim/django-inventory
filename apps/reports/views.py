@@ -1053,6 +1053,7 @@ def _pre_render_report(request):
         fin['count'] = res[1]
     elif isinstance(res, list):
         fin['groupped_results'] = res
+        fin['count'] = res[0]['_count']
 
     return fin
 
