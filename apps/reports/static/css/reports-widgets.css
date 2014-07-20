@@ -1317,6 +1317,10 @@ body.modal-open,
     box-shadow: 0 1px 5px #999999;
 }
 
+.report-results table td table {
+    width: 97%;
+}
+
 table.grp_left_col td.right_part {
     padding: 0px;
 }
@@ -1326,6 +1330,7 @@ table.grp_left_col td.right_part table.grp_left_col {
     border: none;
 }
 
+/*
 .report-results table tr:nth-child(odd) {
     background-color: #e0e0e0;
 }
@@ -1337,6 +1342,7 @@ table.grp_left_col td.right_part table.grp_left_col {
 .report-results table tr:nth-child(1) {
     background-color: #ffffff;
 }
+*/
 
 .report-results table th {
     border-bottom: 3px solid #ddd;
@@ -1359,6 +1365,7 @@ table.grp_left_col td.right_part table.grp_left_col {
 .tab-content {
     min-height: 250px;
 }
+
 #fmt-form-table tr.no-details td {
     text-decoration: line-through;
     opacity: 0.6;
@@ -1500,8 +1507,71 @@ ul.result-types li button {
     .screen-collapsed {
         display: hide;
     }
-    ul.navigation li {
+    ul.navigation li.print,
+    ul.navigation li.print:hover{
         font-size: 120%;
+    }
+    
+    .report-results div.group h4 {
+    }
+    
+    .grp_results table {
+        border: none;
+    }
+    .grp_results table tr {
+        border-bottom:  3px solid #a7b47c;
+    }
+    .report-results table th {
+        border-bottom:  3px solid #a7b47c;
+        background-color:#025C81;
+        color:#FFFFFF;
+    }
+
+    table.grp_left_col {
+        background-color: #FFFFFF !important;
+        box-shadow: 0 1px 5px #999999;
+        margin-left: 12px; 
+        /*Na fygei: Einai mono gia to demo tis stoixisis twn epipedwn"*/
+    }
+    table.grp_left_col th{
+        border-right:1px solid #DDDDDD;
+    }
+
+    table.grp_left_col td.left_part {
+        background-color: #FFFFFF;
+    }
+
+
+    table.grp_left_col td.right_part {
+        padding: 0px;
+    }
+
+    table.grp_left_col td.right_part table.detail-results,
+    table.grp_left_col td.right_part table.grp_left_col {
+        border: none;
+        box-shadow:none;
+    }
+    table.grp_left_col td.right_part table.detail-results tr:hover{
+        background-color:#ccdae0 !important;
+    }
+
+    table.grp_left_col td.right_part table.detail-results th{
+        border-bottom: 3px solid #ddd;
+        background-color: #025C81;
+        color: #FFFFFF;
+    }
+
+    table.grp_left_col td.right_part table.detail-results tr{
+        border-bottom: none !important;
+    }
+
+
+    table.grp_left_col td.right_part table.detail-results tr:nth-child(even) {
+        background-color: #EEF0F2;
+    }
+
+    table.grp_left_col td.right_part table.detail-results tr:nth-child(odd) {
+        background-color: #ffffff;
     }
 }
 
