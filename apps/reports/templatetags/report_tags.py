@@ -5,7 +5,7 @@ from django.conf import settings
 # from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.template import Library, Node, NodeList
-
+from django.utils.translation import ugettext_lazy as _
 
 register = Library()
 
@@ -77,9 +77,52 @@ class GroupNode(Node):
         context['cur_grp_fields'] = grp_fields
         context['do_group_recurse'] = lambda: self._render_group_flat(group_level+1, context)
         context['cur_results'] = filter(rows_filter, group['values'])
+        if grp_fields and grp_fields[0].get('group_mode',False) == 'left_col':
+            self._compute_right_cols(group_level, context)
+        else:
+            context['right_fields'] = []
         yield self.grp_list.render(context)
         context.pop()
         return
+        
+    def _compute_right_cols(self, group_level, context):
+        i = group_level + 1
+        results = context['groupped_results']
+        ret = []
+        last_factor = 1
+        while i <= len(results):
+            cur_results = results[i+1]
+            if cur_results and cur_results.get('group_by'):
+                cur_grp_fields = context['groupped_fields'].get(str(i), [{},])
+                if cur_grp_fields[0].get('group_mode') == 'table':
+                    l = cur_grp_fields[:]
+                    l.sort(key=lambda fc: fc.get('sequence'))
+                    l.append({'id': '_count', 'name': _("Count")})
+                    last_factor = 2
+                    ret += l
+                    break
+                elif cur_grp_fields[0].get('group_mode') == 'left_col':
+                    ret.append(cur_grp_fields[0])
+                else:
+                    ret.append({'id': '_count'})
+                    break
+            elif cur_results:
+                # detailed results
+                l = context['field_cols'][:]
+                # sort?
+                ret.extend(l)
+                break
+            i += 1
+        context['right_fields'] = ret
+
+        def get_rowspan():
+            # note that we're evaluating `context['cur_row']` at the time of
+            # this function call, meaning it will give a different count each time
+            nrf = self._get_rows_filter(context['cur_group']['group_by'], context['cur_row'])
+            count_child_rows = sum(map(nrf, cur_results['values']))
+            return  (count_child_rows * last_factor) + 1
+
+        context['get_rowspan'] = get_rowspan
 
     def _render_group_flat(self, group_level, context):
         nodelist = NodeList()

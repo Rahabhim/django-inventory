@@ -1,12 +1,14 @@
 {% load i18n %}
 {% load report_tags %}
 
+{% if not hide_head %}
 <table class="detail-results">
     <tr>
         {% for fc in field_cols %}
         <th>{% if fc.name != '-' %}{{ fc.name|title }}{% endif %}</th>
         {% endfor %}
     </tr>
+{% endif %}
 
     {% for row in cur_results %}
     <tr>{% for fc in field_cols %}
@@ -26,4 +28,6 @@
         {% endfor %}
     </tr>
     {% endfor %}
+{% if not hide_head %}
 </table>
+{% endif %}
