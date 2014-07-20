@@ -1573,6 +1573,42 @@ ul.result-types li button {
     table.grp_left_col td.right_part table.detail-results tr:nth-child(odd) {
         background-color: #ffffff;
     }
+    
+    .report-results .group h4 span.arrow-img {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: middle;
+        width: 16px; height: 16px;
+        background: url(../images/arrows-16.png) no-repeat;
+        background-position: -16px 0px;
+    }
+    .report-results .group.collapsed h4 span.arrow-img {
+        background-position: -32px 0px;
+    }
+    
+    .report-results .group.collapsed > div {
+        display: none;
+    }
+    
+    .report-results .links_options {
+        margin:12px 0px;
+        width:100%;
+        clear:both;
+        overflow:auto;
+    }
+    .report-results .links_options > div {
+        display: inline-block;
+        margin-right: 30px;
+        padding-top: 8px;
+    }
+    .report-results .links_options a,
+    .report-results .links_options a:active {
+        text-decoration: none;
+        color: blue;
+    }
+    .report-results .links_options a:hover {
+        background-color: #d0d0ff;
+    }
 }
 
 @media print {
@@ -1581,5 +1617,10 @@ ul.result-types li button {
     }
     #main {
         width: 100%;
-    }}
+    }
+    .links_options {
+        display: none;
+    }
+}
+
 /* eof */

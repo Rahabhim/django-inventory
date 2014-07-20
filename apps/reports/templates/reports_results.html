@@ -15,9 +15,29 @@
     <div class="block">
         <h3>{% trans 'Actions' %}</h3>
         <ul class="navigation">
-            <li><a onclick="window.print()"><span class="famfam active famfam-printer"></span>{% trans 'Print this report' %}</a></li>
+            <li class="print"><a onclick="window.print()"><span class="famfam active famfam-printer"></span>{% trans 'Print this report' %}</a></li>
         </ul>
     </div>
+{% endblock %}
+
+{% block web_theme_javascript %}
+    {# using web_theme.. and not just "javascript", to hide 2 unused scripts #}
+<script type="text/javascript">
+    function toggleExpand(elem) {
+        var par = $(elem).parent();
+        // console.log("Toggle expand", elem, par, );
+        if (par.hasClass('collapsed'))
+            par.removeClass('collapsed').addClass('expanded');
+        else
+            par.removeClass('expanded').addClass('collapsed');
+    }
+    function expandAll() {
+        $('.report-results .group').removeClass('collapsed').addClass('expanded');
+    }
+    function collapseAll() {
+         $('.report-results .group').removeClass('expanded').addClass('collapsed');
+    }
+</script>
 {% endblock %}
 
 {% block content %}
@@ -33,9 +53,18 @@
         {% include "sub_results.html" %}
     {% endwith %}
 {% elif groupped_results %}
+    <div class="links_options">
+        <div><a onclick="expandAll()"><span class="famfam active famfam-magnifier_zoom_in"></span>Εμφάνιση όλων</a></div>
+        <div><a onclick="collapseAll()"><span class="famfam active famfam-magifier_zoom_out"></span>Απόκρυψη όλων</a></div>
+    </div>
 {% with group_level=0 %}
     {% include "grp_results.html" %}
 {% endwith %}
+    <div class="links_options">
+        <div><a onclick="expandAll()"><span class="famfam active famfam-magnifier_zoom_in"></span>Εμφάνιση όλων</a></div>
+        <div><a onclick="collapseAll()"><span class="famfam active famfam-magifier_zoom_out"></span>Απόκρυψη όλων</a></div>
+        <div><a onclick="window.print()"><span class="famfam active famfam-printer"></span>{% trans 'Print this report' %}</a></div>
+    </div>
 {% else %}
     <p class="error"> Internal error: no results!</p>
 {% endif %}
