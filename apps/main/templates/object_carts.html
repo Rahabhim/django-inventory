@@ -1,8 +1,9 @@
-<td>{% if has_cart %}{% for cart in carts %}{% if cart.item_state %}
+{% if has_cart %}
+<td class="cart_col">{% for cart in carts %}{% if cart.item_state %}
         <a href="{{ cart.action_url }}" class="cart_action {{ cart.item_state }}" id="cart_action_{{cart.cart_id}}">
             <span>{{cart.item_state }}&nbsp;
         </a>
     {% endif %}{% endfor %}
-{% endif %}
 </td>
+{% endif %}
 
