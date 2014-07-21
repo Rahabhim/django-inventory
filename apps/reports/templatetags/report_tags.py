@@ -71,6 +71,7 @@ class GroupNode(Node):
         if group_level + 1 >= len(context['groupped_results']):
             return
         group = context['groupped_results'][group_level+1]
+        context['has_next_results'] = bool( group_level+2 < len(context['groupped_results']))
         context.push()
         context['cur_group'] = group
         grp_fields = context['groupped_fields'].get(str(group_level), [])

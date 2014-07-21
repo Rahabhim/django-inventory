@@ -1330,19 +1330,6 @@ table.grp_left_col td.right_part table.grp_left_col {
     border: none;
 }
 
-/*
-.report-results table tr:nth-child(odd) {
-    background-color: #e0e0e0;
-}
-
-.report-results table tr:nth-child(even) {
-    background-color: #ffffff;
-}
-
-.report-results table tr:nth-child(1) {
-    background-color: #ffffff;
-}
-*/
 
 .report-results table th {
     border-bottom: 3px solid #ddd;
@@ -1366,7 +1353,7 @@ table.grp_left_col td.right_part table.grp_left_col {
     border-right: 1px solid black;
 }
 .report-results tr.left_row {
-    border-bottom: 1px solid black;
+    /* border-bottom: 1px solid black; */
 }
 
 .tab-content {
@@ -1532,6 +1519,17 @@ ul.result-types li button {
     
     .report-results table.grp_left_col tbody tr.left_row {
         border-top: 3px solid #a7b47c;
+        background: none;
+    }
+    
+    .report-results table.grp_left_col tbody tr.right_table {
+        border-top: 2px solid #ddd;
+    }
+    .report-results table.grp_left_col tbody tr.right_table > td{
+        padding-top: 4px;
+    }
+    .report-results tbody tr.right_table > td{
+        background-color: white;
     }
     
     .report-results table.grp_left_col tbody tr.left_row td.right_empty {
@@ -1546,6 +1544,14 @@ ul.result-types li button {
         background-color:#025C81;
         color:#FFFFFF;
     }
+    .report-results table tbody tr:nth-child(odd) {
+        background-color: #e0e0e0;
+    }
+
+    .report-results table tbody tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+
 
     table.grp_left_col {
         background-color: #FFFFFF !important;
@@ -1557,13 +1563,23 @@ ul.result-types li button {
         border-right:1px solid #DDDDDD;
     }
 
-    table.grp_left_col td.left_part {
+    table.grp_left_col td.left_part
+    {
         background-color: #FFFFFF;
+    }
+    
+    table.grp_left_col tbody tr.left_row td,
+    table.grp_left_col tbody tr td.right_part{
+        /* reset the even/odd highlighting to white background */
+        background: white;
     }
 
 
     table.grp_left_col td.right_part {
         padding: 0px;
+        background-color: white;
+        padding-bottom: 6px;
+        border-top: 1px solid #ddd;
     }
 
     table.grp_left_col td.right_part table.detail-results,

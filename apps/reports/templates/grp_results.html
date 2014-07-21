@@ -17,14 +17,14 @@
             </thead>
         {% endif %}
             {% for cur_row in cur_results %}
-            <tr>
+            <tr class="right_table">
                 {% for fc in cur_grp_sorted %}
                 <td >{{ cur_row|attrib:fc.id }}</td>
                 {% endfor %}
                 <td>{{ cur_row|dvalue:'_count' }}</td>
             </tr>
-            <tr>
-                <td colspan="{{ groupped_fields|length|add:1 }}">
+            <tr {% if not has_next_results %}style="display: none"{% endif %}>
+                <td colspan="{{ groupped_fields|length|add:1 }}" class="right_part">
                     <div>{% with 0 as hide_head %}
                         {{ do_group_recurse }}
                         {% endwith %}
@@ -74,7 +74,7 @@
     {% else %}
         {% for cur_row in cur_results %}
           {% if hide_head %}
-            <tr><td>
+            <tr><td class="right_part">
           {% endif %}
             <div class="group expanded">
             <h4 onclick="toggleExpand(this)"><span class="arrow-img">&nbsp;</span>{% for fc in cur_grp_fields %}

@@ -366,7 +366,7 @@
                 <td ng-repeat="fc in groupped_fields[group_level-1]|seqSort">[[ cur_group[fc.id] ]]</td>
                 <td>[[ cur_group._count ]]</td>
             </tr>
-            <tr ng-repeat-end>
+            <tr ng-repeat-end ng-show="results[group_level+1]">
                 <td colspan="[[ groupped_fields[group_level-1]|seqCount:1]]">
                     <div ng-controller="previewGroupedCtl" ng-init="hide_head=false">
                         <div ng-include="'parts/preview-results.html'"><!-- recursive --></div>
