@@ -119,8 +119,15 @@ class GroupNode(Node):
             # note that we're evaluating `context['cur_row']` at the time of
             # this function call, meaning it will give a different count each time
             nrf = self._get_rows_filter(context['cur_group']['group_by'], context['cur_row'])
-            count_child_rows = sum(map(nrf, cur_results['values']))
-            return  (count_child_rows * last_factor) + 1
+            o = group_level + 1
+            count_child_rows = 1
+            while o <= i:
+                n = sum(map(nrf, results[o+1]['values']))
+                count_child_rows += n
+                if o == i and last_factor == 2:
+                    count_child_rows += n
+                o += 1
+            return count_child_rows
 
         context['get_rowspan'] = get_rowspan
 

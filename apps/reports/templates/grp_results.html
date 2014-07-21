@@ -61,6 +61,7 @@
                     {% endfor %}
                     <div class="count">({{ cur_row|dvalue:'_count' }})</div>
                 </td>
+                <td class="right_empty" colspan="{{right_fields|length}}"></td>
             </tr>
             {% with 1 as hide_head %}
                 {{ do_group_recurse }}
