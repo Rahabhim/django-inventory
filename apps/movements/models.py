@@ -98,7 +98,7 @@ class PurchaseOrderManager(models.Manager):
     def by_request(self, request):
         Q = models.Q
         try:
-            if request.user.is_superuser:
+            if request.user.is_superuser or request.user.is_staff:
                 return self.all()
             else:
                 active_role = role_from_request(request)
@@ -736,7 +736,7 @@ class RepairOrderManager(models.Manager):
     def by_request(self, request):
         Q = models.Q
         try:
-            if request.user.is_superuser:
+            if request.user.is_superuser or request.user.is_staff:
                 return self.all()
             else:
                 active_role = role_from_request(request)
@@ -824,7 +824,7 @@ class MovementManager(models.Manager):
     def by_request(self, request):
         Q = models.Q
         try:
-            if request.user.is_superuser:
+            if request.user.is_superuser or request.user.is_staff:
                 return self.all()
             else:
                 active_role = role_from_request(request)
