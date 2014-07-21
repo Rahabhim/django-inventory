@@ -1525,9 +1525,22 @@ ul.result-types li button {
     .grp_results table {
         border: none;
     }
-    .grp_results table tr {
+    .report-results table.grp_results tbody tr
+    {
         border-bottom:  3px solid #a7b47c;
     }
+    
+    .report-results table.grp_left_col tbody tr.left_row {
+        border-top: 3px solid #a7b47c;
+    }
+    
+    .report-results table.grp_left_col tbody tr.left_row td.right_empty {
+        padding: 0px;
+        margin: 0px;
+        border: none;
+    }
+    
+    
     .report-results table th {
         border-bottom:  3px solid #a7b47c;
         background-color:#025C81;
