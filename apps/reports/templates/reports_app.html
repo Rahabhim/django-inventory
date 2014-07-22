@@ -379,9 +379,12 @@
     </div>
     <div ng-if="group_mode == 'left_col'">
         <table class="grp_left_col">
+            <thead>
             <tr ng-if="!hide_head"><th ng-init="fc = groupped_fields[group_level-1][0]">[[ fc.name ]]</th>
                 <th ng-repeat="fc in right_cols">[[ fc.display_name ]]</th>
             </tr>
+            </thead>
+            <tbody>
             <tr ng-repeat="cur_group in cur_results.values|filter:rowsFilter">
                 <td class="left_col">
                     <div ng-repeat="fc in groupped_fields[group_level-1]|seqSort">
@@ -397,9 +400,10 @@
                 </td>
             </tr>
             <tr>
-                <td class="grp_left_col"> ... </td>
+                <td class="left_col"> ... </td>
                 <td class="right_part" ng-attr-colspan="[[ right_cols.length]]"> ... </td>
             </tr>
+            </tbody>
         </table>
     </div>
     <div ng-if="cur_results && !(cur_results.group_by)">
