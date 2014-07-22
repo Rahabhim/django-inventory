@@ -1521,6 +1521,9 @@ ul.result-types li button {
         border-top: 3px solid #a7b47c;
         background: none;
     }
+    .report-results table.grp_left_col tbody tr td.left_col {
+        background: white;
+    }
     
     .report-results table.grp_left_col tbody tr.right_table {
         border-top: 2px solid #ddd;
@@ -1583,7 +1586,7 @@ ul.result-types li button {
     }
 
     table.grp_left_col td.right_part table.detail-results,
-    table.grp_left_col td.right_part table.grp_left_col {
+    table.grp_left_col td.right_part table.left_col {
         border: none;
         box-shadow:none;
     }
