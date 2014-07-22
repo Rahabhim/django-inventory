@@ -170,6 +170,7 @@ class CJFilter_Model(CJFilter):
             group_fields = {}
             gvalues = []
             gorder_by = []
+            go_backmap = {} # map of "gorder_by" entries not same as group_by
             gb_values_cache = {}
             ret = [{ 'group_level': 0, '_count': objects.count(), "values": []},]
 
@@ -189,7 +190,13 @@ class CJFilter_Model(CJFilter):
                 gvalues.append(oby)
                 if isinstance(field, CJFilter_Model):
                     oby2 = oby + '__id'
-                    gorder_by.append(oby2) # avoid natural order
+                    if not field._model_inst._meta.parents:
+                        # Django db backend borks if we try to order by inheriting id
+                        gorder_by.append(oby2) # avoid natural order
+                    else:
+                        gorder_by.append(oby)
+                        go_backmap[oby] = oby2
+
                     if oby2 not in fields2:
                         fields2.append(oby2)
                 else:
@@ -246,7 +253,7 @@ class CJFilter_Model(CJFilter):
                     vals.append(row)
 
                 ret.append({'group_level': i,
-                            'group_by': map(lambda x: x.replace('__', '.'), go_by),
+                            'group_by': map(lambda x: go_backmap.get(x,x).replace('__', '.'), go_by),
                             'values': vals })
 
             # last, the detailed results
