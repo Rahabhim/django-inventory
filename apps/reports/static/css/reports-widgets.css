@@ -1659,6 +1659,10 @@ ul.result-types li a{
         width: 100%;
         background: transparent;
     }
+    #header, #header-line {
+        display: none;
+    }
+    
     .links_options {
         display: none;
     }
