@@ -1079,6 +1079,8 @@ def csv_fmt(val):
         return val.encode('utf-8')
     elif isinstance(val, bool):
         return (val and 'true') or 'false'
+    elif isinstance(val, list):
+        return ', '.join(map(csv_fmt, val))
     else:
         # dates?
         return str(val)
