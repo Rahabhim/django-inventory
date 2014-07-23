@@ -1301,6 +1301,10 @@ tbody {display: table-row-group;}
     text-align: left;
 }
 
+.popover-content code {
+    font-size: 8pt;
+}
+
 .report-results .group {
     padding-left: 2em;
 }
