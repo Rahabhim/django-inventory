@@ -225,11 +225,13 @@ section.search div.add-criterion {
 .tab-content > .tab-pane,
 .pill-content > .pill-pane {
   display: none;
+  -webkit-transition: display linear 0.4s;
 }
 
 .tab-content > .active,
 .pill-content > .active {
   display: block;
+  -webkit-transition: display linear 0.4s;
 }
 
 .nav .caret {
@@ -1232,6 +1234,15 @@ thead {display: table-header-group;}
 tfoot {display: table-footer-group;}
 tbody {display: table-row-group;}
 
+.tabbable .tab-content {
+    border-bottom: 1px solid #dddddd;
+}
+
+.tabbable .tab-content > .tab-pane {
+    transition: all linear 0.4s;
+    -webkit-transition: all linear 0.4s;
+}
+
 #select-report-type .button-selection {
     border: 2px #d0d0d0;
     border-style: dotted;
@@ -1239,6 +1250,8 @@ tbody {display: table-row-group;}
     width: 20em;
     padding: 2px;
     border-radius: 4px 4px;
+    transition: all linear 0.2s;
+    -webkit-transition: all linear 0.2s;
 }
 
 #select-report-type.clear .button-selection {
