@@ -12,7 +12,7 @@ register = Library()
 def return_attrib(obj, attrib, arguments={}):
     try:
         if isinstance(obj, dict):
-            return obj[attrib]
+            return obj.get(attrib, None)
         elif isinstance(attrib, types.FunctionType):
             return attrib(obj)
         else:
@@ -142,7 +142,7 @@ class GroupNode(Node):
     def _get_rows_filter(self, group_by, cur_row):
         sample = {}
         for f in group_by:
-            sample[f] = cur_row.get(f, False)
+            sample[f] = cur_row.get(f, None)
 
         def rfilter(row):
             for k, v in sample.items():
