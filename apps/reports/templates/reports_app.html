@@ -1100,7 +1100,7 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.selFieldMulti = function(field, di, index) {
                 var sel = field.data[index];
                 for(var i=0; i< field.data.length;)
-                    if (field.data[i]){
+                    if (field.data[i] && field.data[i].pk){
                         // count again, match by object identity
                         if (field.data[i] === sel)
                             di.i = i;
@@ -1111,15 +1111,19 @@ if (typeof String.prototype.startsWith != 'function') {
                 };
             $scope.addFieldMulti = function(field, di) {
                 $log.debug("addFieldMulti", field);
-                if (field.data_op != 'in') {
+                if (field.data_op != 'in' && field.data) {
                     var dd = field.data;
                     field.data = [];
-                    if (dd) field.data.push(dd);
+                    field.data.push(dd);
                     field.data_op = 'in';
                     }
+                else if (!field.data || ( di.i < field.data.length
+                        && !(field.data[di.i] && field.data[di.i].pk)))
+                    return; // don't allow adding a value, when current one is empty
+
                 field.data.push({'value': "", 'repr': "", "pk": 0 });
                 if (di)
-                di.i = field.data.length - 1;
+                    di.i = field.data.length - 1;
                 };
             $scope.rmFieldMulti = function(field, index, di) {
                 if (field.data_op != 'in')
