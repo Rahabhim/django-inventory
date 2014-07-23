@@ -9,6 +9,12 @@
 {% block stylesheets %}
     {{ block.super }}
     <link rel="stylesheet" href="{{ STATIC_URL }}css/reports-widgets.css" type="text/css"/>
+<style media="screen">
+    #main {
+        width: 99%;
+        padding: 10px;
+    }
+</style>
 {% endblock %}
 
 {% block web_theme_sidebar %}
