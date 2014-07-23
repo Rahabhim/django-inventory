@@ -1226,6 +1226,12 @@ body.modal-open,
 }
 
 /* not from bootstrap */
+
+/* try to explicitly fix repetition of header rows on each page: */
+thead {display: table-header-group;}
+tfoot {display: table-footer-group;}
+tbody {display: table-row-group;}
+
 #select-report-type .button-selection {
     border: 2px #d0d0d0;
     border-style: dotted;

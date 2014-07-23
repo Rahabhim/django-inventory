@@ -3,11 +3,14 @@
 
 {% if not hide_head %}
 <table class="detail-results">
+    <thead>
     <tr>
         {% for fc in field_cols %}
         <th>{% if fc.name != '-' %}{{ fc.name|title }}{% endif %}</th>
         {% endfor %}
     </tr>
+    </thead>
+    <tbody>
 {% endif %}
 
     {% for row in cur_results %}
@@ -29,5 +32,6 @@
     </tr>
     {% endfor %}
 {% if not hide_head %}
+    </tbody>
 </table>
 {% endif %}
