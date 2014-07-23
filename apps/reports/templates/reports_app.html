@@ -1424,7 +1424,6 @@ if (typeof String.prototype.startsWith != 'function') {
             angular.forEach($scope.reportType.fields, calc_get_fields,
                             {req: true, ggroup: field_cols});
 
-            // $log.debug("Fields:", $scope.reportType.fields, $scope.field_cols, $scope.groupped_fields);
             field_cols.sort(function(a, b) { return a.sequence - b.sequence; });
         };
 
