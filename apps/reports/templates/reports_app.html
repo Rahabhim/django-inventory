@@ -141,9 +141,9 @@
                                     <input type="text" ng-model="field.fmt.title">
                                 </div>
                                 {% if request.user.is_superuser %}
-                                [[ field.full_path ]]
                                 <div>Pos: <input type="number" style="width: 4em;" ng-model="field.fmt.sequence"></div>
-                                [[ field.fmt ]]
+                                <code>[[ field.full_path ]]</code>
+                                <code>[[ field.fmt|json ]]</code>
                                 {% endif %}
                                 <div ng-if="field.fields">
                                     {% trans 'Display:' %}
