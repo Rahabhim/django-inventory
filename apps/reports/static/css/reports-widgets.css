@@ -1310,7 +1310,7 @@ body.modal-open,
 }
 
 .report-results table {
-    border: 1px solid black; /*-*/
+    border: 1px solid black;
     width: 100%;
     border-collapse: collapse;
     border-radius: 5px;
@@ -1657,9 +1657,18 @@ ul.result-types li a{
     }
     #main {
         width: 100%;
+        background: transparent;
     }
     .links_options {
         display: none;
+    }
+    
+    body,
+    .container,
+    .wrapper,
+    table,
+    table td {
+        background: transparent;
     }
 }
 
