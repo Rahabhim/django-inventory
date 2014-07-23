@@ -297,7 +297,7 @@
     <input ng-model="field.data" type="text" autocomplete="off"
         typeahead="d as d.repr for d in getLookup(field.lookup, $viewValue)"
         typeahead-editable="false">
-    <a ng-click="addFieldMulti(field)" title="{% trans 'Add value' %}">+</a>
+    <a ng-click="addFieldMulti(field)" title="{% trans 'Add value' %}" class="famfam active famfam-bullet_toggle_plus">+</a>
   </div>
   <div ng-if="field.data_op == 'in'" ng-init="di = {i: field.data.length-1}">
     <span ng-repeat="dv in field.data">
@@ -307,10 +307,10 @@
             typeahead="d as d.repr for d in getLookup(field.lookup, $viewValue)"
             typeahead-editable="false">
         <span ng-if="$index == di.i" ng-click="rmFieldMulti(field, $index, di)"
-            title="{% trans 'Remove this value' %}">-</span>
+            title="{% trans 'Remove this value' %}" class="famfam active famfam-bullet_toggle_minus">-</span>
         <span ng-if="!$last"> {% trans 'or' %} </span>
     </span>
-    <a ng-click="addFieldMulti(field, di)" title="{% trans 'Add value' %}">+</a>
+    <a ng-click="addFieldMulti(field, di)" class="famfam active famfam-bullet_toggle_plus" title="{% trans 'Add value' %}">+</a>
   </div>
 </script>
 

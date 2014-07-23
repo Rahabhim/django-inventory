@@ -1278,6 +1278,22 @@ tbody {display: table-row-group;}
     margin-left: 10px;
 }
 
+.params-form dl dd input {
+    min-height: 20px;
+    padding: 1px;
+    margin-bottom: 4px;
+}
+
+.params-form dl dd input[type="text"] {
+    min-width: 20em;
+}
+
+.params-form dl dd input[typeahead] {
+    background:  url('../theme/images/icon-search.png') no-repeat;
+    background-origin: content-box;
+    background-position: right;
+}
+
 .formatting-form table {
     border: 1px solid black;
 }
