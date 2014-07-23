@@ -56,9 +56,11 @@ def _context_has_perm(context, obj, pattern):
         role = False
         if 'request' in context:
             role = role_from_request(context['request'])
-        if role is False:
-            role = context['request'].user
-        return role.has_perm(pattern % npd)
+            if role.has_perm(pattern % npd):
+                return True
+            if context['request'].user.has_perm(pattern % npd):
+                return True
+        return False
     except Exception:
         return False
 
