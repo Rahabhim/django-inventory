@@ -1668,7 +1668,8 @@ ul.result-types li a{
     .wrapper,
     table,
     table td {
-        background: transparent;
+        background: white;
+        -webkit-print-color-adjust: exact;
     }
 }
 
