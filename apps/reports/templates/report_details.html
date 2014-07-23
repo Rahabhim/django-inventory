@@ -4,15 +4,21 @@
 {% load generic_views_helpers %}
 {% block title %}{%trans "Report" %}{% endblock %}
 
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/reports-widgets.css" type="text/css" media="screen" />
+{% endblock %}
+
 {% block content %}
 <div class="content" width="90%"  >
     <h3>{% trans 'Report' %}: {{ report.title }}</h3>
     <div>
         <p>{% blocktrans%} You can get the results in the following formats (in a new window) {% endblocktrans %}</p>
-        <ul>
-            <li><a href="{% url reports_results_html %}?id={{report.id}}" target="_blank">HTML page</a></li>
-            <li><a href="{% url reports_results_pdf %}?id={{report.id}}" target="_blank">PDF document</a></li>
-            <li><a href="{% url reports_results_csv %}?id={{report.id}}" target="_blank">CSV list</a></li>
+        <ul class="result-types">
+            <li><a href="{% url reports_results_html %}?id={{report.id}}" target="_blank"><span class="famfam active famfam-html"></span>HTML page</a></li>
+            <!-- <li><a href="{% url reports_results_pdf %}?id={{report.id}}" target="_blank"><span class="famfam active famfam-page_white_acrobat"></span>PDF document</a></li> -->
+            <li><a href="{% url reports_results_csv %}?id={{report.id}}" target="_blank"><span class="famfam active famfam-page_white_database"></span>CSV list</a></li>
         </ul>
     </div>
 </div>

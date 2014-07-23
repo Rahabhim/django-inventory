@@ -1428,7 +1428,8 @@ ul.result-types li {
     display: inline-block;
 }
 
-ul.result-types li button {
+ul.result-types li button,
+ul.result-types li a{
   background-color: #F0F0F0;
   background-image: -moz-linear-gradient(center top , #FFFFFF 2%, #F0F0F0 2%, #DEDEDE 100%);
   border: 1px solid #969696;
