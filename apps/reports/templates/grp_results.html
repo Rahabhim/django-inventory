@@ -53,7 +53,7 @@
             {% with cur_grp_fields|dictsort:'sequence' as cur_grp_sorted %}
             {% for cur_row in cur_results %}
             <tr class="left_row">
-                <td class="left_col" rowspan="{{ get_rowspan }}">
+                <td class="left_col" rowspan="{{ get_rowspan|add:1 }}">
                     {% for fc in cur_grp_sorted %}
                     <div>
                         {% if fc.name and fc.name != '-' and fc != cur_grp_fields.0 %}
@@ -65,6 +65,9 @@
                     <div class="count">({{ cur_row|dvalue:'_count' }})</div>
                 </td>
                 <td class="right_empty" colspan="{{right_fields|length}}"></td>
+            </tr>
+            <tr class="empty_row">{# balances even/odd rows #}
+                <td class="right_empty" colspan="{{right_fields|length|add:1}}"></td>
             </tr>
             {% with 1 as hide_head %}
                 {{ do_group_recurse }}
