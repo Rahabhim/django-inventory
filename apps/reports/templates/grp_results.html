@@ -19,7 +19,7 @@
             {% for cur_row in cur_results %}
             <tr class="right_table">
                 {% for fc in cur_grp_sorted %}
-                <td >{{ cur_row|attrib:fc.id }}</td>
+                <td >{{ cur_row|attrib:fc.id|default:'-' }}</td>
                 {% endfor %}
                 <td>{{ cur_row|dvalue:'_count' }}</td>
             </tr>
@@ -56,7 +56,7 @@
                         {% if fc.name and fc.name != '-' and fc != cur_grp_fields.0 %}
                         <span >{{ fc.name }}:</span>
                         {% endif %}
-                        {{ cur_row|attrib:fc.id }}
+                        {{ cur_row|attrib:fc.id|default:'-' }}
                     </div>
                     {% endfor %}
                     <div class="count">({{ cur_row|dvalue:'_count' }})</div>
@@ -79,7 +79,7 @@
             <div class="group expanded">
             <h4 onclick="toggleExpand(this)"><span class="arrow-img">&nbsp;</span>{% for fc in cur_grp_fields %}
                 <span>{% if fc.name and fc.name != '-' %}<span>{{ fc.name }}:</span>{% endif %}
-                    {{ cur_row|attrib:fc.id }}
+                    {{ cur_row|attrib:fc.id|default:'-'}}
                 </span>
                 ({{ cur_row|dvalue:"_count" }})
                 {% endfor %}
