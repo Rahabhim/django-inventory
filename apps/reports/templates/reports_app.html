@@ -293,9 +293,25 @@
 </script>
 
 <script type="text/ng-template" id="parts/field-lookup.html">
+  <div ng-if="field.data_op != 'in'">
     <input ng-model="field.data" type="text" autocomplete="off"
         typeahead="d as d.repr for d in getLookup(field.lookup, $viewValue)"
         typeahead-editable="false">
+    <a ng-click="addFieldMulti(field)" title="{% trans 'Add value' %}">+</a>
+  </div>
+  <div ng-if="field.data_op == 'in'" ng-init="di = {i: field.data.length-1}">
+    <span ng-repeat="dv in field.data">
+        <a ng-if="$index != di.i" ng-click="selFieldMulti(field, di, $index)">[[ dv.repr ]]</a>
+        <input ng-if="$index == di.i" ng-model="field.data[$index]"
+            type="text" autocomplete="off"
+            typeahead="d as d.repr for d in getLookup(field.lookup, $viewValue)"
+            typeahead-editable="false">
+        <span ng-if="$index == di.i" ng-click="rmFieldMulti(field, $index, di)"
+            title="{% trans 'Remove this value' %}">-</span>
+        <span ng-if="!$last"> {% trans 'or' %} </span>
+    </span>
+    <a ng-click="addFieldMulti(field, di)" title="{% trans 'Add value' %}">+</a>
+  </div>
 </script>
 
 <script type="text/ng-template" id="parts/field-selection.html">
@@ -586,8 +602,16 @@ if (typeof String.prototype.startsWith != 'function') {
                         }
                     },
                 'lookup': function(rt, name) {
-                        if (rt.data)
-                            return ['=', parseInt(rt.data.pk)];
+                        if (rt.data && rt.data_op == 'in'){
+                            var vals = [];
+                            angular.forEach(rt.data, function(d) {
+                                if (d && d.pk)
+                                    vals.push(parseInt(d.pk))
+                            });
+                            return [rt.data_op, vals];
+                        }
+                        else if (rt.data)
+                            return [rt.data_op, parseInt(rt.data.pk)];
                     },
                 'selection': function(rt, name) {
                         if (rt.data)
@@ -960,7 +984,15 @@ if (typeof String.prototype.startsWith != 'function') {
                             return '[' + criteria.join(', ') + ']';
                         },
                     'lookup': function(field) {
-                        if (field.data)
+                        if (field.data && field.data_op == 'in'){
+                            var vals = [];
+                            angular.forEach(field.data, function(dt) {
+                                if (dt && dt.pk)
+                                vals.push(dt.repr);
+                            });
+                            return '[' + vals.join(' | ') + ']';
+                        }
+                        else if (field.data)
                             return field.data.repr;
                         },
                     'selection': function(field) {
@@ -1063,6 +1095,46 @@ if (typeof String.prototype.startsWith != 'function') {
                     field.data = [field.data, ''];
                 else if (field.data_op != 'between' && angular.isArray(field.data))
                     field.data = field.data[0];
+                };
+
+            $scope.selFieldMulti = function(field, di, index) {
+                var sel = field.data[index];
+                for(var i=0; i< field.data.length;)
+                    if (field.data[i]){
+                        // count again, match by object identity
+                        if (field.data[i] === sel)
+                            di.i = i;
+                        i++
+                    }
+                    else //remove empty entry
+                        field.data.splice(i, 1);
+                };
+            $scope.addFieldMulti = function(field, di) {
+                $log.debug("addFieldMulti", field);
+                if (field.data_op != 'in') {
+                    var dd = field.data;
+                    field.data = [];
+                    if (dd) field.data.push(dd);
+                    field.data_op = 'in';
+                    }
+                field.data.push({'value': "", 'repr': "", "pk": 0 });
+                if (di)
+                di.i = field.data.length - 1;
+                };
+            $scope.rmFieldMulti = function(field, index, di) {
+                if (field.data_op != 'in')
+                    return;
+                field.data.splice(index,1);
+                if (field.data.length == 0) {
+                    field.data_op = '=';
+                    field.data = undefined;
+                }
+                else if (field.data.length == 1) {
+                    field.data = field.data[0];
+                    field.data_op = '=';
+                }
+                else if (di && di.i >= field.data.length)
+                    di.i = field.data.length -1;
                 };
         }]);
 
