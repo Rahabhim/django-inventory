@@ -29,7 +29,7 @@ class SavedReport(models.Model):
     stage2 = models.TextField(null=True, blank=True, verbose_name=_(u'stage2 struct'))
 
     class Meta:
-        ordering = ('owner', 'title')
+        ordering = ('title', 'owner') # first one is also selected in bloated view
         verbose_name = _(u'saved report')
         verbose_name_plural = _(u'saved reports')
         unique_together = (('owner', 'title'),)
