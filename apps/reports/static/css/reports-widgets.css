@@ -1319,6 +1319,42 @@ tbody {display: table-row-group;}
     background-position: right;
 }
 
+.params-form dl dd select {
+    margin-bottom: 4px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-top-color: rgb(221, 221, 221);
+    border-right-color: rgb(221, 221, 221);
+    border-bottom-color: rgb(221, 221, 221);
+    border-left-color: rgb(221, 221, 221);
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    border-bottom-left-radius: 3px 3px;
+    min-height: 20px;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+}
+
+.params-form div label {
+    min-width: 13em;
+    display: inline-block;
+
+}
+.params-form div label + input[type="number"] {
+    min-height: 20px;
+    width: 5em;
+    padding: 2px;
+}
+
 .formatting-form table {
     border: 1px solid black;
 }
