@@ -1236,6 +1236,18 @@ tbody {display: table-row-group;}
 
 .tabbable .tab-content {
     border-bottom: 1px solid #dddddd;
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-left-color: rgb(221, 221, 221);
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: rgb(221, 221, 221);
+    border-bottom-left-radius: 4px 4px;
+    padding-top: 4px;
+    padding-right: 4px;
+    padding-bottom: 4px;
+    padding-left: 4px;
+    border-bottom-right-radius: 4px 4px;
 }
 
 .tabbable .tab-content > .tab-pane {
