@@ -1444,6 +1444,11 @@ table.grp_left_col td.right_part table.grp_left_col {
     /* border-bottom: 1px solid black; */
 }
 
+.report-results tr.empty_row td {
+    padding: 0px;
+    margin: 0px;
+}
+
 .tab-content {
     min-height: 250px;
 }
