@@ -93,12 +93,20 @@
                             <td><div ng-draggable="true" ng-drag-model="field"
                                 ng-click-send="field" ng-click-align="field-fmt-palette"
                                 ng-droppable="true" ng-ondrop="addToGroup(field, dragItem)"
-                                 class="add-after">[[field.full_name]]</div></td>
+                                 class="add-after">[[field.full_name]]
+                                <span ng-if="field.fmt && field.fmt.order=='+'" class="famfam active famfam-arrow_down"></span>
+                                <span ng-if="field.fmt && field.fmt.order=='-'" class="famfam active famfam-arrow_up"></span>
+                                </div>
+                            </td>
                             <td ng-repeat="field2 in get_fmt_fields(field)">
                                 <div ng-draggable="true" ng-drag-model="field2"
                                 ng-droppable="true" ng-ondrop="addToGroup(field, dragItem, field2)"
                                 ng-click-send="field2" ng-click-align="field-fmt-palette"
-                                class="add-after" >[[field2.name]]</div></td>
+                                class="add-after" >[[field2.name]]
+                                <span ng-if="field.fmt && field.fmt.order=='+'" class="famfam active famfam-arrow_down"></span>
+                                <span ng-if="field.fmt && field.fmt.order=='-'" class="famfam active famfam-arrow_up"></span>
+                                </div>
+                            </td>
                         </tr>
                         <tr class="add-group"><th>{% trans 'Add group...' %}</th>
                             <td colspan="[[ fmtTable.length ]]" ng-droppable="true" ng-ondrop="addGroup(dragItem)">{% trans 'drag here to add group...' %}</td></tr>
@@ -108,6 +116,8 @@
                                     ng-droppable="true" ng-ondrop="addToField(dragItem, field)"
                                     class="add-after">
                                     <a ng-click-send="field" ng-click-align="field-fmt-palette">[[ field.full_name ]]</a>
+                                    <span ng-if="field.fmt && field.fmt.order=='+'" class="famfam active famfam-arrow_down"></span>
+                                    <span ng-if="field.fmt && field.fmt.order=='-'" class="famfam active famfam-arrow_up"></span>
                                 </div>
                             </td>
                         </tr>
@@ -145,6 +155,14 @@
                                 <code>[[ field.full_path ]]</code>
                                 <code>[[ field.fmt|json ]]</code>
                                 {% endif %}
+                                <div>
+                                    {% trans "Order:" %}
+                                    <select ng-model="field.fmt.order">
+                                        <option value=""></option>
+                                        <option value="+">{% trans 'Ascending' %}</option>
+                                        <option value="-">{% trans 'Descending' %}</option>
+                                    </select>
+                                </div>
                                 <div ng-if="field.fields">
                                     {% trans 'Display:' %}
                                     <select ng-model="field.fmt.display"
@@ -826,8 +844,8 @@ if (typeof String.prototype.startsWith != 'function') {
                 };
 
             $scope.$root.reportSave = function() {
-                var field_cols=[], groupped_fields={}, req_fields = [];
-                _calc_result_fields($scope, req_fields, field_cols, groupped_fields);
+                var field_cols=[], groupped_fields={}, req_fields = [], order_by = [];
+                _calc_result_fields($scope, req_fields, field_cols, groupped_fields, order_by);
 
                 var stage2 = {'model': $scope.reportType.id,
                         'title': $scope.reportType.title || $scope.reportType.name,
@@ -838,7 +856,8 @@ if (typeof String.prototype.startsWith != 'function') {
                         'group_by': $scope.reportGroups,
                         'limit': $scope.reportType.limit,
                         'field_cols': field_cols,
-                        'groupped_fields': groupped_fields
+                        'groupped_fields': groupped_fields,
+                        'order_by': order_by
                         };
                 var minst = $modal.open({
                     templateUrl: 'parts/file-save.html',
@@ -1452,7 +1471,7 @@ if (typeof String.prototype.startsWith != 'function') {
         }]);
 
     var _calc_result_fields = function($scope,
-                                req_fields, field_cols, groupped_fields ){
+                                req_fields, field_cols, groupped_fields, order_by ){
             var calc_get_fields = function(field, key) {
                 if (field.hide || (field.widget == 'isset'))
                     return;
@@ -1475,14 +1494,22 @@ if (typeof String.prototype.startsWith != 'function') {
                 }
                 if (req2 && field.fmt){
                     var disp = field.full_path;
+                    var order = undefined;
                     if (field.fmt.display)
                         disp += '.' + field.fmt.display;
                     if (!field.fmt.hide)
                         req_fields.push(disp);
+                    if (field.fmt.order){
+                        if (field.fmt.order == '-')
+                            order = '-' + disp;
+                        else
+                            order = disp;
+                    }
                     if (ggroup && !field.fmt.hide)
                         ggroup.push({id: disp,
                             name: field.fmt.title || field.name,
                             widget: field.widget,
+                            order: order,
                             group_mode: field.fmt.group_mode,
                             sequence: field.fmt.sequence || field.sequence});
                 }
@@ -1501,6 +1528,21 @@ if (typeof String.prototype.startsWith != 'function') {
                             {req: true, ggroup: field_cols});
 
             field_cols.sort(function(a, b) { return a.sequence - b.sequence; });
+            for (var i in $scope.reportGroups){
+                var grp_order = [];
+                angular.forEach(groupped_fields[i], function(field) {
+                    if (field.order)
+                        grp_order.push(field);
+                    });
+                if (grp_order.length){
+                    grp_order.sort(function(a, b) { return a.sequence - b.sequence; });
+                    angular.forEach(grp_order, function(g) { order_by.push(g.order);});
+                }
+            }
+            angular.forEach(field_cols, function(field) {
+                    if (field.order)
+                        order_by.push(field.order);
+                    });
         };
 
     reportsApp.controller('previewCtrl', ['$log', '$scope', '$http', '$timeout', '$sce',
@@ -1518,6 +1560,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 $scope.results = false;
                 $scope.field_cols = [];
                 $scope.groupped_fields = {};
+                $scope.order_by = [];
                 $scope.group_level = 0;
                 $scope.rowsFilter = function() { return true; };
 
@@ -1528,7 +1571,8 @@ if (typeof String.prototype.startsWith != 'function') {
                 $scope.cur_domain = $scope.$parent.getCurDomain();
                 var req_fields = [];
                 _calc_result_fields($scope,
-                                req_fields, $scope.field_cols, $scope.groupped_fields);
+                                req_fields, $scope.field_cols, $scope.groupped_fields,
+                                $scope.order_by);
 
 
                 $http.post('./results-preview/' + $scope.reportType.id,
@@ -1537,6 +1581,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         'fields': req_fields,
                         'show_detail': $scope.reportType.show_detail,
                         'group_by': $scope.reportGroups,
+                        'order_by': $scope.order_by,
                         'limit': $scope.reportType.preview_limit || 10
                         }
                     )
@@ -1676,8 +1721,8 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.$parent.prepareResultsPost = function() {
                 if (!$scope.reportType)
                     return;
-                var field_cols=[], groupped_fields={}, req_fields = [];
-                _calc_result_fields($scope, req_fields, field_cols, groupped_fields);
+                var field_cols=[], groupped_fields={}, req_fields = [], order_by = [];
+                _calc_result_fields($scope, req_fields, field_cols, groupped_fields, order_by);
 
                 var data = {'model': $scope.reportType.id,
                         'title': $scope.reportType.title || $scope.reportType.name,
@@ -1686,6 +1731,7 @@ if (typeof String.prototype.startsWith != 'function') {
                         'fields': req_fields,
                         'show_detail': $scope.reportType.show_detail,
                         'group_by': $scope.reportGroups,
+                        'order_by': order_by,
                         'limit': $scope.reportType.limit,
                         'field_cols': field_cols,
                         'groupped_fields': groupped_fields
