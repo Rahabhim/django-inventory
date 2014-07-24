@@ -1595,6 +1595,30 @@ ul.result-types li a{
     min-height: 4em;
 }
 
+.modal-body.file-load {
+}
+
+.modal-body.file-save input[type="text"] {
+    min-width:30em;
+    min-height: 20px;
+    margin-bottom: 10px;
+}
+
+.modal-header .btn-link {
+    border: none;
+    font-weight: bold;
+    font-size: 14px;
+    background-image: initial;
+    background-attachment: initial;
+    background-origin: initial;
+    background-clip: initial;
+    background-color: transparent;
+    cursor: pointer;
+    margin-top: 4px;
+    background-position: initial initial;
+    background-repeat: initial initial;
+}
+
 @media screen, handheld {
     /* only collapse on screen, expand on printer */
     .screen-collapsed {
