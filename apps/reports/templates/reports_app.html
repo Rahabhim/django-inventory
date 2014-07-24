@@ -1166,7 +1166,7 @@ if (typeof String.prototype.startsWith != 'function') {
 
             $scope.$watch('field.fields.category.data', function(cat_data) {
                 var fields = $scope.field.fields;
-                if (cat_data) {
+                if (cat_data && cat_data.pk) {
                         // Avoid http get if we close/open the attributes node.
                         // But this will still need to be set at the beginning
                     if (fields.attributes.cat_pk == cat_data.pk)
