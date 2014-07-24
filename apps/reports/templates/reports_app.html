@@ -448,7 +448,7 @@
     </div>
     <div class="modal-body">
         <div>{% blocktrans %}Select a report to load{% endblocktrans %}</div>
-        <div style="overflow: auto;">
+        <div style="overflow: auto; margin-top: 16px; max-height: 300px">
             <div ng-repeat="r in reports">
                 <span class="famfam active famfam-report"></span><a ng-click="$close(r.id)">[[ r.title ]]</a>
             </div>
