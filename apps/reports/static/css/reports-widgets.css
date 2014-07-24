@@ -1353,6 +1353,7 @@ tbody {display: table-row-group;}
     min-height: 20px;
     width: 5em;
     padding: 2px;
+    margin-bottom: 4px;
 }
 
 .formatting-form table {
@@ -1560,19 +1561,24 @@ ul.result-types li a{
     color: black;
 }
 
+#fmt-trash .fields-list {
+    margin-top: 6px;
+    margin-left: 22px;
+}
+
 #fmt-trash .fields-list > div {
     display: inline-block;
     border: 1px solid #808080;
     background-color: #ffe0e0;
     padding: 2px;
     min-width: 10em;
-    margin-bottom: 1px;
+    margin-bottom: 4px;
     border-top-left-radius: 4px 4px;
     border-top-right-radius: 4px 4px;
     border-bottom-right-radius: 4px 4px;
     border-bottom-left-radius: 4px 4px;
     color: #606060;
-    margin-right: 2px;
+    margin-right: 4px;
 }
 
 #fmt-notes {
