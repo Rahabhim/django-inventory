@@ -131,13 +131,21 @@ class CJFilter_Model(CJFilter):
             return f
 
     def getResults(self, request, domain, fields=False, group_by=False,
-                    limit=False, show_detail=True, **kwargs):
+                    limit=False, show_detail=True, order_by=False, **kwargs):
         objects = self._model_inst.objects
         if getattr(objects, 'by_request', None):
             objects = objects.by_request(request)
         else:
             objects = objects.all()
 
+        order_by2 = []
+        if order_by:
+            for o in order_by:
+                # the data field, then the expression
+                if o.startswith(('+', '-')):
+                    order_by2.append((o[1:]+'.', o))
+                else:
+                    order_by2.append((o+'.', o))
         if domain:
             if isinstance(domain, list) and domain[0] == 'in':
                 flt = self._calc_domain(request, domain[1])
@@ -146,6 +154,7 @@ class CJFilter_Model(CJFilter):
                     objects = objects.filter(flt)
             else:
                 raise ValueError("Domain must be like: [in, [...]]")
+
         post_fns = {}
         if fields:
             # convert fields to django-like exprs
@@ -185,9 +194,12 @@ class CJFilter_Model(CJFilter):
                 for f in fields:
                     if f.startswith(gb+'.'):
                         gbf.append(f[len(gb)+1:].replace('.', '__'))
+
                 oby = gb.replace('.', '__')
-                group_fields[gb] = field, gbf, oby
-                gvalues.append(oby)
+                while order_by2 and order_by2[0][0].startswith(gb+'.'):
+                    gorder_by.append(order_by2[0][1].replace('.', '__'))
+                    del order_by2[0]
+
                 if isinstance(field, CJFilter_Model):
                     oby2 = oby + '__id'
                     if not field._model_inst._meta.parents:
@@ -201,6 +213,11 @@ class CJFilter_Model(CJFilter):
                         fields2.append(oby2)
                 else:
                     gorder_by.append(oby)
+                group_fields[gb] = field, gbf, oby, list(gorder_by)
+                gvalues.append(oby)
+
+            for go in order_by2:
+                gorder_by.append(go[1].replace('.', '__'))
 
             # Second pass: get all /detailed/ results
             if True:
@@ -219,9 +236,8 @@ class CJFilter_Model(CJFilter):
             while i < len(group_by):
                 gb = group_by[i]
                 i += 1
-                go_by = gorder_by[:i]
                 gvals = gvalues[:i]
-                field, gbf, oby = group_fields[gb]
+                field, gbf, oby, go_by = group_fields[gb]
 
                 # get possible values from limited objects:
                 gb_vals = list(set([o[0] for o in obs2.values_list(oby)]))
@@ -267,6 +283,8 @@ class CJFilter_Model(CJFilter):
             # grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
         else:
             count = objects.count()
+            if order_by:
+                objects = objects.order_by(*[o.replace('.', '__') for o in order_by])
             if limit:
                 objects = objects[:limit]
             detailed_results = objects.values('id', *fields2)
