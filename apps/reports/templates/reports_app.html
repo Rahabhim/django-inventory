@@ -464,7 +464,7 @@
         <button style="float: right;" class="btn btn-link btn-mini" ng-click="$dismiss()">&times;</button>
         <h3>{% trans 'Load saved report' %}</h3>
     </div>
-    <div class="modal-body">
+    <div class="modal-body file-load">
         <div>{% blocktrans %}Select a report to load{% endblocktrans %}</div>
         <div style="overflow: auto; margin-top: 16px; max-height: 300px">
             <div ng-repeat="r in reports">
@@ -482,7 +482,7 @@
         <button style="float: right;" class="btn btn-link btn-mini" ng-click="$dismiss()">&times;</button>
         <h3>{% trans 'Save report' %}</h3>
     </div>
-    <div class="modal-body">
+    <div class="modal-body file-save">
         <div>{% trans 'Title' %}: <input ng-model="report.title" type="text"></div>
         {% if user.is_staff %}
         <div>
