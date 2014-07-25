@@ -876,14 +876,18 @@ class CJFilter_attribs(CJFilter_Model):
 
     def _post_fn(self, fname, results, qset):
         imap = {}
-        for prod in qset.prefetch_related('attributes'):
-            if prod.attributes.exists():
+        apath = fname.split('__')
+        for q in qset.prefetch_related(fname):
+            p = q
+            for a in apath:
+                p = getattr(p, a)
+            if p.exists():
                 val = []
-                for attr in prod.attributes.all():
+                for attr in p.all():
                     val.append(attr.value.value)
-                imap[prod.id] = ', '.join(val)
+                imap[q.id] = ', '.join(val)
             else:
-                imap[prod.id] = ''
+                imap[q.id] = ''
         for row in results:
             row[fname] = imap.get(row['id'], None)
 
