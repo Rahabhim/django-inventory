@@ -93,7 +93,8 @@
                             <td><div ng-draggable="true" ng-drag-model="field"
                                 ng-click-send="field" ng-click-align="field-fmt-palette"
                                 ng-droppable="true" ng-ondrop="addToGroup(field, dragItem)"
-                                 class="add-after">[[field.full_name]]
+                                jqyoui-options="{'cursorAt': {'left': 5, 'top': 5}, 'tolerance': 'pointer'}"
+                                class="add-after">[[field.full_name]]
                                 <span ng-if="field.fmt && field.fmt.order=='+'" class="famfam active famfam-arrow_down"></span>
                                 <span ng-if="field.fmt && field.fmt.order=='-'" class="famfam active famfam-arrow_up"></span>
                                 </div>
@@ -101,6 +102,7 @@
                             <td ng-repeat="field2 in get_fmt_fields(field)">
                                 <div ng-draggable="true" ng-drag-model="field2"
                                 ng-droppable="true" ng-ondrop="addToGroup(field, dragItem, field2)"
+                                jqyoui-options="{'cursorAt': {'left': 5, 'top': 5}, 'tolerance': 'pointer'}"
                                 ng-click-send="field2" ng-click-align="field-fmt-palette"
                                 class="add-after" >[[field2.name]]
                                 <span ng-if="field.fmt && field.fmt.order=='+'" class="famfam active famfam-arrow_down"></span>
@@ -109,11 +111,13 @@
                             </td>
                         </tr>
                         <tr class="add-group"><th>{% trans 'Add group...' %}</th>
-                            <td colspan="[[ fmtTable.length ]]" ng-droppable="true" ng-ondrop="addGroup(dragItem)">{% trans 'drag here to add group...' %}</td></tr>
+                            <td colspan="[[ fmtTable.length ]]" ng-droppable="true"
+                                ng-ondrop="addGroup(dragItem)" jqyoui-options="{'tolerance': 'pointer'}">{% trans 'drag here to add group...' %}</td></tr>
                         <tr ng-class="{'no-details': !reportType.show_detail}"><th><input type="checkbox" ng-model="reportType.show_detail">{% trans 'detailed:'%}</th>
                             <td ng-repeat="field in fmtTable|seqSort:true">
                                 <div ng-draggable="true" ng-drag-model="field"
                                     ng-droppable="true" ng-ondrop="addToField(dragItem, field)"
+                                    jqyoui-options="{'cursorAt': {'left': 5, 'top': 5}, 'tolerance': 'pointer'}"
                                     class="add-after">
                                     <a ng-click-send="field" ng-click-align="field-fmt-palette">[[ field.full_name ]]</a>
                                     <span ng-if="field.fmt && field.fmt.order=='+'" class="famfam active famfam-arrow_down"></span>
@@ -122,11 +126,14 @@
                             </td>
                         </tr>
                     </table>
-                    <div id="fmt-trash" ng-droppable="true" ng-ondrop="removeField(dragItem)">
+                    <div id="fmt-trash" ng-droppable="true" ng-ondrop="removeField(dragItem)"
+                        jqyoui-options="{'tolerance': 'pointer' }">
                         <span class="famfam active famfam-bin"></span>
                         {% trans 'Drag any field here to hide/ungroup' %}
                         <div class="fields-list">
-                            <div ng-repeat="field in fmtTable|hiddenOnly" ng-draggable="true" ng-drag-model="field">
+                            <div ng-repeat="field in fmtTable|hiddenOnly"
+                                ng-draggable="true" ng-drag-model="field"
+                                jqyoui-options="{'cursorAt': {'left': 5, 'top': 5}}">
                                 [[ field.full_name ]]
                             </div>
                         </div>
@@ -173,7 +180,8 @@
                                     <div class="more-fields">
                                         {% trans 'Additional fields:' %}
                                         <div ng-repeat="field2 in field.fields"
-                                            ng-draggable="true" ng-drag-model="field2">
+                                            ng-draggable="true" ng-drag-model="field2"
+                                            jqyoui-options="{'cursorAt': {'left': 5, 'top': 5}}">
                                             [[ field2.name ]]
                                         </div>
                                     </div>
