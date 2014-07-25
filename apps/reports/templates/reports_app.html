@@ -266,6 +266,10 @@
     <input type="text" ng-model="field.data"></input>
 </script>
 
+<script type="text/ng-template" id="parts/field-id.html">
+    <!-- ID not searchable -->
+</script>
+
 <script type="text/ng-template" id="parts/field-.html">
     ???
 </script>
@@ -453,6 +457,7 @@
                     <span ng-switch-when="date">[[ row[fc.id]|date:'MM/dd/yyyy']]</span>
                     <span ng-switch-when="boolean">[[ row[fc.id]|fmtBool ]]</span>
                     <span ng-switch-when="has_sth">[[ row[fc.id]|fmtHasSth ]]</span>
+                    <span ng-switch-when="id"><a ng-href="[[ row[fc.id+'.url'] ]]" target="_blank">[[ row[fc.id] ]]</a></span>
                     <span ng-switch-default ng-bind="row[fc.id]"></span>
                 </td>
             </tr>
@@ -604,6 +609,10 @@ if (typeof String.prototype.startsWith != 'function') {
                 'char': function(rt, name) {
                         if (rt.data)
                             return [rt.data_op || 'icontains', rt.data];
+                    },
+                'id': function(rt, name) {
+                        if (rt.data)
+                            $log.warning("Filter for id:", rt.data);
                     },
                 'boolean': function(rt, name){
                         if (rt.data == 'true')
@@ -979,6 +988,9 @@ if (typeof String.prototype.startsWith != 'function') {
                     'boolean': function(field) {
                         if (field.data)
                             return appWords[field.data];
+                        },
+                    'id': function(field) {
+                        // TODO
                         },
                     'has_sth': function(field) {
                         if (field.data)
