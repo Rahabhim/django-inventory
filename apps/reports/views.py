@@ -453,6 +453,26 @@ class CJFilter_Boolean(CJFilter):
                 return { domain[0]: domain[2] }
         raise TypeError("Bad domain: %r", domain)
 
+class CJFilter_id(CJFilter):
+    title = _('ID')
+    sequence = 1
+
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_id, self).getGrammar(is_staff)
+        ret['widget'] = 'id'
+        return ret
+
+    def getQuery(self, request, name, domain):
+        return {}
+
+    def _post_fn(self, fname, results, qset):
+        urls = {}
+        for o in qset:
+            urls[o.id] = o.get_absolute_url()
+
+        for row in results:
+            row[fname +'.url'] = urls.get(row['id'],False)
+
 class CJFilter_dept_has_assets(CJFilter_Boolean):
     """Special filter that finds only Departments with/without assets
     """
@@ -673,6 +693,7 @@ class CJFilter_attribs_multi(CJFilter_attribs):
 
 department_filter = CJFilter_Model('company.Department', sequence=5,
     fields={ '_': CJFilter_isset(sequence=0),
+            'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
             'code': CJFilter_String(title=_('code'), sequence=2),
             'dept_type': CJFilter_lookup('company.DepartmentType', 'department_type',
@@ -690,7 +711,8 @@ department_filter = CJFilter_Model('company.Department', sequence=5,
     famfam_icon='building',
     )
 location_filter = CJFilter_Model('common.Location',
-    fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+    fields={ 'id': CJFilter_id(),
+            'name':  CJFilter_String(title=_('name'), sequence=1),
             'department': department_filter,
             'template': CJFilter_ModelChoices('common.LocationTemplate',
                     fields={'name': CJFilter_String(title=_('name'), sequence=1), }),
@@ -698,13 +720,14 @@ location_filter = CJFilter_Model('common.Location',
     famfam_icon='map', condition=user_is_staff,
     )
 manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer',
-    fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+    fields={ 'id': CJFilter_id(), 'name':  CJFilter_String(title=_('name'), sequence=1),
         },
     famfam_icon='status_online',
     )
 
 users_filter = CJFilter_Model('auth.User', sequence=40,
-    fields= {'first_name': CJFilter_String(title=_('first name'), sequence=1),
+    fields= {'id': CJFilter_id(),
+            'first_name': CJFilter_String(title=_('first name'), sequence=1),
             'last_name': CJFilter_String(title=_('last name'), sequence=2),
             'username': CJFilter_String(title=_('user name'), sequence=5),
             'email': CJFilter_String(title=_('email'), sequence=10),
@@ -714,7 +737,7 @@ users_filter = CJFilter_Model('auth.User', sequence=40,
 
 product_filter = CJFilter_Product('products.ItemTemplate',
     sequence=20,
-    fields = {
+    fields = { 'id': CJFilter_id(),
             'description': CJFilter_String(title=_('name'), sequence=1),
             'category': CJFilter_lookup('products.ItemCategory', 'categories', sequence=5,
                     fields={'name':  CJFilter_String(title=_('name'), sequence=1),} ),
@@ -727,7 +750,8 @@ product_filter = CJFilter_Product('products.ItemTemplate',
 
 contract_filter = CJFilter_lookup('procurements.Contract', 'contracts',
     title=_('contract'),
-    fields={'name':  CJFilter_String(title=_('name'), sequence=1),
+    fields={ 'id': CJFilter_id(),
+            'name':  CJFilter_String(title=_('name'), sequence=1),
             'delegate': CJFilter_Model('procurements.Delegate',
                 fields={ 'name':  CJFilter_String(title=_('name'), sequence=1),
                 }
@@ -737,7 +761,8 @@ contract_filter = CJFilter_lookup('procurements.Contract', 'contracts',
     )
 
 purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
-    fields={ 'user_id': CJFilter_String(title=_("user defined id"), sequence=1),
+    fields={ 'id': CJFilter_id(),
+            'user_id': CJFilter_String(title=_("user defined id"), sequence=1),
             'create_user': users_filter.copy(title=_("created by"), staff_only=True),
             'validate_user': users_filter.copy(title=_("validated by"), staff_only=True),
             'supplier': CJFilter_lookup('common.Supplier', 'supplier_vat',
@@ -760,7 +785,7 @@ item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
     )
 
 item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
-    fields = {
+    fields = {'id': CJFilter_id(),
             'location': location_filter,
             'item_template': product_filter,
             'itemgroup': CJFilter_contains(item_templ_c_filter,
@@ -773,7 +798,7 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     )
 
 inventories_filter = CJFilter_Model('inventory.InventoryGroup', title=_('inventories'),
-    fields={
+    fields={'id': CJFilter_id(),
         'name': CJFilter_String(title=_('name'), sequence=1),
         'department': department_filter,
         'date_act': CJFilter_date(title=_("date performed")),
@@ -787,7 +812,7 @@ inventories_filter = CJFilter_Model('inventory.InventoryGroup', title=_('invento
     )
 
 movements_filter = CJFilter_Model('movements.Movement', title=_("movements"),
-    fields={
+    fields={'id': CJFilter_id(),
         'name': CJFilter_String(title=_('name'), sequence=1),
         'date_act': CJFilter_date(title=_("date performed")),
         'date_val': CJFilter_date(title=_("date validated")),
