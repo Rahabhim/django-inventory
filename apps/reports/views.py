@@ -860,10 +860,6 @@ class CJFilter_contains(CJFilter):
 
 class CJFilter_attribs(CJFilter_Model):
     name_suffix = 'value'
-    #def __init__(self, sub_filter, **kwargs):
-    #    assert isinstance(sub_filter, CJFilter), repr(sub_filter)
-    #    self.sub = sub_filter
-    #    super(CJFilter_contains, self).__init__(**kwargs)
 
     def getGrammar(self, is_staff=False):
         ret = super(CJFilter_attribs, self).getGrammar(is_staff)
