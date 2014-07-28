@@ -646,7 +646,7 @@ if (typeof String.prototype.startsWith != 'function') {
                             return [rt.data_op, vals];
                         }
                         else if (rt.data)
-                            return [rt.data_op, parseInt(rt.data.pk)];
+                            return [rt.data_op || '=', parseInt(rt.data.pk)];
                     },
                 'selection': function(rt, name) {
                         if (rt.data)
