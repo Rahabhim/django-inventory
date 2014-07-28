@@ -164,12 +164,12 @@ class CJFilter_Model(CJFilter):
                 fld = self._get_field(*fpath)
                 if fld is None:
                     continue
-                if not fn.startswith('_'):
+                if not (fn.startswith('_') or isinstance(fld, (CJFilter_contains, CJFilter_attribs))):
                     fields2.append(fn.replace('.', '__'))
                 if fld._post_fn:
                     post_fns[fn.replace('.', '__')] = fld._post_fn
         else:  # not fields
-            fields2 = filter(lambda f: not f.startswith('_'), self.fields.keys())
+            fields2 = filter(lambda f: not (f.startswith('_') or isinstance(fld, (CJFilter_contains, CJFilter_attribs))), self.fields.keys())
             # fields.sort(key=lambda f: self.fields[f].sequence) # done at JS side
             for fn, fld in self.fields.items():
                 if fld._post_fn:
