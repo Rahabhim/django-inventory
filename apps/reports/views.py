@@ -699,6 +699,25 @@ class CJFilter_count(CJFilter):
         ret['widget'] = 'count'
         return ret
 
+class CJFilter_attribs_count(CJFilter_attribs):
+    sequence = 120
+    def __init__(self, model, sub_path, attribs_path='attributes', cat_path='category', **kwargs):
+        super(CJFilter_attribs_count, self).__init__(model, **kwargs)
+        self.sub_path = sub_path
+        self.attribs_path = attribs_path
+        self.cat_path = cat_path
+
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_attribs_count, self).getGrammar(is_staff)
+        ret['widget'] = 'attribs_count'
+        ret['sub_path'] = self.sub_path
+        ret['attribs_path'] = self.attribs_path
+        ret['cat_path'] = self.cat_path
+        return ret
+
+######## - model definitions
+
+
 department_filter = CJFilter_Model('company.Department', sequence=5,
     fields={ '_': CJFilter_isset(sequence=0),
             'id': CJFilter_id(),
@@ -789,6 +808,7 @@ item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {
         'item_template': product_filter,
         '_count': CJFilter_count(),
+        '_sum_attribs': CJFilter_attribs_count('products.ItemTemplateAttributes', 'item_template'),
         },
     famfam_icon = 'computer',
     )
