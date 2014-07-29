@@ -992,8 +992,8 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.type_name = '?';
         }]);
 
-    reportsApp.controller('paramsCtrl', ['$log', '$scope','$http', 'appWords',
-        function($log, $scope, $http, appWords) {
+    reportsApp.controller('paramsCtrl', ['$log', '$scope','$http', '$q', 'appWords',
+        function($log, $scope, $http, $q, appWords) {
             $scope.field = false;
             $scope.$parent.$watch('reportType', function(rt){
                     $scope.field = rt;
@@ -1198,49 +1198,62 @@ if (typeof String.prototype.startsWith != 'function') {
                 else if (di && di.i >= field.data.length)
                     di.i = field.data.length -1;
                 };
-        }]);
 
-    reportsApp.controller('productParamsCtrl', ['$log', '$scope', '$http', function($log, $scope, $http) {
-            $log.debug("productParamsCtrl:", $scope);
-
-            $scope.$watch('field.fields.category.data', function(cat_data) {
-                var fields = $scope.field.fields;
+            $scope.refreshCatData = function(cat_data, attr_field, setItemContains) {
+                /** Called when a products-category value is changed
+                    
+                    Refreshes the grammar of attributes, calls setItemContains()
+                    with allowed categories for child items
+                */
                 if (cat_data && cat_data.pk) {
                         // Avoid http get if we close/open the attributes node.
                         // But this will still need to be set at the beginning
-                    if (fields.attributes.cat_pk == cat_data.pk)
-                        return;
+                    if (attr_field.cat_pk == cat_data.pk)
+                        return $q.reject('no change');
 
-                    var old_data = fields.attributes.data;
-                    $http.get('./cat-grammar/'+cat_data.pk).then(function(response) {
+                    var old_data = attr_field.data;
+                    return $http.get('./cat-grammar/'+cat_data.pk).then(function(response) {
                         if (response.status == 200){
                             var d = response.data;
-                            if (d.is_group || d.is_bundle)
-                                $scope.$parent.setItemContains(d.may_contain);
-                            if (d.attributes && d.attributes.length){
-                                fields.attributes.hide = false;
-                                fields.attributes.attribs = d.attributes;
-                                fields.attributes.data = {};
-                                fields.attributes.cat_pk = cat_data.pk;
+                            if (attr_field && d.attributes && d.attributes.length){
+                                attr_field.hide = false;
+                                attr_field.attribs = d.attributes;
+                                attr_field.data = {};
+                                attr_field.cat_pk = cat_data.pk;
                                 if (old_data)
                                     angular.forEach(d.attributes, function(attr){
                                         if (old_data[attr.aid])
-                                            fields.attributes.data[attr.aid] = old_data[attr.aid];
+                                            attr_field.data[attr.aid] = old_data[attr.aid];
                                         });
                             }
+                            return d;
                         }
                         else
-                            $log.warn("Bad http response:", response)
+                            $log.warn("Bad http response:", response);
                         });
                 } else {
                     /* no category selected, cleanup attributes and sibling "containing" */
-                    if (fields && fields.attributes){
-                        fields.attributes.hide = true;
-                        fields.attributes.data = false;
-                        fields.attributes.cat_pk = false;
+                    if (attr_field){
+                        attr_field.hide = true;
+                        attr_field.data = false;
+                        attr_field.cat_pk = false;
                         }
-                    $scope.$parent.setItemContains(false);
-                    }
+                    return $q.when(false);
+                }
+            };
+        }]);
+
+    reportsApp.controller('productParamsCtrl', ['$log', '$scope', function($log, $scope) {
+            // $log.debug("productParamsCtrl:", $scope);
+
+            $scope.$watch('field.fields.category.data', function(cat_data) {
+                $scope.refreshCatData(cat_data, $scope.field.fields.attributes)
+                    .then(function(data) {
+                        if (data && (data.is_group || data.is_bundle))
+                            $scope.$parent.setItemContains(data.may_contain);
+                        else
+                            $scope.setItemContains(false);
+                    });
             });
         }]);
     reportsApp.controller('attribsCtrl', ['$log', '$scope', function($log, $scope) {
