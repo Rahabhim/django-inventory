@@ -301,6 +301,20 @@
     </div>
 </script>
 
+<script type="text/ng-template" id="parts/field-attribs_count.html">
+    <div ng-controller="attribsCountCtrl">
+        <div ng-repeat="attr in field.attribs">
+            <label ng-bind="attr.name"></label>
+            <select ng-model="field.data_op[attr.aid]">
+                <option value=">="> &gt;=</option>
+                <option value="<">&lt;</option>
+                <option value="=">=</option>
+            </select>
+            <input type="number" ng-model="field.data[attr.aid]">
+        </div>
+    </div>
+</script>
+
 <script type="text/ng-template" id="parts/field-boolean.html">
     <select ng-model="field.data">
         <option value="">*</option>
@@ -1112,6 +1126,19 @@ if (typeof String.prototype.startsWith != 'function') {
                     'count': function(field) {
                         if (field.data && field.data_op)
                             return '' + field.data_op + field.data;
+                        },
+                    'attribs_count': function(field) {
+                        var criteria = [];
+                        angular.forEach(field.attribs, function(attr) {
+                            var v = field.data[attr.aid];
+                            var op = field.data_op[attr.aid];
+                            if (!(v && op))
+                                return;
+                            criteria.push('SUM('+attr.name+') ' + op +' '+v);
+                            });
+                        if (criteria.length)
+                            return criteria.join(',');
+                        return "";
                         }
                 };
             formatFns['model-product'] = formatFns['model'];
@@ -1307,6 +1334,23 @@ if (typeof String.prototype.startsWith != 'function') {
                 $scope.cur_edit = idx;
             };
         }]);
+
+    reportsApp.controller('attribsCountCtrl', ['$log', '$scope', function($log, $scope) {
+            for(var s=$scope.$parent; s && s.field === $scope.field; s=s.$parent);
+            $scope.attribs = [];
+            if (!$scope.field.data)
+                $scope.field.data = {};
+            if (!$scope.field.data_op)
+                $scope.field.data_op = {};
+            var watch_expr = 'field.fields.'+$scope.field.sub_path +'.fields.'+$scope.field.cat_path + '.data';
+            s.$watch(watch_expr, function(cat_data) {
+                    var attr_field = s.field.fields[$scope.field.sub_path].fields[$scope.field.attribs_path];
+                    s.refreshCatData(cat_data, attr_field)
+                        .then(function(data) {
+                            $scope.field.attribs = attr_field.attribs || [];
+                        });
+                });
+            }]);
 
     reportsApp.controller('formattingCtrl', ['$log', '$scope',function($log, $scope) {
             $scope.fmtTable = false;
