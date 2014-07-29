@@ -620,13 +620,21 @@ if (typeof String.prototype.startsWith != 'function') {
                             if (dom2 && dom2.length){
                                 if (dom2[0] == '&') {
                                     angular.forEach(dom2[1], function(dom3) {
-                                        dom.push([n2, '=',].concat(dom3));
+                                        if (angular.isArray(dom3) && dom3.length > 1)
+                                            dom.push([n2,'in', dom3]);
+                                        else
+                                            dom.push([n2, '=',].concat(dom3));
                                         });
                                 }
                                 else if (dom2[0] == '&in') {
                                     angular.forEach(dom2[1], function(dom3) {
                                         if (dom3 && dom3.length)
                                             dom.push([n2, 'in', dom3]);
+                                        });
+                                }
+                                else if (dom2[0] == '&*') {
+                                    angular.forEach(dom2[1], function(dom3) {
+                                        if (dom3) dom.push([n2, dom3[0], dom3[1]]);
                                         });
                                 }
                                 else
