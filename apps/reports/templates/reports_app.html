@@ -290,6 +290,17 @@
     </select>
 </script>
 
+<script type="text/ng-template" id="parts/field-count.html">
+    <div>
+        <select ng-model="field.data_op">
+            <option value=">=">&gt;=</option>
+            <option value="<">&lt;</option>
+            <option value='='>=</option>
+        </select>
+        <input type="number" ng-model="field.data">
+    </div>
+</script>
+
 <script type="text/ng-template" id="parts/field-boolean.html">
     <select ng-model="field.data">
         <option value="">*</option>
@@ -705,6 +716,10 @@ if (typeof String.prototype.startsWith != 'function') {
                                 return ['=', true];
                         }
                     },
+                'count': function(rt, name) {
+                        if(rt.data && rt.data_op)
+                            return [rt.data_op, rt.data];
+                    },
                 };
             domainFns['model-product'] = domainFns['model'];
             domainFns['has_sth'] = domainFns['boolean'];
@@ -1093,6 +1108,10 @@ if (typeof String.prototype.startsWith != 'function') {
                                 return "set";
                             }
                         return "";
+                        },
+                    'count': function(field) {
+                        if (field.data && field.data_op)
+                            return '' + field.data_op + field.data;
                         }
                 };
             formatFns['model-product'] = formatFns['model'];

@@ -691,6 +691,14 @@ class CJFilter_attribs_multi(CJFilter_attribs):
         ret['widget'] = 'attribs_multi'
         return ret
 
+class CJFilter_count(CJFilter):
+    title = _('count')
+    sequence = 100
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_count, self).getGrammar(is_staff)
+        ret['widget'] = 'count'
+        return ret
+
 department_filter = CJFilter_Model('company.Department', sequence=5,
     fields={ '_': CJFilter_isset(sequence=0),
             'id': CJFilter_id(),
@@ -780,6 +788,7 @@ purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
 item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {
         'item_template': product_filter,
+        '_count': CJFilter_count(),
         },
     famfam_icon = 'computer',
     )
