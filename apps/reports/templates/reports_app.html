@@ -742,6 +742,15 @@ if (typeof String.prototype.startsWith != 'function') {
                         if(rt.data && rt.data_op)
                             return [rt.data_op, rt.data];
                     },
+                'attribs_count': function(rt, name) {
+                        var ret = [];
+                        angular.forEach(rt.data_op, function(op, key) {
+                            if (rt.data[key])
+                                ret.push([key, op, rt.data[key]]);
+                            });
+                        if (ret.length)
+                            return ['in', ret];
+                    }
                 };
             domainFns['model-product'] = domainFns['model'];
             domainFns['has_sth'] = domainFns['boolean'];
