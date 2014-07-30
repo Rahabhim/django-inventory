@@ -1367,6 +1367,9 @@ if (typeof String.prototype.startsWith != 'function') {
                             $scope.field.attribs = attr_field.attribs || [];
                         });
                 });
+            s.$watch('field.fields.'+$scope.field.sub_path +'.fields.'+$scope.field.attribs_path, function(){
+                    $scope.field.attribs = s.field.fields[$scope.field.sub_path].fields[$scope.field.attribs_path].attribs || [];
+                    });
             }]);
 
     reportsApp.controller('formattingCtrl', ['$log', '$scope',function($log, $scope) {
