@@ -735,6 +735,10 @@ class CJFilter_contains(CJFilter):
         ret = super(CJFilter_contains, self).getGrammar(is_staff=False)
         ret['widget'] = 'contains'
         ret['sub'] = self.sub_filter.getGrammar(is_staff)
+        for k, field in self.fields.items():
+            if getattr(field, 'staff_only', False) and not is_staff:
+                continue
+            ret['sub']['fields'][k] = field.getGrammar(is_staff)
         return ret
 
     def getQuery(self, request, name, domain):
@@ -850,13 +854,33 @@ class CJFilter_attribs_multi(CJFilter_attribs):
 class CJFilter_count(CJFilter):
     title = _('count')
     sequence = 100
+    operators = set(['>=', '<', '='])
+
     def getGrammar(self, is_staff=False):
         ret = super(CJFilter_count, self).getGrammar(is_staff)
         ret['widget'] = 'count'
         return ret
 
+    def setExtraQuery(self, dom, extra_query):
+        """ Prepare an extra-query for the /count/ of sub-query items
+
+            `extra_query` shall already be clean (w/o select fields, ordering etc.)
+            and then we convert it to a "count" one, like the `quewry.get_count()`
+            does.
+        """
+        qq = extra_query.clone()
+        qq.query.add_count_column()
+        qq.name = dom[0]
+        if dom[1] not in self.operators:
+            # don't allow arbitrary strings from remote !
+            raise ValueError("Invalid operator")
+        qq.clause = (dom[1], dom[2])
+        yield qq
+
 class CJFilter_attribs_count(CJFilter_attribs):
     sequence = 120
+    operators = set(['>=', '<', '='])
+
     def __init__(self, model, sub_path, attribs_path='attributes', cat_path='category', **kwargs):
         super(CJFilter_attribs_count, self).__init__(model, **kwargs)
         self.sub_path = sub_path
@@ -870,6 +894,37 @@ class CJFilter_attribs_count(CJFilter_attribs):
         ret['attribs_path'] = self.attribs_path
         ret['cat_path'] = self.cat_path
         return ret
+
+    def setExtraQuery(self, dom, extra_query):
+        """ Prepare queries for "sum of attribute" clauses
+
+            A bit more tricky: since attributes need to be limited to a specific
+            "attribute type" (like "memory" or "speed"), we need a separate sub-
+            query for each attribute type. So we clone the base query multiple
+            times.
+        """
+        clauses = []
+        if dom[1] == '=':
+            clauses = [dom[2]]
+
+        elif dom[1] == 'in':
+            clauses = dom[2]
+
+        for c in clauses:
+            qq = extra_query.clone()
+            qq.name = dom[0]
+            qq.query.add_filter(('%s__%s__value__atype__applies_category__id' % \
+                            (self.sub_path, self.attribs_path), c[0]))
+
+            aggregate = models.Sum('%s__%s__value__value_num' % \
+                            (self.sub_path, self.attribs_path))
+            qq.query.add_aggregate(aggregate, qq.query.model, qq.name, is_summary=True)
+            if c[1] not in self.operators:
+                # don't allow arbitrary strings from remote !
+                raise ValueError("Invalid operator")
+            qq.clause = (c[1], c[2])
+            yield qq
+        return
 
 ######## - model definitions
 
@@ -963,8 +1018,6 @@ purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
 item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {
         'item_template': product_filter,
-        '_count': CJFilter_count(),
-        '_sum_attribs': CJFilter_attribs_count('products.ItemTemplateAttributes', 'item_template'),
         },
     famfam_icon = 'computer',
     )
@@ -976,6 +1029,11 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
             'itemgroup': CJFilter_contains(item_templ_c_filter,
                             alt_model=('assets', 'ItemGroup'),
                             title=_('containing'), name_suffix='items',
+                            related_name='bundled_in',
+                            fields={
+                                '_count': CJFilter_count(),
+                                '_sum_attribs': CJFilter_attribs_count('products.ItemTemplateAttributes', 'item_template'),
+                                },
                             sequence=25),
             'src_contract': contract_filter,
             },
