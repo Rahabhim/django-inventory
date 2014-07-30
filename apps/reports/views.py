@@ -18,6 +18,9 @@ import csv
 
 from models import SavedReport
 from common.api import user_is_staff
+import logging
+
+# ------ Utility classes ------
 
 class JsonEncoderS(json.JSONEncoder):
     def default(self, obj):
@@ -28,6 +31,110 @@ class JsonEncoderS(json.JSONEncoder):
         elif isinstance(obj, datetime.date):
             return obj.strftime('%Y-%m-%d')
         return super(JsonEncoderS, self).default(obj)
+
+class QryPlaceholder(object):
+    """ Placeholder for Django Query values
+
+        A placeholder will behave like a string, but also be preserved
+        along the query build-up, so that we can substitute it *late*.
+
+        We do that because the inner query has to reference the 'id'
+        field of the outer query, for which Django has no provision.
+        Django, however, will respect our `._prepare()` method and
+        thus avoid converting this value.
+    """
+    _index = 0
+
+    def __init__(self, ss=''):
+        self.s = ss
+
+    def _prepare(self):
+        if not self.s:
+            self.s = '<placeholder_%x>' % self._index
+            QryPlaceholder._index += 1
+        return self
+
+    def __str__(self):
+        return self.s
+
+    def set(self, s):
+        self.s = s
+
+    @staticmethod
+    def trans_params(e, query):
+        """ Replace placeholders with outer query "id" column reference
+
+            @param e a dict of Query.extra() parameters (having 'where' and 'params')
+            @param query the outer Query instance
+
+            @returns None, it updates "e" in-place
+        """
+        if not ('where' in e and 'params' in e):
+            return
+        assert len(e['where']) == 1, repr(e['where'])
+        lp = []
+        params2 = []
+        found = False
+        for p in e['params']:
+            if isinstance(p, QryPlaceholder):
+                lp.append(query.get_initial_alias() + '.id')
+                found = True
+            else:
+                lp.append('%s')
+                params2.append(p)
+        if found:
+            e['where'][0] = e['where'][0] % tuple(lp)
+            e['params'] = params2
+
+class ExtraQuery(object):
+    """ Query clause, resolving to `.extra()` attributes
+
+        This object will hold a subquery plus its outer clause. We dive
+        deep into the mechanics of Django.models.query.Query, exploit it
+        in order to construct a proper sub-query for our models.
+    """
+    def __init__(self, qset, related_name=False):
+        if isinstance(qset, ExtraQuery):
+            self._placeholder_mark = qset._placeholder_mark
+            self.query = qset.query.clone()
+            self.clause = qset.clause
+            self.name = qset.name
+        else:
+            self._placeholder_mark = QryPlaceholder()
+            self.clause = None
+            self.name = '_extra'
+            try:
+                self.query = qset
+                self.query.default_cols = False
+                self.query.clear_select_fields()
+                self.query.clear_ordering(True)
+                self.query.clear_limits()
+                self.query.select_for_update = False
+                self.query.select_related = False
+                self.query.related_select_cols = []
+                self.query.related_select_fields = []
+                self.query.add_filter((related_name, self._placeholder_mark))
+            except Exception:
+                logging.getLogger('apps').exception("related_name")
+                raise
+            self.query.bump_prefix()
+
+    def __repr__(self):
+        return '<Extra: %s %s %r>' % (self.name or '', self.query, self.clause or '')
+
+    def clone(self):
+        return ExtraQuery(self)
+
+    def setQueryExtras(self, extras, qdic):
+        """ Populate extras with dict for `QuerySet.extra()`, qdic with clauses
+        """
+        query, params = self.query.sql_with_params()
+        if self.clause:
+            ex = {}
+            ex['where'] = [ '(%s) %s %%s' % (query, self.clause[0])]
+            ex['params'] = list(params) + [ self.clause[1]]
+            extras.append(ex)
+
 
 # ----------- Filters ----------------
 
@@ -79,6 +186,7 @@ class CJFilter(object):
 
     def getResults(self, request, **kwargs):
         raise NotImplementedError(self.__class__.__name__)
+
 
 class CJFilter_Model(CJFilter):
     """ Search for records of some Model
@@ -148,7 +256,11 @@ class CJFilter_Model(CJFilter):
                     order_by2.append((o+'.', o))
         if domain:
             if isinstance(domain, list) and domain[0] == 'in':
-                flt = self._calc_domain(request, domain[1])
+                extras = []
+                flt = self._calc_domain(request, domain[1], extras)
+                for e in extras:
+                    QryPlaceholder.trans_params(e, objects.query)
+                    objects = objects.extra(**e)
                 if flt:
                     assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
                     objects = objects.filter(flt)
@@ -309,11 +421,15 @@ class CJFilter_Model(CJFilter):
             return { name+'__pk__in': domain[2] }
         elif domain[1] == 'in':
             objects = self._model_inst.objects
+            extras = []
             if getattr(objects, 'by_request', None):
                 objects = objects.by_request(request)
             else:
                 objects = objects.all()
-            flt = self._calc_domain(request, domain[2])
+            flt = self._calc_domain(request, domain[2], extras)
+            for e in extras:
+                QryPlaceholder.trans_params(e, objects.query)
+                objects = objects.extra(**e)
             if flt:
                 assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
                 objects = objects.filter(flt)
@@ -321,7 +437,7 @@ class CJFilter_Model(CJFilter):
         else:
             raise ValueError("Invalid operator for model: %r" % domain[1])
 
-    def _calc_domain(self, request, domain):
+    def _calc_domain(self, request, domain, extras):
         """ Parse a _list_ of domain expressions into a Query filter
         """
         ret = []
@@ -337,10 +453,19 @@ class CJFilter_Model(CJFilter):
                     pass
                 elif isinstance(ff, dict):
                     ff = models.Q(**ff)
+                elif isinstance(ff, list) and all([isinstance(x,ExtraQuery) for x in ff]):
+                    td = {} # will receive WHERE clauses
+                    for f in ff:
+                        f.setQueryExtras(extras, td)
+                    if td:
+                        ff = models.Q(**td)
+                    else:
+                        ff = None
                 else:
                     raise TypeError("Bad query: %r" % ff)
 
-                ret.append(ff)
+                if ff is not None:
+                    ret.append(ff)
             else:
                 raise ValueError("Invalid domain expression: %r" % d)
 
@@ -624,6 +749,37 @@ class CJFilter_contains(CJFilter):
             if self.name_suffix:
                 name2 += '__' + self.name_suffix
             return self.sub_filter.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
+        elif domain[1] == 'in':
+            # multiple criteria, possibly a '_count'
+            name2 = name
+            if self.name_suffix:
+                name2 += '__' + self.name_suffix
+            inner_dom = []
+            count_dom = []
+            for dom in domain[2]:
+                if isinstance(dom, str) and dom in ('!', '&', '|'):
+                    raise NotImplementedError('Operators not supported in contains yet')
+                if isinstance(dom, (list, tuple)) and len(dom) == 3:
+                    if dom[0] in self.fields:
+                        count_dom.append(dom)
+                    else:
+                        inner_dom.append(dom)
+                else:
+                    raise ValueError("invalid expression: %r", dom)
+            sq = self.sub_filter.getQuery(request, name2, [domain[0], 'in', inner_dom])
+            if count_dom:
+                # no longer a straight "exists" sub-query that Django can handle.
+                # we need to separate it and write in a special syntax.
+                qset = sq.pop(name2+'__in')
+                assert not sq, "bad query: %r" % sq.keys()
+                base_extra_qry = ExtraQuery(qset.query, self.related_name)
+                all_extras = []
+                for dom in count_dom:
+                    for eq in self.fields[dom[0]].setExtraQuery(dom, base_extra_qry):
+                        all_extras.append(eq)
+                return all_extras
+            else:
+                return sq
         else:
             raise ValueError("Invalid operator for contains: %r" % domain[1])
 
