@@ -789,7 +789,7 @@ class CJFilter_contains(CJFilter):
 
     def _post_fn(self, fname, results, qset):
         """annotate `results` with computed value for our field `fname`
-        
+
             @param qset a QuerySet, whose .values() produced `results`
         """
         if getattr(self, 'alt_model', False):
@@ -1373,7 +1373,7 @@ def csv_fmt(val):
 
 def reports_results_csv(request):
     res = _pre_render_report(request)
-    
+
     if not 'flat_results' in res:
         raise NotImplementedError
     else:
