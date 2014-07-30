@@ -1212,6 +1212,11 @@ def reports_get_preview(request, rep_type):
     assert (req_data['model'] == rep_type), "invalid model: %r" % req_data['model']
 
     req_data.setdefault('limit', 10)
+    if req_data.get('show_detail', True) and req_data['limit'] > 200:
+        req_data['limit'] = 200
+    elif (not req_data.get('show_detail', True)) and req_data['limit'] > 1000:
+        req_data['limit'] = 1000
+
     res = rt.getResults(request, **req_data)
 
     if isinstance(res, tuple) and isinstance(res[0], QuerySet):
