@@ -913,7 +913,7 @@ class CJFilter_attribs_count(CJFilter_attribs):
         for c in clauses:
             qq = extra_query.clone()
             qq.name = dom[0]
-            qq.query.add_filter(('%s__%s__value__atype__applies_category__id' % \
+            qq.query.add_filter(('%s__%s__value__atype__id' % \
                             (self.sub_path, self.attribs_path), c[0]))
 
             aggregate = models.Sum('%s__%s__value__value_num' % \
