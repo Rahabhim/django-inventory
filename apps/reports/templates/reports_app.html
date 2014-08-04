@@ -1704,7 +1704,7 @@ if (typeof String.prototype.startsWith != 'function') {
                     .success(function(data) {
                         // $log.debug("Preview data came:", data);
                         $scope.wait_results = false;
-                        if (data.count){
+                        if (data.count !== undefined){
                             $scope.results = [{'group_level': 0, _count: data.count},
                                         {'group_level': 1, 'group_by': false,
                                         'values': data.results }];

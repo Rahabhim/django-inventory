@@ -1348,9 +1348,11 @@ def _pre_render_report(request):
     res = rt.getResults(request, **(report_data))
     if isinstance(res, tuple) and isinstance(res[0], QuerySet):
         fin['flat_results'] = map(_expand_keys, res[0])
+        fin['have_flat_results'] = True
         fin['count'] = res[1]
     elif isinstance(res, list):
         fin['groupped_results'] = res
+        fin['have_groupped_results'] = True
         fin['count'] = res[0]['_count']
 
     return fin
