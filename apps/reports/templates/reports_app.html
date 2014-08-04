@@ -64,8 +64,8 @@
                     <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
                 </div>
                 <div class="params-form">
-                    <div><label>{% trans 'Limit' %}</label> <input type="number" ng-model="reportType.limit"></div>
-                    <div><label>{% trans 'Preview Limit' %}</label> <input type="number" ng-model="reportType.preview_limit"></div>
+                    <div><label>{% trans 'Limit' %}</label> <input type="number" min="1" ng-model="reportType.limit"></div>
+                    <div><label>{% trans 'Preview Limit' %}</label> <input type="number" min="1" ng-model="reportType.preview_limit"></div>
                 </div>
 
                 <div id="fmt-notes">
@@ -297,7 +297,7 @@
             <option value="<">&lt;</option>
             <option value='='>=</option>
         </select>
-        <input type="number" ng-model="field.data">
+        <input type="number" min="0" ng-model="field.data">
     </div>
 </script>
 
@@ -310,7 +310,7 @@
                 <option value="<">&lt;</option>
                 <option value="=">=</option>
             </select>
-            <input type="number" ng-model="field.data[attr.aid]">
+            <input type="number" min="0.0" ng-model="field.data[attr.aid]">
         </div>
     </div>
 </script>
