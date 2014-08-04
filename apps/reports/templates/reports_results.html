@@ -61,7 +61,7 @@
         {% endwith %}
         {% endif %}
     </div>
-{% if flat_results %}
+{% if have_flat_results %}
     <div class="links_options">
         <div><a onclick="window.print()"><span class="famfam active famfam-printer"></span>{% trans 'Print this report' %}</a></div>
     </div>
@@ -71,7 +71,7 @@
     <div class="links_options">
         <div><a onclick="window.print()"><span class="famfam active famfam-printer"></span>{% trans 'Print this report' %}</a></div>
     </div>
-{% elif groupped_results %}
+{% elif have_groupped_results %}
     <div class="links_options">
         <div><a onclick="expandAll()"><span class="famfam active famfam-magnifier_zoom_in"></span>{% trans "Expand all" %}</a></div>
         <div><a onclick="collapseAll()"><span class="famfam active famfam-magifier_zoom_out"></span>{% trans "Collapse all" %}</a></div>
