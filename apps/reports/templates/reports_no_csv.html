@@ -1,0 +1,29 @@
+{% extends "base-bare.html" %}
+{% load i18n %}
+
+{% block web_theme_project_name %}{% trans 'Report builder' %}{% endblock %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/reports-widgets.css" type="text/css"/>
+<style media="screen">
+    #main {
+        width: 99%;
+        padding: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block web_theme_sidebar %}
+    <div class="block">
+    </div>
+{% endblock %}
+
+
+{% block content %}
+<div class="content">
+    <h2>{% trans 'Format not available' %}</h2>
+    <p class="error">{% blocktrans %}You cannot use a flat format (CSV) for a groupped report.
+    Please, remove the groupping from the report formatting tab.{% endblocktrans %}</p>
+</div>
+{% endblock %}

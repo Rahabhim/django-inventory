@@ -1382,7 +1382,7 @@ def reports_results_csv(request):
     res = _pre_render_report(request)
 
     if not 'flat_results' in res:
-        raise NotImplementedError
+        return render(request, 'reports_no_csv.html')
     else:
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="results.csv"'
