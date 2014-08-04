@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-02 16:57+0300\n"
-"PO-Revision-Date: 2013-09-03 12:00+0300\n"
+"POT-Creation-Date: 2013-09-25 13:06+0300\n"
+"PO-Revision-Date: 2013-09-25 13:09+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: \n"
@@ -84,6 +84,50 @@ msgstr "λίστα έργων"
 #: urls.py:59 urls.py:62 urls.py:66 urls.py:70
 msgid "project"
 msgstr "έργο"
+
+#: models.py:18
+msgid "code"
+msgstr "κωδικός"
+
+#: models.py:29 models.py:43
+msgid "name"
+msgstr "όνομα"
+
+#: models.py:30 models.py:44
+msgid "description"
+msgstr "περιγραφή"
+
+#: models.py:47
+msgid "start date"
+msgstr "Ημερομηνία Έναρξης"
+
+#: models.py:48
+msgid "end date"
+msgstr "Ημερομηνία τέλους"
+
+#: models.py:49
+msgid "warranty duration"
+msgstr "Διάρκεια εγγύησης"
+
+#: models.py:50
+msgid "service response"
+msgstr "Χρόνος Απόκρισης"
+
+#: models.py:51
+msgid "repair time"
+msgstr "Χρόνος Επισκευής"
+
+#: models.py:52
+msgid "filename"
+msgstr "όνομα αρχείου"
+
+#: models.py:53
+msgid "department"
+msgstr "μονάδα"
+
+#: models.py:55
+msgid "delegete"
+msgstr "ανάδοχος"
 
 #, fuzzy
 #~ msgid "Will delete delegate and all references in contracts"
