@@ -161,6 +161,11 @@ class CJFilter(object):
             if k.startswith('_'):
                 continue
             kkw[k] = v
+        fields_add = kwargs.pop('fields_add', None)
+        if fields_add:
+            kkw['fields'] = kkw.get('fields', {}).copy()
+            for k, ff in fields_add.items():
+                kkw['fields'][k] = ff
         kkw.update(**kwargs)
         return self.__class__(**kkw)
 
