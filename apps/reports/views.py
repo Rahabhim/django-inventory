@@ -1069,6 +1069,19 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     famfam_icon = 'computer',
     )
 
+location_filter_full = location_filter.copy(fields_add={
+            'item': CJFilter_contains(item_templ_c_filter,
+                            title=_('containing'),
+                            set_suffix=True,
+                            related_name='location',
+                            fields={
+                                '_count': CJFilter_count(),
+                                '_sum_attribs': CJFilter_attribs_count('products.ItemTemplateAttributes', 'item_template'),
+                                },
+                            sequence=25
+                            ),
+            })
+
 inventories_filter = CJFilter_Model('inventory.InventoryGroup', title=_('inventories'),
     fields={'id': CJFilter_id(),
         'name': CJFilter_String(title=_('name'), sequence=1),
@@ -1119,7 +1132,7 @@ def _reports_init_cache():
             'items': item_templ_filter,
             'products': product_filter,
             'department': department_filter,
-            'location': location_filter,
+            'location': location_filter_full,
             'purchase_order': purchaseorder_filter,
             'inventories': inventories_filter,
             'movements': movements_filter,
