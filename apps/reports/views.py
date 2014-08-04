@@ -739,6 +739,7 @@ class CJFilter_contains(CJFilter):
         assert isinstance(sub_filter, CJFilter), repr(sub_filter)
         self.sub_filter = sub_filter
         self.name_suffix = None
+        self.set_suffix = False
         super(CJFilter_contains, self).__init__(**kwargs)
 
     def __repr__(self):
@@ -823,8 +824,11 @@ class CJFilter_contains(CJFilter):
         else:
             qset2 = qset
         imap = {} # id=> value map
-        for ig in qset2.prefetch_related(self.name_suffix or fname):
-            qset3 = getattr(ig, self.name_suffix or fname)
+        name2 = self.name_suffix or fname
+        if self.set_suffix:
+            name2 += '_set'
+        for ig in qset2.prefetch_related(name2):
+            qset3 = getattr(ig, name2)
             cnts = [] # ordered
             cnts_c = {} # counters
             for cnt in qset3.all():
