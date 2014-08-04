@@ -409,6 +409,14 @@ class CJFilter_Model(CJFilter):
 
             @params domain a 3-item list/tuple, domain expression segment
         """
+        if domain is True:
+            objects = self._model_inst.objects
+            if getattr(objects, 'by_request', None):
+                objects = objects.by_request(request)
+            else:
+                objects = objects.all()
+            return { name + '__in': objects }
+
         if domain[1] == '=':
             if (domain[2] is True) or (domain[2] is False):
                 return { name + '__isnull': not domain[2]}
@@ -752,7 +760,19 @@ class CJFilter_contains(CJFilter):
             name2 = name
             if self.name_suffix:
                 name2 += '__' + self.name_suffix
-            return self.sub_filter.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
+            if domain[2][0] in self.fields:
+                # count on unconditional sub-query
+                dom = domain[2]
+                sq = self.sub_filter.getQuery(request, name2, True)
+                qset = sq.pop(name2+'__in')
+                assert not sq, "bad query: %r" % sq.keys()
+                base_extra_qry = ExtraQuery(qset.query, self.related_name)
+                all_extras = []
+                for eq in self.fields[dom[0]].setExtraQuery(dom, base_extra_qry):
+                    all_extras.append(eq)
+                return all_extras
+            else:
+                return self.sub_filter.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
         elif domain[1] == 'in':
             # multiple criteria, possibly a '_count'
             name2 = name
