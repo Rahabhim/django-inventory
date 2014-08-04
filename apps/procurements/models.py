@@ -21,6 +21,8 @@ class Delegate(Partner):
     class Meta:
         # TODO: redundant
         ordering = ['name']
+        verbose_name = _("delegate")
+        verbose_name_plural = _("delegates")
         
     @models.permalink
     def get_absolute_url(self):
@@ -53,7 +55,7 @@ class Contract(models.Model):
     kp_filename = models.CharField(max_length=128, blank=True, null=True, verbose_name=_("filename"))
     department = models.ForeignKey('company.Department', blank=True, null=True, verbose_name=_("department")) # Either department or manager
     parent = models.ForeignKey(Project, verbose_name=_("project"))
-    delegate = models.ForeignKey(Delegate, related_name='delegate', blank=True, null=True, verbose_name=_("delegete"))
+    delegate = models.ForeignKey(Delegate, related_name='delegate', blank=True, null=True, verbose_name=_("delegate"))
 
     class Meta:
         ordering = ['name']
