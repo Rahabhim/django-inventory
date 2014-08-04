@@ -487,7 +487,7 @@
                     <ul ng-switch-when="contains">
                         <li ng-repeat="cnt in row[fc.id]">[[cnt]]</li>
                     </ul>
-                    <span ng-switch-when="date">[[ row[fc.id]|date:'MM/dd/yyyy']]</span>
+                    <span ng-switch-when="date">[[ row[fc.id]|date:'dd/MM/yyyy']]</span>
                     <span ng-switch-when="boolean">[[ row[fc.id]|fmtBool ]]</span>
                     <span ng-switch-when="has_sth">[[ row[fc.id]|fmtHasSth ]]</span>
                     <span ng-switch-when="id"><a ng-href="[[ row[fc.id+'.url'] ]]" target="_blank">[[ row[fc.id] ]]</a></span>
@@ -1937,7 +1937,7 @@ if (typeof String.prototype.startsWith != 'function') {
             else if (field.widget == 'has_sth')
                 return appWords['has_' + value];
             else if (field.widget == 'date')
-                return dateFilter(value, 'MM/dd/yyyy');
+                return dateFilter(value, 'dd/MM/yyyy');
             /*else if (field.widget == 'id'){
                 return $sce.trustAsHtml(data);
             }*/
