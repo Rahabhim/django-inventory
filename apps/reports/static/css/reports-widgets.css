@@ -1309,6 +1309,10 @@ tbody {display: table-row-group;}
     margin-bottom: 4px;
 }
 
+.params-form input.ng-invalid {
+    background: #e02020;
+}
+
 .params-form dl dd input[type="text"] {
     min-width: 20em;
 }
