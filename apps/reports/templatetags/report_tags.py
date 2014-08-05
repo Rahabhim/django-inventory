@@ -91,7 +91,7 @@ class GroupNode(Node):
         results = context['groupped_results']
         ret = []
         last_factor = 1
-        while i <= len(results):
+        while i < len(results)-1:
             cur_results = results[i+1]
             if cur_results and cur_results.get('group_by'):
                 cur_grp_fields = context['groupped_fields'].get(str(i), [{},])
@@ -122,7 +122,7 @@ class GroupNode(Node):
             nrf = self._get_rows_filter(context['cur_group']['group_by'], context['cur_row'])
             o = group_level + 1
             count_child_rows = 1
-            while o <= i:
+            while o <= i and o < len(results)-1:
                 n = sum(map(nrf, results[o+1]['values']))
                 count_child_rows += n
                 if o == i and last_factor == 2:
