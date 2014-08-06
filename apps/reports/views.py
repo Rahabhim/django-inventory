@@ -547,6 +547,8 @@ class CJFilter_String(CJFilter):
 
 def to_date(d):
     if isinstance(d, basestring):
+        if 'T' in d:
+            d = d.split('T',1)[0]
         return datetime.datetime.strptime(d, '%Y-%m-%d').date()
     elif isinstance(d, (datetime.date)):
         return d
