@@ -740,6 +740,7 @@ class CJFilter_contains(CJFilter):
         self.sub_filter = sub_filter
         self.name_suffix = None
         self.set_suffix = False
+        self.fields = {}
         super(CJFilter_contains, self).__init__(**kwargs)
 
     def __repr__(self):
