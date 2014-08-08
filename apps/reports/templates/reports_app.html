@@ -81,7 +81,7 @@
                 -->
                 <div class="formatting-form" ng-controller="formattingCtrl">
                     <table id="fmt-form-table">
-                        <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length ]]">{% trans 'Columns...' %}</tr>
+                        <tr><th>&nbsp;</th><th colspan="[[ fmtTable.length + 2 ]]">{% trans 'Columns...' %}</tr>
                         <tr ng-repeat="fname in reportGroups" ng-init="field=fieldByPath(fname)">
                             <th>{% trans 'Group' %} [[ $index + 1 ]] 
                                 <select ng-model="field.fmt.group_mode">
@@ -111,9 +111,10 @@
                             </td>
                         </tr>
                         <tr class="add-group"><th>{% trans 'Add group...' %}</th>
-                            <td colspan="[[ fmtTable.length ]]" ng-droppable="true"
+                            <td colspan="[[ fmtTable.length + 2 ]]" ng-droppable="true"
                                 ng-ondrop="addGroup(dragItem)" jqyoui-options="{'tolerance': 'pointer'}">{% trans 'drag here to add group...' %}</td></tr>
                         <tr ng-class="{'no-details': !reportType.show_detail}"><th><input type="checkbox" ng-model="reportType.show_detail">{% trans 'detailed:'%}</th>
+                            <td><div ng-droppable="true" ng-ondrop="addToField(dragItem)" class="add-before"></div></td>
                             <td ng-repeat="field in fmtTable|seqSort:true">
                                 <div ng-draggable="true" ng-drag-model="field"
                                     ng-droppable="true" ng-ondrop="addToField(dragItem, field)"
