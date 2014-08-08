@@ -286,9 +286,12 @@ class CJFilter_Model(CJFilter):
                 if fld._post_fn:
                     post_fns[fn.replace('.', '__')] = fld._post_fn
         else:  # not fields
-            fields2 = filter(lambda f: not (f.startswith('_') or isinstance(fld, (CJFilter_contains, CJFilter_attribs))), self.fields.keys())
-            # fields.sort(key=lambda f: self.fields[f].sequence) # done at JS side
+            fields2 = []
             for fn, fld in self.fields.items():
+                if fn.startswith('_') or isinstance(fld, (CJFilter_contains, CJFilter_attribs)):
+                    # completely skip complex fields
+                    continue
+                fields2.append(fn)
                 if fld._post_fn:
                     post_fns[fn] = fld._post_fn
 
