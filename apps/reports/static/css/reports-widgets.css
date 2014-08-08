@@ -1501,6 +1501,22 @@ table.grp_left_col td.right_part table.grp_left_col {
     background: yellow;
 }
 
+.ui-droppable.add-before {
+    border: none;
+    margin: 0px;
+    padding: 0px;
+}
+
+.ui-droppable.add-before.ui-state-highlight {
+    min-height: 20px;
+    min-width: 1em;
+    border: 1px solid black;
+}
+
+.ui-droppable.add-before.ui-state-highlight.ui-drop-hover {
+    border: 2px solid red;
+}
+
 .ui-droppable.add-after.ui-state-highlight {
     border: 1px solid black;
     border-right: 2px black;
