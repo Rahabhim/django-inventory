@@ -965,7 +965,7 @@ class CJFilter_attribs_count(CJFilter_attribs):
 
 
 department_filter = CJFilter_Model('company.Department', sequence=5,
-    fields={ '_': CJFilter_isset(sequence=0),
+    fields={
             'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
             'code': CJFilter_String(title=_('code'), sequence=2),
@@ -986,7 +986,7 @@ department_filter = CJFilter_Model('company.Department', sequence=5,
 location_filter = CJFilter_Model('common.Location',
     fields={ 'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
-            'department': department_filter,
+            'department': department_filter.copy(fields_add={'_': CJFilter_isset(sequence=0), }),
             'template': CJFilter_ModelChoices('common.LocationTemplate',
                     fields={'name': CJFilter_String(title=_('name'), sequence=1), }),
         },
