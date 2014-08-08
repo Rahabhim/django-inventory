@@ -7,8 +7,18 @@ from common.api import user_is_staff
 
 title_filter = {'name': 'title', 'title': _('Title'), 'destination':'title__icontains'}
 
-model_filter = {'name': 'model', 'title': _('Model'), 'destination':'model',
-                'condition': user_is_staff }
+def _get_model_choices(**kwargs):
+    from views import get_allowed_rtypes, get_rtype_name
+    choices = [('', '*')]
+    if 'parent' in kwargs:
+        context = {'request': kwargs['parent'].request, 'user': kwargs['parent'].request.user}
+        for rt in get_allowed_rtypes(context):
+            choices.append((rt, get_rtype_name(rt).title()))
+    return choices
+
+model_filter = {'name': 'rmodel', 'title': _('Model'), 'destination':'rmodel',
+                'condition': user_is_staff,
+                'choices': _get_model_choices }
 
 urlpatterns = patterns('reports.views',
     url(r'^$', 'reports_app_view', (), name='reports_app_view'),
