@@ -310,6 +310,8 @@ class FilterForm(forms.Form):
                     assert choices, "Model %s.%s does not have choices" %(amodel.afield)
                     # don't do insert, but copy the list!
                     choices = [('','*' )] + choices
+                elif callable(list_filter['choices']):
+                    choices = list_filter['choices'](form=self, **qargs)
                 else:
                     raise TypeError("Invalid type for list_filters.choices: %s" % type(list_filter['choices']))
                 self.fields[list_filter['name']] = forms.ChoiceField(choices=choices, label=label, required=False)
