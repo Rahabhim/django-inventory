@@ -2,7 +2,7 @@
 {% load generic_views_helpers %}
 {% load pagination_tags %}
 {% load navigation %}
-{% load carts %}
+{# load carts #}
 
 {% if side_bar %}
     <div class="block">
@@ -75,7 +75,7 @@
                 {% object_navigation_template %}
                 </td>
             {% endif %}
-            {% object_carts object %}
+            {# object_carts object #}
             </tr>
         {% empty %}
             <tr><td colspan=99 class="tc">{% blocktrans %}There are no {{ title }}{% endblocktrans %}</td></tr>
@@ -125,7 +125,7 @@
                 {% object_navigation_template %}
                 </td>
             {% endif %}
-            {% object_carts object %}
+            {# object_carts object #}
             </tr>
             {% endfor %}{% endif %}
         {% empty %}
@@ -135,7 +135,7 @@
     {% endif %}
         </tbody>
     </table>
-         {% object_list_carts object_list %}
+         {# object_list_carts object_list #}
   </form>
     {% paginate %}
 </div>
