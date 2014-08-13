@@ -1,0 +1,1 @@
+../../apps/dhelp/static/js/advanced.js
