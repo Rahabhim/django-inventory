@@ -9,6 +9,8 @@ from django.db import models
 
 import types
 
+import settings
+
 # FIXME once the "ajax_select" is merged in, remove this class:
 class AutoCompleteSelectField(object):
     pass
@@ -190,11 +192,16 @@ class FilterForm(forms.Form):
             else:
                 self.fields[list_filter['name']] = forms.CharField(label=label, required=False)
 
+    def _init_by_request(self, request):
         for name, cond in self.field_conditions.items():
             if not cond:
                 continue
             if not cond(None, {'request': request, 'user': request.user}):
                 del self.fields[name]
+        #for fname in self.fields:
+        #    if isinstance(self.fields[fname], AutoCompleteSelectField):
+        #        UnAutoCompleteField(self.fields, fname, request)
+
 class InlineModelForm(forms.ModelForm):
     def as_table(self):
         "Returns this form rendered as HTML <td>s"
