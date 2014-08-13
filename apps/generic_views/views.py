@@ -267,7 +267,15 @@ class _InlineViewMixin(object):
             return super(_InlineViewMixin, self).get_success_url()
 
 class _PermissionsMixin(object):
+    """
+        check_object() is a callable that may check the object *before* the form
+            is populated and rendered. We may want some views only to be available
+            for objects that satisfy some condition.
+        need_permission is a string (or a callable) to be verified against the
+            active role's or user's group permissions
+    """
     need_permission = False
+    check_object = False
     _logger = logging.getLogger('permissions')
 
     def dispatch(self, request, *args, **kwargs):
@@ -283,12 +291,27 @@ class _PermissionsMixin(object):
                 npd['Model'] = model._meta.object_name
                 npd['model'] = model._meta.module_name
             np = self.need_permission
-            np = np % npd
-            if not request.user.has_perm(np):
+            if callable(np):
+                np = np(**npd)
+            elif isinstance(np, basestring):
+                np = np % npd
+            if np is False:
+                # special shortcut: the function has already refused permission
+                raise PermissionDenied
+            elif np is True:
+                pass
+            elif not request.user.has_perm(np):
                 self._logger.warning("%s view denied %s permission to user %s",
                         self.__class__.__name__, np, request.user.username)
                 raise PermissionDenied
         return super(_PermissionsMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        obj = super(_PermissionsMixin, self).get_object()
+        if self.check_object:
+            if not self.check_object(obj):
+                raise PermissionDenied
+        return obj
 
 class GenericCreateView(_PermissionsMixin, _InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
