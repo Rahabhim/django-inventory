@@ -2,22 +2,23 @@ import urllib
 
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count, get_model, ProtectedError
 from django.db.models.query import QuerySet
 from django.db.models.related import RelatedObject
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.views.generic.list_detail import object_detail, object_list
 from django.views.generic.create_update import create_object, update_object, delete_object
 import django.views.generic as django_gv
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.forms.models import inlineformset_factory, ModelForm
 
 from forms import FilterForm, GenericConfirmForm, GenericAssignRemoveForm, \
-                  DetailForm, InlineModelForm
+                  InlineModelForm, DetailForm
+import logging
 
 def add_filter(request, list_filters):
     """ Add list filters to form and eventually filter the queryset
@@ -94,17 +95,7 @@ def generic_list(request, list_filters=[], queryset_filter=None, *args, **kwargs
     return object_list(request,  template_name='generic_list.html', *args, **kwargs)
 
 def generic_delete(*args, **kwargs):
-    try:
-        kwargs['post_delete_redirect'] = reverse(kwargs['post_delete_redirect'])
-    except NoReverseMatch:
-        pass
-
-    if 'extra_context' in kwargs:
-        kwargs['extra_context']['delete_view'] = True
-    else:
-        kwargs['extra_context'] = {'delete_view':True}
-  
-    return delete_object(template_name='generic_confirm.html', *args, **kwargs)
+    raise RuntimeError("obsolete")
 
 def generic_confirm(request, _view, _title=None, _model=None, _object_id=None, _message='', *args, **kwargs):
     if request.method == 'POST':
@@ -275,10 +266,150 @@ class _InlineViewMixin(object):
         else:
             return super(_InlineViewMixin, self).get_success_url()
 
-class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
-    template_name = 'generic_form_fs.html'
+class _PermissionsMixin(object):
+    """
+        check_object() is a callable that may check the object *before* the form
+            is populated and rendered. We may want some views only to be available
+            for objects that satisfy some condition.
+        need_permission is a string (or a callable) to be verified against the
+            active role's or user's group permissions
+    """
+    need_permission = False
+    check_object = False
+    _logger = logging.getLogger('permissions')
 
-class GenericUpdateView(_InlineViewMixin, django_gv.UpdateView):
+    def dispatch(self, request, *args, **kwargs):
+        if self.need_permission:
+            npd = {}
+            model = False
+            if hasattr(self, 'model'):
+                 model= self.model
+            elif hasattr(self, 'form_class'):
+                model = self.form_class._meta.model
+            if model:
+                npd['app'] = model._meta.app_label
+                npd['Model'] = model._meta.object_name
+                npd['model'] = model._meta.module_name
+            np = self.need_permission
+            if callable(np):
+                np = np(**npd)
+            elif isinstance(np, basestring):
+                np = np % npd
+            if np is False:
+                # special shortcut: the function has already refused permission
+                raise PermissionDenied
+            elif np is True:
+                pass
+            elif not request.user.has_perm(np):
+                self._logger.warning("%s view denied %s permission to user %s",
+                        self.__class__.__name__, np, request.user.username)
+                raise PermissionDenied
+        return super(_PermissionsMixin, self).dispatch(request, *args, **kwargs)
+
+    def get_object(self):
+        obj = super(_PermissionsMixin, self).get_object()
+        if self.check_object:
+            if not self.check_object(obj):
+                raise PermissionDenied
+        return obj
+
+    def get_queryset(self):
+        if self.queryset is not None and not isinstance(self.queryset, QuerySet) \
+                    and callable(self.queryset):
+            return self.queryset(self.request)
+        else:
+            return super(_PermissionsMixin, self).get_queryset()
+
+class GenericCreateView(_PermissionsMixin, _InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
+    need_permission = '%(app)s.add_%(model)s'
+
+    def get_initial(self):
+        initial = self.initial.copy()
+        if self.request.method == 'GET':
+            initial.update(self.request.GET.dict())
+        return initial
+
+class GenericUpdateView(_PermissionsMixin, _InlineViewMixin, django_gv.UpdateView):
+    template_name = 'generic_form_fs.html'
+    need_permission = '%(app)s.change_%(model)s'
+
+class GenericDeleteView(_PermissionsMixin, django_gv.DeleteView):
+    template_name = 'generic_confirm.html'
+    extra_context = None
+    form_mode = 'delete'
+    need_permission = '%(app)s.delete_%(model)s'
+
+    def get_context_data(self, **kwargs):
+        context = super(GenericDeleteView, self).get_context_data(**kwargs)
+
+        if self.extra_context:
+            context.update(self.extra_context)
+        context['form_mode'] = self.form_mode
+        context['delete_view'] = True
+        return context
+
+    def get_success_url(self):
+        if self.success_url:
+            if '/' in self.success_url:
+                return self.success_url
+            else:
+                return reverse(self.success_url)
+        else:
+            raise ImproperlyConfigured(
+                "No URL to redirect to. Provide a success_url.")
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            self.object.delete()
+        except ProtectedError, e:
+           return render(request, 'generic_delete_failed.html',
+                    { 'object': self.object,
+                      'object_url': self.object.get_absolute_url(),
+                      'protected_objects': e.protected_objects
+                      })
+        return HttpResponseRedirect(self.get_success_url())
+
+class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
+    """ Form-based, read-only view of an object
+    """
+    template_name = 'generic_detail.html'
+    form_mode = 'details'
+    form_class = DetailForm
+    extra_fields = None
+
+    def get_queryset(self):
+        if self.queryset is not None and not isinstance(self.queryset, QuerySet) \
+                    and callable(self.queryset):
+            return self.queryset(self.request)
+        else:
+            return super(GenericDetailView, self).get_queryset()
+
+    def get_context_data(self, **kwargs):
+        ret = super(GenericDetailView, self).get_context_data(**kwargs)
+        # a little weird that we're making the form after the formsets. But we
+        # must call get_form() after get_context_data() initializes self.object
+        assert 'form' not in ret, ret.get('form', False )
+        form_class = self.get_form_class()
+        ret['form'] = self.get_form(form_class)
+        return ret
+
+    def get_form_class(self):
+        return self.form_class
+
+    def get_form(self, form_class):
+        """
+        Returns an instance of the form to be used in this view.
+        """
+        assert self.object
+        try:
+            if self.extra_fields:
+                form = form_class(instance=self.object, extra_fields=self.extra_fields)
+            else:
+                form = form_class(instance=self.object)
+        except ObjectDoesNotExist:
+            raise Http404
+        return form
 
 #eof
