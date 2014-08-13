@@ -300,11 +300,13 @@ class _PermissionsMixin(object):
                 raise PermissionDenied
         return super(_PermissionsMixin, self).dispatch(request, *args, **kwargs)
 
-class GenericCreateView(_InlineViewMixin, django_gv.CreateView):
+class GenericCreateView(_PermissionsMixin, _InlineViewMixin, django_gv.CreateView):
     template_name = 'generic_form_fs.html'
+    need_permission = '%(app)s.add_%(model)s'
 
-class GenericUpdateView(_InlineViewMixin, django_gv.UpdateView):
+class GenericUpdateView(_PermissionsMixin, _InlineViewMixin, django_gv.UpdateView):
     template_name = 'generic_form_fs.html'
+    need_permission = '%(app)s.change_%(model)s'
 
 class GenericDetailView(_InlineViewMixin, django_gv.DetailView):
     """ Form-based, read-only view of an object
