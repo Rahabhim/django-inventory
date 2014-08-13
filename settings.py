@@ -116,6 +116,7 @@ INSTALLED_APPS = [
     'photologue',
     'photos',
     'common',
+    'dhelp',
     'generic_views',
     'inventory',
     'assets',
@@ -146,6 +147,7 @@ LOGIN_EXEMPT_URLS = (
     r'^favicon\.ico$',
     r'^about\.html$',
     r'^legal/', # allow the entire /legal/* subsection
+    r'^help/', # all help is public, too
     r'^django-inventory-site_media/',
 
     r'^accounts/register/$',

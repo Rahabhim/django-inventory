@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <style type="text/css">
+    </style>
+{% endblock %}
+
+{% block web_theme_sidebar_not %}
+{# override, keep it empty #}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+
+        <div class="block">
+        <h2>{% trans 'General topics' %}</h2>
+        <ul>
+        {% for topic in other_topics %}
+            <li><a href="{{topic.get_absolute_url }}">{{topic.title }}</a></li>
+        {% endfor %}
+        </ul>
+        </div>
+
+        <div class="block">
+        <h2>{% trans 'Applications' %}<h2>
+        <ul>
+        {% for topic in our_topics %}
+            <li><a href="{{topic.get_absolute_url }}">{{topic.title }}</a></li>
+        {% endfor %}
+        </ul>
+        </div>
+    </div>
+
+{% endblock %}

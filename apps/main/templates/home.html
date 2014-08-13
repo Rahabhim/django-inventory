@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% load project_tags %}
 {% load i18n %}
+{% load online_help %}
 {% block content %}
     <div class="content">
         <div class="tc"><h1>{% project_name %}</h1></div>
         <div class="tc"><img src="{{ MEDIA_URL }}images/1269206_36297494-resized.jpg" /></div>
+        {% help_for_view %}
     </div>
 {% endblock %}
 {% block footer %}

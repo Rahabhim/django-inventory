@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <style type="text/css">
+    </style>
+{% endblock %}
+
+{% block web_theme_sidebar %}
+{% if request.user.is_staff %}
+    {{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <h2>{{ topic.title }} </h2>
+
+        <div class="block">
+            {{ topic.content|safe }}
+        </div>
+
+        {% if sub_topics %}
+        <h2>{% trans 'More' %}</h2>
+        {% for title, sts in sub_topics %}
+            <div class="block">
+            <h3>{{ title }}</h3>
+            <ul>{% for s in sts %}
+                <li><a href="{{ s.get_absolute_url }}">{{ s.title}}</a></li>
+            {% endfor %}
+            </ul>
+            </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    {% if can_edit %}
+        <div class="content" style="text-alignment: right">
+            <a class="button" href="./{{ topic.id }}/update">{% trans 'Edit' %}</a>
+        </div>
+    {% endif %}
+
+{% endblock %}
