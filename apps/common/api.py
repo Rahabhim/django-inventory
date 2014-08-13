@@ -55,9 +55,9 @@ def _context_has_perm(context, obj, pattern):
                 'model': obj._meta.module_name}
         role = False
         if 'request' in context:
-            role = role_from_request(context['request'])
-            if role.has_perm(pattern % npd):
-                return True
+            #role = role_from_request(context['request'])
+            #if role.has_perm(pattern % npd):
+            #    return True
             if context['request'].user.has_perm(pattern % npd):
                 return True
         return False
