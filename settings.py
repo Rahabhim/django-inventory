@@ -60,7 +60,7 @@ AUTH_URLS = AUTH_BACKEND + '.urls'
 AUTH_PROFILE_MODULE = AUTH_BACKEND+'.UserProfile'
 
 DATABASES = {
-    'non-default': {
+    'non_default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': os.path.join(PROJECT_ROOT, "%s.sqlite" % PROJECT_NAME),     # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
@@ -75,8 +75,27 @@ DATABASES = {
         #'PASSWORD': 'USERPASSWORD',   # Not used with sqlite3.
         #'HOST': 'localhost',      # Set to empty string for localhost.
         'PORT': '',               # Set to empty string for default.
+    },
+    'read-1': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django_inventory2',
+        'USER': 'django2',
+        #'PASSWORD': 'USERPASSWORD',
+        #'HOST': 'localhost',      # Set to empty string for localhost.
+        'PORT': '',               # Set to empty string for default.
+    },
+    'reports-1': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django_inventory2',
+        'USER': 'django2',
+        #'PASSWORD': 'USERPASSWORD',
+        #'HOST': 'localhost',      # Set to empty string for localhost.
+        'PORT': '',               # Set to empty string for default.
     }
 }
+
+DATABASE_ROUTERS = ['routing.ReplicasRouter',]
+DATABASE_NON_ROUTED_APPS = ['sessions', 'auth', 'reports']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
