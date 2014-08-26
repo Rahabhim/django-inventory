@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseNotFound, HttpResponse, HttpResponseNotAllowed
 from django.core.urlresolvers import reverse
 from django.utils.functional import Promise
-from django.db import models
+from django.db import models, router
 from django.db.models.query import QuerySet
 from django.contrib import messages
 import json
@@ -250,6 +250,7 @@ class CJFilter_Model(CJFilter):
             objects = objects.by_request(request)
         else:
             objects = objects.all()
+        objects = objects.using(router.db_for_read(self._model_inst, cluster='reports'))
 
         order_by2 = []
         if order_by:
@@ -369,7 +370,8 @@ class CJFilter_Model(CJFilter):
 
                 vals_group = {}
                 if isinstance(field, CJFilter_Model):
-                    for g in field._model_inst.objects.filter(pk__in=gb_vals).values('id', *gbf):
+                    for g in field._model_inst.objects.using(router.db_for_read(field._model_inst, cluster='reports')) \
+                            .filter(pk__in=gb_vals).values('id', *gbf):
                         g2 = {}
                         for k, v in g.items():
                             g2[gb + '.' + k.replace('__', '.')] = v
@@ -423,6 +425,7 @@ class CJFilter_Model(CJFilter):
                 objects = objects.by_request(request)
             else:
                 objects = objects.all()
+            objects = objects.using(router.db_for_read(self._model_inst, cluster='reports'))
             return { name + '__in': objects }
 
         if domain[1] == '=':
@@ -436,7 +439,7 @@ class CJFilter_Model(CJFilter):
         elif domain[1] == 'in' and all([isinstance(x, (long, int)) for x in domain[2]]):
             return { name+'__pk__in': domain[2] }
         elif domain[1] == 'in':
-            objects = self._model_inst.objects
+            objects = self._model_inst.objects.using(router.db_for_read(self._model_inst, cluster='reports'))
             extras = []
             if getattr(objects, 'by_request', None):
                 objects = objects.by_request(request)
@@ -628,18 +631,19 @@ class CJFilter_dept_has_assets(CJFilter_Boolean):
 
     def getQuery(self, request, name, domain):
         from company.models import Department
+        dept_objs = Department.objects.using(router.db_for_read(Department, cluster='reports'))
         if isinstance(domain, (list, tuple)) and len(domain) == 3 \
                 and (domain[1] == '='):
             q = models.Q(location__item__isnull=False)
             if domain[2]:
                 # pass through Q, to get unique results
-                return models.Q(id__in=Department.objects.filter(q))
+                return models.Q(id__in= dept_objs.filter(q))
             else:
                 # we cannot just say "location__item__isnull=True", because
                 # it would take Departments having /one/ of their locations
                 # empty. So, we invert the result set of those having any
                 # assets.
-                return ~models.Q(id__in=Department.objects.filter(q))
+                return ~models.Q(id__in=dept_objs.filter(q))
         raise TypeError("Bad domain: %r", domain)
 
     def _post_fn(self, fname, results, qset):
@@ -654,7 +658,8 @@ class CJFilter_dept_has_assets(CJFilter_Boolean):
         # http://dev.mysql.com/doc/refman/5.5/en/subquery-restrictions.html
         # A nested sub-query, in MySQL, cannot have LIMIT. So, we need
         # to force Django to use a plain list of IDs
-        depts_with = set(Department.objects.filter(id__in=list(all_ids)). \
+        dept_objs = Department.objects.using(router.db_for_read(Department, cluster='reports'))
+        depts_with = set(dept_objs.filter(id__in=list(all_ids)). \
                     filter(location__item__isnull=False).distinct()\
                     .values_list('id', flat=True))
 
@@ -688,6 +693,7 @@ class CJFilter_ModelChoices(CJFilter_Model):
         objects = self._model_inst.objects
         if True:
             objects = objects.all()
+        objects = objects.using(router.db_for_read(self._model_inst, cluster='reports'))
         if self.filter_expr:
             objects = objects.filter(**self.filter_expr)
         ret['selection'] = [(o.id, unicode(o)) for o in objects]
@@ -825,8 +831,9 @@ class CJFilter_contains(CJFilter):
             @param qset a QuerySet, whose .values() produced `results`
         """
         if getattr(self, 'alt_model', False):
-            qset2 = models.get_model(self.alt_model[0], self.alt_model[1]) \
-                    .objects.filter(pk__in=[v['id'] for v in results])
+            model2 = models.get_model(self.alt_model[0], self.alt_model[1])
+            model2_objects = model2.objects.using(router.db_for_read(model2, cluster='reports'))
+            qset2 = model2_objects.filter(pk__in=[v['id'] for v in results])
         else:
             qset2 = qset
         imap = {} # id=> value map

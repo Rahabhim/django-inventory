@@ -30,8 +30,27 @@ DATABASES = {
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    },
+    'example-read-1': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django_inventory2',
+        'USER': 'django2',
+        #'PASSWORD': 'USERPASSWORD',
+        #'HOST': 'localhost',      # Set to empty string for localhost.
+        'PORT': '',               # Set to empty string for default.
+    },
+    'example-reports-1': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'django_inventory2',
+        'USER': 'django2',
+        #'PASSWORD': 'USERPASSWORD',
+        #'HOST': 'localhost',      # Set to empty string for localhost.
+        'PORT': '',               # Set to empty string for default.
     }
 }
+
+DATABASE_ROUTERS = ['routing.ReplicasRouter',]
+DATABASE_NON_ROUTED_APPS = ['sessions', 'auth', 'reports']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
