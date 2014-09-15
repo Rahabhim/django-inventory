@@ -50,7 +50,7 @@ INVENTORY_STATES = [('draft', _('Draft')),
 class InventoryGroupManager(models.Manager):
     def by_request(self, request):
         try:
-            if request.user.is_superuser:
+            if request.user.is_superuser or request.user.is_staff:
                 return self.all()
             else:
                 q = Q(create_user=request.user) | Q(validate_user=request.user)
