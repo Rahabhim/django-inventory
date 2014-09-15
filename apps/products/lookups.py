@@ -40,6 +40,7 @@ class ProductSpecsLookup(LookupChannel):
     """Locate product by specs
     """
     model = ItemTemplate
+    max_length = 250
 
     def get_query(self, q, request):
         """ Specs will be fed to other variables of `request` rather than `q`
