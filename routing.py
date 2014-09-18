@@ -11,16 +11,14 @@ class ReplicasRouter(object):
             if '-' in db_alias:
                 cluster, db = db_alias.split('-', 1)
                 self.dbs.setdefault(cluster, []).append(db_alias)
-        
+
         self.system_apps = getattr(settings, 'DATABASE_NON_ROUTED_APPS', [])
-        print "system apps:", self.system_apps
 
     def db_for_read(self, model, **hints):
         """Point all read operations to a random read slave"""
         if model._meta.app_label in self.system_apps:
             return None
         dbs = self.dbs.get(hints.get('cluster', 'read'), ['default'])
-        print "dbs for read:", model, repr(model._meta.app_label),  dbs
         if len(dbs) > 1:
             return random.choice(dbs[1:])
         else:
