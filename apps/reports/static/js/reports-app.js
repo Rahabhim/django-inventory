@@ -268,6 +268,11 @@ if (typeof String.prototype.startsWith != 'function') {
                             r['contains'].push(_getFieldData_one(item));
                             });
                     }
+                    if (field.path && field.path.startsWith('+')){
+                        r['name'] = field.name;
+                        r['full_name'] = field.full_name;
+                        r['widget'] = field.widget;
+                    }
                     return r;
                 };
             var getFieldData = function(fields) {
@@ -300,7 +305,14 @@ if (typeof String.prototype.startsWith != 'function') {
             var setFieldData = function(fields, target){
                 angular.forEach(fields, function(field, key){
                     if (target[key])
-                    _setFieldData_one(field, target[key]);
+                        _setFieldData_one(field, target[key]);
+                    else if (key.startsWith('+')){
+                        var new_field = {name: field.name, full_name: field.full_name,
+                                path: key, full_path: key,
+                                widget: field.widget};
+                        _setFieldData_one(field, new_field);
+                        target[key] = new_field;
+                        }
                     });
                 };
             $scope.resetFieldData = function(field) {
