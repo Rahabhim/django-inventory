@@ -128,7 +128,8 @@ class ExtraQuery(object):
     def setQueryExtras(self, extras, qdic):
         """ Populate extras with dict for `QuerySet.extra()`, qdic with clauses
         """
-        query, params = self.query.sql_with_params()
+        db_alias = router.db_for_read(self.query.model, cluster='reports')
+        query, params = self.query.get_compiler(db_alias).as_sql()
         if self.clause:
             ex = {}
             ex['where'] = [ '(%s) %s %%s' % (query, self.clause[0])]
