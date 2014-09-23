@@ -201,7 +201,11 @@ if (typeof String.prototype.startsWith != 'function') {
                             });
                         if (ret.length)
                             return ['in', ret];
-                    }
+                    },
+                // Both "extra" fields don't limit the results, but
+                // only add display fields.
+                'extra_attrib': function (rt, name) { return []; },
+                'extra_condition': function (rt, name) { return []; }
                 };
             domainFns['model-product'] = domainFns['model'];
             domainFns['has_sth'] = domainFns['boolean'];
@@ -210,6 +214,11 @@ if (typeof String.prototype.startsWith != 'function') {
                     return [];
                 return domainFns['model']($scope.reportType);
                 };
+            $scope.getFieldDomain = function(field){
+                var dfn = domainFns[field.widget];
+                if (dfn)
+                    return dfn(field);
+            };
             /** Get field object by some dot-delimited path */
             $scope.fieldByPath = function(path, ffrom) {
                 var ps = path.split('.');
@@ -294,6 +303,15 @@ if (typeof String.prototype.startsWith != 'function') {
                     _setFieldData_one(field, target[key]);
                     });
                 };
+            $scope.resetFieldData = function(field) {
+                if (field.data_op)
+                    field.data_op = undefined;
+                field.data = undefined;
+                if (field.fields)
+                    angular.forEach(field.fields, $scope.resetFieldData);
+                if (field.contains)
+                    field.contains_data = [];
+            };
 
             var _loadReport = function(rid) { 
                         $log.debug("Load report:", rid);
@@ -465,6 +483,46 @@ if (typeof String.prototype.startsWith != 'function') {
                     _loadReport(report_id);
                 });
             $scope.prepareResultsPost = angular.noop;
+            
+            var last_field_index = 0;
+            var _fillFieldPaths = function(field, key){
+                if (!field.full_path){
+                    field.full_name = this.name_prefix + field.name;
+                    field.full_path = this.fld_prefix + key;
+                }
+                if (field.fields)
+                    angular.forEach(field.fields, _fillFieldPaths,
+                            { name_prefix: field.full_name + ' / ',
+                              fld_prefix: field.full_path+ '.'
+                            });
+                if (field.widget == 'contains')
+                    angular.forEach(field.sub.fields, _fillFieldPaths,
+                            { name_prefix: field.full_name + ' / ',
+                              fld_prefix: field.full_path+ '.'
+                            });
+            };
+            $scope.fillFieldPaths = function(){
+                if (!$scope.reportType)
+                    return;
+                angular.forEach($scope.reportType.fields, _fillFieldPaths, {name_prefix: '', fld_prefix: ''});
+            };
+            $scope.add_extra_field = function(field){
+                if (last_field_index == 0){
+                    for(var key in $scope.reportType.fields)
+                        if (key.startsWith('+')){
+                            var idx = parseInt(key.split('_').pop());
+                            if (idx > last_field_index)
+                                last_field_index = idx;
+                        };
+                }
+                var newName = '+extra_' + last_field_index;
+                last_field_index++;
+                if ($scope.reportType.fields[newName])
+                    throw Error('name conflict: ' + newName);
+                field.path = field.full_path = newName;
+                $scope.reportType.fields[newName] = field;
+            };
+
         }]);
 
     reportsApp.controller('reportsTypeCtrl', ['$log', '$scope',function($log, $scope) {
@@ -607,6 +665,14 @@ if (typeof String.prototype.startsWith != 'function') {
                         if (criteria.length)
                             return criteria.join(',');
                         return "";
+                        },
+                    'extra_attrib': function(field) {
+                        // it is only used for display
+                        return field.fmt.title || "";
+                        },
+                    'extra_condition': function(field) {
+                        // it is only used for display
+                        return field.fmt.title || "";
                         }
                 };
             formatFns['model-product'] = formatFns['model'];
@@ -736,6 +802,36 @@ if (typeof String.prototype.startsWith != 'function') {
                     return $q.when(false);
                 }
             };
+
+            $scope.addAsField = function(field) {
+                // Get domain, if domain then add
+                var dom = $scope.getFieldDomain(field);
+                if (dom && (dom != [])){
+                    dom.unshift(field.full_path);
+                    var new_field = {name: field.name + ' ?',
+                        full_name: field.full_name,
+                        data: dom,
+                        widget: 'extra_condition',
+                        sequence: 100};
+                    $scope.setFieldFmt(new_field);
+                    var ft = $scope.formatParmsData(field);
+                    if (ft)
+                        new_field.fmt.title = ft;
+                    $scope.$parent.add_extra_field(new_field);
+                    $scope.resetFieldData(field);
+                }
+            };
+            $scope.addAttribAsField = function(field, attr) {
+                // direct add
+                var new_field = {name: attr.name,
+                        full_name: field.full_name + '/' + attr.name,
+                        data: [field.full_path, attr.aid],
+                        widget: 'extra_attrib',
+                        sequence: 100};
+                $scope.setFieldFmt(new_field);
+                new_field.title = $scope.formatParmsData(field) || field.title;
+                $scope.$parent.add_extra_field(new_field);
+            };
         }]);
 
     reportsApp.controller('productParamsCtrl', ['$log', '$scope', function($log, $scope) {
@@ -825,17 +921,6 @@ if (typeof String.prototype.startsWith != 'function') {
 
     reportsApp.controller('formattingCtrl', ['$log', '$scope',function($log, $scope) {
             $scope.fmtTable = false;
-            var fillFieldPaths = function(field, key){
-                if (!field.full_path){
-                    field.full_name = this.name_prefix + field.name;
-                    field.full_path = this.fld_prefix + key;
-                }
-                if (field.fields)
-                    angular.forEach(field.fields, fillFieldPaths,
-                            { name_prefix: field.full_name + ' / ',
-                              fld_prefix: field.full_path+ '.'
-                            });
-            };
             var recalcFmtTable = function() {
                 $scope.fmtTable = [];
                 if (!$scope.reportType.fields)
@@ -858,7 +943,7 @@ if (typeof String.prototype.startsWith != 'function') {
             var recalcFmtTable_full = function() {
                 if (!$scope.reportType)
                     return;
-                angular.forEach($scope.reportType.fields, fillFieldPaths, {name_prefix: '', fld_prefix: ''});
+                $scope.$parent.fillFieldPaths();
                 recalcFmtTable();
                 };
             $scope.$parent.$watchCollection('reportType.fields', recalcFmtTable_full);
@@ -1027,11 +1112,14 @@ if (typeof String.prototype.startsWith != 'function') {
                         }
                         return false;
                     }
+                    else if (dragItem.path && dragItem.path.startsWith('+')) {
+                        delete $scope.reportType.fields[dragItem.path];
+                    }
                     else {
                         // not groupped, just hide the field
                         $scope.setFieldFmt(dragItem);
                         dragItem.fmt.hide = true;
-                        }
+                    }
                     recalcFmtTable();
                     return true;
                 };
@@ -1064,8 +1152,12 @@ if (typeof String.prototype.startsWith != 'function') {
                     var order = undefined;
                     if (field.fmt.display)
                         disp += '.' + field.fmt.display;
-                    if (!field.fmt.hide)
-                        req_fields.push(disp);
+                    if (!field.fmt.hide){
+                        if (field.path && field.path.startsWith('+'))
+                            req_fields.push([field.path, field.widget, field.data]);
+                        else
+                            req_fields.push(disp);
+                    }
                     if (field.fmt.order){
                         if (field.fmt.order == '-')
                             order = '-' + disp;
@@ -1392,6 +1484,10 @@ if (typeof String.prototype.startsWith != 'function') {
             /*else if (field.widget == 'id'){
                 return $sce.trustAsHtml(data);
             }*/
+            else if (field.widget == 'extra_condition'){
+                value = data[field.path.substr(1)];
+                return appWords[value];
+            }
             else
                 return value;
         };
