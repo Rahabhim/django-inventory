@@ -26,7 +26,7 @@ class ReplicasRouter(object):
 
     def db_for_write(self, model, **hints):
         "Point all write operations to the master"
-        return None
+        return "default"
 
     def allow_relation(self, obj1, obj2, **hints):
         "Allow any relation between two objects in the db pool"
