@@ -510,6 +510,7 @@
                     <span ng-switch-when="has_sth">[[ row[fc.id]|fmtHasSth ]]</span>
                     <span ng-switch-when="id"><a ng-href="[[ row[fc.id+'.url'] ]]" target="_blank">[[ row[fc.id] ]]</a></span>
                     <span ng-switch-when="extra_condition">[[ row[fc.id.substr(1)]|fmtBool]]</span>
+                    <span ng-switch-when="extra_attrib">[[ row[fc.id.substr(1)] ]]</span>
                     <span ng-switch-default ng-bind="row[fc.id]"></span>
                 </td>
             </tr>

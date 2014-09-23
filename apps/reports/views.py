@@ -86,6 +86,25 @@ class QryPlaceholder(object):
             e['where'][0] = e['where'][0] % tuple(lp)
             e['params'] = params2
 
+    @staticmethod
+    def trans_query(query_str, params, query):
+        """ Resolve placeholders in string query
+
+            @param query_str The SQL query string
+            @param params list of positional parameters to string
+            @param query the outer queryset, to get the alias from
+            @return a new `query` string, with placeholders replaced
+        """
+        lp = []
+        params2 = []
+        for p in params:
+            if isinstance(p, QryPlaceholder):
+                lp.append(query.get_initial_alias() + '.id')
+            else:
+                lp.append('%s')
+                params2.append(p)
+        return query_str % tuple(lp), params2
+
 class ExtraQuery(object):
     """ Query clause, resolving to `.extra()` attributes
 
@@ -1029,9 +1048,72 @@ class CJFilter_extra_condition(CJFilter):
         return query.extra(select={name: ' AND '.join(select_exprs)},
                             select_params=select_params)
 
+class CJFilter_extra_attrib(CJFilter):
+    aggregate_mode = 'limit'
+
+    def __init__(self, data, **kwargs):
+        super(CJFilter_extra_attrib, self).__init__(**kwargs)
+        assert isinstance(data, (tuple, list)) and len(data) == 2
+        assert '.' in data[0], data[0]
+        self.field_name = data[0]
+        self.attr_aid = data[1]
+
+    def __repr__(self):
+        return '<extra attrib: %s: %r >' % (self.field_name, self.attr_aid)
+
+    def getExtra(self, parent, request, query, name):
+
+        db_alias = router.db_for_read(query.model, cluster='reports')
+        fnp = self.field_name.split('.')
+        field = parent
+        atype_path = ''
+
+        # compute the real django-filter-path to our attribute
+        # You might be tempted to use `field_name.replace('.', '__')`
+        # but that doesn't work for `CJFilter_contains` fields, which
+        # may have a suffix.
+        while fnp:
+            fn = fnp.pop(0)
+            field = field.fields[fn]
+            if atype_path:
+                atype_path += '__'
+            atype_path += fn
+
+            if isinstance(field, CJFilter_contains):
+                if field.name_suffix:
+                    atype_path += '__' + field.name_suffix
+                elif field.set_suffix:
+                    atype_path += '__set'
+                field = field.sub_filter
+            elif isinstance(field, CJFilter_attribs):
+                assert not fnp, "Attribs must be last, still has: %r" % fnp
+            elif isinstance(field, CJFilter_Model):
+                pass
+            else:
+                raise NotImplementedError(type(field))
+
+        atype_path += '__value'
+
+        flt = { atype_path + '__atype__id': self.attr_aid,
+                'id': QryPlaceholder()
+                }
+        new_query = query.model.objects.filter(**flt).values(atype_path+'__value').query
+        new_query.clear_ordering(True)
+        new_query.bump_prefix() # needed to avoid conflict with outer query
+
+        q, p = new_query.get_compiler(db_alias).as_sql()
+
+        if self.aggregate_mode == 'limit':
+            q += ' LIMIT 1'
+
+        q, p = QryPlaceholder.trans_query(q, p, query.query)
+
+        return query.extra(select={name: q}, select_params=p)
+
 
 CJFilter_Model.dynamic_fields = {
         'extra_condition': CJFilter_extra_condition,
+        'extra_attrib': CJFilter_extra_attrib,
         #'extra_attrib': CJFilter_extra_attrib,
         }
 
