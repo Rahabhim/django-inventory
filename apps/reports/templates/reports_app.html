@@ -259,7 +259,11 @@
             <span class="famfam active" ng-class="{'famfam-wrench': field.expanded, 'famfam-resultset_next': !field.expanded}"></span>
             [[ field.name ]]
         </dt>
-        <dd ng-if="!field.expanded"> [[ formatParmsData(field) ]]</dd>
+        <a ng-show="field.expanded" class="add-as-field" ng-click="addAsField(field)"
+                title="{% trans 'Add condition as column to result' %}">
+            <span class="famfam active famfam-table_add">+</span>
+        </a>
+        <dd ng-if="!field.expanded"> [[ formatParmsData(field) ]] </dd>
         <dd ng-if="field.expanded" class="expanded">
             <div ng-include="'parts/field-'+ field.widget +'.html'"></div>
         </dd>
@@ -282,6 +286,14 @@
 
 <script type="text/ng-template" id="parts/field-.html">
     ???
+</script>
+
+<script type="text/ng-template" id="parts/field-extra_attrib.html">
+    {% trans 'Read only:' %} [[ field.name ]]
+</script>
+
+<script type="text/ng-template" id="parts/field-extra_condition.html">
+    extra condition [[ field.data ]]
 </script>
 
 <script type="text/ng-template" id="parts/field-isset.html">
@@ -401,6 +413,10 @@
     <div ng-repeat="attr in field.attribs">
         <div ng-controller="attribsCtrl">
             <label ng-bind="attr.name"></label>
+            <a class="add-as-field" ng-click="addAttribAsField(field, attr)"
+                    title="{% trans 'Add attribute as column to result' %}">
+                <span class="famfam active famfam-table_add">+</span>
+            </a>
             <span ng-repeat="fd in data">
                 <a ng-click="setCurEdit($index)" ng-show="cur_edit!=$index">[[ visibleName(fd, attr.values) ]]</a>
                 <select ng-show="cur_edit == $index" ng-model="data[$index]" ng-options="d[0] as d[1] for d in remainingValues(data, $index)">
@@ -493,6 +509,7 @@
                     <span ng-switch-when="boolean">[[ row[fc.id]|fmtBool ]]</span>
                     <span ng-switch-when="has_sth">[[ row[fc.id]|fmtHasSth ]]</span>
                     <span ng-switch-when="id"><a ng-href="[[ row[fc.id+'.url'] ]]" target="_blank">[[ row[fc.id] ]]</a></span>
+                    <span ng-switch-when="extra_condition">[[ row[fc.id.substr(1)]|fmtBool]]</span>
                     <span ng-switch-default ng-bind="row[fc.id]"></span>
                 </td>
             </tr>

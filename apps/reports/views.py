@@ -277,10 +277,20 @@ class CJFilter_Model(CJFilter):
                 raise ValueError("Domain must be like: [in, [...]]")
 
         post_fns = {}
+        dyn_fields = {}
         if fields:
             # convert fields to django-like exprs
             fields2 = []
             for fn in fields:
+                if isinstance(fn, (tuple, list)):
+                    fn, ftype, data = fn
+                    if fn.startswith('+'):
+                        fn = fn[1:]
+                    fld = dyn_fields[fn] = self.dynamic_fields[ftype](data)
+                    fields2.append(fn)
+                    if fld._post_fn:
+                        post_fns[fn] = fld._post_fn
+                    continue
                 fpath = fn.split('.')
                 fld = self._get_field(*fpath)
                 if fld is None:
@@ -408,6 +418,8 @@ class CJFilter_Model(CJFilter):
             # grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
         else:
             count = objects.count()
+            for fn, fld in dyn_fields.items():
+                objects = fld.getExtra(self, request, objects, fn)
             if order_by:
                 objects = objects.order_by(*[o.replace('.', '__') for o in order_by])
             if limit:
@@ -970,6 +982,58 @@ class CJFilter_attribs_count(CJFilter_attribs):
             qq.clause = (c[1], c[2])
             yield qq
         return
+
+class CJFilter_extra_condition(CJFilter):
+    def __init__(self, data, **kwargs):
+        super(CJFilter_extra_condition, self).__init__(**kwargs)
+        assert isinstance(data, (tuple, list)) and len(data) == 3
+        fn = data[0]
+        if '.' in fn:
+            fn, rest = fn.split('.', 1)
+            self.field_name = fn
+            self.domain = ['', 'in', [[ rest, data[1], data[2]]]]
+        else:
+            self.field_name = fn
+            self.domain = ['', data[1], data[2]]
+
+    def __repr__(self):
+        return '<extra condition: %s => %r >' % (self.field_name, self.domain)
+        
+    def getExtra(self, parent, request, query, name):
+        field = parent.fields[self.field_name]
+        flt = field.getQuery(request, '', self.domain)
+        assert isinstance(flt, dict), type(flt)
+        select_exprs = []
+        select_params = []
+        for op, vals in flt.items():
+            if op == '__in':
+                if isinstance(vals, list):
+                    raise NotImplementedError
+                elif isinstance(vals, QuerySet):
+                    db_alias = router.db_for_read(vals.query.model, cluster='reports')
+                    vals.query.clear_select_fields()
+                    vals.query.clear_ordering(True)
+                    vals.query.clear_limits()
+                    q, p = vals.values('pk').query.get_compiler(db_alias).as_sql()
+                    select_exprs.append('%s_id IN (%s)' % (self.field_name, q))
+                    select_params += p
+                else:
+                    raise TypeError("vals: %s" % type(vals))
+                    
+            elif op == '':
+                # equality
+                select_exprs.append(self.field_name + ' = %s')
+                select_params.append(vals)
+            else:
+                raise ValueError("cannot handle operator: '%s'" % op)
+        return query.extra(select={name: ' AND '.join(select_exprs)},
+                            select_params=select_params)
+
+
+CJFilter_Model.dynamic_fields = {
+        'extra_condition': CJFilter_extra_condition,
+        #'extra_attrib': CJFilter_extra_attrib,
+        }
 
 ######## - model definitions
 
