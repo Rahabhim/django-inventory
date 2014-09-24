@@ -498,8 +498,15 @@ class CJFilter_Model(CJFilter):
                 op_stack.append(d)
                 continue
             if isinstance(d, (tuple, list)) and len(d) == 3:
-                field = self.fields[d[0]] # KeyError means we're asking for wrong field!
-                ff = field.getQuery(request, d[0], d)
+                if '.' in d[0]:
+                    # expand shortcut ['spam.eggs.ham', '=', 4]
+                    # to detailed ['spam', 'in', ['eggs', 'in', ['ham', '=', 4]]]
+                    fn, rest = d[0].split('.', 1)
+                    field = self.fields[fn]
+                    ff = field.getQuery(request, fn, [fn, 'in', [[rest, d[1], d[2]],]])
+                else:
+                    field = self.fields[d[0]] # KeyError means we're asking for wrong field!
+                    ff = field.getQuery(request, d[0], d)
                 if isinstance(ff, models.Q):
                     pass
                 elif isinstance(ff, dict):
