@@ -524,8 +524,8 @@ if (typeof String.prototype.startsWith != 'function') {
                     for(var key in $scope.reportType.fields)
                         if (key.startsWith('+')){
                             var idx = parseInt(key.split('_').pop());
-                            if (idx > last_field_index)
-                                last_field_index = idx;
+                            if (idx >= last_field_index)
+                                last_field_index = idx+1;
                         };
                 }
                 var newName = '+extra_' + last_field_index;
