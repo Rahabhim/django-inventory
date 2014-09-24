@@ -1490,6 +1490,8 @@ if (typeof String.prototype.startsWith != 'function') {
         var dateFilter = $filter('date');
         return function(data, field){
             var value = data[field.id];
+            if (field.id[0] == '+')
+                value = data[field.id.substr(1)];
             if (field.widget == 'boolean')
                 return appWords[value];
             else if (field.widget == 'has_sth')
@@ -1500,8 +1502,10 @@ if (typeof String.prototype.startsWith != 'function') {
                 return $sce.trustAsHtml(data);
             }*/
             else if (field.widget == 'extra_condition'){
-                value = data[field.path.substr(1)];
                 return appWords[value];
+            }
+            else if (field.widget == 'extra_attrib') {
+                return value;
             }
             else
                 return value;
