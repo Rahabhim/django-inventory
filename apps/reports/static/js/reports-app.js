@@ -519,6 +519,7 @@ if (typeof String.prototype.startsWith != 'function') {
                     return;
                 angular.forEach($scope.reportType.fields, _fillFieldPaths, {name_prefix: '', fld_prefix: ''});
             };
+
             $scope.add_extra_field = function(field){
                 if (last_field_index == 0){
                     for(var key in $scope.reportType.fields)
@@ -532,6 +533,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 last_field_index++;
                 if ($scope.reportType.fields[newName])
                     throw Error('name conflict: ' + newName);
+                // $log.debug("add_extra_field", newName, $scope);
                 field.path = field.full_path = newName;
                 $scope.reportType.fields[newName] = field;
             };
