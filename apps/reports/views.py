@@ -1016,7 +1016,7 @@ class CJFilter_extra_condition(CJFilter):
     def __repr__(self):
         return '<extra condition: %r >' % self.domain
 
-    def getExtra(self, parent, request, query, name):
+    def setExtra(self, parent, request, query, name):
 
         flt = parent.getQuery(request, '', ['', 'in', [self.domain,]])
         assert isinstance(flt, dict)
@@ -1031,7 +1031,8 @@ class CJFilter_extra_condition(CJFilter):
         q, p = new_query.get_compiler(db_alias).as_sql()
         q += ' LIMIT 1'
         q, p = QryPlaceholder.trans_query(q, p, query.query)
-        return query.extra(select={name: q}, select_params=p)
+        query.query.add_extra(select={name: q}, select_params=p,
+                where=None, params=None, tables=None, order_by=None)
 
 class CJFilter_extra_attrib(CJFilter):
     aggregate_mode = 'limit'
@@ -1046,7 +1047,7 @@ class CJFilter_extra_attrib(CJFilter):
     def __repr__(self):
         return '<extra attrib: %s: %r >' % (self.field_name, self.attr_aid)
 
-    def getExtra(self, parent, request, query, name):
+    def setExtra(self, parent, request, query, name):
 
         db_alias = router.db_for_read(query.model, cluster='reports')
         fnp = self.field_name.split('.')
@@ -1087,13 +1088,11 @@ class CJFilter_extra_attrib(CJFilter):
         new_query.bump_prefix() # needed to avoid conflict with outer query
 
         q, p = new_query.get_compiler(db_alias).as_sql()
-
         if self.aggregate_mode == 'limit':
             q += ' LIMIT 1'
-
         q, p = QryPlaceholder.trans_query(q, p, query.query)
-
-        return query.extra(select={name: q}, select_params=p)
+        query.query.add_extra(select={name: q}, select_params=p,
+                where=None, params=None, tables=None, order_by=None)
 
 
 CJFilter_Model.dynamic_fields = {
