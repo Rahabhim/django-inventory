@@ -22,7 +22,7 @@
             </ul>
             {% elif fc.widget == 'date' %}
             {{ row|dvalue:fc.id}}
-            {% elif fc.widget == 'boolean' %}
+            {% elif fc.widget == 'boolean' or fc.widget == 'extra_condition' %}
             {% if row|dvalue:fc.id %}{% trans 'True'%}{% else %}{%trans 'False' %}{%endif %}
             {% elif fc.widget == 'has_sth' %}
             {% if row|dvalue:fc.id %}{% trans 'has'%}{% else %}{%trans "doesn't have" %}{%endif %}

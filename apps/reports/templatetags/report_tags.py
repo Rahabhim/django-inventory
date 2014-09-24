@@ -11,6 +11,8 @@ register = Library()
 
 def return_attrib(obj, attrib, arguments={}):
     try:
+        if isinstance(attrib,basestring) and attrib.startswith('+'):
+            attrib = attrib[1:]
         if isinstance(obj, dict):
             return obj.get(attrib, None)
         elif isinstance(attrib, types.FunctionType):
