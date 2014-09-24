@@ -212,6 +212,20 @@ class CJFilter(object):
     def getResults(self, request, **kwargs):
         raise NotImplementedError(self.__class__.__name__)
 
+def DynGroup(dinput, cols):
+    """Aggregate rows in `dinput` by their distinct `cols` values, sum "count" column
+    """
+    from collections import namedtuple, Counter
+
+    dtype = namedtuple('dyn_xx', cols) # hashable, fast, type
+    cnt = Counter()
+
+    for drow in dinput:
+        c = drow.pop('count', 1)
+        d = dtype(**drow)
+        cnt.update({d: c})
+
+    return [ dict(d._asdict(), count=c) for d, c in cnt.items()]
 
 class CJFilter_Model(CJFilter):
     """ Search for records of some Model
@@ -341,13 +355,19 @@ class CJFilter_Model(CJFilter):
 
             # First pass: resolve the fields that need to be used for groupping
             for gb in group_by:
-                field = self._get_field(*(gb.split('.')))
+                if gb.startswith('+'):
+                    gb = gb[1:]
+                    field = dyn_fields[gb]
+                else:
+                    field = self._get_field(*(gb.split('.')))
 
                 if not field:
                     raise KeyError("Invalid field %s for model %s" %(gb, self.model))
 
                 gbf = []
                 for f in fields:
+                    if isinstance(f, (list, tuple)):
+                        f = f[0]
                     if f.startswith(gb+'.'):
                         gbf.append(f[len(gb)+1:].replace('.', '__'))
 
@@ -379,7 +399,7 @@ class CJFilter_Model(CJFilter):
             if True:
                 obs2 = objects
                 if limit:
-                    obs2 = objects.order_by(*gorder_by)[:limit]
+                    obs2 = obs2.order_by(*gorder_by)[:limit]
 
                 detailed_results = obs2.values('id', *fields2)
                 # all_ids = [o.id for o in detailed_results]
@@ -393,15 +413,30 @@ class CJFilter_Model(CJFilter):
                 gb = group_by[i]
                 i += 1
                 gvals = gvalues[:i]
+                if gb[0] == '+':
+                    gb = gb[1:]
                 field, gbf, oby, go_by = group_fields[gb]
 
                 # get possible values from limited objects:
-                gb_vals = list(set([o[0] for o in obs2.values_list(oby)]))
-                if limit:
+                dynamic_order = (oby in dyn_fields)
+                if not dynamic_order:
+                    obs3 = obs2
+                    if dyn_fields:
+                        # avoid Django bug with extra+ordering
+                        obs3 = obs2._clone()
+                        obs3.query.clear_ordering(True)
+                    gb_vals = list(set([o[0] for o in obs3.values_list(oby)]))
+                else:
+                    gb_vals = []
+                if limit and not dynamic_order:
                     gb_filter[oby+'__in'] = gb_vals
 
                 # now, get some results:
-                grp_results = objects.filter(**gb_filter).order_by(*go_by).values(*gvals).annotate(count=models.Count('pk'))
+                grp_results = objects.filter(**gb_filter).order_by(*go_by).values(*gvals)
+                if dynamic_order:
+                    # Django code is broken when extra fields + group_by + ordering
+                    grp_results.query.clear_ordering()
+                grp_results = grp_results.annotate(count=models.Count('pk'))
 
                 vals_group = {}
                 if isinstance(field, CJFilter_Model):
@@ -413,6 +448,9 @@ class CJFilter_Model(CJFilter):
                         vals_group[g['id']] = g2
 
                 gb_values_cache[gb] = vals_group
+
+                if dynamic_order:
+                    grp_results = DynGroup(grp_results, gvals)
 
                 vals = []
                 for gr in grp_results:
