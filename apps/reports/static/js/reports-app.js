@@ -861,8 +861,8 @@ if (typeof String.prototype.startsWith != 'function') {
                 angular.forEach($scope.reportType.fields, fillFieldPaths, {name_prefix: '', fld_prefix: ''});
                 recalcFmtTable();
                 };
-            $scope.$parent.$watch('reportType.fields', recalcFmtTable_full);
-            $scope.$parent.$watch('reportGroups', recalcFmtTable);
+            $scope.$parent.$watchCollection('reportType.fields', recalcFmtTable_full);
+            $scope.$parent.$watchCollection('reportGroups', recalcFmtTable);
 
             $scope.addGroup = function(dragItem) {
                     $log.debug("addGroup", dragItem, "to", $scope.reportGroups);
