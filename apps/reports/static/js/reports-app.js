@@ -346,6 +346,7 @@ if (typeof String.prototype.startsWith != 'function') {
                                 angular.extend($scope.reportType, upd);
                                 $location.search('id', data.id);
                                 $scope.reportGroups = data.data.groups || [];
+                                $scope.fillFieldPaths();
 
                                 setFieldData(data.data.fields, $scope.reportType.fields);
                                 $scope.$root.needs_save = false;
@@ -818,6 +819,8 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.addAsField = function(field) {
                 // Get domain, if domain then add
                 var dom = $scope.getFieldDomain(field);
+                if (!field.full_path)
+                    throw Error("no full path for field");
                 if (dom && (dom != [])){
                     dom.unshift(field.full_path);
                     var new_field = {name: field.name + ' ?',
