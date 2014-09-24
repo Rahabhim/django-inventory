@@ -326,6 +326,11 @@ class CJFilter_Model(CJFilter):
                 if fld._post_fn:
                     post_fns[fn] = fld._post_fn
 
+        # setup extras (dynamic fields) on base query, to be used
+        # in both grouped and ungrouped cases
+        for fn, fld in dyn_fields.items():
+            fld.setExtra(self, request, objects, fn)
+
         if group_by:
             group_fields = {}
             gvalues = []
@@ -435,8 +440,6 @@ class CJFilter_Model(CJFilter):
             # grp_queryset = rel_field.rel.to.objects.filter(id__in=grp_rdict1.keys())
         else:
             count = objects.count()
-            for fn, fld in dyn_fields.items():
-                objects = fld.getExtra(self, request, objects, fn)
             if order_by:
                 objects = objects.order_by(*[o.replace('.', '__') for o in order_by])
             if limit:
