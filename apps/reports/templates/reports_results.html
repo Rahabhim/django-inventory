@@ -66,7 +66,18 @@
         <div><a onclick="window.print()"><span class="famfam active famfam-printer"></span>{% trans 'Print this report' %}</a></div>
     </div>
     {% with cur_results=flat_results %}
-        {% include "sub_results.html" %}
+    <table class="detail-results">
+        <thead>
+        <tr>
+            {% for fc in field_cols %}
+            <th>{% if fc.name != '-' %}{{ fc.name|title }}{% endif %}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+            {% include "sub_results.html" %}
+        </tbody>
+    </table>
     {% endwith %}
     <div class="links_options">
         <div><a onclick="window.print()"><span class="famfam active famfam-printer"></span>{% trans 'Print this report' %}</a></div>
@@ -76,9 +87,9 @@
         <div><a onclick="expandAll()"><span class="famfam active famfam-magnifier_zoom_in"></span>{% trans "Expand all" %}</a></div>
         <div><a onclick="collapseAll()"><span class="famfam active famfam-magifier_zoom_out"></span>{% trans "Collapse all" %}</a></div>
     </div>
-    {% with group_level=0 %}
-        {% include "grp_results.html" %}
-    {% endwith %}
+
+    {% include "grp_results.html" %}
+
     <div class="links_options">
         <div><a onclick="expandAll()"><span class="famfam active famfam-magnifier_zoom_in"></span>{% trans "Expand all" %}</a></div>
         <div><a onclick="collapseAll()"><span class="famfam active famfam-magifier_zoom_out"></span>{% trans "Collapse all" %}</a></div>

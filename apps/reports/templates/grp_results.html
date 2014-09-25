@@ -3,105 +3,109 @@
 
 {% group_recurse %}
 
-{% if cur_group.group_by %}
-    {% if cur_grp_fields.0.group_mode == 'table' %}
-        {% with cur_grp_fields|dictsort:'sequence' as cur_grp_sorted %}
-        {% if not hide_head %}
+{% if group_by %}
+    {% if group_mode == 'table' %}
+        {% if render_head %}
         <table class="grp_results">
             <thead>
-            <tr>{% for fc in cur_grp_sorted %}
+            <tr>{% for fc in render_head %}
                 <th>{{ fc.name|title }}</th>
                 {% endfor %}
-                <th>{% trans 'Count' %}</th>
             </tr>
             </thead>
             <tbody>
         {% endif %}
             {% for cur_row in cur_results %}
             <tr class="right_table">
-                {% for fc in cur_grp_sorted %}
+                {% for fc in field_cols %}
                 <td >{{ cur_row|attrib:fc.id|default:'-' }}</td>
                 {% endfor %}
-                <td>{{ cur_row|dvalue:'_count' }}</td>
             </tr>
-            <tr {% if not has_next_results %}style="display: none"{% endif %}>
-                <td colspan="{{ groupped_fields|length|add:1 }}" class="right_part">
-                    <div>{% with 0 as hide_head %}
+            {% if has_sub_values %}
+            <tr>
+                <td colspan="{{ field_cols|length }}" class="right_part">
+                    <div>
                         {{ do_group_recurse }}
-                        {% endwith %}
                     </div>
                 </td>
             </tr>
+            {% endif %}
             {% endfor %}
-        {% if not hide_head %}
+        {% if render_head %}
         </tbody>
         </table>
         {% endif %}
-        {% endwith %}
-    {% elif cur_grp_fields.0.group_mode == 'left_col' %}
-        {% if not hide_head %}
+    {% elif group_mode == 'left_col' %}
+        {% if render_head %}
         <table class="grp_left_col">
             <thead>
-            <tr><th>{{ cur_grp_fields.0.name }}</th>
-                {% for fc in right_fields %}
+            <tr>{% for fc in render_head %}
                 <th>{% if fc.name != '-'%}{{ fc.name }}{% endif %}</th>
                 {% endfor %}
             </tr>
             </thead>
             <tbody>
         {% endif %}
-            {% with cur_grp_fields|dictsort:'sequence' as cur_grp_sorted %}
             {% for cur_row in cur_results %}
             <tr class="left_row">
-                <td class="left_col" rowspan="{{ get_rowspan|add:1 }}">
-                    {% for fc in cur_grp_sorted %}
+                <td class="left_col" rowspan="{{ get_rowspan }}">
+                    {% for fc in field_cols %}
                     <div>
-                        {% if fc.name and fc.name != '-' and fc != cur_grp_fields.0 %}
-                        <span >{{ fc.name }}:</span>
+                        {% if fc.name and fc.name != '-'%}
+                        <span >{{ fc.name }}:</span> {{ fc.id }}
                         {% endif %}
                         {{ cur_row|attrib:fc.id|default:'-' }}
                     </div>
                     {% endfor %}
                     <div class="count">({{ cur_row|dvalue:'_count' }})</div>
                 </td>
-                <td class="right_empty" colspan="{{right_fields|length}}"></td>
             </tr>
-            <tr class="empty_row">{# balances even/odd rows #}
-                <td class="right_empty" colspan="{{right_fields|length|add:1}}"></td>
-            </tr>
-            {% with 1 as hide_head %}
-                {{ do_group_recurse }}
-            {% endwith %}
+            {{ do_group_recurse }}
             {% endfor %}
-            {% endwith %}
-        {% if not hide_head %}
+        {% if render_head %}
         </tbody>
         </table>
         {% endif %}
     {% else %}
         {% for cur_row in cur_results %}
-          {% if hide_head %}
+          {% if in_table %}
             <tr><td class="right_part">
           {% endif %}
             <div class="group expanded">
-            <h4 onclick="toggleExpand(this)"><span class="arrow-img">&nbsp;</span>{% for fc in cur_grp_fields %}
+            <h4 onclick="toggleExpand(this)"><span class="arrow-img">&nbsp;</span>
+                {% for fc in field_cols %}
                 <span>{% if fc.name and fc.name != '-' %}<span>{{ fc.name }}:</span>{% endif %}
                     {{ cur_row|attrib:fc.id|default:'-'}}
                 </span>
-                ({{ cur_row|dvalue:"_count" }})
                 {% endfor %}
+                ({{ cur_row|dvalue:"_count" }})
             </h4>
-            <div>{% with 0 as hide_head %}
+            <div>
                 {{ do_group_recurse }}
-                {% endwith %}
             </div>
             </div>
-          {% if hide_head %}
+          {% if in_table %}
             </tr></td>
           {% endif %}
         {% endfor %}
     {% endif %}
 {% else %}
-    {% include 'sub_results.html' %}
+    {% if render_head %}
+      <table class="detail-results">
+        <thead>
+        <tr>
+            {% for fc in render_head %}
+            <th>{% if fc.name != '-' %}{{ fc.name|title }}{% endif %}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+    {% endif %}
+        {% include 'sub_results.html' %}
+    {% if render_head %}
+        </tbody>
+    </table>
+    {% endif %}
 {% endif %}
 {% end_group_recurse %}
+
