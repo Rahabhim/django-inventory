@@ -52,7 +52,7 @@
                     {% for fc in field_cols %}
                     <div>
                         {% if fc.name and fc.name != '-'%}
-                        <span >{{ fc.name }}:</span> {{ fc.id }}
+                        <span >{{ fc.name }}:</span>
                         {% endif %}
                         {{ cur_row|attrib:fc.id|default:'-' }}
                     </div>
