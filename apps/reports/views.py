@@ -1252,6 +1252,8 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
                                 },
                             sequence=25),
             'src_contract': contract_filter,
+            'property_number': CJFilter_String(title=_("asset number"), sequence=22),
+            'serial_number': CJFilter_String(title=_("serial number"), sequence=23),
             },
     famfam_icon = 'computer',
     )
