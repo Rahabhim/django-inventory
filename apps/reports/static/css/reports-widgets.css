@@ -1421,6 +1421,23 @@ tbody {display: table-row-group;}
     width: 97%;
 }
 
+.var_params {
+    word-wrap: break-word;
+}
+.var_params dl dt {
+    display: inline-block;
+    font-weight: bold;
+    min-width: 8em;
+    margin-right: 1em;
+    margin-left: 2em;
+}
+
+.var_params dl dd {
+    display: inline-block;
+    font-style: italic;
+}
+
+
 table.grp_left_col td.right_part {
     padding: 0px;
 }

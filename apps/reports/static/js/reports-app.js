@@ -29,6 +29,7 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.reportGroups = [];
             $scope.available_types = appReportTypes;
             $scope.show_warning = false;
+            $scope.var_params = {};
             $scope.tabs = { 'type': true, 'params': false, 'format': false, 'preview': false, 'results': false };
             $scope.selectType = function(t, dblclick) {
                     if (! t.id)
@@ -538,6 +539,9 @@ if (typeof String.prototype.startsWith != 'function') {
                 $scope.reportType.fields[newName] = field;
             };
 
+            $scope.rmVarParam = function(k) {
+                delete $scope.var_params[k];
+            };
         }]);
 
     reportsApp.controller('reportsTypeCtrl', ['$log', '$scope',function($log, $scope) {
@@ -550,6 +554,7 @@ if (typeof String.prototype.startsWith != 'function') {
     reportsApp.controller('paramsCtrl', ['$log', '$scope','$http', '$q', 'appWords',
         function($log, $scope, $http, $q, appWords) {
             $scope.field = false;
+            $scope.allow_var_params = false;
             $scope.$parent.$watch('reportType', function(rt){
                     $scope.field = rt;
                     if (rt)
@@ -1254,6 +1259,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 $http.post('./results-preview/' + $scope.reportType.id,
                         {'model': $scope.reportType.id,
                         'domain': $scope.cur_domain,
+                        'var_params': $scope.var_params,
                         'fields': req_fields,
                         'show_detail': $scope.reportType.show_detail,
                         'group_by': $scope.reportGroups,
@@ -1391,6 +1397,8 @@ if (typeof String.prototype.startsWith != 'function') {
                     if ($scope.reportType && $scope.reportType.saved_id)
                         form.action += 'id=' + $scope.reportType.saved_id + '&';
                     form.action += 'n=' + num_submit.toString();
+                    for(var key in $scope.var_params)
+                        form.action += '&' + key + '=' + encodeURIComponent($scope.var_params[key]);
                     });
             };
 

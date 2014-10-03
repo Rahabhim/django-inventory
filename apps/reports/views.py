@@ -15,6 +15,7 @@ from django.utils.safestring import SafeString
 from collections import defaultdict
 from django.core.exceptions import ObjectDoesNotExist
 import csv
+import re
 
 from models import SavedReport
 from common.api import user_is_staff
@@ -1335,6 +1336,32 @@ def _expand_keys(dd):
         ret[k.replace('__', '.')] = v
     return ret
 
+params_subst_re = re.compile(r'\$(\w+)')
+def params_subst(old_domain, var_params):
+    def sub_fn(m):
+        k = m.group(1)
+        if k:
+            return var_params.get(k, k)
+        return k
+
+    dom = list(old_domain)
+    has_new = False
+    for e in dom:
+        if isinstance(e, list) and len(e) == 3:
+            if isinstance(e[2], basestring) and '$' in e[2]:
+                e[2] = params_subst_re.sub(sub_fn, e[2])
+                has_new = True
+            elif e[1] in ('in', 'not in') and isinstance(e[2], list):
+                new_e2 = params_subst(e[2], var_params)
+                if new_e2:
+                    e[2] = new_e2
+                    has_new = True
+
+    if has_new:
+        return dom
+    else:
+        return False
+
 def reports_get_preview(request, rep_type):
     """Return a subset of results, for some report
     """
@@ -1357,6 +1384,12 @@ def reports_get_preview(request, rep_type):
         req_data['limit'] = 200
     elif (not req_data.get('show_detail', True)) and req_data['limit'] > 1000:
         req_data['limit'] = 1000
+    
+    if req_data.get('var_params', False) and req_data.get('domain', False):
+        if len(req_data['domain']) == 2 and req_data['domain'][0] == 'in':
+            new_dom = params_subst(req_data['domain'][1], req_data['var_params'])
+            if new_dom:
+                req_data['domain'] = ['in', new_dom]
 
     res = rt.getResults(request, **req_data)
 
@@ -1485,6 +1518,12 @@ def _pre_render_report(request):
             'field_cols': report_data.pop('field_cols'),
             'groupped_fields': report_data.pop('groupped_fields'),
         }
+
+    if report_data.get('domain', False) and request.GET:
+        if len(report_data['domain']) == 2 and report_data['domain'][0] == 'in':
+            new_dom = params_subst(report_data['domain'][1], request.GET)
+            if new_dom:
+                report_data['domain'] = ['in', new_dom]
 
     res = rt.getResults(request, **(report_data))
     if isinstance(res, tuple) and isinstance(res[0], QuerySet):
