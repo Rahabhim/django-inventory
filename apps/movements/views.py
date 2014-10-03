@@ -493,13 +493,16 @@ def purchase_order_receive(request, object_id):
                     ],
                 })
 
-            form_attrs['confirm_ask'] = True
+            form_attrs['confirm_ask'] = False
             for move in moves_list:
+                # Confirm for validation must happen if /any/ of the movements
+                # is draft and belongs to the user. (or if the bundle one is draft)
                 if move.state == 'draft' and active_role \
                             and active_role.department is not None \
-                            and move.location_dest.usage == 'internal' \
-                            and active_role.department != move.location_dest.department:
-                    form_attrs['confirm_ask'] = False
+                            and (move.location_dest.usage == 'production'
+                                or (move.location_dest.usage == 'internal' \
+                                    and active_role.department == move.location_dest.department)):
+                    form_attrs['confirm_ask'] = True
                     break
 
         del lock
