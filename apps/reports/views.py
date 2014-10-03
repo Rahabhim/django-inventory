@@ -1268,7 +1268,7 @@ def get_rtype_name(rep_type):
 # ------------------ Views -------------
 
 def reports_app_view(request, object_id=None):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
     _reports_init_cache()
     context = {'request': request, 'user': request.user}
@@ -1279,13 +1279,13 @@ def reports_app_view(request, object_id=None):
             })
 
 def report_details_view(request, pk=False):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
     report = get_object_or_404(SavedReport.objects.by_request(request), pk=pk)
     return render(request, 'report_details.html', { 'report': report })
 
 def reports_parts_params_view(request, part_id):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
     _reports_init_cache()
     if part_id not in _reports_cache['main_types']:
@@ -1294,7 +1294,7 @@ def reports_parts_params_view(request, part_id):
     return render(request, 'params-%s.html' % part_id, {})
 
 def reports_grammar_view(request, rep_type):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
     _reports_init_cache()
 
@@ -1308,7 +1308,7 @@ def reports_cat_grammar_view(request, cat_id):
     """Return the category-specific grammar (is_bundle and attributes)
     """
     from products.models import ItemCategory
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
     category = get_object_or_404(ItemCategory, pk=cat_id)
     ret = {'is_bundle': category.is_bundle, 'is_group': category.is_group,
@@ -1365,7 +1365,7 @@ def params_subst(old_domain, var_params):
 def reports_get_preview(request, rep_type):
     """Return a subset of results, for some report
     """
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
     _reports_init_cache()
 
@@ -1405,7 +1405,7 @@ def reports_get_preview(request, rep_type):
     return HttpResponse(content, content_type='application/json')
 
 def reports_back_list_view(request):
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
     res = SavedReport.objects.by_request(request).distinct().values('id', 'title', 'rmodel')
     content = json.dumps(res, cls=JsonEncoderS)
@@ -1414,7 +1414,7 @@ def reports_back_list_view(request):
 def reports_back_load_view(request):
     if request.method != 'GET':
         return HttpResponseNotAllowed(['GET',])
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
 
     _reports_init_cache()
@@ -1436,7 +1436,7 @@ def reports_back_load_view(request):
 def reports_back_save_view(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST',])
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
 
     req_data = json.loads(request.body)
@@ -1467,7 +1467,7 @@ def reports_back_save_view(request):
 def reports_back_del_view(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST',])
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
 
     req_data = json.loads(request.body)
@@ -1490,7 +1490,7 @@ def reports_back_del_view(request):
 def _pre_render_report(request):
     """Decode request parameters and prepare a report to be rendered
     """
-    if not request.user.is_authenticated:
+    if not request.user.is_authenticated():
         raise PermissionDenied
 
     _reports_init_cache()
