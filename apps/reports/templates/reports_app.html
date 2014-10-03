@@ -69,6 +69,40 @@
                     <div><label>{% trans 'Preview Limit' %}</label> <input type="number" min="1" ng-model="reportType.preview_limit"></div>
                 </div>
 
+                {% if request.user.is_superuser %}
+                <div class="parms-form">
+                    <div><label>{% trans 'Allow variable parameters' %}</label>
+                        <input type="checkbox" ng-model="allow_var_params">
+                    </div>
+
+                    <div ng-show="allow_var_params">
+                        <table>
+                            <thead><tr><th colspan="2">{% trans 'Variable parameters' %}</th></tr>
+                                    <tr><th>{% trans 'Name' %}</th><th>{% trans 'Value' %}</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="(k, v) in var_params">
+                                    <td>$[[ k ]]</td>
+                                    <td><input type="text" ng-model="var_params[k]">
+                                        <span title="Remove" ng-click="rmVarParam(k)" class="famfam active famfam-bullet_toggle_minus"> - </span>
+                                    </td>
+                                </tr>
+                                <tr ng-init="new_k=''; new_v=''">
+                                    <td>$<input type="text" ng-model="new_k"></td>
+                                    <td><input type="text" ng-model="new_v">
+                                        <span title="Add" ng-click="var_params[new_k] = new_v; new_k= ''; new_v = ''" class="famfam active famfam-bullet_toggle_plus">+</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="hint">{%blocktrans %}These values are NOT stored with the report.
+                            They have to be given, again, each time the report is requested.
+                        {% endblocktrans %}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div id="fmt-notes">
                     <h3>{% trans 'Notes' %}</h3>
                     <textarea ng-model="reportType.notes" placeholder="{%trans 'Write your notes, which will be printed in the report' %}">
@@ -200,6 +234,10 @@
                     {% if request.user.is_superuser %}
                         <div style="word-wrap: break-word">Domain:
                             [[ cur_domain ]]
+                        </div>
+                        <div class="var_params">
+                            Var. params:
+                            <dl ng-repeat="(key, val) in var_params"><dt>$[[ key]]</dt><dd>[[ val]] </dd></dl>
                         </div>
                     {% endif %}
                     <div ng-show="wait_results">{% trans 'Please wait, calculating preview...' %}</div>
