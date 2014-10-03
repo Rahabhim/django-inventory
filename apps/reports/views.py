@@ -1574,6 +1574,11 @@ def reports_results_html(request):
 def reports_results_pdf(request):
     raise NotImplementedError
 
+@allow_public_mode
+def reports_results_json(request):
+    res = _pre_render_report(request)
+    return HttpResponse(json.dumps(res, cls=JsonEncoderS), content_type='application/json')
+
 def csv_fmt(val):
     if val is None:
         return ''
