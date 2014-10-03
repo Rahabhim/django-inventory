@@ -40,6 +40,10 @@ urlpatterns = patterns('reports.views',
     url(r'^results.pdf', 'reports_results_pdf', (), name='reports_results_pdf'),
     url(r'^results.csv', 'reports_results_csv', (), name='reports_results_csv'),
 
+    # Public results, bypassing Django authentication
+    url(r'^pub/results.html$', 'reports_results_html', (), name='reports_pub_results_html'),
+    url(r'^pub/results.csv$', 'reports_results_csv', (), name='reports_pub_results_csv'),
+
     # back API
     url(r'^back/list', 'reports_back_list_view', (), name='reports_back_list_view'),
     url(r'^back/load', 'reports_back_load_view', (), name='reports_back_load_view'),

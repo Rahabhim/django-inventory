@@ -246,6 +246,7 @@ LOGIN_EXEMPT_URLS = (
     r'^about\.html$',
     r'^legal/', # allow the entire /legal/* subsection
     r'^help/', # all help is public, too
+    r'^creports/pub/', # reports using alternate authentication
     )
 
 if AUTH_BACKEND == 'auth_passwd':
