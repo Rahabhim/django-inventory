@@ -1266,7 +1266,7 @@ tbody {display: table-row-group;}
     -webkit-transition: all linear 0.2s;
 }
 
-#select-report-type.clear .button-selection {
+#select-report-type.no-report .button-selection {
     border: 1px blue;
     border-style: solid;
     background-color: #e0e0e0;

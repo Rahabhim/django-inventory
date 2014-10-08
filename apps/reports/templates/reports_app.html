@@ -49,7 +49,7 @@
                     have done in the other tabs. Please double click to confirm.
                     {% endblocktrans %}
                 </div>
-                <div id="select-report-type" ng-class="{'clear': !reportType}">
+                <div id="select-report-type" ng-class="{'no-report': !reportType}">
                     <div ng-repeat="t in available_types|seqSort">
                         <div class="button-selection" ng-class="{'selected': (t.id == reportType.id)}"
                             ng-click="selectType(t)" ng-dblclick="selectType(t, true)">
