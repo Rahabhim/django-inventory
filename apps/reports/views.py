@@ -1203,6 +1203,14 @@ product_filter = CJFilter_Product('products.ItemTemplate',
     famfam_icon='camera',
     )
 
+project_filter = CJFilter_Model('procurements.Project',
+    sequence=15,
+    famfam_icon='page_go',
+    fields={ 'id': CJFilter_id(),
+            'name':  CJFilter_String(title=_('name'), sequence=1),
+            'description':  CJFilter_String(title=_('description'), sequence=5, staff_only=True),
+    })
+
 contract_filter = CJFilter_lookup('procurements.Contract', 'contracts',
     title=_('contract'),
     fields={ 'id': CJFilter_id(),
@@ -1213,6 +1221,25 @@ contract_filter = CJFilter_lookup('procurements.Contract', 'contracts',
             )
         },
     famfam_icon='basket',
+    )
+
+contract_filter2 = CJFilter_Model('procurements.Contract',
+    title=_('contract'),
+    sequence=30,
+    fields={ 'id': CJFilter_id(),
+            'name':  CJFilter_String(title=_('name'), sequence=1),
+            'description':  CJFilter_String(title=_('description'), sequence=5, staff_only=True),
+            'use_regular': CJFilter_Boolean(title=_("regular procurements"), staff_only=True),
+            'use_mass': CJFilter_Boolean(title=_("mass procurements"), staff_only=True),
+            'date_start': CJFilter_date(title=_('start date'), staff_only=True),
+            'end_date': CJFilter_date(title=_('end date'), staff_only=True),
+            'parent': project_filter,
+            'delegate': CJFilter_Model('procurements.Delegate',
+                fields={ 'name':  CJFilter_String(title=_('name'), sequence=1),
+                }
+            )
+        },
+    famfam_icon='basket', condition=user_is_staff,
     )
 
 purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
@@ -1228,6 +1255,8 @@ purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
             'issue_date': CJFilter_date(title=_("issue date")),
             'state': CJFilter_choices('movements.PurchaseOrder', 'state', title=_('state')),
             'department': department_filter,
+            'procurement': contract_filter2.copy(staff_only=True,
+                    fields_add={ '_': CJFilter_isset(sequence=0), }),
         },
     condition=user_is_staff, famfam_icon='cart_go'
     )
@@ -1331,6 +1360,7 @@ def _reports_init_cache():
             'purchase_order': purchaseorder_filter,
             'inventories': inventories_filter,
             'movements': movements_filter,
+            'contracts': contract_filter2,
             }
 
     _reports_cache['available_types'] = [ rt.to_main_report(k) for k, rt in _reports_cache['main_types'].items()]
