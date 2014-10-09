@@ -75,7 +75,7 @@ class RoleLocationLookup(LookupChannel):
                     models.Q(department=None, name__icontains=q))
         elif active_role:
             # search for term in all departments the user has access to
-            loc_list = Location.objects.filter(active=True, department=active_role.department, name__icontains=q) \
+            loc_list = Location.objects.filter(active=True, department__in=active_role.departments, name__icontains=q) \
                     .filter(models.Q(department__in=_departments_by_q(q))| models.Q(department=None, name__icontains=q))
         else:
             # search for term in the locations of the current department

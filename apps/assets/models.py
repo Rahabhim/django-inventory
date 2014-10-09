@@ -59,7 +59,7 @@ class ItemManager(models.Manager):
             else:
                 role = role_from_request(request)
                 if role:
-                    return self.filter(location__department=role.department)
+                    return self.filter(location__department__in=role.departments)
                 else:
                     return self.filter(location__department__in=request.user.dept_roles.values_list('department', flat=True))
         except Exception:

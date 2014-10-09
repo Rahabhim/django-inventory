@@ -104,8 +104,9 @@ class PurchaseOrderManager(models.Manager):
                 active_role = role_from_request(request)
                 if active_role:
                     # remember: location_src is always the supplier!
-                    q = Q(movements__location_dest__department=active_role.department) \
-                        | Q(department=active_role.department)
+                    depts = active_role.departments
+                    q = Q(movements__location_dest__department__in=depts) \
+                        | Q(department__in=depts)
                 else:
                     q = Q(create_user=request.user) | Q(validate_user=request.user) \
                         | Q(department__in=request.user.dept_roles.values_list('department', flat=True))
@@ -741,7 +742,7 @@ class RepairOrderManager(models.Manager):
             else:
                 active_role = role_from_request(request)
                 if active_role:
-                    q = Q(department=active_role.department)
+                    q = Q(department__in=active_role.departments)
                 else:
                     q = Q(create_user=request.user) | Q(validate_user=request.user) \
                         | Q(department__in=request.user.dept_roles.values_list('department', flat=True))
@@ -829,8 +830,9 @@ class MovementManager(models.Manager):
             else:
                 active_role = role_from_request(request)
                 if active_role:
-                    q = Q(location_src__department=active_role.department) \
-                          | Q(location_dest__department=active_role.department)
+                    depts = active_role.departments
+                    q = Q(location_src__department__in=depts) \
+                          | Q(location_dest__department__in=depts)
                 else:
                     allowed_depts = request.user.dept_roles.values_list('department', flat=True)
                     q = Q(create_user=request.user) | Q(validate_user=request.user) \

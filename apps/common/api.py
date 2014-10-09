@@ -121,6 +121,7 @@ class _fake_role(object):
     def __init__(self, user):
         self.user = user
         self.department = None
+        self.departments = []
         self.role = None
 
     def has_perm(self, perm):

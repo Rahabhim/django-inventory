@@ -57,7 +57,7 @@ class InventoryGroupManager(models.Manager):
                 if request.session.get('current_user_role', False):
                     role_id = request.session['current_user_role']
                     role = request.user.dept_roles.get(pk=role_id)
-                    q = Q(department=role.department)
+                    q = Q(department__in=role.departments)
                 return self.filter(q).distinct()
         except Exception:
             logger.exception("cannot filter:")
@@ -123,7 +123,7 @@ class InventoryGroup(models.Model):
             return True
 
         active_role = role_from_request(context['request'])
-        if active_role and obj.department == active_role.department:
+        if active_role and obj.department in active_role.departments:
             return True
 
         return False
@@ -191,7 +191,7 @@ class InventoryManager(models.Manager):
                 if request.session.get('current_user_role', False):
                     role_id = request.session['current_user_role']
                     role = request.user.dept_roles.get(pk=role_id)
-                    q = Q(location__department=role.department)
+                    q = Q(location__department__in=role.departments)
                 return self.filter(q).distinct()
         except Exception:
             logger.exception("cannot filter:")
@@ -240,7 +240,7 @@ class Inventory(models.Model):
             return True
 
         active_role = role_from_request(context['request'])
-        if active_role and obj.location.department == active_role.department:
+        if active_role and obj.location.department in active_role.departments:
             return True
 
         return False
