@@ -31,6 +31,25 @@ class DepartmentRole(models.Model):
         return self.role.permissions.filter(content_type__app_label=app_label, \
                                             codename=codename).exists()
 
+    @property
+    def departments(self):
+        """Return all covered departments for this role
+        """
+        depts = []
+        if self.department:
+            depts.append(self.department)
+        all_depts = []
+        if self.has_perm('company.recurse'):
+            while depts:
+                all_depts += depts
+                new_depts = []
+                for d in depts:
+                    new_depts += d.dept_parent_id.all()
+                depts = new_depts
+            return all_depts
+        else:
+            return depts
+
 def create_user_profile(sender, instance, created, **kwargs):
     if created or not instance.get_profile():
         UserProfile.objects.create(user=instance)

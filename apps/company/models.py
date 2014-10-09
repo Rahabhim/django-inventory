@@ -63,7 +63,9 @@ class Department(models.Model):
     class Meta:
         # admin = True
         ordering = ['name']
-        permissions = [('admin_company', 'Can manage companies'),]
+        permissions = [('admin_company', 'Can manage companies'),
+                        ('recurse', 'Recurse in child departments')
+                      ]
         verbose_name = _("department")
         verbose_name_plural = _("departments")
 
