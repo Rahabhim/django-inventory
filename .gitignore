@@ -11,3 +11,4 @@ django_inventory.sqlite
 settings_local.py
 /dist
 .directory
+apps/reports/static/js/reports-app.min.js
