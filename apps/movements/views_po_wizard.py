@@ -631,13 +631,12 @@ class PO_Step5m(WizardForm):
         departments = []
 
         for role in request.user.dept_roles.all():
-            if role.department.id not in depts:
-                continue
             if not role.has_perm('movements.change_purchaseorder'):
-                logger.warning("User %s not allowed to change PO for dept %s", request.user, role.department)
-                raise PermissionDenied(_("You don't have permission to change this PO for department %s") % role.department)
-            depts.remove(role.department.id)
-            departments.append(role.department)
+                continue
+            for adept in role.departments:
+                if adept.id in depts:
+                    depts.remove(adept.id)
+                    departments.append(adept)
 
         if len(depts):
             if request.user.is_staff or request.user.is_superuser:

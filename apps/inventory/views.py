@@ -136,7 +136,7 @@ def inventory_validate(request, object_id):
         elif not (active_role and active_role.has_perm('inventory.validate_inventory')):
             raise PermissionDenied(_("Your active role does not have permission to validate an inventory"))
         # check that active_role has the same dept as inventory!
-        elif active_role.department != inventory.department:
+        elif inventory.department not in active_role.departments:
             raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
 
         # actual act of closing the inventory: (note, we don't pass the date)
@@ -204,7 +204,7 @@ def inventory_reject(request, object_id):
         if not (active_role and active_role.has_perm('inventory.validate_inventory')):
             raise PermissionDenied(_("Your active role does not have permission to reject an inventory"))
         # check that active_role has the same dept as inventory!
-        if active_role.department != inventory.department:
+        if inventory.department not in active_role.departments:
             raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
     except PermissionDenied, e:
         messages.error(request, _("Permission denied: %s") % e, fail_silently=True)

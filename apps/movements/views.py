@@ -393,9 +393,9 @@ def purchase_order_receive(request, object_id):
                     if move.state != 'draft':
                         moves_pending = True
                         continue
-                    if active_role.department is not None \
+                    if active_role \
                             and move.location_dest.usage == 'internal' \
-                            and active_role.department != move.location_dest.department:
+                            and move.location_dest.department not in active_role.departments:
                         # User is not allowed to validate the movement for that
                         # department, so carry on, avoid confirming the PO.
                         moves_pending = True
@@ -498,10 +498,9 @@ def purchase_order_receive(request, object_id):
                 # Confirm for validation must happen if /any/ of the movements
                 # is draft and belongs to the user. (or if the bundle one is draft)
                 if move.state == 'draft' and active_role \
-                            and active_role.department is not None \
                             and (move.location_dest.usage == 'production'
                                 or (move.location_dest.usage == 'internal' \
-                                    and active_role.department == move.location_dest.department)):
+                                    and move.location_dest.department in active_role.departments)):
                     form_attrs['confirm_ask'] = True
                     break
 
@@ -538,9 +537,7 @@ def purchase_order_reject(request, object_id):
         try:
             active_role = role_from_request(request)
             if not (active_role and active_role.has_perm('movements.validate_purchaseorder') \
-                    and active_role.department):
-                raise PermissionDenied
-            if active_role.department != purchase_order.department:
+                    and purchase_order.department in active_role.departments):
                 raise PermissionDenied
         except ObjectDoesNotExist:
             raise PermissionDenied
@@ -624,14 +621,12 @@ def purchase_order_copy(request, object_id):
             departments = []
 
             for role in request.user.dept_roles.all():
-                if role.department.id not in depts:
-                    continue
                 if not role.has_perm('movements.add_purchaseorder'):
-                    logger.warning("User %s not allowed to create PO for dept %s", request.user, role.department)
-                    messages.error(request,_('Not allowed to create PO for department %s') % role.department, fail_silently=True)
-                    return redirect(request.path.rstrip('?'), object_id=object_id)
-                depts.remove(role.department.id)
-                departments.append(role.department)
+                    continue
+                for adept in role.departments:
+                    if adept.id in depts:
+                        depts.remove(adept.id)
+                        departments.append(adept)
 
             if len(depts):
                 if request.user.is_staff or request.user.is_superuser:
@@ -798,9 +793,9 @@ def movement_do_close(request, object_id):
                 'object': movement})
 
     try:
-        if active_role.department is not None:
+        if active_role:
             if movement.stype in ('in', 'other'):
-                if active_role.department != movement.location_dest.department:
+                if movement.location_dest.department not in active_role.departments:
                     raise Exception(_("You do not have the permission to validate an incoming movement to %s") % movement.location_dest.department.name)
                 movement.do_close(movement.validate_user)
                 messages.success(request, _(u'The movement has been validated.'))
@@ -808,7 +803,7 @@ def movement_do_close(request, object_id):
                 # Internal moves may need validation from both source and destination
                 # departments, if those are different
 
-                if active_role.department == movement.location_dest.department:
+                if movement.location_dest.department in active_role.departments:
                     # We are called by a user on the receiving end
                     if movement.location_src.department == movement.location_dest.department \
                             or movement.src_validate_user \
@@ -827,7 +822,7 @@ def movement_do_close(request, object_id):
                         movement.save()
                         messages.warning(request, _('Movement has been validated by you, but is still pending validation from source department'))
 
-                elif active_role.department == movement.location_src.department:
+                elif movement.location_src.department in active_role.departments:
                     # That's the sending side. Mark our approval, and then perhaps close
                     # the movement, if receiving side has agreed.
                     movement._close_check()
@@ -845,7 +840,7 @@ def movement_do_close(request, object_id):
                                     movement.location_dest.department.name)
 
             elif movement.stype == 'out':
-                if active_role.department != movement.location_src.department:
+                if movement.location_src.department not in active_role.departments:
                     raise Exception(_("You do not have the permission to validate an outgoing movement from %s") % movement.location_src.department.name)
                 movement.do_close(movement.validate_user)
                 messages.success(request, _(u'The movement has been validated.'))
@@ -871,9 +866,9 @@ def movement_do_reject(request, object_id):
     elif not (active_role and active_role.has_perm('movements.validate_movement')):
         raise PermissionDenied
     try:
-        if active_role.department is not None:
+        if active_role:
             if movement.stype in ('in', 'other'):
-                if active_role.department != movement.location_dest.department:
+                if movement.location_dest.department not in active_role.departments:
                     raise Exception(_("You do not have the permission to reject an incoming movement to %s") % movement.location_dest.department.name)
                 movement.do_reject(movement.validate_user)
                 messages.success(request, _(u'The movement has been rejected.'))
@@ -881,8 +876,8 @@ def movement_do_reject(request, object_id):
                 # Internal moves may need validation from both source and destination
                 # departments, if those are different
 
-                if active_role.department == movement.location_src.department \
-                        or active_role.department == movement.location_dest.department:
+                if movement.location_src.department in active_role.departments \
+                        or movement.location_dest.department in active_role.departments:
                     # Either end can reject a movement to/from their dept
                     movement.do_reject(request.user)
                     messages.success(request, _(u'The movement has been rejected.'))
@@ -891,7 +886,7 @@ def movement_do_reject(request, object_id):
                                     movement.location_dest.department.name)
 
             elif movement.stype == 'out':
-                if active_role.department != movement.location_src.department:
+                if movement.location_src.department not in active_role.departments:
                     raise Exception(_("You do not have the permission to reject an outgoing movement from %s") % movement.location_src.department.name)
                 movement.do_reject(movement.validate_user)
                 messages.success(request, _(u'The movement has been rejected.'))
@@ -942,11 +937,10 @@ def repair_itemgroup(request, object_id):
 
     # A: the locations we can fetch from + their available parts
     if active_role:
-        dept = active_role.department
         if request.user.is_staff:
-            pass
-        elif item_location and dept and dept == item_location.department:
-            pass
+            dept = item_location.department
+        elif item_location and item_location.department in active_role.departments:
+            dept = item_location.department
         else:
             logger.warning("User %s does not have active_role for dept %s to edit item %d %s",
                         request.user, item_location.department, item.id, item)
@@ -1041,8 +1035,7 @@ def repair_do_close(request, object_id):
         raise PermissionDenied
 
     try:
-        if (active_role.department is not None) \
-                and active_role.department != repair.department:
+        if active_role and repair.department not in active_role.departments:
             raise Exception(_("You do not have the permission to validate a repair order for %s") % repair.department.name)
 
         moves_pending = False
@@ -1053,14 +1046,14 @@ def repair_do_close(request, object_id):
             if move.state != 'draft':
                 moves_pending = True
                 continue
-            if active_role.department is not None \
+            if active_role \
                     and move.location_dest.usage == 'internal' \
-                    and active_role.department != move.location_dest.department:
+                    and move.location_dest.department not in active_role.departments:
                 moves_pending = True
                 continue
-            elif active_role.department is not None \
+            elif active_role \
                     and move.location_src.usage == 'internal' \
-                    and active_role.department != move.location_src.department:
+                    and move.location_src.department not in active_role.departments:
                 moves_pending = True
                 continue
             # check only, on first pass, to ensure that /all/ movements can close

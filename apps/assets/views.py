@@ -188,9 +188,9 @@ def asset_printout(request, object_id):
     if not request.user.is_staff:
         # don't allow other roles to see assets of another dept.
         active_role = role_from_request(request)
-        if active_role and active_role.department != asset.location.department:
-            raise PermissionDenied
-        elif active_role and not active_role.department:
+        if active_role and asset.location.department in active_role.departments:
+            pass
+        else:
             raise PermissionDenied
 
     from django.template.loader import render_to_string
@@ -212,9 +212,9 @@ def asset_list_printout(request, dept_id):
     if not request.user.is_staff:
         # don't allow other roles to see assets of another dept.
         active_role = role_from_request(request)
-        if active_role and active_role.department != dept:
-            raise PermissionDenied
-        elif active_role and not active_role.department:
+        if active_role and dept in active_role.departments:
+            pass
+        else:
             raise PermissionDenied
 
     from django.template.loader import render_to_string
@@ -244,4 +244,5 @@ def asset_list_printout2(request):
         return HttpResponseRedirect(reverse("asset_list_printout", args=[active_role.department.id]))
     else:
         raise PermissionDenied
+
 #eof
