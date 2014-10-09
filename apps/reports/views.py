@@ -1151,6 +1151,7 @@ department_filter = CJFilter_Model('company.Department', sequence=5,
             'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
             'code': CJFilter_String(title=_('code'), sequence=2),
+            'code2': CJFilter_String(title=_('code 2'), sequence=3, staff_only=True),
             'dept_type': CJFilter_lookup('company.DepartmentType', 'department_type',
                         fields={'name':  CJFilter_String(title=_('name'), sequence=1), }
                 ),
