@@ -1673,18 +1673,25 @@ def allow_public_mode(_orig_fn):
                 raise PermissionDenied
             api_users = getattr(settings, 'API_USERS', {})
             remote_addr = request.META.get('REMOTE_ADDR', '')
-            if remote_addr not in api_users:
+
+            resolved_user = api_users.get(remote_addr, None)
+            if not resolved_user:
+                # search only class C subnet
+                remote_subnet = remote_addr.rsplit('.',1)[0] + '.'
+                resolved_user = api_users.get(remote_subnet, None)
+
+            if not resolved_user:
                 logging.getLogger('apps.reports').error("API connections from %s are not allowed", remote_addr)
                 raise PermissionDenied
             # TODO: auth header
 
             try:
-                request.user = User.objects.get(username=api_users[remote_addr]['user'])
+                request.user = User.objects.get(username=resolved_user['user'])
             except ObjectDoesNotExist:
-                logging.getLogger('apps.reports').error("API connection from %s specifies non-existent user \"%s\"", remote_addr, api_users[remote_addr]['user'])
+                logging.getLogger('apps.reports').error("API connection from %s specifies non-existent user \"%s\"", remote_addr, resolved_user['user'])
                 raise PermissionDenied
-            if 'allowed_reports' in api_users[remote_addr]:
-                if int(request.GET.get('id', '-1')) not in api_users[remote_addr]['allowed_reports']:
+            if 'allowed_reports' in resolved_user:
+                if int(request.GET.get('id', '-1')) not in resolved_user['allowed_reports']:
                     logging.getLogger('apps.reports').error("Report %r is not allowed to %s ", request.GET.get('id', '??'), remote_addr)
                     raise PermissionDenied
         return _orig_fn(request)
