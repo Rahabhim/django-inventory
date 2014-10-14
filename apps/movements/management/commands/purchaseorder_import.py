@@ -169,6 +169,10 @@ class Command(SyncCommand):
                 if r.strip() == '-':
                     print "Stop"
                     break
+                if r.strip() == 'n':
+                    # skip importing that product
+                    cache[remote_id] = False
+                    continue
                 if r.strip() == 'y' and len(found) == 1:
                     item_template = found[0]
                     break
@@ -197,7 +201,10 @@ class Command(SyncCommand):
             contracts_map[remote_id] = PurchaseOrder.objects.get(pk=local_id)
 
         for remote_id, local_id in cache_data.get('product_map', {}).items():
-            product_map[remote_id] = ItemTemplate.objects.get(pk=local_id)
+            if local_id is False:
+                product_map[remote_id] = False
+            else:
+                product_map[remote_id] = ItemTemplate.objects.get(pk=local_id)
 
         logger.debug("Doing %d assets with %d products, %d contracts", len(values), len(product_map), len(contracts_map))
 
@@ -213,6 +220,9 @@ class Command(SyncCommand):
 
             purchase_order = contracts_map[str(row['src_contract.id'])]
             product = product_map[str(row['item_template.id'])]
+
+            if not product:
+                continue
 
             location = self._get_location(row, cache_data)
             if not location:
@@ -237,6 +247,8 @@ class Command(SyncCommand):
                                 for row in values])
         for sc_it, count in counter.items():
             purchase_order, product = sc_it
+            if not product:
+                continue
             line, c = purchase_order.items.get_or_create(item_template=product)
             if line.qty < count:
                 line.qty = count
