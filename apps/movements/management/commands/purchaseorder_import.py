@@ -202,6 +202,8 @@ class Command(SyncCommand):
             product = product_map[str(row['item_template.id'])]
 
             location = self._get_location(row, cache_data)
+            if not location:
+                continue
 
             movement, c = Movement.objects.get_or_create(stype='in', state='draft',
                     location_src=lsrcs[0], location_dest=location,
@@ -241,7 +243,31 @@ class Command(SyncCommand):
                             row['location.department.name'], dept.id, dept.name):
                     break
             else:
-                raise ValueError("No department for code: %s", row['location.department.code'])
+                dept = False
+
+            if not dept:
+                print "Please enter Department for remote: #%s: %s" % (remote_id, row['location.department.name'])
+                while True:
+                    r = raw_input()
+                    if not r:
+                        print "?",
+                        continue
+                    if r.strip() == '-':
+                        print "Skip this line"
+                        return False
+
+                    try:
+                        dept = Department.objects.get(pk=int(r.strip()))
+                        if self.ask("Department found: #%d %s Are you sure?", dept.id, dept.name):
+                            break
+                        else:
+                            dept = False
+                    except ValueError, e:
+                        print "Invalid input:", e
+                    except ObjectDoesNotExist:
+                        print "No such department"
+                if not dept:
+                    raise ValueError("No department, stopping")
 
             cache[remote_id] = dept.id
 
