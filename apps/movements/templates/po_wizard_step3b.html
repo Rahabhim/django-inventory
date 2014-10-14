@@ -221,6 +221,25 @@
     }
 </style>
 
+<style>
+  .ui-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .ui-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+  }
+  .ui-combobox-input {
+    margin: 0;
+    padding: 3px 7px;
+  }
+  </style>
+
+<script type="text/javascript" src="{{ STATIC_URL }}/js/ui-combobox.js"></script>
 <script>
 
     /** Show the right pane for some category
@@ -417,8 +436,10 @@
         function upd_product2() {
             update_product2(field_id, cat_id);
         }
+        $(field_id + "_manuf_combo").combobox();
         $(field_id + "_manuf_combo").change(upd_product2);
         $(field_id + "_attribs div.product_attrib > select").change(upd_product2);
+        $(field_id + "_combo").combobox();
         $(field_id + "_combo").change(function() { select_some_part(field_id); } );
         $(field_id + "_qty").change(function() { upd_quantity(field_id); });
         $(field_id + "_code").autocomplete({

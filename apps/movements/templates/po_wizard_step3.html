@@ -9,8 +9,11 @@
     $(function() {
         $( "#step3_tabs" ).tabs();
     });
+
 </script>
+<script type="text/javascript" src="{{ STATIC_URL }}/js/ui-combobox.js"></script>
 {% endblock %}
+
 {% block pow_content %}
 <div class="u2_form">
 <style>
@@ -79,7 +82,23 @@
     }
 
 </style>
-
+<style>
+  .ui-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .ui-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+  }
+  .ui-combobox-input {
+    margin: 0;
+    padding: 3px 7px;
+  }
+  </style>
 {{ wizard.form.management_form }}
 
 {% with wizard.form as form %}
@@ -178,6 +197,7 @@
                 'success': update_product3});
     }
 
+    $("#{{form.manufacturer.auto_id}}").combobox();
     $("#{{form.manufacturer.auto_id}}").change(update_product2);
     $("#{{form.product_attributes.auto_id}} select").change(update_product2);
 
@@ -200,6 +220,7 @@
             return false;
         }
     }
+    $("#{{form.item_template2.auto_id}}").combobox();
     $("#{{form.item_template2.auto_id}}").change(select_some_product);
 
     $("#{{form.item_template.auto_id}}_on_deck").bind('added', function() {
