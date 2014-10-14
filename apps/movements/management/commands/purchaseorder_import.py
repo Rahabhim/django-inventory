@@ -112,12 +112,14 @@ class Command(SyncCommand):
             remote_id = str(val['src_contract.id'])
             if remote_id in cache:
                 continue
+            if self._active != 'i':
+                break
             print "Please enter PO #ID for remote source-contract #%s: %s" % (remote_id, val['src_contract.name'])
             purchase_order = None
             while True:
+                print "?",
                 r = raw_input()
                 if not r:
-                    print "?",
                     continue
                 if r.strip() == '-':
                     print "Stop"
@@ -145,13 +147,24 @@ class Command(SyncCommand):
                 continue
             print "Please enter product #ID for remote #%s: %s" % (remote_id, val['item_template.description'])
             found = ItemTemplate.objects.filter(description=val['item_template.description'])
+
+            if self._active is True and len(found) == 1:
+                item_template = found[0]
+                cache[remote_id] = item_template.id
+                continue
+            elif self._active == 'i':
+                pass
+            else:
+                # don't ask in non-interactive mode!
+                break
+
             for p in found:
                 print "    #%d [%s] %s" % (p.id, p.manufacturer.name, p.description)
             item_template = None
-            while True:
+            while self._active == 'i':
+                print "?",
                 r = raw_input()
                 if not r:
-                    print "?",
                     continue
                 if r.strip() == '-':
                     print "Stop"
@@ -245,8 +258,8 @@ class Command(SyncCommand):
             else:
                 dept = False
 
-            if not dept:
-                print "Please enter Department for remote: #%s: %s" % (remote_id, row['location.department.name'])
+            if (not dept) and self._active == 'i':
+                print "Please enter Department ID for remote: #%s: %s\n#" % (remote_id, row['location.department.name']),
                 while True:
                     r = raw_input()
                     if not r:
@@ -266,8 +279,8 @@ class Command(SyncCommand):
                         print "Invalid input:", e
                     except ObjectDoesNotExist:
                         print "No such department"
-                if not dept:
-                    raise ValueError("No department, stopping")
+            if not dept:
+                raise ValueError("No department, stopping")
 
             cache[remote_id] = dept.id
 
