@@ -210,11 +210,14 @@ class Command(SyncCommand):
 
         last_line = cache_data.get('last_line', 0)
         line_num = 0
+        lines_done = lines_skipped = 0
+        skipped_assets = cache_data.setdefault('skipped_assets', [])
         for row in values:
             line_num += 1
-            if last_line > line_num:
+            if last_line > line_num and (row['id'] not in skipped_assets):
+                lines_skipped += 1
                 continue
-            if self._limit and (line_num - last_line) >= self._limit:
+            if self._limit and lines_done >= self._limit:
                 break
             cache_data['last_line'] = line_num
 
@@ -222,10 +225,14 @@ class Command(SyncCommand):
             product = product_map[str(row['item_template.id'])]
 
             if not product:
+                skipped_assets.append(row['id'])
+                lines_skipped += 1
                 continue
 
             location = self._get_location(row, cache_data)
             if not location:
+                skipped_assets.append(row['id'])
+                lines_skipped += 1
                 continue
 
             movement, c = Movement.objects.get_or_create(stype='in', state='draft',
@@ -236,6 +243,7 @@ class Command(SyncCommand):
 
             if c:
                 movement.save()
+            lines_done += 1
 
             if row['serial_number'] and movement.items.filter(item_template=product, serial_number=row['serial_number']).exists():
                 continue
@@ -254,6 +262,7 @@ class Command(SyncCommand):
                 line.qty = count
                 line.save()
 
+        logger.info("In %d assets, processed: %d , skipped: %d , done %d", len(values), line_num, lines_skipped, lines_done)
         return
 
     def _get_location(self, row, cache_data):
@@ -292,6 +301,8 @@ class Command(SyncCommand):
                         print "Invalid input:", e
                     except ObjectDoesNotExist:
                         print "No such department"
+            elif (not dept) and self._active:
+                return False
             if not dept:
                 raise ValueError("No department, stopping")
 
