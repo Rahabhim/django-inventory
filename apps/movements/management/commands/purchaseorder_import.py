@@ -232,10 +232,11 @@ class Command(SyncCommand):
             movement.items.create(item_template=product, serial_number=row['serial_number'])
 
         # fix product quantities in PO
-        counter = Counter([ (row['src_contract.id'], row['item_template.id']) for row in values])
+        counter = Counter([ ( contracts_map[str(row['src_contract.id'])],
+                                product_map[str(row['item_template.id'])]) \
+                                for row in values])
         for sc_it, count in counter.items():
-            purchase_order = contracts_map[str(sc_it[0])]
-            product = product_map[str(sc_it[1])]
+            purchase_order, product = sc_it
             line, c = purchase_order.items.get_or_create(item_template=product)
             if line.qty < count:
                 line.qty = count
