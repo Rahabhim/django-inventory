@@ -172,7 +172,7 @@ class Command(SyncCommand):
                 if r.strip() == 'n':
                     # skip importing that product
                     cache[remote_id] = False
-                    continue
+                    break
                 if r.strip() == 'y' and len(found) == 1:
                     item_template = found[0]
                     break
