@@ -318,6 +318,7 @@
         else
             pcombo.append($('<option>', {value: ''}).text('--- Κανένα ---'));
 
+        data.sort(function(a,b) { if ( a.repr > b.repr) return 1; if (a.repr < b.repr) return -1; return 0 });
 
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
