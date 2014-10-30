@@ -335,7 +335,11 @@
 
     function update_product2(field_id, cat_id){
         var attribs = new Array();
-        $(field_id + "_attribs div.product_attrib > select").each( function() { if (this.value) attribs.push(this.value) });
+        var has_attrs = false;
+        $(field_id + "_attribs div.product_attrib > select").each( function() {
+                if (this.value) attribs.push(this.value);
+                has_attrs = true
+            });
         var manuf_value = $(field_id + "_manuf_combo")[0].value;
         // console.log("lookup specs", cat_id, attribs);
 
@@ -351,10 +355,36 @@
                 'data': {'term': 'foo', 'attributes': attribs,
                         'category': cat_id,
                         'manufacturer': manuf_value },
-                'success': function(data,status, xhr) { update_product3(data, field_id);},
+                'success': function(data,status, xhr) { update_product3(data, field_id);}
             });
         $(field_id + "_combo_results").text('?');
+
+        if (has_attrs)
+            $.ajax("{% url product_combi_attrs %}", {
+                'dataType': 'json',
+                'data': { 'attributes': attribs,
+                          'category': cat_id,
+                          'manufacturer': manuf_value
+                        },
+                'success': function(data) { update_combos(data, field_id) }
+                });
     }
+
+    function update_combos(data, field_id) {
+        $(field_id + "_attribs select").each(
+            function(){
+               var sel = this;
+               var atype = sel.id.split('-')[3].substr(1);
+               var adata = data[atype];
+               if (! adata)
+                    return;
+                while(sel.options.length > 1)
+                    sel.options.remove(1);
+                sel = $(sel);
+                for(var i = 0; i < adata.length; i++)
+                    sel.append($("<option>").attr("value", adata[i][0]).text(adata[i][1]));
+            });
+        }
 
     /** Read the field_combo (when changed) and update the selection
     */
