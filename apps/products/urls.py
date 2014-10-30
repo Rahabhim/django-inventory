@@ -195,6 +195,7 @@ urlpatterns = patterns('products.views',
                     extra_context={'object_name':_(u'attribute'),}),
             name='attributes_view'),
 
+    url(r'^attributes/get-combination/$', 'product_combi_attrs', (), name='product_combi_attrs'),
     )
 
 

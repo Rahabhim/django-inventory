@@ -2,9 +2,11 @@
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 from generic_views.views import generic_assign_remove
+from django.http import HttpResponse, HttpResponseNotAllowed
+from django.utils import simplejson
 
 from common.models import Supplier
-from models import ItemTemplate
+from models import ItemTemplate, ItemCategory, ProductAttributeValue
 
 
 def supplier_assign_remove_itemtemplates(request, object_id):
@@ -56,3 +58,43 @@ def template_assign_remove_suppliers(request, object_id):
         left_list_title=_(u'Unassigned suppliers'),
         right_list_title=_(u'Assigned suppliers'),
         item_name=_(u"suppliers"))
+
+def product_combi_attrs(request):
+    """Retrieve possible values for product attributes, limited to some combination
+    """
+    if request.method == "GET":
+        params = request.GET
+    elif request.method == "POST":
+        params = request.POST
+    else:
+        return HttpResponseNotAllowed(['POST', 'GET'])
+
+    categ = get_object_or_404(ItemCategory, pk=int(params['category']))
+
+    products = ItemTemplate.objects.filter(category=categ)
+    if params.get('manufacturer', False):
+        products = products.filter(manufacturer_id=int(params['manufacturer']))
+
+    attrs = params.getlist('attributes') or params.getlist('attributes[]') or []
+    for att in attrs:
+        if not att:
+            continue
+        products = products.filter(attributes__value_id=int(att))
+
+    results = {}
+    for cat in categ.attributes.all():
+        results[cat.id] = []
+
+    for aval in ProductAttributeValue.objects\
+            .filter(itemtemplateattributes__template__in=products) \
+            .distinct().prefetch_related('atype'):
+        if aval.atype_id not in results:
+            continue
+        if str(aval.id) in attrs:
+            del results[aval.atype_id]
+        else:
+            results[aval.atype_id].append([aval.id, aval.value])
+
+    return HttpResponse(simplejson.dumps(results), mimetype='application/javascript')
+
+#eof
