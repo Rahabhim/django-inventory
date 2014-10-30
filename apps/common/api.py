@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import copy
+import re
 import ajax_select
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
@@ -51,6 +52,7 @@ def register_submenu(menu_id, links):
 
 class LookupChannel(ajax_select.LookupChannel):
     max_length = 50
+    _white_re = re.compile(r'\s+')
     queryset = None
 
     def check_auth(self,request):
@@ -71,6 +73,10 @@ class LookupChannel(ajax_select.LookupChannel):
         for r in q.split(' '):
             cur = cur.filter(**{"%s__icontains" % self.search_field: r})
         return cur.order_by(self.search_field)[:self.max_length]
+
+    def format_item_display(self,obj):
+        res = super(LookupChannel, self).format_item_display(obj)
+        return self._white_re.sub(' ', res)
 
 # Condition functions for the views
 
