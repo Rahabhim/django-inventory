@@ -129,6 +129,15 @@
      _destroy: function() {
        this.wrapper.remove();
        this.element.show();
+     },
+     
+     clear: function(nochange) {
+        console.log("clear called on", this);
+        this.input.val("");
+        this.element.val("");
+        this._trigger("select", {}, { item: null });
+        if (!nochange)
+                this.element.trigger("change");
      }
    });
  })( jQuery );
