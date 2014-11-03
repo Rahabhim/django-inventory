@@ -1211,4 +1211,44 @@ table.wiz_form td.wf_field div.wf_auto p{
     margin:3px 0;
 }
 
+  .ui-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .ui-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+  }
+  .ui-combobox-input {
+    margin: 0;
+    padding: 3px 7px;
+  }
+
+  .wait-spinner {
+        display: none;
+        width: 300px;
+        min-height: 40px;
+        text-align: center;
+        margin-top: 40px;
+        padding-bottom: 54px;
+        padding-top: 54px;
+        vertical-align: middle;
+        position: absolute;
+        background: rgba(160,160,160,0.7);
+        border: 2px solid rgba(120,120,120,0.9);
+        border-radius: 6px;
+        float: center;
+  }
+  .wait-spinner span {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        width: 32px;
+        height: 32px;
+        background:  url('/static/images/loading.gif') no-repeat;
+  }
+
 /* eof */

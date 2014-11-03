@@ -221,24 +221,6 @@
     }
 </style>
 
-<style>
-  .ui-combobox {
-    position: relative;
-    display: inline-block;
-  }
-  .ui-combobox-toggle {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin-left: -1px;
-    padding: 0;
-  }
-  .ui-combobox-input {
-    margin: 0;
-    padding: 3px 7px;
-  }
-  </style>
-
 <script type="text/javascript" src="{{ STATIC_URL }}/js/ui-combobox.js"></script>
 <script>
 
@@ -333,6 +315,25 @@
         }
     }
 
+    /** Disable all combos and attributes while waiting for ajax response */
+    function freeze_parts(field_id) {
+        $(field_id + "_manuf_combo").combobox("disable");
+        $(field_id + "_attribs div.product_attrib > select").prop("disabled", true);
+        $(field_id + "_combo").combobox("disable");
+        $(field_id + "_code").autocomplete("disable");
+        $(field_id + "_wait_spinner").delay(600).show('fast');
+        };
+
+    /** re-enable all element parts after ajax response */
+    function thaw_parts(field_id) {
+        $(field_id + "_wait_spinner").clearQueue(); // ensure we have no 'show()' queued after this
+        $(field_id + "_manuf_combo").combobox("enable");
+        $(field_id + "_attribs div.product_attrib > select").prop("disabled", false);
+        $(field_id + "_combo").combobox("enable");
+        $(field_id + "_code").autocomplete("enable");
+        $(field_id + "_wait_spinner").hide();
+        };
+
     function update_product2(field_id, cat_id){
         var attribs = new Array();
         var has_attrs = false;
@@ -350,12 +351,14 @@
             return;
         }
 
+        freeze_parts(field_id);
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
                 'data': {'term': 'foo', 'attributes': attribs,
                         'category': cat_id,
                         'manufacturer': manuf_value },
-                'success': function(data,status, xhr) { update_product3(data, field_id);}
+                'success': function(data,status, xhr) { update_product3(data, field_id); },
+                'complete': function() { thaw_parts(field_id); }
             });
         $(field_id + "_combo_results").text('?');
 

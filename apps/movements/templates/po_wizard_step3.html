@@ -83,21 +83,7 @@
 
 </style>
 <style>
-  .ui-combobox {
-    position: relative;
-    display: inline-block;
-  }
-  .ui-combobox-toggle {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin-left: -1px;
-    padding: 0;
-  }
-  .ui-combobox-input {
-    margin: 0;
-    padding: 3px 7px;
-  }
+
   </style>
 {{ wizard.form.management_form }}
 
@@ -119,7 +105,13 @@
         </div>
         <p align="center"> ή </p>
 
-        <div class="product_search" id="product_search_combi"> <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία:
+        <div class="product_search" id="product_search_combi">
+             <div id="product_wait_spinner" class="wait-spinner">
+                <p>Γίνεται αναζήτηση...</p>
+                <span class="spinner"></span>
+             </div>
+
+                <p> Σύνθετη αναζήτηση με βάση τα παρακάτω στοιχεία:
                 </p>
             
         <label>Κατασκευαστής: </label>{{ form.manufacturer }}<br/>
@@ -187,15 +179,37 @@
             $("#product_combo_results").text('('+ data.length + ')');
         }
     }
+
+    /** Disable all combos and attributes while waiting for ajax response */
+    function freeze_product() {
+        $("#{{form.manufacturer.auto_id}}").combobox("disable");
+        $("#{{form.product_attributes.auto_id}} select").prop("disabled", true);
+        $("#{{form.item_template2.auto_id}}").combobox("disable");
+        // $("#{{form.item_template.auto_id}}").autocomplete("disable");
+        $("#product_wait_spinner").delay(600).show('fast');
+        };
+
+    /** re-enable all element parts after ajax response */
+    function thaw_product() {
+        $("#product_wait_spinner").clearQueue(); // ensure we have no 'show()' queued after this
+        $("#{{form.manufacturer.auto_id}}").combobox("enable");
+        $("#{{form.product_attributes.auto_id}} select").prop("disabled", false);
+        $("#{{form.item_template2.auto_id}}").combobox("enable");
+        // $("#{{form.item_template.auto_id}}").autocomplete("enable");
+        $("#product_wait_spinner").hide();
+        };
+
     function update_product2(){
         var attribs = new Array();
         $("#{{form.product_attributes.auto_id}} select").each(function() { attribs.push(this.value)});
+        freeze_product();
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
                 'data': {'term': 'foo', 'attributes': attribs,
                         'category': "{{ form.category_id }}",
                         'manufacturer': $("#{{ form.manufacturer.auto_id }}")[0].value },
-                'success': update_product3});
+                'success': update_product3,
+                'complete': thaw_product});
 
         if (attribs.length) // only if category has any attributes at all
             $.ajax("{% url product_combi_attrs %}", {
