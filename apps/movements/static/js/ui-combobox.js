@@ -43,7 +43,8 @@
 
      _createShowAllButton: function() {
        var input = this.input,
-         wasOpen = false;
+         wasOpen = false,
+         options = this.options;
 
        $( "<a>" )
          .attr( "tabIndex", -1 )
@@ -62,6 +63,8 @@
            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
          })
          .click(function() {
+           if (options.disabled)
+                return;
            input.focus();
 
            // Close if already visible
@@ -90,7 +93,7 @@
      _removeIfInvalid: function( event, ui ) {
 
        // Selected an item, nothing to do
-       if ( ui.item ) {
+       if ( ui.item || this.options.disabled) {
          return;
        }
 
@@ -130,6 +133,20 @@
        this.wrapper.remove();
        this.element.show();
      },
+
+     disable: function() {
+        this.input.autocomplete("disable");
+        this.input.tooltip("disable");
+        this.input.prop('disabled', true);
+        this._super();
+        },
+     enable: function() {
+        this.input.autocomplete("enable");
+        this.input.tooltip("enable");
+        this.input.prop('disabled', false);
+        this._super();
+        },
+
      
      clear: function(nochange) {
         console.log("clear called on", this);
