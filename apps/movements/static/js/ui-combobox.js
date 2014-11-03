@@ -147,9 +147,7 @@
         this._super();
         },
 
-     
      clear: function(nochange) {
-        console.log("clear called on", this);
         this.input.val("");
         this.element.val("");
         this._trigger("select", {}, { item: null });
