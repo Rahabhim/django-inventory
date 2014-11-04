@@ -344,6 +344,7 @@
         var manuf_value = $(field_id + "_manuf_combo")[0].value;
         // console.log("lookup specs", cat_id, attribs);
 
+        $(field_id + "_combo").combobox("clear");
         if (! (manuf_value || attribs.length)){
             // don't perform query if no selector is specified
             // Just clear the results.
