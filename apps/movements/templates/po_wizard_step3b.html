@@ -266,9 +266,10 @@
 
     /** Clear the attributes form, on user's request
     */
-    function clear_attribs(field_id, has_part) {
+    function clear_attribs(field_id, has_part, cat_id) {
         $(field_id + "_manuf_combo").combobox("clear", true);
         $(field_id + "_combo").empty();
+        $(field_id + "_combo").combobox("clear", true);
         $(field_id + " .combo_results").text('');
         $(field_id + "_attribs option:selected").prop("selected", false);
         $(field_id + " .product_selection").removeClass("found selected not-found")
@@ -281,6 +282,12 @@
             $(field_id+ " .label_not_found").show();
             $(field_id+ " .line_vals").hide();
         }
+        if ($(field_id + "_attribs div.product_attrib > select").length)
+            $.ajax("{% url product_combi_attrs %}", {
+                'dataType': 'json',
+                'data': { 'category': cat_id },
+                'success': function(data) { update_combos(data, field_id) }
+                });
         return false;
     }
 
@@ -349,6 +356,14 @@
             // don't perform query if no selector is specified
             // Just clear the results.
             update_product3([], field_id);
+
+            // also reset the attributes combination
+            if (has_attrs)
+            $.ajax("{% url product_combi_attrs %}", {
+                'dataType': 'json',
+                'data': { 'category': cat_id },
+                'success': function(data) { update_combos(data, field_id) }
+                });
             return;
         }
 
@@ -468,7 +483,7 @@
         @param cat_id   the database id of the category
     */
     function setup_category(field_id, cat_id){
-        function upd_product2() {
+        var upd_product2 = function() {
             update_product2(field_id, cat_id);
         }
         $(field_id + "_manuf_combo").combobox();

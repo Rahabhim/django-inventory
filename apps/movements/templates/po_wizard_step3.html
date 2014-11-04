@@ -200,6 +200,7 @@
     function update_product2(){
         var attribs = new Array();
         $("#{{form.product_attributes.auto_id}} select").each(function() { attribs.push(this.value)});
+        $("#{{form.item_template2.auto_id}}").combobox("clear", true);
         freeze_product();
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
