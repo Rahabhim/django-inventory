@@ -282,7 +282,7 @@
             $(field_id+ " .label_not_found").show();
             $(field_id+ " .line_vals").hide();
         }
-        if ($(field_id + "_attribs div.product_attrib > select").length)
+        if ($(field_id + "_attribs div.product_attrib > select").length && cat_id)
             $.ajax("{% url product_combi_attrs %}", {
                 'dataType': 'json',
                 'data': { 'category': cat_id },
