@@ -75,25 +75,24 @@ def product_combi_attrs(request):
     if params.get('manufacturer', False):
         products = products.filter(manufacturer_id=int(params['manufacturer']))
 
+    results = {}
+    for atype in categ.attributes.all():
+        results[atype.id] = []
+
     attrs = params.getlist('attributes') or params.getlist('attributes[]') or []
     for att in attrs:
         if not att:
             continue
-        products = products.filter(attributes__value_id=int(att))
+        pval = ProductAttributeValue.objects.get(pk=int(att))
+        results.pop(pval.atype_id, None)
+        products = products.filter(attributes__value=pval)
 
-    results = {}
-    for cat in categ.attributes.all():
-        results[cat.id] = []
 
     for aval in ProductAttributeValue.objects\
-            .filter(itemtemplateattributes__template__in=products) \
+            .filter(itemtemplateattributes__template__in=products,
+                    atype_id__in=results.keys()) \
             .distinct().prefetch_related('atype'):
-        if aval.atype_id not in results:
-            continue
-        if str(aval.id) in attrs:
-            del results[aval.atype_id]
-        else:
-            results[aval.atype_id].append([aval.id, aval.value])
+        results[aval.atype_id].append([aval.id, aval.value])
 
     return HttpResponse(simplejson.dumps(results), mimetype='application/javascript')
 
