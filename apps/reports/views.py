@@ -168,6 +168,8 @@ class CJFilter(object):
     _post_fn = None
 
     def __init__(self, **kwargs):
+        if 'post_fn' in kwargs:
+            self._post_fn = kwargs.pop('post_fn')
         self.__dict__.update(kwargs)
         CJFilter._instances.append(self)
 
