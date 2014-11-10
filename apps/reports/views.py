@@ -834,6 +834,7 @@ class CJFilter_contains(CJFilter):
         "sub" is the filter for each of the criteria, but will be repeated N times
         and request to satisfy all of those N contents.
     """
+
     def __init__(self, sub_filter, **kwargs):
         assert isinstance(sub_filter, CJFilter), repr(sub_filter)
         self.sub_filter = sub_filter
@@ -1173,6 +1174,7 @@ department_filter = CJFilter_Model('company.Department', sequence=5,
             },
     famfam_icon='building',
     )
+
 location_filter = CJFilter_Model('common.Location',
     fields={ 'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
@@ -1346,6 +1348,7 @@ movements_filter = CJFilter_Model('movements.Movement', title=_("movements"),
     condition=user_is_staff,
     famfam_icon='computer_go',
     )
+
 department_filter_full = department_filter.copy(fields_add={
             'inventorygroup': CJFilter_contains(inventories_filter.copy(fields_add={'department': None}),
                                 set_suffix=True,
