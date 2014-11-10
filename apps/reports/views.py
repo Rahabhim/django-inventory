@@ -188,7 +188,10 @@ class CJFilter(object):
         if fields_add:
             kkw['fields'] = kkw.get('fields', {}).copy()
             for k, ff in fields_add.items():
-                kkw['fields'][k] = ff
+                if ff is None:
+                    del kkw['fields'][k]
+                else:
+                    kkw['fields'][k] = ff
         kkw.update(**kwargs)
         return self.__class__(**kkw)
 
