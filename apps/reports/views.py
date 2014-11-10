@@ -310,6 +310,8 @@ class CJFilter_Model(CJFilter):
                 if flt:
                     assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
                     objects = objects.filter(flt)
+
+                objects = objects.distinct()
             else:
                 raise ValueError("Domain must be like: [in, [...]]")
 
@@ -442,7 +444,7 @@ class CJFilter_Model(CJFilter):
                 if dynamic_order:
                     # Django code is broken when extra fields + group_by + ordering
                     grp_results.query.clear_ordering()
-                grp_results = grp_results.annotate(count=models.Count('pk'))
+                grp_results = grp_results.annotate(count=models.Count('pk', distinct=True))
 
                 vals_group = {}
                 if isinstance(field, CJFilter_Model):
