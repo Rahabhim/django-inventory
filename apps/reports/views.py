@@ -836,6 +836,7 @@ class CJFilter_contains(CJFilter):
         "sub" is the filter for each of the criteria, but will be repeated N times
         and request to satisfy all of those N contents.
     """
+
     def __init__(self, sub_filter, **kwargs):
         assert isinstance(sub_filter, CJFilter), repr(sub_filter)
         self.sub_filter = sub_filter
@@ -1156,6 +1157,7 @@ CJFilter_Model.dynamic_fields = {
 
 
 location_filter = CJFilter_Model('inventory.Location',
+
     fields={ 'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
         },
@@ -1223,6 +1225,7 @@ location_filter_full = location_filter.copy(fields_add={
                             sequence=25
                             ),
             })
+
 
 # ---------------- Cache ---------------
 
