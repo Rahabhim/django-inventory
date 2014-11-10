@@ -1346,6 +1346,13 @@ movements_filter = CJFilter_Model('movements.Movement', title=_("movements"),
     condition=user_is_staff,
     famfam_icon='computer_go',
     )
+department_filter_full = department_filter.copy(fields_add={
+            'inventorygroup': CJFilter_contains(inventories_filter.copy(fields_add={'department': None}),
+                                set_suffix=True,
+                                related_name='department',
+                                title=_("inventories"))
+            })
+
 # ---------------- Cache ---------------
 
 _reports_cache = {}
@@ -1363,7 +1370,7 @@ def _reports_init_cache():
     _reports_cache['main_types'] = {
             'items': item_templ_filter,
             'products': product_filter,
-            'department': department_filter,
+            'department': department_filter_full,
             'location': location_filter_full,
             'purchase_order': purchaseorder_filter,
             'inventories': inventories_filter,
