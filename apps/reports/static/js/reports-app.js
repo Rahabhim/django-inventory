@@ -1512,7 +1512,7 @@ if (typeof String.prototype.startsWith != 'function') {
                 return $sce.trustAsHtml(data);
             }*/
             else if (field.widget == 'extra_condition'){
-                return appWords[value];
+                return appWords[!!value];
             }
             else if (field.widget == 'extra_attrib') {
                 return value;
