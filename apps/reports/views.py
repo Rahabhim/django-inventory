@@ -570,6 +570,18 @@ class CJFilter_Model(CJFilter):
                         ff = models.Q(**td)
                     else:
                         ff = None
+                elif isinstance(ff, list) and all([isinstance(x, (ExtraQuery, dict)) for x in ff]):
+                    # like above, a bit more difficult: mixed dicts and ExtraQueries
+                    ffq = models.Q()
+                    for f in ff:
+                        if isinstance(f, ExtraQuery):
+                            td = {}
+                            f.setQueryExtras(extras, td)
+                            if td:
+                                ffq = ffq & models.Q(**td)
+                        elif isinstance(f, dict):
+                            ffq = ffq & models.Q(**f)
+                    ff = ffq
                 else:
                     raise TypeError("Bad query: %r" % ff)
 
@@ -742,7 +754,6 @@ class CJFilter_dept_has_assets(CJFilter_Boolean):
         if qset.query.extra:
             # in that case, we MUST request for all the extra columns, because
             # they may participate in the ORDER BY clause
-            print "query has extra:", qset.query.extra.keys()
             afields = ['id'] + qset.query.extra.keys()
             all_ids = [ row[0] for row in qset.values_list(*afields) ]
         else:
@@ -891,37 +902,53 @@ class CJFilter_contains(CJFilter):
                 return self.sub_filter.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
         elif domain[1] == 'in':
             # multiple criteria, possibly a '_count'
-            name2 = name
-            if self.name_suffix:
-                name2 += '__' + self.name_suffix
-            inner_dom = []
-            count_dom = []
-            for dom in domain[2]:
-                if isinstance(dom, str) and dom in ('!', '&', '|'):
-                    raise NotImplementedError('Operators not supported in contains yet')
-                if isinstance(dom, (list, tuple)) and len(dom) == 3:
-                    if dom[0] in self.fields:
-                        count_dom.append(dom)
-                    else:
-                        inner_dom.append(dom)
-                else:
-                    raise ValueError("invalid expression: %r", dom)
-            sq = self.sub_filter.getQuery(request, name2, [domain[0], 'in', inner_dom])
-            if count_dom:
-                # no longer a straight "exists" sub-query that Django can handle.
-                # we need to separate it and write in a special syntax.
-                qset = sq.pop(name2+'__in')
-                assert not sq, "bad query: %r" % sq.keys()
-                base_extra_qry = ExtraQuery(qset.query, self.related_name)
-                all_extras = []
-                for dom in count_dom:
-                    for eq in self.fields[dom[0]].setExtraQuery(dom, base_extra_qry):
-                        all_extras.append(eq)
-                return all_extras
+            return self._getQuery_in(request, name, domain[0], domain[2])
+        elif domain[1] == '&':
+            # this is a list of "in"-like sub-expressions
+            if len(domain[2]) == 1:
+                return self._getQuery_in(request, name, domain[0], domain[2][0])
             else:
-                return sq
+                all_ret = []
+                for dom2 in domain[2]:
+                    rq = self._getQuery_in(request, name, domain[0], dom2)
+                    if isinstance(rq, list):
+                        all_ret += rq
+                    else:
+                        all_ret.append(rq) # dict case
+                return all_ret
         else:
             raise ValueError("Invalid operator for contains: %r" % domain[1])
+
+    def _getQuery_in(self, request, name, domain0, domain2):
+        name2 = name
+        if self.name_suffix:
+            name2 += '__' + self.name_suffix
+        inner_dom = []
+        count_dom = []
+        for dom in domain2:
+            if isinstance(dom, str) and dom in ('!', '&', '|'):
+                raise NotImplementedError('Operators not supported in contains yet')
+            if isinstance(dom, (list, tuple)) and len(dom) == 3:
+                if dom[0] in self.fields:
+                    count_dom.append(dom)
+                else:
+                    inner_dom.append(dom)
+            else:
+                raise ValueError("invalid expression: %r", dom)
+        sq = self.sub_filter.getQuery(request, name2, [domain0, 'in', inner_dom])
+        if count_dom:
+            # no longer a straight "exists" sub-query that Django can handle.
+            # we need to separate it and write in a special syntax.
+            qset = sq.pop(name2+'__in')
+            assert not sq, "bad query: %r" % sq.keys()
+            base_extra_qry = ExtraQuery(qset.query, self.related_name)
+            all_extras = []
+            for dom in count_dom:
+                for eq in self.fields[dom[0]].setExtraQuery(dom, base_extra_qry):
+                    all_extras.append(eq)
+            return all_extras
+        else:
+            return sq
 
     def _post_fn(self, fname, results, qset):
         """annotate `results` with computed value for our field `fname`
