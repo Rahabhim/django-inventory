@@ -43,12 +43,13 @@
 
      _createShowAllButton: function() {
        var input = this.input,
-         wasOpen = false;
+         wasOpen = false,
+         options = this.options;
 
        $( "<a>" )
          .attr( "tabIndex", -1 )
-         .attr( "title", "Show All Items" )
-         .tooltip()
+         //.attr( "title", "Show All Items" )
+         //.tooltip()
          .appendTo( this.wrapper )
          .button({
            icons: {
@@ -62,6 +63,8 @@
            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
          })
          .click(function() {
+           if (options.disabled)
+                return;
            input.focus();
 
            // Close if already visible
@@ -78,7 +81,7 @@
        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
        response( this.element.children( "option" ).map(function() {
          var text = $( this ).text();
-         if ( this.value && ( !request.term || matcher.test(text) ) )
+         if ( !request.term || ( this.value && matcher.test(text) ) )
            return {
              label: text,
              value: text,
@@ -90,7 +93,7 @@
      _removeIfInvalid: function( event, ui ) {
 
        // Selected an item, nothing to do
-       if ( ui.item ) {
+       if ( ui.item || this.options.disabled) {
          return;
        }
 
@@ -119,12 +122,37 @@
        this._delay(function() {
          this.input.tooltip( "close" ).attr( "title", "" );
        }, 2500 );
-       this.input.autocomplete( "instance" ).term = "";
+       // this.input.autocomplete( "instance" ).term = "";
+       this._trigger( "select", event, {
+             item: null
+           });
+       this.element.trigger("change");
      },
 
      _destroy: function() {
        this.wrapper.remove();
        this.element.show();
+     },
+
+     disable: function() {
+        this.input.autocomplete("disable");
+        this.input.tooltip("disable");
+        this.input.prop('disabled', true);
+        this._super();
+        },
+     enable: function() {
+        this.input.autocomplete("enable");
+        this.input.tooltip("enable");
+        this.input.prop('disabled', false);
+        this._super();
+        },
+
+     clear: function(nochange) {
+        this.input.val("");
+        this.element.val("");
+        this._trigger("select", {}, { item: null });
+        if (!nochange)
+                this.element.trigger("change");
      }
    });
  })( jQuery );

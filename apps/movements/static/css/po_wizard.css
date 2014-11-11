@@ -1018,10 +1018,6 @@ a.like-button {
     margin-top:8px;
     padding:5px;
 }
-.wiz_form select{ /*step 1 select*/
-    margin-top:8px;
-    padding:5px;
-}
 
 #submit0, table.two_cols button,
         #ss3s-1 > div#note_not_found button,
@@ -1078,6 +1074,27 @@ a.like-button {
     padding:5px;
     max-width:95%;
 }
+.wiz_form select{ /*step 1 select*/
+    margin-top:8px;
+    padding:5px;
+}
+
+table.wiz_form td.wf_field select,
+.u2_form .product_search select{
+    border: 1px solid #CCC;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    line-height: 22px;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 1.1em;
+    min-width: 15em;
+    color: #555;
+}
+table.wiz_form td.wf_field select option,
+.u2_form .product_search select option {
+    background-color: #EEE;
+}
+
 div#ss3s-2 { /*insert some margin to unstick the 2 sections of the page*/
     margin-top: 30px;
 }
@@ -1193,4 +1210,45 @@ table.wiz_form td.wf_field div.wf_auto {
 table.wiz_form td.wf_field div.wf_auto p{
     margin:3px 0;
 }
+
+  .ui-combobox {
+    position: relative;
+    display: inline-block;
+  }
+  .ui-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+  }
+  .ui-combobox-input {
+    margin: 0;
+    padding: 3px 7px;
+  }
+
+  .wait-spinner {
+        display: none;
+        width: 300px;
+        min-height: 40px;
+        text-align: center;
+        margin-top: 40px;
+        padding-bottom: 54px;
+        padding-top: 54px;
+        vertical-align: middle;
+        position: absolute;
+        background: rgba(160,160,160,0.7);
+        border: 2px solid rgba(120,120,120,0.9);
+        border-radius: 6px;
+        float: center;
+  }
+  .wait-spinner span {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        width: 32px;
+        height: 32px;
+        background:  url('/static/images/loading.gif') no-repeat;
+  }
+
 /* eof */

@@ -221,24 +221,6 @@
     }
 </style>
 
-<style>
-  .ui-combobox {
-    position: relative;
-    display: inline-block;
-  }
-  .ui-combobox-toggle {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin-left: -1px;
-    padding: 0;
-  }
-  .ui-combobox-input {
-    margin: 0;
-    padding: 3px 7px;
-  }
-  </style>
-
 <script type="text/javascript" src="{{ STATIC_URL }}/js/ui-combobox.js"></script>
 <script>
 
@@ -284,9 +266,10 @@
 
     /** Clear the attributes form, on user's request
     */
-    function clear_attribs(field_id, has_part) {
-        $(field_id + "_manuf_combo option:selected").prop("selected", false);
+    function clear_attribs(field_id, has_part, cat_id) {
+        $(field_id + "_manuf_combo").combobox("clear", true);
         $(field_id + "_combo").empty();
+        $(field_id + "_combo").combobox("clear", true);
         $(field_id + " .combo_results").text('');
         $(field_id + "_attribs option:selected").prop("selected", false);
         $(field_id + " .product_selection").removeClass("found selected not-found")
@@ -299,6 +282,12 @@
             $(field_id+ " .label_not_found").show();
             $(field_id+ " .line_vals").hide();
         }
+        if ($(field_id + "_attribs div.product_attrib > select").length && cat_id)
+            $.ajax("{% url product_combi_attrs %}", {
+                'dataType': 'json',
+                'data': { 'category': cat_id },
+                'success': function(data) { update_combos(data, field_id) }
+                });
         return false;
     }
 
@@ -318,6 +307,7 @@
         else
             pcombo.append($('<option>', {value: ''}).text('--- Κανένα ---'));
 
+        data.sort(function(a,b) { if ( a.repr > b.repr) return 1; if (a.repr < b.repr) return -1; return 0 });
 
         for(i=0;i<data.length;i++){
             pcombo.append($('<option>', { value: data[i].pk }).text(data[i].repr));
@@ -332,28 +322,88 @@
         }
     }
 
+    /** Disable all combos and attributes while waiting for ajax response */
+    function freeze_parts(field_id) {
+        $(field_id + "_manuf_combo").combobox("disable");
+        $(field_id + "_attribs div.product_attrib > select").prop("disabled", true);
+        $(field_id + "_combo").combobox("disable");
+        $(field_id + "_code").autocomplete("disable");
+        $(field_id + "_wait_spinner").delay(600).show('fast');
+        };
+
+    /** re-enable all element parts after ajax response */
+    function thaw_parts(field_id) {
+        $(field_id + "_wait_spinner").clearQueue(); // ensure we have no 'show()' queued after this
+        $(field_id + "_manuf_combo").combobox("enable");
+        $(field_id + "_attribs div.product_attrib > select").prop("disabled", false);
+        $(field_id + "_combo").combobox("enable");
+        $(field_id + "_code").autocomplete("enable");
+        $(field_id + "_wait_spinner").hide();
+        };
+
     function update_product2(field_id, cat_id){
         var attribs = new Array();
-        $(field_id + "_attribs div.product_attrib > select").each( function() { if (this.value) attribs.push(this.value) });
+        var has_attrs = false;
+        $(field_id + "_attribs div.product_attrib > select").each( function() {
+                if (this.value) attribs.push(this.value);
+                has_attrs = true
+            });
         var manuf_value = $(field_id + "_manuf_combo")[0].value;
         // console.log("lookup specs", cat_id, attribs);
 
+        $(field_id + "_combo").combobox("clear");
         if (! (manuf_value || attribs.length)){
             // don't perform query if no selector is specified
             // Just clear the results.
             update_product3([], field_id);
+
+            // also reset the attributes combination
+            if (has_attrs)
+            $.ajax("{% url product_combi_attrs %}", {
+                'dataType': 'json',
+                'data': { 'category': cat_id },
+                'success': function(data) { update_combos(data, field_id) }
+                });
             return;
         }
 
+        freeze_parts(field_id);
         $.ajax("{% url ajax_lookup 'product_specs' %}", {
                 'dataType': 'json',
                 'data': {'term': 'foo', 'attributes': attribs,
                         'category': cat_id,
                         'manufacturer': manuf_value },
-                'success': function(data,status, xhr) { update_product3(data, field_id);},
+                'success': function(data,status, xhr) { update_product3(data, field_id); },
+                'complete': function() { thaw_parts(field_id); }
             });
         $(field_id + "_combo_results").text('?');
+
+        if (has_attrs)
+            $.ajax("{% url product_combi_attrs %}", {
+                'dataType': 'json',
+                'data': { 'attributes': attribs,
+                          'category': cat_id,
+                          'manufacturer': manuf_value
+                        },
+                'success': function(data) { update_combos(data, field_id) }
+                });
     }
+
+    function update_combos(data, field_id) {
+        $(field_id + "_attribs select").each(
+            function(){
+               var sel = this;
+               var atype = sel.id.split('-')[3].substr(1);
+               var adata = data[atype];
+               if (! adata)
+                    return;
+                while(sel.options.length > 1)
+                    sel.options.remove(1);
+                sel = $(sel);
+                for(var i = 0; i < adata.length; i++)
+                    sel.append($("<option>").attr("value", adata[i][0]).text(adata[i][1]));
+            });
+        }
 
     /** Read the field_combo (when changed) and update the selection
     */
@@ -433,7 +483,7 @@
         @param cat_id   the database id of the category
     */
     function setup_category(field_id, cat_id){
-        function upd_product2() {
+        var upd_product2 = function() {
             update_product2(field_id, cat_id);
         }
         $(field_id + "_manuf_combo").combobox();

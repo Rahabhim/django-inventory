@@ -92,7 +92,11 @@ class ProductAttributeValue(models.Model):
 
     def __unicode__(self):
         if self.atype.short_name:
-            return '%s=%s' % (self.atype.short_name, self.value)
+            if self.atype.short_name[-1].isalnum():
+                ch = '='
+            else:
+                ch = ''
+            return '%s%s%s' % (self.atype.short_name, ch, self.value)
         else:
             return self.value
 
