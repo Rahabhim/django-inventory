@@ -737,7 +737,14 @@ class CJFilter_dept_has_assets(CJFilter_Boolean):
     def _post_fn(self, fname, results, qset):
         from company.models import Department
         # use Department.objects again, because qset is already sliced
-        all_ids = qset.values_list('id', flat=True)
+        if qset.query.extra:
+            # in that case, we MUST request for all the extra columns, because
+            # they may participate in the ORDER BY clause
+            print "query has extra:", qset.query.extra.keys()
+            afields = ['id'] + qset.query.extra.keys()
+            all_ids = [ row[0] for row in qset.values_list(*afields) ]
+        else:
+            all_ids = qset.values_list('id', flat=True)
         # Django is smart enough to keep `all_ids` decorated with the
         # original query, so that filter(id__in=all_ids) will be
         # implemented using a nested sub-query.
