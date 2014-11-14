@@ -820,7 +820,7 @@ class PO_Wizard(SessionWizardView):
         try:
             next_step = form.save_data(self)
         except PermissionDenied, e:
-            logger.exception('cannot save at step %s: ' % (self.steps.current))
+            logger.exception('cannot save at step %s: ', self.steps.current)
             if (e.message):
                 messages.error(self.request, _("Permission denied: %s") % e, fail_silently=True)
             else:
@@ -828,7 +828,7 @@ class PO_Wizard(SessionWizardView):
             return self.render(form)
         except Exception, e:
             messages.error(self.request, _('Cannot save data'))
-            logger.exception('cannot save at step %s: %s' % (self.steps.current, e))
+            logger.exception('cannot save at step %s: %s', self.steps.current, e)
             return self.render(form)
 
         # get the form instance based on the data from the storage backend
@@ -854,11 +854,11 @@ class PO_Wizard(SessionWizardView):
                 messages.error(self.request, _("Permission denied: %s") % e, fail_silently=True)
             else:
                 messages.error(self.request, _('Not permitted to save data'))
-            logger.exception('cannot save at step %s: ' % self.steps.current)
+            logger.exception('cannot save at step %s: ', self.steps.current)
             return self.render(form)
         except Exception, e:
             messages.error(self.request, _('Cannot save data'))
-            logger.exception('cannot finish at step %s: %s' % (self.steps.current, e))
+            logger.exception('cannot finish at step %s: %s', self.steps.current, e)
             return self.render(form)
         if res:
             self.render_revalidation_failure(self.steps.current, form, **kwargs)
