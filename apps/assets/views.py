@@ -223,7 +223,7 @@ def asset_list_printout(request, dept_id):
     logger.info("Rendering department #%d %s asset list to HTTP", dept.id, dept.name)
 
     def locations():
-        for loc in Location.objects.filter(department=dept).all():
+        for loc in Location.objects.filter(department=dept).filter(active=True):
             assets = Item.objects.filter(location=loc, active=True)
             yield loc, assets
 
