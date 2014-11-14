@@ -14,7 +14,7 @@ from products.models import ItemTemplate
 class ItemForm(RModelForm):
     class Meta:
         model = Item
-        exclude = ('photos', 'active', 'is_bundled', 'qty')
+        exclude = ('photos', 'active', 'is_bundled', 'qty', 'src_contract')
         widgets = {'location': DetailForeignWidget(queryset=Location.objects.filter(active=True)),
                     'item_template': DetailForeignWidget(queryset=ItemTemplate.objects.all()),
                     'property_number': ReadOnlyInput,
@@ -28,7 +28,7 @@ class ItemForm_view(DetailForm):
 class ItemGroupForm(ItemForm):
     class Meta:
         model = ItemGroup
-        exclude = ('items', 'active', 'is_bundled', 'qty')
+        exclude = ('items', 'active', 'is_bundled', 'qty', 'src_contract')
         widgets = {'location': DetailForeignWidget(queryset=Location.objects.filter(active=True)),
                     'item_template': DetailForeignWidget(queryset=ItemTemplate.objects.all()),
                     'property_number': ReadOnlyInput,
@@ -60,7 +60,7 @@ class ItemGroupForm_view(DetailForm):
 class ItemGroupForm_edit(ItemForm):
     class Meta:
         model = ItemGroup
-        exclude = ('photos', 'active', 'is_bundled', 'qty')
+        exclude = ('photos', 'active', 'is_bundled', 'qty',  'src_contract')
         widgets = {'items': SubItemsDetailWidget,
                 'location': DetailForeignWidget(queryset=Location.objects.filter(active=True)),
                 'item_template': DetailForeignWidget(queryset=ItemTemplate.objects.all()),
