@@ -90,7 +90,8 @@ class Department(models.Model):
             assert self.parent != self, "Department \"%s\" is self-parented!" % self.name
             return self.parent.get_sequence()
         else:
-            raise ObjectDoesNotExist(_("No sequence for department %s") % self.name)
+            from common.models import Sequence
+            raise Sequence.DoesNotExist(_("No sequence for department %s") % self.name)
 
     def fix_locations(self):
         """Update Locations for this Department, from template(s)

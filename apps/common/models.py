@@ -112,7 +112,8 @@ class Location(models.Model):
         if self.department:
             return self.department.get_sequence()
         else:
-            raise ObjectDoesNotExist("No department for location %s" % self.name)
+            from company.models import Department
+            raise Department.DoesNotExist("No department for location %s" % self.name)
 
     def fmt_active(self):
         if self.active:
