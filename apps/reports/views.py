@@ -1333,7 +1333,7 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     )
 
 location_filter_full = location_filter.copy(fields_add={
-            'item': CJFilter_contains(item_templ_c_filter,
+            'item': CJFilter_contains(item_templ_filter.copy(fields_add={'location': None}),
                             title=_('containing'),
                             set_suffix=True,
                             related_name='location',
