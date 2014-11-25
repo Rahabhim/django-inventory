@@ -870,8 +870,12 @@ class Movement(models.Model):
     checkpoint_dest = models.ForeignKey('inventory.Inventory', verbose_name=_('Destination checkpoint'),
                 null=True, blank=True, related_name='+', on_delete=models.SET_NULL)
 
-    purchase_order = models.ForeignKey(PurchaseOrder, blank=True, null=True, related_name='movements', on_delete=models.SET_NULL)
-    repair_order = models.ForeignKey(RepairOrder, blank=True, null=True, related_name='movements', on_delete=models.SET_NULL)
+    purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_("purchase order"),
+                                       blank=True, null=True, related_name='movements',
+                                       on_delete=models.SET_NULL)
+    repair_order = models.ForeignKey(RepairOrder, verbose_name=_("repair order"),
+                                     blank=True, null=True, related_name='movements',
+                                     on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ('date_act', )
