@@ -80,7 +80,7 @@ def _fmt_date_act(item):
 
 class ItemMovesWidget(ColumnsDetailWidget):
     columns = [ {'name': _('Date'), 'format': _fmt_date_act },
-            {'name': _(u'Reference'), 'attribute': 'origin' },
+            {'name': _(u'Reference'), 'attribute': 'name' },
             {'name': _(u'From'), 'attribute':'location_src' },
             {'name': _(u'To'), 'attribute':'location_dest'},
             # {'name': _(u'State'), 'attribute':'get_state_display'},
