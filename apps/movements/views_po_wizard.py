@@ -738,8 +738,11 @@ class PO_Wizard(SessionWizardView):
                     # push the item's parameters into "data" and bring up the
                     # 3rd wizard page again
                     line_num = int(data['iaction'][5:])
+                    data4 = self.storage.get_step_data('4')
+                    if not data4:
+                        raise RuntimeError("Entered edit: without step 4 data")
                     old_data = None
-                    for item in self.storage.get_step_data('4')['4-items']:
+                    for item in data4['4-items']:
                         if item.get('line_num', 'foo') == line_num:
                             old_data = item
                             break
