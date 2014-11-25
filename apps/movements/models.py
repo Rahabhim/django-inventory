@@ -18,6 +18,13 @@ from settings import DATE_FMT_FORMAT
 
 logger = logging.getLogger('apps.' + __name__)
 
+def fmt_date(ddate):
+    try:
+        return ddate.strftime(DATE_FMT_FORMAT)
+    except ValueError:
+        # raw, ISO format
+        return str(ddate)
+
 class PurchaseRequestStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
 
@@ -180,7 +187,7 @@ class PurchaseOrder(models.Model):
                 ('validate_purchaseorder', 'Can validate a purchase order'), )
 
     def __unicode__(self):
-        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date.strftime(DATE_FMT_FORMAT))
+        return '#%s (%s)' % (self.user_id if self.user_id else self.id, fmt_date(self.issue_date))
 
     @models.permalink
     def get_absolute_url(self):
@@ -204,11 +211,11 @@ class PurchaseOrder(models.Model):
                 raise ValidationError(_("You must supply a date"))
             if self.procurement.date_start and (self.issue_date < self.procurement.date_start):
                 raise ValidationError(_("You cannot register a Purchase Order before the Procurement start date: %s") \
-                        % (self.procurement.date_start.strftime(DATE_FMT_FORMAT)))
+                        % (fmt_date(self.procurement.date_start)))
 
             if self.procurement.end_date and (self.issue_date > self.procurement.end_date):
                 raise ValidationError(_("You cannot register a Purchase Order after the Procurement end date: %s") \
-                        % (self.procurement.end_date.strftime(DATE_FMT_FORMAT)))
+                        % (fmt_date(self.procurement.end_date)))
 
     def map_items(self):
         """ Map the items mentioned in this PO to real items inside the PO's movements
@@ -771,7 +778,7 @@ class RepairOrder(models.Model):
         permissions = ( ('validate_repairorder', 'Can validate a repair order'), )
 
     def __unicode__(self):
-        return '#%s (%s)' % (self.user_id if self.user_id else self.id, self.issue_date.strftime(DATE_FMT_FORMAT))
+        return '#%s (%s)' % (self.user_id if self.user_id else self.id, fmt_date(self.issue_date))
 
     @models.permalink
     def get_absolute_url(self):
@@ -921,7 +928,7 @@ class Movement(models.Model):
         self.clean()
         if self.checkpoint_src and self.date_act < self.checkpoint_src.date_val:
             raise ValueError(_("You are not allowed to make any movements before %s, when last inventory was validated") %\
-                        self.checkpoint_src.date_act.strftime(DATE_FMT_FORMAT))
+                        fmt_date(self.checkpoint_src.date_act))
 
         if not self.items.exists():
             raise ValueError(_("You cannot close a movement with no items selected"))
