@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-25 13:06+0300\n"
+"POT-Creation-Date: 2014-11-25 14:47+0200\n"
 "PO-Revision-Date: 2013-09-25 13:09+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "procurements"
 msgstr "προμήθειες"
 
-#: __init__.py:10
+#: __init__.py:10 models.py:25
 msgid "delegates"
 msgstr "ανάδοχοι"
 
@@ -37,13 +37,61 @@ msgstr "συμβάσεις"
 msgid "Department"
 msgstr "Μονάδα"
 
-#: models.py:46
+#: models.py:19
+msgid "code"
+msgstr "κωδικός"
+
+#: models.py:24 models.py:58 urls.py:19 urls.py:22 urls.py:26 urls.py:30
+msgid "delegate"
+msgstr "ανάδοχος"
+
+#: models.py:32 models.py:46
+msgid "name"
+msgstr "όνομα"
+
+#: models.py:33 models.py:47
+msgid "description"
+msgstr "περιγραφή"
+
+#: models.py:48
 msgid "use for regular procurements"
 msgstr "χρήση σε απλές παραλαβές"
 
-#: models.py:47
+#: models.py:49
 msgid "use for mass procurements"
 msgstr "χρήση σε μαζικές παραλαβές"
+
+#: models.py:50
+msgid "start date"
+msgstr "Ημερομηνία Έναρξης"
+
+#: models.py:51
+msgid "end date"
+msgstr "Ημερομηνία τέλους"
+
+#: models.py:52
+msgid "warranty duration"
+msgstr "Διάρκεια εγγύησης"
+
+#: models.py:53
+msgid "service response"
+msgstr "Χρόνος Απόκρισης"
+
+#: models.py:54
+msgid "repair time"
+msgstr "Χρόνος Επισκευής"
+
+#: models.py:55
+msgid "filename"
+msgstr "όνομα αρχείου"
+
+#: models.py:56
+msgid "department"
+msgstr "μονάδα"
+
+#: models.py:57 urls.py:59 urls.py:62 urls.py:66 urls.py:70
+msgid "project"
+msgstr "έργο"
 
 #: urls.py:16
 msgid "Active"
@@ -52,10 +100,6 @@ msgstr "Ενεργό"
 #: urls.py:17
 msgid "delegates list"
 msgstr "Λίστα ανάδοχων"
-
-#: urls.py:19 urls.py:22 urls.py:26 urls.py:30
-msgid "delegate"
-msgstr "ανάδοχος"
 
 #: urls.py:35
 msgid "Date"
@@ -81,53 +125,8 @@ msgstr "Λεπτομέρειες σύμβασης"
 msgid "list of projects"
 msgstr "λίστα έργων"
 
-#: urls.py:59 urls.py:62 urls.py:66 urls.py:70
-msgid "project"
-msgstr "έργο"
-
-#: models.py:18
-msgid "code"
-msgstr "κωδικός"
-
-#: models.py:29 models.py:43
-msgid "name"
-msgstr "όνομα"
-
-#: models.py:30 models.py:44
-msgid "description"
-msgstr "περιγραφή"
-
-#: models.py:47
-msgid "start date"
-msgstr "Ημερομηνία Έναρξης"
-
-#: models.py:48
-msgid "end date"
-msgstr "Ημερομηνία τέλους"
-
-#: models.py:49
-msgid "warranty duration"
-msgstr "Διάρκεια εγγύησης"
-
-#: models.py:50
-msgid "service response"
-msgstr "Χρόνος Απόκρισης"
-
-#: models.py:51
-msgid "repair time"
-msgstr "Χρόνος Επισκευής"
-
-#: models.py:52
-msgid "filename"
-msgstr "όνομα αρχείου"
-
-#: models.py:53
-msgid "department"
-msgstr "μονάδα"
-
-#: models.py:55
-msgid "delegete"
-msgstr "ανάδοχος"
+#~ msgid "delegete"
+#~ msgstr "ανάδοχος"
 
 #, fuzzy
 #~ msgid "Will delete delegate and all references in contracts"
