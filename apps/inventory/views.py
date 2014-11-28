@@ -89,7 +89,7 @@ def supplier_purchase_orders(request, object_id):
         queryset = supplier.purchaseorder_set.all(),
         template_name = "generic_list.html",
         extra_context=dict(
-            title = '%s: %s' % (_(u"purchase orders from supplier"), supplier),
+            title = '%s: %s' % (unicode(_(u"purchase orders from supplier")), supplier),
         ),
     )
 
