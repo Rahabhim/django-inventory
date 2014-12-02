@@ -12,6 +12,7 @@ from movements.models import PurchaseOrderItem, PurchaseOrderBundledItem, Purcha
 
 class Command(SyncCommand):
     help = 'Merges multiple products into a single one'
+    args = '[--interactive] <target-id> <source-id> ...'
     logger = logging.getLogger('command')
 
     #def create_parser(self, prog_name, subcommand):
