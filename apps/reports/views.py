@@ -1629,6 +1629,14 @@ def reports_back_save_view(request):
     report = None
     if req_data.get('id', None):
         report = get_object_or_404(SavedReport.objects.by_request(request), pk=req_data['id'])
+        if request.user.is_superuser:
+            pass
+        elif (not report.owner) and request.user.is_staff:
+            pass
+        elif report.owner == request.user:
+            pass
+        else:
+            raise PermissionDenied()
     else:
         report = SavedReport()
 
@@ -1654,7 +1662,9 @@ def reports_back_del_view(request):
     report = get_object_or_404(SavedReport.objects.by_request(request), pk=req_data['id'])
 
     # Staff can delete public reports, all other users only private ones
-    if (request.user.is_staff or request.user.is_superuser) and not report.owner:
+    if request.user.is_superuser:
+        pass
+    elif request.user.is_staff and not report.owner:
         pass
     elif request.user == report.owner:
         pass
