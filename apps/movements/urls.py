@@ -143,6 +143,7 @@ urlpatterns = patterns('movements.views',
     url(r'^purchase/order/(?P<object_id>\d+)/receive/$', 'purchase_order_receive', (), 'purchase_order_receive'),
     url(r'^purchase/order/(?P<object_id>\d+)/reject/$', 'purchase_order_reject', (), 'purchase_order_reject'),
     url(r'^purchase/order/(?P<object_id>\d+)/copy/$', 'purchase_order_copy', (), 'purchase_order_copy'),
+    url(r'^purchase/order/(?P<object_id>\d+)/analyze/$', 'purchase_order_analyze', (), 'purchase_order_analyze'),
 
     url(r'^purchase/order/(?P<pk>\d+)/cart_open/$', views.POCartOpenView.as_view(
                 dest_model='products.ItemTemplate',

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load styling %}
+{% load generic_views_helpers %}
+{% block title %}{%trans "Analyze Purchase Order" %}{% endblock %}
+
+
+{% block stylesheets %}
+    {{ block.super }}
+  <style>
+    .code {
+        border: 1px solid #a0a0a0;
+        background: #e0e0e0;
+        border-radius: 4px;
+        margin: 2em;
+    }
+    .code ul li {
+        font-family: Courier, Monospace, Serif;
+        font-size: 9pt;
+        margin-bottom: 2px;
+    }
+    
+    .code ul li.log_error span,
+    .code .log_exception span {
+        color: red;
+    }
+    .code ul li.log_warning span {
+        color: yellow;
+    }
+    .code ul li.log_info span {
+        color: blue;
+    }
+    .code ul li.log_debug span {
+        color: gray;
+    }
+    .code ul li.log_debug {
+        font-size: 90%;
+        color: #707070;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h3>{% trans 'Analyze PO:' %}{{ purchase_order }}</h3>
+    <div>
+        <div class="code">
+        <ul>
+            {% for level, line in logger.get_lines %}
+            <li class="log_{{level}}"><span>{{level }}</span> {{ line }} </li>
+            {% endfor %}
+        </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

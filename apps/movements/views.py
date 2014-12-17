@@ -739,6 +739,118 @@ def purchase_order_copy(request, object_id):
                 'po_form': po_form, 'subtemplates': subtemplates,
                 'object': po_instance })
 
+class _pseydo_logger(object):
+    """Emulates a logging.logger, keeping an internal copy of the messages
+    """
+    def __init__(self, logger_name):
+        self.queue = []
+        self._logger = logging.getLogger(logger_name)
+
+        for level in ('debug', 'info', 'warning', 'error', 'critical', 'exception'):
+            self._make_fn(level)
+
+    def log(self, level, msg, *args, **kwargs):
+        self.queue.append((level, msg, args))
+        self._logger.log(level, msg, *args, **kwargs)
+
+    def _make_fn(self, level):
+        logger_fn = getattr(self._logger, level)
+        def _fn(msg, *args, **kwargs):
+            self.queue.append((level, msg, args))
+            logger_fn(msg, *args, **kwargs)
+        setattr(self, level, _fn)
+
+    def get_lines(self):
+        for level, msg, args in self.queue:
+            try:
+                if args:
+                    msg = msg % args
+            except Exception:
+                pass
+            yield level, msg
+
+def purchase_order_analyze(request, object_id):
+    """Admin-only view for analysis of a PO
+    """
+    if not (request.user.is_authenticated() and request.user.is_superuser):
+        raise PermissionDenied
+    po = get_object_or_404(PurchaseOrder.objects, pk=object_id)
+    log = _pseydo_logger('movements.analyze')
+    log.info("Analyzing purchase order: %d", po.id)
+    def print_detail(po, excess_items, mapped_items=False, do_items=True):
+        for poi in po.items.all():
+            log.debug("    %s x%d", poi, poi.qty)
+            for boi in poi.bundled_items.all():
+                log.debug("        %s x%d", boi, boi.qty)
+        if excess_items:
+            log.info("Excess items:")
+            for ei in excess_items:
+                log.info("    %s #%d", ei, ei.id)
+
+        if mapped_items:
+            log.info("Missing items:")
+            for tdict in mapped_items.values():
+                for it_id, objs in tdict.items():
+                    for o in objs:
+                        if not o.item_id:
+                            log.info("    - %s     %s" , it_id, o.serial)
+
+    try:
+        mapped_items = po.map_items()
+        log.info("Purchase Order #%d: %s (by %s on %s)", po.id, po, po.create_user, po.department or '?')
+        all_ids = []
+        all_serials = []
+        for loc_kind, tdict in mapped_items.items():
+            log.info("Location: %s", loc_kind or '*')
+            for product, objs in tdict.items():
+                try:
+                    itt = ItemTemplate.objects.get(pk=product)
+                    log.info("    product: %s", itt)
+                except ItemTemplate.DoesNotExist:
+                    log.info("    product: #%d (not found!)", product)
+
+                for o in objs:
+                    s = ''
+                    if o.serial and o.serial in all_serials:
+                        s = '* Dup serial!'
+                    log.info("        %r %s", o, s)
+                    if o.serial:
+                        all_serials.append(o.serial)
+
+        for tdict in mapped_items.values():
+            for objs in tdict.values():
+                for o in objs:
+                    if o.item_id:
+                        all_ids.append(o.item_id)
+
+        num_excess = 0
+        excess_items = []
+        for move in po.movements.all():
+            for it in move.items.all():
+                if it.id not in all_ids:
+                    num_excess += 1
+                    excess_items.append(it)
+
+            if num_excess and move.checkpoint_dest is not None:
+                log.error("PO #%d has excess items, but move #%d is validated in %s",
+                        po.id, move.id, move.checkpoint_dest)
+                print_detail(po, excess_items)
+                excess_items = None
+                num_excess = 0
+
+        if num_excess and po.map_has_left(mapped_items):
+            log.warning("PO #%d has excess items, but is also missing some, not wise to modify", po.id)
+            print_detail(po, excess_items, mapped_items)
+            excess_items = None
+        elif num_excess:
+            log.warning("PO #%d %s has %d excess items", po.id, po, num_excess)
+            print_detail(po, excess_items)
+
+    except ValueError, ve:
+        log.warning("Cannot map items for PO %#d: %s", po.id, ve)
+
+    return render(request, 'po_analyze.html',
+                      {'purchase_order': po, 'logger': log })
 
 class PurchaseOrderListView(GenericBloatedListView):
     queryset=PurchaseOrder.objects.by_request
