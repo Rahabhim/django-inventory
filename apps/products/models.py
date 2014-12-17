@@ -229,7 +229,7 @@ class ItemTemplatePart(models.Model):
         verbose_name_plural = _("standard parts")
 
 class ItemTemplateAttributes(models.Model):
-    template = models.ForeignKey(ItemTemplate, related_name="attributes", on_delete=models.PROTECT)
+    template = models.ForeignKey(ItemTemplate, related_name="attributes", on_delete=models.CASCADE)
     value = models.ForeignKey(ProductAttributeValue, verbose_name=_("value"), on_delete=models.PROTECT)
 
     class Meta:
