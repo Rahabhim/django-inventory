@@ -149,12 +149,65 @@ class Item(models.Model):
     def get_category(self):
         return unicode(self.item_template.category)
 
+class ItemGroupManager(ItemManager):
+    def update_flags(self, offset=None, limit=None, **filters):
+        from conf.settings import item_group_flags
+
+        if not item_group_flags:
+            logger.warning("ItemGroup flags not set in conf, skipping update_flags()")
+            return
+
+        all_states = item_group_flags.values()
+
+        n = 0
+        if offset and limit:
+            limit += offset
+
+        for group in self.filter(**filters)[offset:limit] \
+                    .prefetch_related('item_template', 'items', 'itemstate_set'):
+            n += 1
+            if (n % 100) == 0:
+                logger.debug("Updated %d bundles", n)
+
+            bundled_items = {}
+            # sum up the quantity of items per category:
+            for part in group.items.prefetch_related('item_template').all():
+                cat_id = part.item_template.category_id
+                bundled_items[cat_id] = bundled_items.get(cat_id, 0) + 1
+
+            errors = []
+            next_states = {}
+            for subcat in group.item_template.category.may_contain.all():
+                haz = bundled_items.pop(subcat.category_id, 0)
+                if haz < subcat.min_count:
+                    # logger.debug("Count for subcat %s = %d < %d", subcat.category, haz, subcat.min_count)
+                    next_states[item_group_flags['missing']] = True
+                elif haz > subcat.max_count:
+                    #logger.debug("Count for subcat %s = %d > %d", subcat.category, haz, subcat.max_count)
+                    next_states[item_group_flags['excess']] = True
+
+            # logger.debug("Errors for #%d = %r", group.id, next_states)
+
+            for itemstate in group.itemstate_set.all():
+                if itemstate.state_id in next_states:
+                    next_states.pop(itemstate.state_id)
+                elif itemstate.state_id in all_states:
+                    logger.info("Removing state %s from group #%d", itemstate.state, group.id)
+                    itemstate.delete()
+
+            for n in next_states:
+                logger.info("Adding state %d to group #%d", n, group.id)
+                nit = ItemState(item=group, state_id=n)
+                nit.save()
+
+        return
+
 class ItemGroup(Item):
     """ A group (or bundle) is itself an item, behaves like one in the long run
     
         But the contained items must have their location set to empty.
     """
-    objects = ItemManager()
+    objects = ItemGroupManager()
     items = models.ManyToManyField(Item, blank=True, null=True, verbose_name=_(u"bundled items"), 
             related_name='bundled_in')
 
