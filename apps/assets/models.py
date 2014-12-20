@@ -21,7 +21,10 @@ class State(models.Model):
         verbose_name_plural = _(u"states")
 
     def __unicode__(self):
-        return "%s (%s)" % (self.name, self.exclusive and _(u'exclusive') or _(u'inclusive'))
+        ret = self.name
+        if self.exclusive:
+            ret += " (%s)" % _(u'exclusive')
+        return ret
 
     @models.permalink
     def get_absolute_url(self):

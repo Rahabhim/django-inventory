@@ -45,7 +45,22 @@ location_filter = {'name': 'location', 'title': _('location'),
 contract_filter = { 'name': 'contract', 'lookup_channel': 'contracts', 'title': _('procurement contract'),
             'destination': 'src_contract'}
 
+def req_has_perm(request, perm):
+    """Directly check request.role|user for permission
+    """
+    try:
+        role = role_from_request(request)
+        if role and role.has_perm(perm):
+            return True
+        elif request.user.has_perm(perm):
+            return True
+        return False
+    except Exception:
+        return False
+
 def item_setstate(request, object_id, state_id):
+    if not req_has_perm(request, 'assets.add_itemstate'):
+        raise PermissionDenied
     item = get_object_or_404(Item, pk=object_id)
     state = get_object_or_404(State, pk=state_id)
 
@@ -82,11 +97,13 @@ def item_setstate(request, object_id, state_id):
 
         return HttpResponseRedirect(next)
 
-    return render_to_response('generic_confirm.html', data,
-    context_instance=RequestContext(request))
+    return render_to_response('generic_confirm.html', data, context_instance=RequestContext(request))
 
 
 def item_remove_state(request, object_id, state_id):
+    if not req_has_perm(request, 'assets.delete_itemstate'):
+        raise PermissionDenied
+
     item = get_object_or_404(Item, pk=object_id)
     state = get_object_or_404(State, pk=state_id)
     next = reverse("item_view", args=[item.id])
@@ -111,8 +128,7 @@ def item_remove_state(request, object_id, state_id):
 
         return HttpResponseRedirect(next)
 
-    return render_to_response('generic_confirm.html', data,
-    context_instance=RequestContext(request))
+    return render_to_response('generic_confirm.html', data, context_instance=RequestContext(request))
 
 class AssetListView(GenericBloatedListView):
     """ The default Assets view
