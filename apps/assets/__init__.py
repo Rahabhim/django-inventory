@@ -33,7 +33,7 @@ group_edit = {'text':_(u'edit serials'), 'view':'group_update', 'args':'object.i
 #group_update = {'text':_(u'edit'), 'view':'group_update', 'args':'object.id', 'famfam':'chart_pie_edit'}
 #group_delete = {'text' : _(u'delete'), 'view':'group_delete', 'args':'object.id', 'famfam':'chart_pie_delete'}
 
-state_filter = {'name':'state', 'title':_(u'state'), 'queryset':State.objects.all(), 'destination':'itemstate'}
+state_filter = {'name':'state', 'title':_(u'state'), 'queryset':State.objects.all(), 'destination':'itemstate__state'}
 
 
 #register_links(['item_list', 'item_view',
