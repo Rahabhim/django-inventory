@@ -504,6 +504,13 @@ def purchase_order_receive(request, object_id):
                                     and move.location_dest.department in active_role.departments)):
                     form_attrs['confirm_ask'] = True
                     break
+            else:
+                # if all moves are confirmed, then enable confirm of PO
+                for move in moves_list:
+                    if move.state != 'done':
+                        break
+                else:
+                    form_attrs['confirm_ask'] = True
 
         del lock
         return render_to_response('po_transfer_ask.html', form_attrs, context_instance=RequestContext(request))
