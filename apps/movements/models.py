@@ -809,6 +809,7 @@ class RepairOrder(models.Model):
             else:
                 raise ValueError(u"Invalid move #%d %s for a Repair Order" % (move.id, unicode(move)))
 
+        ItemGroup.objects.update_flags(pk=self.item)
         self.validate_user = user
         self.state = 'done'
         self.save()

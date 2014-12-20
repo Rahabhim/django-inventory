@@ -439,6 +439,7 @@ def purchase_order_receive(request, object_id):
                         po_item.active = False
                         po_item.status = None # TODO
                         po_item.save()
+                    ItemGroup.objects.update_flags(movements__in=purchase_order.movements.all())
                     purchase_order.validate_user = request.user
                     purchase_order.state = 'done'
                     purchase_order.status = None # TODO

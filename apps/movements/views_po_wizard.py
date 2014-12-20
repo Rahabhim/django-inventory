@@ -13,6 +13,7 @@ from django.contrib import messages
 from common.models import Location, LocationTemplate
 from common.api import role_from_request
 from company.models import Department
+from assets.models import ItemGroup
 from products.models import ItemCategory, Manufacturer, ItemTemplate
 from products.form_fields import CategoriesSelectWidget, CategoriesAttributesField
 from products.forms import ItemTemplateRequestForm_base
@@ -600,6 +601,7 @@ class PO_Step5(WizardForm):
                         self.cleaned_data['location'].department, \
                         self.cleaned_data['location'])
         po_instance.prune_items(mapped_items)
+        ItemGroup.objects.update_flags(movements__in=po_instance.movements.all())
 
         if msg:
             return '5'
@@ -659,6 +661,7 @@ class PO_Step5m(WizardForm):
             po_instance.items_into_moves(mapped_items, request, \
                         departments, False)
         po_instance.prune_items(mapped_items)
+        ItemGroup.objects.update_flags(movements__in=po_instance.movements.all())
 
         return True
 
