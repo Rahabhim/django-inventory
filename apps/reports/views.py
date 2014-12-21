@@ -1238,7 +1238,7 @@ item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
     famfam_icon = 'computer',
     )
 
-item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
+asset_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {'id': CJFilter_id(),
             'location': location_filter,
             'item_template': product_filter,
@@ -1276,7 +1276,7 @@ def _reports_init_cache():
 
     # These types will be used as top-level reports:
     _reports_cache['main_types'] = {
-            'items': item_templ_filter,
+            'items': asset_filter,
             'products': product_filter,
             'location': location_filter_full,
             'purchase_order': purchaseorder_filter,
