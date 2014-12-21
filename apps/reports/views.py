@@ -1312,7 +1312,7 @@ item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
     famfam_icon = 'computer',
     )
 
-item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
+asset_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {'id': CJFilter_id(),
             'location': location_filter,
             'item_template': product_filter,
@@ -1333,7 +1333,7 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     )
 
 location_filter_full = location_filter.copy(fields_add={
-            'item': CJFilter_contains(item_templ_filter.copy(fields_add={'location': None}),
+            'item': CJFilter_contains(asset_filter.copy(fields_add={'location': None}),
                             title=_('containing'),
                             set_suffix=True,
                             related_name='location',
@@ -1405,7 +1405,7 @@ def _reports_init_cache():
 
     # These types will be used as top-level reports:
     _reports_cache['main_types'] = {
-            'items': item_templ_filter,
+            'items': asset_filter,
             'products': product_filter,
             'department': department_filter_full,
             'location': location_filter_full,
