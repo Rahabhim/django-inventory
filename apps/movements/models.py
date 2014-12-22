@@ -10,20 +10,13 @@ from common.models import Supplier, Location, LocationTemplate
 from assets.models import Item, ItemTemplate, ItemGroup
 from company.models import Department
 
-from common.api import role_from_request
+from common.api import role_from_request, fmt_date
 from dynamic_search.api import register
 import datetime
 import logging
-from settings import DATE_FMT_FORMAT
 
 logger = logging.getLogger('apps.' + __name__)
 
-def fmt_date(ddate):
-    try:
-        return ddate.strftime(DATE_FMT_FORMAT)
-    except ValueError:
-        # raw, ISO format
-        return str(ddate)
 
 class PurchaseRequestStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)

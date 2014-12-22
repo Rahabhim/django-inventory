@@ -4,6 +4,7 @@ import re
 import ajax_select
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
+from settings import DATE_FMT_FORMAT
 
 object_navigation = {}
 menu_links = []
@@ -149,5 +150,11 @@ def role_from_request(request):
     else:
         return False
 
+def fmt_date(ddate):
+    try:
+        return ddate.strftime(DATE_FMT_FORMAT)
+    except ValueError:
+        # raw, ISO format
+        return str(ddate)
 #eof
 
