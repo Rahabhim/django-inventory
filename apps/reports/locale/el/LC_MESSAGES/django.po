@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-25 14:47+0200\n"
-"PO-Revision-Date: 2014-11-25 14:51+0200\n"
+"POT-Creation-Date: 2014-12-22 12:28+0200\n"
+"PO-Revision-Date: 2014-12-22 12:32+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: el\n"
@@ -33,7 +33,7 @@ msgstr "Αναφορές"
 msgid "title"
 msgstr "τίτλος"
 
-#: models.py:23
+#: models.py:23 views.py:1362
 msgid "notes"
 msgstr "σημειώσεις"
 
@@ -85,150 +85,159 @@ msgstr "ID"
 msgid "count"
 msgstr "πλήθος"
 
-#: views.py:1194 views.py:1198 views.py:1205 views.py:1214 views.py:1217
-#: views.py:1222 views.py:1240 views.py:1242 views.py:1254 views.py:1261
-#: views.py:1263 views.py:1274 views.py:1282 views.py:1295 views.py:1350
-#: views.py:1364
+#: views.py:1204
+#, python-format
+msgid "%(name)s on %(date)s"
+msgstr "%(name)s στις %(date)s"
+
+#: views.py:1225 views.py:1229 views.py:1236 views.py:1245 views.py:1248
+#: views.py:1253 views.py:1271 views.py:1273 views.py:1285 views.py:1292
+#: views.py:1294 views.py:1305 views.py:1313 views.py:1326 views.py:1383
+#: views.py:1397
 msgid "name"
 msgstr "όνομα"
 
-#: views.py:1195 views.py:1206
+#: views.py:1226 views.py:1237
 msgid "code"
 msgstr "κωδικός"
 
-#: views.py:1196
+#: views.py:1227
 msgid "code 2"
 msgstr "κωδικός ΠΣΔ"
 
-#: views.py:1200
+#: views.py:1231
 msgid "has assets"
 msgstr "έχει εξοπλισμό"
 
-#: views.py:1204
+#: views.py:1235
 msgid "parent department"
 msgstr "Προϊστάμενο τμήμα"
 
-#: views.py:1229
+#: views.py:1260
 msgid "first name"
 msgstr "Μικρό όνομα"
 
-#: views.py:1230
+#: views.py:1261
 msgid "last name"
 msgstr "Επώνυμο"
 
-#: views.py:1231
+#: views.py:1262
 msgid "user name"
 msgstr "όνομα χρήστη"
 
-#: views.py:1232
+#: views.py:1263
 msgid "email"
 msgstr "email"
 
-#: views.py:1245
+#: views.py:1276
 msgid "approved"
 msgstr "Εγκεκριμένο"
 
-#: views.py:1255 views.py:1275
+#: views.py:1286 views.py:1306
 msgid "description"
 msgstr "περιγραφή"
 
-#: views.py:1259 views.py:1271
+#: views.py:1290 views.py:1302
 msgid "contract"
 msgstr "σύμβαση"
 
-#: views.py:1276
+#: views.py:1307
 msgid "regular procurements"
 msgstr "χρήση σε απλές παραλαβές"
 
-#: views.py:1277
+#: views.py:1308
 msgid "mass procurements"
 msgstr "χρήση σε μαζικές παραλαβές"
 
-#: views.py:1278
+#: views.py:1309
 msgid "start date"
 msgstr "Ημερομηνία Έναρξης"
 
-#: views.py:1279
+#: views.py:1310
 msgid "end date"
 msgstr "Ημερομηνία τέλους"
 
-#: views.py:1291
+#: views.py:1322
 msgid "user defined id"
 msgstr "Αρ. Τιμολογίου/εντολής"
 
-#: views.py:1292 views.py:1355 views.py:1369
+#: views.py:1323 views.py:1388 views.py:1402
 msgid "created by"
 msgstr "Δημιουργήθηκε από"
 
-#: views.py:1293 views.py:1356 views.py:1370
+#: views.py:1324 views.py:1389 views.py:1403
 msgid "validated by"
 msgstr "Επικύρωση από"
 
-#: views.py:1296
+#: views.py:1327
 msgid "VAT number"
 msgstr "ΑΦΜ"
 
-#: views.py:1299
+#: views.py:1330
 msgid "issue date"
 msgstr "Ημερομηνία έκδοσης"
 
-#: views.py:1300 views.py:1354 views.py:1367
+#: views.py:1331 views.py:1387 views.py:1400
 msgid "state"
 msgstr "κατάσταση"
 
-#: views.py:1308 views.py:1315
+#: views.py:1339 views.py:1346
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: views.py:1321 views.py:1337
+#: views.py:1352 views.py:1370
 msgid "containing"
 msgstr "να περιέχει"
 
-#: views.py:1329
+#: views.py:1360
 msgid "asset number"
 msgstr "αριθμός κτηματολογίου"
 
-#: views.py:1330
+#: views.py:1361
 msgid "serial number"
 msgstr "Σειριακός αριθμός"
 
-#: views.py:1348 views.py:1390
+#: views.py:1363
+msgid "Purchase Order"
+msgstr "Παραλαβή"
+
+#: views.py:1381 views.py:1424
 msgid "inventories"
 msgstr "Απογραφές"
 
-#: views.py:1352 views.py:1365
+#: views.py:1385 views.py:1398
 msgid "date performed"
 msgstr "ημερομηνία εκτέλεσης"
 
-#: views.py:1353 views.py:1366
+#: views.py:1386 views.py:1399
 msgid "date validated"
 msgstr "ημερομηνία επικύρωσης"
 
-#: views.py:1362
+#: views.py:1395
 msgid "movements"
 msgstr "μετακινήσεις"
 
-#: views.py:1368
+#: views.py:1401
 msgid "type"
 msgstr "τύπος"
 
-#: views.py:1371
+#: views.py:1404
 msgid "source location"
 msgstr "τοποθεσία προέλευσης"
 
-#: views.py:1372
+#: views.py:1405
 msgid "destination location"
 msgstr "τοποθεσία προορισμού"
 
-#: views.py:1374
+#: views.py:1407
 msgid "items"
 msgstr "εξοπλισμός"
 
-#: views.py:1665
+#: views.py:1709
 msgid "Report deleted"
 msgstr "Η αναφορά διαγράφηκε"
 
-#: views.py:1683
+#: views.py:1727
 msgid "This report has not been saved properly, no stage2 data"
 msgstr "Η αναφορά δεν έχει αποθηκευτεί σωστά, δεν έχει δομή αποτελεσμάτων."
 

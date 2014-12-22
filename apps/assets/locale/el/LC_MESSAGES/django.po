@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-02 16:56+0300\n"
+"POT-Creation-Date: 2014-12-22 12:28+0200\n"
 "PO-Revision-Date: 2013-06-03 09:52+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
@@ -61,11 +61,11 @@ msgstr "Εκτύπωση"
 msgid "list all groups"
 msgstr "λίστα συνθέσεων"
 
-#: __init__.py:36 models.py:20 models.py:38
+#: __init__.py:36 models.py:20 models.py:41
 msgid "state"
 msgstr "κατάσταση"
 
-#: __init__.py:53 models.py:88 models.py:169
+#: __init__.py:53 models.py:91 models.py:225
 msgid "assets"
 msgstr "εξοπλισμός"
 
@@ -77,12 +77,12 @@ msgstr "εκτύπωση εξοπλισμού μονάδας"
 msgid "Contained Item"
 msgstr "Περιεχόμενο αντικείμενο"
 
-#: forms.py:50 urls.py:49 views.py:130 templates/asset_details.rml.tmpl:57
+#: forms.py:50 urls.py:49 views.py:146 templates/asset_details.rml.tmpl:57
 #: templates/asset_details.rml.tmpl:68
 msgid "Manufacturer"
 msgstr "Κατασκευαστής"
 
-#: forms.py:51 urls.py:50 views.py:131 templates/asset_details.rml.tmpl:56
+#: forms.py:51 urls.py:50 views.py:147 templates/asset_details.rml.tmpl:56
 #: templates/asset_details.rml.tmpl:69
 msgid "Category"
 msgstr "Είδος"
@@ -111,100 +111,96 @@ msgstr "Tύπος"
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:17 models.py:24
+#: models.py:17 models.py:26
 msgid "exclusive"
 msgstr "αποκλειστική"
 
-#: models.py:21 models.py:168 urls.py:60 urls.py:63
+#: models.py:21 models.py:224 urls.py:63 urls.py:66
 msgid "states"
 msgstr "καταστάσεις"
 
-#: models.py:24
-msgid "inclusive"
-msgstr "αποκλειστική"
-
-#: models.py:37
+#: models.py:40
 msgid "item"
 msgstr "προϊόν"
 
-#: models.py:39
+#: models.py:42
 msgid "date"
 msgstr "ημερομηνία"
 
-#: models.py:44
+#: models.py:47
 msgid "item state"
 msgstr "κατάσταση προϊόντος"
 
-#: models.py:45
+#: models.py:48
 msgid "item states"
 msgstr "καταστάσεις εξοπλισμού"
 
-#: models.py:48
+#: models.py:51
 #, python-format
 msgid "%(asset)s, %(state)s since %(date)s"
 msgstr "%(asset)s, %(state)s από τις %(date)s"
 
-#: models.py:71
+#: models.py:74
 msgid "item template"
 msgstr "προϊόν"
 
-#: models.py:72
+#: models.py:75
 msgid "asset number"
 msgstr "αριθμός παγίου"
 
-#: models.py:73
+#: models.py:76
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:74
+#: models.py:77
 msgid "serial number"
 msgstr "Σειριακός αριθμός"
 
-#: models.py:75
+#: models.py:78
 msgid "current location"
 msgstr "Τρέχουσα τοποθεσία"
 
-#: models.py:76
+#: models.py:79
 msgid "active"
 msgstr "ενεργό"
 
-#: models.py:77
+#: models.py:80
 msgid "quantity"
 msgstr "Ποσότητα"
 
-#: models.py:78
+#: models.py:81
 msgid "Allows a batch of identical items to be referenced as one entity"
 msgstr ""
 "Επιτρέπει σε ένα πλήθος όμοιων αντικειμένων εξοπλισμού να θεωρούνται ένα "
 "κομμάτι."
 
-#: models.py:80
+#: models.py:83
 msgid "If true, this item is bundled in a group, and therefore has no location"
 msgstr ""
 "Δηλώνει ότι ο εξοπλισμός είναι μέρος Σύνθεσης, και γι' αυτό δεν έχει "
 "τοποθεσία."
 
-#: models.py:81 views.py:136 views.py:142 views.py:155 views.py:174
+#: models.py:84 views.py:152 views.py:158 views.py:171 views.py:190
 msgid "Source Contract"
 msgstr "Σύμβαση Παραλαβής"
 
-#: models.py:83
+#: models.py:86
 msgid "The procurement at which this item was initially obtained"
 msgstr "Η σύμβαση προμήθειας με την οποία παρελήφθη αρχικά ο εξοπλισμός."
 
-#: models.py:87 urls.py:24 urls.py:30 urls.py:42
+#: models.py:90 urls.py:24 urls.py:30 urls.py:42
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:155
+#: models.py:211
 msgid "bundled items"
 msgstr "περιεχόμενα εξαρτήματα"
 
-#: models.py:160
+#: models.py:216
 msgid "item group"
 msgstr "σύνθεση"
 
-#: models.py:161 models.py:170 urls.py:47
+#: models.py:217 models.py:226 urls.py:47
 msgid "item groups"
 msgstr "συνθέσεις"
 
@@ -224,11 +220,11 @@ msgstr "Μετακινήσεις"
 msgid "asset trace"
 msgstr "Ιστορικό Εξοπλισμού"
 
-#: urls.py:48 views.py:135 views.py:177 templates/asset_details.rml.tmpl:48
+#: urls.py:48 views.py:151 views.py:193 templates/asset_details.rml.tmpl:48
 msgid "Location"
 msgstr "τοποθεσία"
 
-#: urls.py:58
+#: urls.py:61
 msgid "Edit item group"
 msgstr "Επεξεργασία σύνθεσης"
 
@@ -252,21 +248,21 @@ msgstr "τοποθεσία"
 msgid "procurement contract"
 msgstr "σύμβαση προμήθειας"
 
-#: views.py:53
+#: views.py:68
 #, python-format
 msgid "This asset has already been marked as '%s'."
 msgstr "Ο εξοπλισμός έχει ήδη σημανθεί ως '%s'."
 
-#: views.py:60
+#: views.py:75
 #, python-format
 msgid "Are you sure you wish to mark this asset as '%s'?"
 msgstr "Θέλετε να σημάνετε τον εξοπλισμό ως '%s' ;"
 
-#: views.py:64
+#: views.py:79
 msgid "Any other states this asset may be marked as, will be cleared."
 msgstr "Θα μηδενιστούν όλες οι άλλες καταστάσεις που έχει ο εξοπλισμός."
 
-#: views.py:74
+#: views.py:89
 #, python-format
 msgid ""
 "This asset has already been exclusively marked as '%s'.  Clear this state "
@@ -274,55 +270,55 @@ msgid ""
 msgstr ""
 "Ο εξοπλισμός έχει ήδη την αποκλειστική σήμανση '%s'. Αφαιρέστε αυτήν πρώτα."
 
-#: views.py:81
+#: views.py:96
 #, python-format
 msgid "The asset has been marked as '%s'."
 msgstr "Ο εξοπλισμός σημάνθηκε ως '%s'."
 
-#: views.py:96
+#: views.py:113
 #, python-format
 msgid "This asset is not marked as '%s'"
 msgstr "Ο εξοπλισμός δεν σημαίνεται ως '%s'."
 
-#: views.py:102
+#: views.py:119
 #, python-format
 msgid "Are you sure you wish to unmark this asset as '%s'?"
 msgstr "Θέλετε σίγουρα να αφαιρέσετε την σήμανση '%s' από τον εξοπλισμό;"
 
-#: views.py:108
+#: views.py:125
 #, python-format
 msgid "The asset has been unmarked as '%s'."
 msgstr "Ο εξοπλισμός πλέον δεν σημαίνεται ως '%s'."
 
-#: views.py:110
+#: views.py:127
 #, python-format
 msgid "Unable to unmark this asset as '%s'"
 msgstr "Δεν γίνεται να αφαιρεθεί η σήμανση '%s'."
 
-#: views.py:129
+#: views.py:145
 msgid "Item Template"
 msgstr "προϊόν"
 
-#: views.py:134 views.py:141 views.py:154 views.py:176
+#: views.py:150 views.py:157 views.py:170 views.py:192
 #: templates/asset_details.rml.tmpl:47
 msgid "Serial number"
 msgstr "Σειριακός αριθμός"
 
-#: views.py:148
+#: views.py:164
 #, python-format
 msgid "location assets: %s"
 msgstr "Εξοπλισμός τοποθεσίας: %s"
 
-#: views.py:153
+#: views.py:169
 msgid "specifications"
 msgstr "προδιαγραφές"
 
-#: views.py:159
+#: views.py:175
 #, python-format
 msgid "department assets: %s"
 msgstr "εξοπλισμός μονάδας: %s"
 
-#: views.py:182
+#: views.py:198
 #, python-format
 msgid "Items of template: %s"
 msgstr "Εξοπλισμός από προϊόν: %s"
@@ -455,23 +451,26 @@ msgstr "Δεν υπάρχουν %(title)s"
 msgid "The location can only be changed through movements of this asset"
 msgstr "Η τοποθεσία μπορεί να αλλάξει μόνο από μετακινήσεις εξοπλισμού."
 
-#: templates/state_subtemplate.html:7
+#: templates/state_subtemplate.html:8
 msgid "Item states"
 msgstr "καταστάσεις εξοπλισμού"
 
-#: templates/state_subtemplate.html:12
+#: templates/state_subtemplate.html:13
 #, python-format
 msgid "Unmark as %(state)s"
 msgstr "Αποεπιλογή %(state)s"
 
-#: templates/state_subtemplate.html:14
+#: templates/state_subtemplate.html:15
 #, python-format
 msgid "Mark as %(state)s"
 msgstr "Επιλογή  %(state)s"
 
-#: templates/state_subtemplate.html:18
+#: templates/state_subtemplate.html:19
 msgid "There are no states defined."
 msgstr "Δεν έχουν οριστεί καταστάσεις"
+
+#~ msgid "inclusive"
+#~ msgstr "αποκλειστική"
 
 #~ msgid "State"
 #~ msgstr "Κατάσταση"
