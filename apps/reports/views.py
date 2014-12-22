@@ -18,7 +18,7 @@ import csv
 import re
 
 from models import SavedReport
-from common.api import user_is_staff
+from common.api import user_is_staff, fmt_date
 import logging
 
 # ------ Utility classes ------
@@ -1178,6 +1178,37 @@ class CJFilter_extra_attrib(CJFilter):
         query.query.add_extra(select={name: q}, select_params=p,
                 where=None, params=None, tables=None, order_by=None)
 
+class CJFilter_asset_purchaseorder(CJFilter):
+    """Present the Purchase Order where that asset has come from
+    """
+    sequence = 150
+    #staff_only = True    # by default, this field is too expensive to compute
+
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_asset_purchaseorder, self).getGrammar(is_staff)
+        ret['widget'] = 'null'
+        return ret
+
+    def getQuery(self, request, name, domain):
+        return None
+
+    def _post_fn(self, fname, results, qset):
+        assets_po = {} # by id
+        for asset in qset:
+            # separate query per asset row. Slow!
+            moves = asset.movements.filter(state='done', stype='in', purchase_order__isnull=False) \
+                        .prefetch_related('purchase_order')
+            try:
+                if moves:
+                    po = moves[0].purchase_order
+                    assets_po[asset.id] = _("%(name)s on %(date)s") %\
+                        { 'name': po.user_id, 'date': fmt_date(po.issue_date) }
+            except ObjectDoesNotExist:
+                pass
+
+        for row in results:
+            row[fname] = assets_po.get(row['id'], '')
+
 
 CJFilter_Model.dynamic_fields = {
         'extra_condition': CJFilter_extra_condition,
@@ -1329,6 +1360,7 @@ asset_filter = CJFilter_Model('assets.Item', title=_('asset'),
             'property_number': CJFilter_String(title=_("asset number"), sequence=22),
             'serial_number': CJFilter_String(title=_("serial number"), sequence=23),
             'notes': CJFilter_String(title=_("notes"), sequence=30),
+            '_purchaseorder': CJFilter_asset_purchaseorder(title=_("Purchase Order")),
             },
     famfam_icon = 'computer',
     )
