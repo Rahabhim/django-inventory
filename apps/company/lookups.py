@@ -6,7 +6,7 @@ from django.db import models
 
 from django.http import HttpResponseForbidden
 from models import Department
-from ajax_select import LookupChannel
+from common.api import LookupChannel
 
 class DepartmentLookup(LookupChannel):
     model = Department
