@@ -1,4 +1,5 @@
 import copy
+import re
 import ajax_select
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
@@ -113,6 +114,11 @@ class LookupChannel(ajax_select.LookupChannel):
             cur = cur.filter(**{"%s__icontains" % self.search_field: r})
         return cur.order_by(self.search_field)[:self.max_length]
 
+    _white_re = re.compile(r'\s+')
+
+    def format_item_display(self,obj):
+        res = super(LookupChannel, self).format_item_display(obj)
+        return self._white_re.sub(' ', res)
 
 #eof
 
