@@ -974,38 +974,11 @@ class CJFilter_attribs_count(CJFilter_attribs):
 ######## - model definitions
 
 
-department_filter = CJFilter_Model('company.Department', sequence=5,
-    fields={
-            'id': CJFilter_id(),
-            'name':  CJFilter_String(title=_('name'), sequence=1),
-            'code': CJFilter_String(title=_('code'), sequence=2),
-            'dept_type': CJFilter_lookup('company.DepartmentType', 'department_type',
-                        fields={'name':  CJFilter_String(title=_('name'), sequence=1), }
-                ),
-            '_has_assets': CJFilter_dept_has_assets(title=_("has assets"), sequence=5),
-            #'nom_name':  CJFilter_String(title=_('Nom Name'), sequence=15),
-            #'ota_name':  CJFilter_String(title=_('OTA Name'), sequence=16),
-            'parent': CJFilter_lookup('company.Department', 'department',
-                title=_("parent department"),
-                fields={'name':  CJFilter_String(title=_('name'), sequence=1),
-                        'code': CJFilter_String(title=_('code'), sequence=2),
-                        }),
-            },
-    famfam_icon='building',
-    )
-location_filter = CJFilter_Model('common.Location',
+location_filter = CJFilter_Model('inventory.Location',
     fields={ 'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
-            'department': department_filter.copy(fields_add={'_': CJFilter_isset(sequence=0), }),
-            'template': CJFilter_ModelChoices('common.LocationTemplate',
-                    fields={'name': CJFilter_String(title=_('name'), sequence=1), }),
         },
-    famfam_icon='map', condition=user_is_staff,
-    )
-manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer',
-    fields={ 'id': CJFilter_id(), 'name':  CJFilter_String(title=_('name'), sequence=1),
-        },
-    famfam_icon='status_online',
+    famfam_icon='map', # condition=user_is_staff,
     )
 
 users_filter = CJFilter_Model('auth.User', sequence=40,
@@ -1015,49 +988,30 @@ users_filter = CJFilter_Model('auth.User', sequence=40,
             'username': CJFilter_String(title=_('user name'), sequence=5),
             'email': CJFilter_String(title=_('email'), sequence=10),
             },
-    famfam_icon='user', condition=user_is_staff,
+    famfam_icon='user', #condition=user_is_staff,
     )
 
-product_filter = CJFilter_Product('products.ItemTemplate',
+product_filter = CJFilter_Product('inventory.ItemTemplate',
     sequence=20,
     fields = { 'id': CJFilter_id(),
             'description': CJFilter_String(title=_('name'), sequence=1),
-            'category': CJFilter_lookup('products.ItemCategory', 'categories', sequence=5,
-                    fields={'name':  CJFilter_String(title=_('name'), sequence=1),} ),
-            'manufacturer': manuf_filter,
-            'attributes': CJFilter_attribs_multi('products.ItemTemplateAttributes', sequence=15),
-            'approved': CJFilter_Boolean(title=_("approved"), staff_only=True),
+            #'category': CJFilter_lookup('products.ItemCategory', 'categories', sequence=5,
+            #        fields={'name':  CJFilter_String(title=_('name'), sequence=1),} ),
             },
     famfam_icon='camera',
     )
 
-contract_filter = CJFilter_lookup('procurements.Contract', 'contracts',
-    title=_('contract'),
-    fields={ 'id': CJFilter_id(),
-            'name':  CJFilter_String(title=_('name'), sequence=1),
-            'delegate': CJFilter_Model('procurements.Delegate',
-                fields={ 'name':  CJFilter_String(title=_('name'), sequence=1),
-                }
-            )
-        },
-    famfam_icon='basket',
-    )
 
 purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
     fields={ 'id': CJFilter_id(),
             'user_id': CJFilter_String(title=_("user defined id"), sequence=1),
-            'create_user': users_filter.copy(title=_("created by"), staff_only=True),
-            'validate_user': users_filter.copy(title=_("validated by"), staff_only=True),
-            'supplier': CJFilter_lookup('common.Supplier', 'supplier_vat',
+            'supplier': CJFilter_lookup('inventory.Supplier', 'supplier_vat',
                 fields={'name':  CJFilter_String(title=_('name'), sequence=1),
-                        'vat_number':  CJFilter_String(title=_('VAT number'), sequence=10),
                     }
                 ),
             'issue_date': CJFilter_date(title=_("issue date")),
-            'state': CJFilter_choices('movements.PurchaseOrder', 'state', title=_('state')),
-            'department': department_filter,
         },
-    condition=user_is_staff, famfam_icon='cart_go'
+    famfam_icon='cart_go', #condition=user_is_staff,
     )
 
 item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
@@ -1071,16 +1025,6 @@ item_templ_filter = CJFilter_Model('assets.Item', title=_('asset'),
     fields = {'id': CJFilter_id(),
             'location': location_filter,
             'item_template': product_filter,
-            'itemgroup': CJFilter_contains(item_templ_c_filter,
-                            alt_model=('assets', 'ItemGroup'),
-                            title=_('containing'), name_suffix='items',
-                            related_name='bundled_in',
-                            fields={
-                                '_count': CJFilter_count(),
-                                '_sum_attribs': CJFilter_attribs_count('products.ItemTemplateAttributes', 'item_template'),
-                                },
-                            sequence=25),
-            'src_contract': contract_filter,
             },
     famfam_icon = 'computer',
     )
@@ -1092,49 +1036,11 @@ location_filter_full = location_filter.copy(fields_add={
                             related_name='location',
                             fields={
                                 '_count': CJFilter_count(),
-                                '_sum_attribs': CJFilter_attribs_count('products.ItemTemplateAttributes', 'item_template'),
                                 },
                             sequence=25
                             ),
             })
 
-inventories_filter = CJFilter_Model('inventory.InventoryGroup', title=_('inventories'),
-    fields={'id': CJFilter_id(),
-        'name': CJFilter_String(title=_('name'), sequence=1),
-        'department': department_filter,
-        'date_act': CJFilter_date(title=_("date performed")),
-        'date_val': CJFilter_date(title=_("date validated")),
-        'state': CJFilter_choices('inventory.InventoryGroup', 'state', title=_('state')),
-        'create_user': users_filter.copy(title=_("created by"), staff_only=True),
-        'validate_user': users_filter.copy(title=_("validated by"), staff_only=True),
-    },
-    condition=user_is_staff,
-    famfam_icon='package'
-    )
-
-movements_filter = CJFilter_Model('movements.Movement', title=_("movements"),
-    fields={'id': CJFilter_id(),
-        'name': CJFilter_String(title=_('name'), sequence=1),
-        'date_act': CJFilter_date(title=_("date performed")),
-        'date_val': CJFilter_date(title=_("date validated")),
-        'state': CJFilter_choices('movements.Movement', 'state', title=_('state'), sequence=4),
-        'stype': CJFilter_choices('movements.Movement', 'stype', title=_('type'), sequence=5),
-        'create_user': users_filter.copy(title=_("created by"), staff_only=True, sequence=20),
-        'validate_user': users_filter.copy(title=_("validated by"), staff_only=True, sequence=21),
-        'location_src': location_filter.copy(title=_('source location'), sequence=2),
-        'location_dest': location_filter.copy(title=_('destination location'), sequence=3),
-        'items': CJFilter_contains(item_templ_c_filter,
-                            title=_('items'),
-                            related_name='movements',
-                            fields={
-                                '_count': CJFilter_count(),
-                                '_sum_attribs': CJFilter_attribs_count('products.ItemTemplateAttributes', 'item_template'),
-                                },
-                            sequence=25),
-    },
-    condition=user_is_staff,
-    famfam_icon='computer_go',
-    )
 # ---------------- Cache ---------------
 
 _reports_cache = {}
@@ -1152,11 +1058,8 @@ def _reports_init_cache():
     _reports_cache['main_types'] = {
             'items': item_templ_filter,
             'products': product_filter,
-            'department': department_filter,
             'location': location_filter_full,
             'purchase_order': purchaseorder_filter,
-            'inventories': inventories_filter,
-            'movements': movements_filter,
             }
 
     _reports_cache['available_types'] = [ rt.to_main_report(k) for k, rt in _reports_cache['main_types'].items()]
