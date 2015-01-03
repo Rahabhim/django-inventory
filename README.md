@@ -31,6 +31,7 @@ Requirements
 * PIL - The Python Imaging Library.
 * django-pagination
 * django-photologue - Powerful image management for the Django web framework.
+* django-ajax-selects - Auto-completion (lookup) fields for Django
 
 Or execute pip install -r requirements/production.txt to install the dependencies automatically.
 
