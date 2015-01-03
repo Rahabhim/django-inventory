@@ -26,7 +26,6 @@ def register_links(src, links, menu_name=None):
                 object_navigation[menu_name][one_src] = {'links':links}
         else:
             object_navigation[menu_name] = {src:{'links':links}}
-        
 
 def register_menu(links):
     for link in links:
@@ -93,6 +92,7 @@ def user_is_super(obj, context):
 
 class LookupChannel(ajax_select.LookupChannel):
     max_length = 50
+    queryset = None
 
     def check_auth(self,request):
         if not request.user.is_authenticated():
@@ -105,10 +105,14 @@ class LookupChannel(ajax_select.LookupChannel):
         if not request.user.is_authenticated():
             raise HttpResponseForbidden()
         # filtering only this user's contacts
-        cur = self.model.objects
+        if self.queryset is None:
+            cur = self.model.objects
+        else:
+            cur = self.queryset
         for r in q.split(' '):
             cur = cur.filter(**{"%s__icontains" % self.search_field: r})
         return cur.order_by(self.search_field)[:self.max_length]
+
 
 #eof
 
