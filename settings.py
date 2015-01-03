@@ -111,6 +111,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django.contrib.staticfiles',
     'south',
     'pagination',
     'photologue',
@@ -132,6 +133,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     'django.core.context_processors.request',
+    'django.core.context_processors.static',
     "grappelli.context_processors.admin_template_path",
     'django.contrib.messages.context_processors.messages',
 ]
@@ -171,6 +173,12 @@ LOGIN_EXEMPT_URLS = (
 PAGINATION_DEFAULT_PAGINATION = 10
 #--------- Web theme app ---------------
 WEB_THEME = 'warehouse'
+
+STATIC_URL= '/static/'
+STATIC_ROOT = './staticfiles/'
+# USE_ETAGS = False
+USE_THOUSAND_SEPARATOR = True
+
 #======== End of configuration options =======
 try:
     from settings_local import *

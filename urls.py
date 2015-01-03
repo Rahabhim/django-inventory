@@ -24,10 +24,12 @@ urlpatterns = patterns('',
 )
 
 if settings.DEVELOPMENT:
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
     urlpatterns += patterns('',
         (r'^django-inventory-site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'site_media', 'show_indexes': True}),
     )
 
+    urlpatterns += staticfiles_urlpatterns()
     if 'rosetta' in settings.INSTALLED_APPS:
         urlpatterns += patterns('',
             url(r'^rosetta/', include('rosetta.urls'), name = "rosetta"),
