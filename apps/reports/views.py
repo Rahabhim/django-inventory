@@ -222,6 +222,8 @@ class CJFilter_Model(CJFilter):
         if not self._model_inst:
             app, name = self.model.split('.', 1)
             self._model_inst = models.get_model(app, name)
+        if not self._model_inst:
+            raise RuntimeError("Model %s does not exist. Not loaded app?" % self.model)
         if not self.title:
             self.title = self._model_inst._meta.verbose_name  # _plural
 
