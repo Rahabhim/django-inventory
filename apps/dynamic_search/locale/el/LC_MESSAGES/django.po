@@ -41,4 +41,3 @@ msgstr "αποτελέσματα με: %s"
 #: templates/search_results.html:14
 msgid "No results found"
 msgstr "Δε βρέθηκαν αποτελέσματα"
-
