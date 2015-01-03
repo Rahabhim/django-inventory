@@ -180,6 +180,7 @@ LOGIN_EXEMPT_URLS = (
     r'^about\.html$',
     r'^legal/', # allow the entire /legal/* subsection
     r'^help/', # all help is public, too
+    r'^creports/pub/', # reports using alternate authentication
     r'^django-inventory-site_media/',
 
     r'^accounts/register/$',

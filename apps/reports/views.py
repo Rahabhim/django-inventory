@@ -1537,6 +1537,35 @@ def _pre_render_report(request):
 
     return fin
 
+import settings
+from django.contrib.auth.models import User
+
+def allow_public_mode(_orig_fn):
+    def _int_fn(request):
+        if not request.user.is_authenticated():
+            if request.method != 'GET':
+                raise PermissionDenied
+            api_users = getattr(settings, 'API_USERS', {})
+            remote_addr = request.META.get('REMOTE_ADDR', '')
+            if remote_addr not in api_users:
+                logging.getLogger('apps.reports').error("API connections from %s are not allowed", remote_addr)
+                raise PermissionDenied
+            # TODO: auth header
+
+            try:
+                request.user = User.objects.get(username=api_users[remote_addr]['user'])
+            except ObjectDoesNotExist:
+                logging.getLogger('apps.reports').error("API connection from %s specifies non-existent user \"%s\"", remote_addr, api_users[remote_addr]['user'])
+                raise PermissionDenied
+            if 'allowed_reports' in api_users[remote_addr]:
+                if int(request.GET.get('id', '-1')) not in api_users[remote_addr]['allowed_reports']:
+                    logging.getLogger('apps.reports').error("Report %r is not allowed to %s ", request.GET.get('id', '??'), remote_addr)
+                    raise PermissionDenied
+        return _orig_fn(request)
+
+    return _int_fn
+
+@allow_public_mode
 def reports_results_html(request):
     """Retrieve results, rendered in a html page
     """
@@ -1558,6 +1587,7 @@ def csv_fmt(val):
         # dates?
         return str(val)
 
+@allow_public_mode
 def reports_results_csv(request):
     res = _pre_render_report(request)
 
