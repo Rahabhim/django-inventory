@@ -94,7 +94,7 @@ class Command(SyncCommand):
                     manufacturer = Manufacturer(partner_ptr_id=target.id)
                     manufacturer.__dict__.update(cdict)
                     manufacturer.save()
-                ItemTemplate.objects.get(manufacturer_id__in=source_ids).update(manufacturer=manufacturer)
+                ItemTemplate.objects.filter(manufacturer_id__in=source_ids).update(manufacturer=manufacturer)
 
             logger.info("Partners %s merged into #%d", ', '.join(map(str, source_ids)), target.id)
             source_partners.delete()
