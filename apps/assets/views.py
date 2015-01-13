@@ -256,7 +256,7 @@ def asset_list_printout(request, dept_id):
 
 def asset_list_printout2(request):
     active_role = role_from_request(request)
-    if active_role.department:
+    if request.user.is_staff or (active_role and active_role.department):
         return HttpResponseRedirect(reverse("asset_list_printout", args=[active_role.department.id]))
     else:
         raise PermissionDenied
