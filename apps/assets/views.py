@@ -211,6 +211,8 @@ def asset_printout(request, object_id):
 
     from django.template.loader import render_to_string
     from rml2pdf import parseString
+    from reportlab.platypus.doctemplate import LayoutError
+
     logger = logging.getLogger('apps.assets')
     logger.info("Rendering asset #%d %s to HTTP", asset.id, asset.property_number)
 
@@ -220,8 +222,13 @@ def asset_printout(request, object_id):
                         'now': datetime.datetime.now(),
                         'user': request.user,
                         'author': "Django-inventory"  } )
-    outPDF = parseString(rml_str, localcontext={})
-    return HttpResponse(outPDF, content_type='application/pdf')
+    try:
+        outPDF = parseString(rml_str, localcontext={})
+        return HttpResponse(outPDF, content_type='application/pdf')
+    except LayoutError, err:
+        logger.error("Cannot render asset-%d.pdf: %s", asset.id, err)
+        messages.error(request, _("Internal error, cannot render PDF: perhaps some elements cannot fit the page"))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def asset_list_printout(request, dept_id):
     dept = get_object_or_404(Department, pk=dept_id)
@@ -235,6 +242,8 @@ def asset_list_printout(request, dept_id):
 
     from django.template.loader import render_to_string
     from rml2pdf import parseString
+    from reportlab.platypus.doctemplate import LayoutError
+
     logger = logging.getLogger('apps.assets')
     logger.info("Rendering department #%d %s asset list to HTTP", dept.id, dept.name)
 
@@ -251,8 +260,13 @@ def asset_list_printout(request, dept_id):
                         'author': "Django-inventory",
                         'locations': locations,
                         } )
-    outPDF = parseString(rml_str, localcontext={})
-    return HttpResponse(outPDF, content_type='application/pdf')
+    try:
+        outPDF = parseString(rml_str, localcontext={})
+        return HttpResponse(outPDF, content_type='application/pdf')
+    except LayoutError, err:
+        logger.error("Cannot render department-%d-assets.pdf: %s", dept.id, err)
+        messages.error(request, _("Internal error, cannot render PDF: perhaps some elements cannot fit the page"))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def asset_list_printout2(request):
     active_role = role_from_request(request)

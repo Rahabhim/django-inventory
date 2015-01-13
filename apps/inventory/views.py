@@ -7,7 +7,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.list_detail import object_list
 # from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
@@ -175,6 +175,7 @@ def inventory_printout(request, object_id):
     inventory = get_object_or_404(InventoryGroup, pk=object_id)
     from django.template.loader import render_to_string
     from rml2pdf import parseString
+    from reportlab.platypus.doctemplate import LayoutError
     logger = logging.getLogger('apps.inventory')
     logger.info("Rendering inventory #%d %s to HTTP", inventory.id, inventory.name)
 
@@ -184,8 +185,14 @@ def inventory_printout(request, object_id):
                         'now': datetime.datetime.now(),
                         'user': request.user,
                         'author': "Django-inventory"  } )
-    outPDF = parseString(rml_str, localcontext={})
-    return HttpResponse(outPDF, content_type='application/pdf')
+    try:
+        outPDF = parseString(rml_str, localcontext={})
+        return HttpResponse(outPDF, content_type='application/pdf')
+    except LayoutError, err:
+        logger.error("Cannot render inventory[%s].pdf: %s", inventory.id, err)
+        messages.error(request, _("Internal error, cannot render PDF: perhaps some elements cannot fit the page"))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 def inventory_reject(request, object_id):
     inventory = get_object_or_404(InventoryGroup, pk=object_id)
