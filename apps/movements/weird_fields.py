@@ -2,6 +2,7 @@
 import logging
 from collections import defaultdict
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from django import forms
 from django.template.loader import render_to_string
@@ -218,7 +219,10 @@ class ItemsGroupWidget(forms.widgets.Widget):
             # it comes from form submission
             ret = {}
             # We have to decode the various fields:
-            ret['item_template'] = ItemTemplate.objects.get(pk=data['id_%s_item_template' % name])
+            product_id = data['id_%s_item_template' % name]
+            if not (product_id and product_id.isdigit()):
+                raise ValidationError(_("Bad entry for selected product"))
+            ret['item_template'] = ItemTemplate.objects.get(pk=product_id)
             ret['line_num'] = data.get('id_%s_line_num' % name, None)
             if ret['line_num']:
                 ret['line_num'] = int(ret['line_num'])
