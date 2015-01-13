@@ -734,9 +734,9 @@ class PO_Wizard(SessionWizardView):
     def get_form(self, step=None, data=None, files=None):
         if step is None:
             step = self.steps.current
-        if step in ('4', '3s'):
+        if step in ('4', '3s') and data and 'iaction' in data:
             # edit actions of items
-            if data and 'iaction' in data:
+            try:
                 if data['iaction'].startswith('edit:'):
                     # push the item's parameters into "data" and bring up the
                     # 3rd wizard page again
@@ -750,7 +750,7 @@ class PO_Wizard(SessionWizardView):
                             old_data = item
                             break
                     else:
-                        raise IndexError("No line num: %s" % line_num)
+                        raise RuntimeError("No line num: %s" % line_num)
                     if old_data['item_template'].category.is_group:
                         # a group cannot be edited.
                         # Instead, we proceed to step 3s to edit its contents
@@ -807,6 +807,10 @@ class PO_Wizard(SessionWizardView):
                         form._errors = ErrorDict()
                     form._errors[''] = ''
                     return form
+            except RuntimeError, e:
+                logger.error("Cannot perform action @%s %s: %s", step, data['iaction'], e)
+                # try to continue with form ..?
+
         if step == '4':
             # hack: for step 4, data always comes from the session
             data = self.storage.get_step_data(step)
