@@ -586,6 +586,17 @@ class PurchaseOrder(models.Model):
         self.save()
         return True
 
+    def delete(self, *args, **kwargs):
+        if self.movements.exclude(state__in=('pending', 'done')).exists():
+            raise models.ProtectedError(_("Cannot delete purchase order %s with validated or pending movements") % self,
+                                 self.movements.filter(state__in=('pending', 'done')).all())
+        if self.state not in ('draft', 'reject') or self.validate_user:
+            raise models.ProtectedError(_("Cannot delete non-draft purchase order: %s") % self, [])
+
+        self.movements.filter(state__in=('draft', 'rejected')).update(purchase_order=None)
+        return super(PurchaseOrder,self).delete(*args, **kwargs)
+
+
 class PurchaseOrderItemStatus(models.Model):
     name = models.CharField(verbose_name=_(u'name'), max_length=32)
 
@@ -777,6 +788,16 @@ class RepairOrder(models.Model):
     def get_absolute_url(self):
         return ('repair_order_view', [str(self.id)])
 
+    def delete(self, *args, **kwargs):
+        if self.movements.exclude(state__in=('pending', 'done')).exists():
+            raise models.ProtectedError(_("Cannot delete repair order %s with validated or pending movements") % self,
+                                 self.movements.filter(state__in=('pending', 'done')).all())
+        if self.state not in ('draft', 'reject') or self.validate_user:
+            raise models.ProtectedError(_("Cannot delete non-draft repair order: %s") % self, [])
+
+        self.movements.filter(state__in=('draft', 'rejected')).update(purchase_order=None)
+        return super(RepairOrder,self).delete(*args, **kwargs)
+
     def do_close(self, user):
         """ Update the the items bound in the itemgroup
 
@@ -873,10 +894,10 @@ class Movement(models.Model):
 
     purchase_order = models.ForeignKey(PurchaseOrder, verbose_name=_("purchase order"),
                                        blank=True, null=True, related_name='movements',
-                                       on_delete=models.SET_NULL)
+                                       on_delete=models.PROTECT)
     repair_order = models.ForeignKey(RepairOrder, verbose_name=_("repair order"),
                                      blank=True, null=True, related_name='movements',
-                                     on_delete=models.SET_NULL)
+                                     on_delete=models.PROTECT)
 
     class Meta:
         ordering = ('date_act', )
