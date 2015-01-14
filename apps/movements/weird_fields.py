@@ -221,7 +221,8 @@ class ItemsGroupWidget(forms.widgets.Widget):
             # We have to decode the various fields:
             product_id = data['id_%s_item_template' % name]
             if not (product_id and product_id.isdigit()):
-                raise ValidationError(_("Bad entry for selected product"))
+                # *return* the value, let cleaner catch it!
+                return ValidationError(_("Bad entry for selected product"))
             ret['item_template'] = ItemTemplate.objects.get(pk=product_id)
             ret['line_num'] = data.get('id_%s_line_num' % name, None)
             if ret['line_num']:
@@ -240,7 +241,12 @@ class ItemsGroupWidget(forms.widgets.Widget):
                     if not dpart:
                         continue
                     dpart_id = int(dpart)
-                    dqty = int(qtys.pop(0) or '0')
+                    try:
+                        dqty = int(qtys.pop(0) or '0')
+                        if dqty < 1:
+                            raise ValueError
+                    except ValueError:
+                        dqty = 0
                     pa.append((ItemTemplate.objects.get(pk=dpart_id, category=mc.category), dqty))
             return ret
         else:
@@ -276,6 +282,15 @@ class ItemsGroupWidget(forms.widgets.Widget):
 
 class ItemsGroupField(forms.Field):
     widget = ItemsGroupWidget
+
+    def clean(self, value):
+        if isinstance(value, Exception):
+            raise value
+        super(ItemsGroupField, self).clean(value)
+        for pvals in value.get('parts', {}).values():
+            for part, qty in pvals:
+                if qty < 1:
+                    raise ValidationError(_("Wrong number format for quantity, part: %s") % part)
 
     @classmethod
     def post_validate(cls, value):
