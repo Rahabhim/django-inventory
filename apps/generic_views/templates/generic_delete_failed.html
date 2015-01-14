@@ -13,10 +13,8 @@
       <div class="block" id="block-login">
         <h2>{% trans 'Could not delete item' %}</h2>
         <div class="content login">
-        
             <p class="error" >
-            {% blocktrans %}The item {{ object }} cannot be deleted because it is referenced by other records:
-            {% endblocktrans %}
+                {{ message }}
             </p>
             <ul>
                 {% for pobj in protected_objects|slice:":10" %}

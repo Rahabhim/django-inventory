@@ -696,8 +696,14 @@ class GenericDeleteView(_PermissionsMixin, django_gv.DeleteView):
         try:
             self.object.delete()
         except ProtectedError, e:
-           return render(request, 'generic_delete_failed.html',
+            if not isinstance(e.args[0], str):
+                # Non-string would be a custom unicode message or lazy gettext object
+                msg = e.args[0]
+            else:
+                msg = _('The item %s cannot be deleted because it is referenced by other records:') % self.object
+            return render(request, 'generic_delete_failed.html',
                     { 'object': self.object,
+                      'message': msg,
                       'object_url': self.object.get_absolute_url(),
                       'protected_objects': e.protected_objects
                       })
