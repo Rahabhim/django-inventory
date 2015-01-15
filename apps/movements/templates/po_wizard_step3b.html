@@ -219,6 +219,10 @@
         white-space: normal;
 
     }
+    div.qty_warning {
+        margin-top: 4px;
+        display: none;
+    }
 </style>
 
 <script type="text/javascript" src="{{ STATIC_URL }}/js/ui-combobox.js"></script>
@@ -472,10 +476,14 @@
         var part_id = $(field_id+ '_part').val();
         var newqty = $(field_id + "_qty").val();
         $('#cont_parts-'+ part_id +' input[name="'+ field_id.substr(1)+'_part_qty"]').val(newqty);
-        if (newqty != 1)
+        if (newqty != 1){
             $('#cont_parts-'+ part_id +' span.qty').text('x' + newqty.toString());
-        else
+            $(field_id + "_qty_warning").show();
+        }
+        else{
+            $(field_id + "_qty_warning").hide();
             $('#cont_parts-'+ part_id +' span.qty').text('');
+        }
     }
     /** Setup some field to provide search for category
 
