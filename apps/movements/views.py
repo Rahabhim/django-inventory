@@ -14,7 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.forms.formsets import formset_factory
 
 from common.models import Supplier, Location, Sequence
-from common.api import role_from_request
+from common.api import role_from_request, fmt_date
 from assets.models import ItemTemplate, Item, ItemGroup
 from generic_views.views import GenericBloatedListView, CartOpenView, _ModifyCartView
 from main import cart_utils
@@ -377,6 +377,11 @@ def purchase_order_receive(request, object_id):
                 pass
             elif not (active_role and active_role.has_perm('movements.validate_purchaseorder')):
                 messages.error(request,_('You do not have permission to validate the order!'), fail_silently=True)
+                return redirect(request.path.rstrip('?'), object_id=object_id)
+
+            if purchase_order.issue_date > datetime.date.today():
+                messages.error(request, _("You are not allowed to validate purchase orders in a future date: %s") \
+                                        % fmt_date(purchase_order.issue_date) , fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
             try:
                 moves_pending = False

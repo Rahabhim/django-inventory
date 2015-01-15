@@ -947,6 +947,10 @@ class Movement(models.Model):
             raise ValueError(_("You are not allowed to make any movements before %s, when last inventory was validated") %\
                         fmt_date(self.checkpoint_src.date_act))
 
+        if self.date_act > datetime.date.today():
+            raise ValueError(_("You are not allowed to validate movement in a future date: %s") %\
+                        fmt_date(self.checkpoint_src.date_act))
+
         if not self.items.exists():
             raise ValueError(_("You cannot close a movement with no items selected"))
 
