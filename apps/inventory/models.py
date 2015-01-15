@@ -14,7 +14,7 @@ from settings import DATE_FMT_FORMAT
 from dynamic_search.api import register
 from common import models as common
 from company import models as company
-from common.api import role_from_request
+from common.api import role_from_request, fmt_date
 from assets import models as assets
 
 # from products import models as products
@@ -161,6 +161,10 @@ class InventoryGroup(models.Model):
 
         if val_date < self.date_act:
             raise ValidationError(_("The active date cannot be after the validation date"))
+
+        if val_date > datetime.date.today():
+            raise ValidationError(_("You are not allowed to validate inventories in a future date: %s") %\
+                                    fmt_date(val_date))
 
         # Check them all, before any of them is written to
         for inv in self.inventories.all():
