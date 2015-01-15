@@ -137,16 +137,18 @@ class _map_item(object):
 
 class _ProcessLock(object):
     def __init__(self, p_order):
+        self.p_order = None
         self.prev_state = p_order.state
         if self.prev_state == 'processing':
-            raise RuntimeError("Lock asserted twice")
+            # at this point, p_order == None, del() will be called
+            raise RuntimeError("Lock for order #%d asserted twice" % p_order.id)
         self.p_order = p_order
         p_order.state = 'processing'
         p_order.save()
 
     def __del__(self):
         try:
-            if self.p_order.state == 'processing':
+            if self.p_order and self.p_order.state == 'processing':
                 self.p_order.state = self.prev_state
                 self.p_order.save()
         except Exception:
