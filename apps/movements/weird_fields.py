@@ -286,11 +286,12 @@ class ItemsGroupField(forms.Field):
     def clean(self, value):
         if isinstance(value, Exception):
             raise value
-        super(ItemsGroupField, self).clean(value)
+        c = super(ItemsGroupField, self).clean(value)
         for pvals in value.get('parts', {}).values():
             for part, qty in pvals:
                 if qty < 1:
                     raise ValidationError(_("Wrong number format for quantity, part: %s") % part)
+        return c
 
     @classmethod
     def post_validate(cls, value):
