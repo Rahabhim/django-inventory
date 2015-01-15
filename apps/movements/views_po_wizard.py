@@ -307,12 +307,11 @@ class PO_Step3b(WizardForm):
             step4_data = MultiValueDict()
 
         aitems = step4_data.setdefault('4-items',[])
-        our_data = self.cleaned_data.get('ig', {})
+        our_data = self.cleaned_data.get('ig', {}) or {}
         if our_data:
             ItemsGroupField.post_validate(our_data)
-        if not our_data.get('line_num', False):
-            raise RuntimeError("Step 3b data does not have a line_num from step 3!")
-        else:
+            if not our_data.get('line_num', False):
+                raise RuntimeError("Step 3b data does not have a line_num from step 3!")
             for it in aitems:
                 if it.get('line_num', False) == our_data['line_num']:
                     assert it.get('item_template') == our_data['item_template'], \
