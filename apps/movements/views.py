@@ -504,6 +504,9 @@ def purchase_order_receive(request, object_id):
                                     and move.location_dest.department in active_role.departments)):
                     form_attrs['confirm_ask'] = True
                     break
+                elif move.state == 'draft' and request.user.is_superuser:
+                    form_attrs['confirm_ask'] = True
+                    break
             else:
                 # if all moves are confirmed, then enable confirm of PO
                 for move in moves_list:
