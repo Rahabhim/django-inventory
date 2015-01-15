@@ -60,7 +60,7 @@ class InventoryGroupManager(models.Manager):
                     q = Q(department__in=role.departments)
                 return self.filter(q).distinct()
         except Exception:
-            logger.exception("cannot filter:")
+            logger.exception("cannot filter (role_id=%r):", request.session.get('current_user_role', False))
         return self.none()
 
 class InventoryGroup(models.Model):
