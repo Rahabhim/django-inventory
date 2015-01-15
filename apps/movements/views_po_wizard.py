@@ -595,7 +595,7 @@ class PO_Step5(WizardForm):
                         department=self.cleaned_data['department']).all()[0]
 
         if po_instance.map_has_left(mapped_items):
-            if not active_role.has_perm('movements.change_purchaseorder'):
+            if not (active_role and active_role.has_perm('movements.change_purchaseorder')):
                 raise PermissionDenied(_("Your active role is not allowed to modify this PO"))
             po_instance.items_into_moves(mapped_items, request, \
                         self.cleaned_data['location'].department, \
