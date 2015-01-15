@@ -268,8 +268,8 @@ class PurchaseOrder(models.Model):
             # This is an error, because we cannot allow different PO lines to repeat
             # the same serials for the same products.
             if old_serials.intersection(serials):
-                raise ValueError(_("Some serials are repeated in po #%d: %s ")  % \
-                        (self.id, ','.join(old_serials.intersection(serials))))
+                raise ValueError(_("Some serials are repeated in po #%(sid)d: %(serials)s ")  % \
+                                { 'sid': self.id, 'serials': ','.join(old_serials.intersection(serials))})
 
             rec_qty = item.received_qty
             idx = 0
