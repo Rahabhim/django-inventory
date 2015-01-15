@@ -574,7 +574,7 @@ class PO_Step5(WizardForm):
         # Mostly copied from views.purchase_order_receive
         po_instance = wizard.get_form_instance('1')
         request = wizard.request
-        if not po_instance.pk:
+        if not (po_instance and po_instance.pk):
             raise RuntimeError("PO instance must be saved by step 5")
         lock = po_instance.lock_process()
         try:
