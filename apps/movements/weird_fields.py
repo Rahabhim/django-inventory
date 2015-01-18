@@ -256,6 +256,9 @@ class ItemsGroupWidget(forms.widgets.Widget):
     def render(self, name, value, attrs=None):
         if value is None:
             value = {}
+        elif isinstance(value, ValidationError):
+            raise value
+
         final_attrs = self.build_attrs(attrs)
         self.html_id = final_attrs.pop('id', name)
         item_template = value.get('item_template', None)
