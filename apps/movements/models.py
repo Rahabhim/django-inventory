@@ -407,10 +407,11 @@ class PurchaseOrder(models.Model):
         if not isinstance(departments, list):
             if departments:
                 departments = [departments,]
-            elif master_location:
+            elif master_location and master_location.department:
                 departments = [master_location.department,]
             else:
-                logger.warning("Fishy, both 'departments' and 'master_location' are empty in items_into_moves")
+                logger.error("Fishy, both 'departments' and 'master_location' (%r) are empty in items_into_moves %s",
+                             master_location, request.path)
                 departments = []
 
         for lk, it_tmpls in mapped_items.items():
