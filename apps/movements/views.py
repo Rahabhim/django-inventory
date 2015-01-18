@@ -792,7 +792,7 @@ def purchase_order_analyze(request, object_id):
         raise PermissionDenied
     po = get_object_or_404(PurchaseOrder.objects, pk=object_id)
     log = _pseydo_logger('movements.analyze')
-    log.info("Analyzing purchase order: %d", po.id)
+    log.info("Analyzing purchase order: %d in state %s", po.id, po.state)
     def print_detail(po, excess_items, mapped_items=False, do_items=True):
         for poi in po.items.all():
             log.debug("    %s x%d", poi, poi.qty)
