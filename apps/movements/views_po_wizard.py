@@ -287,7 +287,7 @@ class PO_Step3_allo(_WizardFormMixin, ItemTemplateRequestForm_base):
             messages.info(wizard.request, _("Your request for %s has been stored. An administrator of the Helpdesk will review it and come back to you. In the meanwhile, please continue filling the Purchase Order form with the remaining items") % \
                     self.instance.description)
         except Exception:
-            logger.exception("Helpdesk request fail:")
+            logger.exception("Helpdesk request fail:", extra={'request': wizard.request})
             messages.error(wizard.request, _("The data you have entered has been saved, but the Helpdesk has NOT been notified, due to an internal error."))
         return '4'
 
@@ -429,7 +429,7 @@ class PO_Step4(WizardForm):
         errors = False
         line_groups = defaultdict(list)
         if not self.cleaned_data.get('items', False):
-            logger.warning("No equipment selected for step 4")
+            logger.warning("No equipment selected for step 4", extra={'request': wizard.request})
             messages.error(wizard.request, _("You must select some equipment into the purchase order"))
             return '4a'
 
@@ -579,6 +579,7 @@ class PO_Step5(WizardForm):
         try:
             mapped_items = po_instance.map_items()
         except ValueError, ve:
+            logger.error("Cannot save data at step 5: PO %s", po_instance, extra={'request': wizard.request})
             messages.error(request, unicode(ve), fail_silently=True)
             return '5'
 
@@ -624,6 +625,7 @@ class PO_Step5m(WizardForm):
             lock = po_instance.lock_process()
             mapped_items = po_instance.map_items()
         except ValueError, ve:
+            logger.error("Cannot save data at step 5m: PO %s", po_instance, extra={'request': wizard.request})
             messages.error(request, unicode(ve), fail_silently=True)
             return '5'
         except RuntimeError:
@@ -809,7 +811,8 @@ class PO_Wizard(SessionWizardView):
                     form._errors[''] = ''
                     return form
             except RuntimeError, e:
-                logger.error("Cannot perform action @%s %s: %s", step, data['iaction'], e)
+                logger.error("Cannot perform action @%s %s: %s", step, data['iaction'], e,
+                             extra={'request': self.request})
                 # try to continue with form ..?
 
         if step == '4':
@@ -839,7 +842,8 @@ class PO_Wizard(SessionWizardView):
             return self.render(form)
         except Exception, e:
             messages.error(self.request, _('Cannot save data'))
-            logger.exception('cannot save at step %s: %s', self.steps.current, e)
+            logger.exception('cannot save at step %s: %s', self.steps.current, e,
+                             extra={'request': self.request})
             return self.render(form)
 
         # get the form instance based on the data from the storage backend
@@ -869,7 +873,8 @@ class PO_Wizard(SessionWizardView):
             return self.render(form)
         except Exception, e:
             messages.error(self.request, _('Cannot save data'))
-            logger.exception('cannot finish at step %s: %s', self.steps.current, e)
+            logger.exception('cannot finish at step %s: %s', self.steps.current, e,
+                             extra={'request': self.request})
             return self.render(form)
         if res:
             self.render_revalidation_failure(self.steps.current, form, **kwargs)

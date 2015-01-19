@@ -112,7 +112,7 @@ class PurchaseOrderManager(models.Manager):
                         | Q(department__in=request.user.dept_roles.values_list('department', flat=True))
                 return self.filter(q).distinct()
         except Exception:
-            logger.exception("cannot filter:")
+            logger.exception("cannot filter:", extra={'request': request})
         return self.none()
 
 class _map_item(object):
@@ -865,7 +865,7 @@ class MovementManager(models.Manager):
                         | Q(location_dest__department__in=allowed_depts)
                 return self.filter(q).distinct()
         except Exception:
-            logger.exception("cannot filter:")
+            logger.exception("cannot filter:", extra={'request': request})
         return self.none()
 
 class Movement(models.Model):
