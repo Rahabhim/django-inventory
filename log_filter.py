@@ -33,6 +33,12 @@ class CookieSafeRF(SafeExceptionReporterFilter):
             for k, v in request.META.items():
                 if k in self._allowed_META_vars:
                     r[k] = v
+        if request.user is not None:
+            try:
+                r['user.id'] = request.user.id
+                r['user'] = unicode(request.user)
+            except Exception:
+                pass
         return r
 
 
