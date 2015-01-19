@@ -93,6 +93,7 @@ DATABASES = {
         #'PASSWORD': 'USERPASSWORD',
         #'HOST': 'localhost',      # Set to empty string for localhost.
         'PORT': '',               # Set to empty string for default.
+        #'ROUTED_MODELS': ['auth.User'],
     }
 }
 

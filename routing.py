@@ -7,22 +7,29 @@ class ReplicasRouter(object):
     def __init__(self):
         import settings # lazy
         self.dbs = {}
-        for db_alias in settings.DATABASES:
+        for db_alias, vals in settings.DATABASES.items():
             if '-' in db_alias:
                 cluster, db = db_alias.split('-', 1)
-                self.dbs.setdefault(cluster, []).append(db_alias)
+                self.dbs.setdefault(cluster, {})[db_alias] = vals.get('ROUTED_MODELS', [])
 
         self.system_apps = getattr(settings, 'DATABASE_NON_ROUTED_APPS', [])
 
     def db_for_read(self, model, **hints):
         """Point all read operations to a random read slave"""
+        dbt = self.dbs.get(hints.get('cluster', 'read'), {'default': [] })
         if model._meta.app_label in self.system_apps:
-            return None
-        dbs = self.dbs.get(hints.get('cluster', 'read'), ['default'])
-        if len(dbs) > 1:
-            return random.choice(dbs[1:])
+            dbt = dbt.copy() # will receive dbs explicitly allowed to route this system model
+
+            model_tag = '%s.%s' %( model._meta.app_label, model._meta.object_name)
+            for dbname in dbt.keys():
+                if model_tag not in dbt[dbname]:
+                    del dbt[dbname]
+            if not dbt:
+                return None
+        if len(dbt) > 1:
+            return random.choice(dbt.keys()[1:])
         else:
-            return dbs[0]
+            return dbt.keys()[0]
 
     def db_for_write(self, model, **hints):
         "Point all write operations to the master"
