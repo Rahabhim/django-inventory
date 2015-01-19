@@ -21,6 +21,8 @@ ADMINS = (
         # ('Your Name', 'your_email@domain.com'),
 )
 
+DEFAULT_EXCEPTION_REPORTER_FILTER = 'log_filter.CookieSafeRF'
+
 LOGGING = {
     'version': 1,
 
