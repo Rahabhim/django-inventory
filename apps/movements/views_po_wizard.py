@@ -579,7 +579,7 @@ class PO_Step5(WizardForm):
         try:
             mapped_items = po_instance.map_items()
         except ValueError, ve:
-            logger.error("Cannot save data at step 5: PO %s", po_instance, extra={'request': wizard.request})
+            logger.error("Cannot save data at step 5: PO #%d", po_instance.id, extra={'request': wizard.request})
             messages.error(request, unicode(ve), fail_silently=True)
             return '5'
 
