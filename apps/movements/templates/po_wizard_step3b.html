@@ -205,7 +205,7 @@
 
     div.product_search .note_not_found {
         margin-left: 2em;
-        display: block;
+        display: none;
     }
 
     div.product_search .note_not_found button {
@@ -277,12 +277,11 @@
         $(field_id + " .combo_results").text('');
         $(field_id + "_attribs option:selected").prop("selected", false);
         $(field_id + " .product_selection").removeClass("found selected not-found")
+        $(field_id+ " .note_not_found").hide();
         if (has_part) {
-            $(field_id+ " .note_not_found").hide();
             $(field_id+ " .label_not_found").hide();
             $(field_id+ " .line_vals").show();
         } else {
-            $(field_id+ " .note_not_found").show();
             $(field_id+ " .label_not_found").show();
             $(field_id+ " .line_vals").hide();
         }
@@ -500,6 +499,7 @@
         $(field_id + "_combo").combobox();
         $(field_id + "_combo").change(function() { select_some_part(field_id); } );
         $(field_id + "_qty").change(function() { upd_quantity(field_id); });
+        $(field_id+ " .note_not_found").hide();
         $(field_id + "_code").autocomplete({
                 source: "{% url ajax_lookup 'product_part' %}?category="+cat_id,
                 minLength: 2,
