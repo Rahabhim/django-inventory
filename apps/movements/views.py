@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from django import forms
 from django.conf import settings
+from django.db import transaction
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.http import HttpResponseRedirect #, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404, redirect, render
@@ -303,14 +304,14 @@ def purchase_order_open(request, object_id):
     return render_to_response('generic_confirm.html', data,
     context_instance=RequestContext(request))
 
-
+@transaction.commit_on_success
 def purchase_order_receive(request, object_id):
     """
     Take a purchase order and call transfer_to_inventory to transfer and
     close all of its item and close the purchase order too
     """
     _ = ugettext
-    purchase_order = get_object_or_404(PurchaseOrder, pk=object_id)
+    purchase_order = get_object_or_404(PurchaseOrder.objects.select_for_update(), pk=object_id)
 
     msg = None
     if purchase_order.validate_user:
@@ -386,7 +387,7 @@ def purchase_order_receive(request, object_id):
             try:
                 moves_pending = False
                 moves_other_pending = False
-                for move in purchase_order.movements.all():
+                for move in purchase_order.movements.select_for_update().all():
                     if move.state == 'done':
                         continue
                     # Skip movements to bundle location, at this first pass:
@@ -458,6 +459,7 @@ def purchase_order_receive(request, object_id):
                     messages.error(request, msg, fail_silently=True)
                 return redirect(request.path.rstrip('?'), object_id=object_id)
             except Exception, e:
+                transaction.rollback()
                 messages.error(request, unicode(e))
 
         # we must ask about the remaining items or confirmation:
@@ -525,11 +527,12 @@ def purchase_order_receive(request, object_id):
 
     raise RuntimeError
 
+@transaction.commit_on_success
 def purchase_order_reject(request, object_id):
     """ Reject the purchase order
 
     """
-    purchase_order = get_object_or_404(PurchaseOrder, pk=object_id)
+    purchase_order = get_object_or_404(PurchaseOrder.objects.select_for_update(), pk=object_id)
 
     msg = None
     if purchase_order.validate_user:
@@ -563,6 +566,7 @@ def purchase_order_reject(request, object_id):
             purchase_order.do_reject(request.user)
             messages.success(request, _("The purchase order has been marked as rejected"), fail_silently=True)
         except Exception, e:
+            transaction.rollback()
             messages.error(request, e, fail_silently=True)
         return redirect(url_after_this)
     else:
@@ -890,9 +894,10 @@ class MovementListView(GenericBloatedListView):
                       'order_attribute': 'state', 'col_class': 'state'},
                     {'name':_(u'type'), 'attribute': 'get_stype_display', 'order_attribute': 'stype'}]
 
+@transaction.commit_on_success
 def movement_do_close(request, object_id):
     _ = ugettext
-    movement = get_object_or_404(Movement, pk=object_id)
+    movement = get_object_or_404(Movement.objects.select_for_update(), pk=object_id)
     active_role = role_from_request(request)
     if request.user.is_superuser:
         pass
@@ -914,6 +919,7 @@ def movement_do_close(request, object_id):
             except ObjectDoesNotExist:
                 pass
             except Exception, e:
+                transaction.rollback()
                 messages.error(request, unicode(e))
 
     if form:
@@ -981,13 +987,15 @@ def movement_do_close(request, object_id):
 
         cart_utils.remove_from_session(request, movement)
     except Exception, e:
+        transaction.rollback()
         messages.error(request, unicode(e))
 
     return redirect(movement.get_absolute_url())
 
+@transaction.commit_on_success
 def movement_do_reject(request, object_id):
     _ = ugettext
-    movement = get_object_or_404(Movement, pk=object_id)
+    movement = get_object_or_404(Movement.objects.select_for_update(), pk=object_id)
     active_role = role_from_request(request)
     if request.user.is_superuser:
         pass
@@ -1027,18 +1035,21 @@ def movement_do_reject(request, object_id):
 
         cart_utils.remove_from_session(request, movement)
     except Exception, e:
+        transaction.rollback()
         messages.error(request, unicode(e))
 
     return redirect(movement.get_absolute_url())
 
+@transaction.commit_on_success
 def repair_itemgroup(request, object_id):
     _ = ugettext
-    item = get_object_or_404(ItemGroup, pk=object_id)
+    item = get_object_or_404(ItemGroup.objects.select_for_update(), pk=object_id)
     active_role = role_from_request(request)
     logger = logging.getLogger('apps.movements.repair')
     if not (request.user.is_superuser or active_role.has_perm('assets.change_itemgroup')):
         logger.warning("User %s is not allowed to repair item", request.user)
         messages.error(request,_('You dont\'t have the permission to repair items'), fail_silently=True)
+        transaction.rollback()
         return redirect(item.get_absolute_url())
 
     data = {'title': _("Repair of asset"), }
@@ -1049,6 +1060,7 @@ def repair_itemgroup(request, object_id):
     if not item_location:
         logger.warning("Item %d %s does not belong to any location, cannot repair", item.id, item)
         messages.error(request,_('Item cannot be repaired if it does not belong to a location'), fail_silently=True)
+        transaction.rollback()
         return redirect(item.get_absolute_url())
     elif not item_location.department:
         # search for a bundle in bundle
@@ -1061,6 +1073,7 @@ def repair_itemgroup(request, object_id):
         else:
             logger.warning("Item %d %s, nor its parent belong to any location", item.id, item)
             messages.error(request,_('Item, nor its parent, belong to any location'), fail_silently=True)
+            transaction.rollback()
             return redirect(item.get_absolute_url())
 
     # A: the locations we can fetch from + their available parts
@@ -1073,6 +1086,7 @@ def repair_itemgroup(request, object_id):
             logger.warning("User %s does not have active_role for dept %s to edit item %d %s",
                         request.user, item_location.department, item.id, item)
             messages.error(request,_('Your active role does not allow repairing items at this location'), fail_silently=True)
+            transaction.rollback()
             return redirect(item.get_absolute_url())
     else:
         dept = item_location.department
@@ -1083,6 +1097,7 @@ def repair_itemgroup(request, object_id):
         logger.warning("Department for item %d %s is not specified, cannot allow repair",
                     item.id, item)
         messages.error(request,_('Item can not be repaired if the Location is not a Department one'), fail_silently=True)
+        transaction.rollback()
         return redirect(item.get_absolute_url())
 
     if request.method == 'POST':
@@ -1131,6 +1146,7 @@ def repair_itemgroup(request, object_id):
             return redirect(reform.get_absolute_url())
         except Exception:
             logger.warning("Exception at repair:", exc_info=True)
+            transaction.rollback()
             # continue with our form, ask again.
 
     may_contain = [ mc.category for mc in item.item_template.category.may_contain.all()]
@@ -1151,11 +1167,12 @@ def repair_itemgroup(request, object_id):
 
     return render_to_response('repair_item.html', data, context_instance=RequestContext(request))
 
+@transaction.commit_on_success
 def repair_do_close(request, object_id):
     """ Close moves of repair order; then the order itself
     """
     _ = ugettext
-    repair = get_object_or_404(RepairOrder, pk=object_id)
+    repair = get_object_or_404(RepairOrder.objects.select_for_update(), pk=object_id)
     active_role = role_from_request(request)
     if request.user.is_superuser:
         pass
@@ -1168,7 +1185,7 @@ def repair_do_close(request, object_id):
 
         moves_pending = False
 
-        for move in repair.movements.all():
+        for move in repair.movements.select_for_update().all():
             if move.state == 'done':
                 continue
             if move.state != 'draft':
@@ -1211,6 +1228,7 @@ def repair_do_close(request, object_id):
                     (repair.user_id or ('#%d' % repair.id))
             messages.error(request, msg, fail_silently=True)
     except Exception, e:
+        transaction.rollback()
         messages.error(request, unicode(e))
 
 

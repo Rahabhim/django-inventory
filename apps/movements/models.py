@@ -231,7 +231,7 @@ class PurchaseOrder(models.Model):
         ret = defaultdict(lambda: defaultdict(list)) # default dict-in-dict
         logger.debug('map_items(): first stage for %s', self.id)
         # 1st step: fill dicts with the things we've ordered
-        for item in self.items.all():
+        for item in self.items.select_for_update().all():
             if not item.received_qty:
                 continue
 
@@ -932,6 +932,9 @@ class Movement(models.Model):
                 self.checkpoint_src = chks[0]
 
     def _close_check(self, skip_name=False):
+        all_items = self.items.select_for_update().all()
+        all_items_count = all_items.count() # this will trigger the query and lock them early
+
         if self.state not in ('draft', 'pending'):
             raise ValueError(_("Cannot close movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
         if self.date_val:
@@ -952,10 +955,9 @@ class Movement(models.Model):
             raise ValueError(_("You are not allowed to validate movement in a future date: %s") %\
                         fmt_date(self.checkpoint_src.date_act))
 
-        if not self.items.exists():
+        if not all_items_count:
             raise ValueError(_("You cannot close a movement with no items selected"))
 
-        all_items = self.items.all()
         for item in all_items:
             if not item.item_template.approved:
                 raise ValueError(_("Product %s is not approved, you cannot use it in this movement") % \

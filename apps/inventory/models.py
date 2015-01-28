@@ -131,7 +131,7 @@ class InventoryGroup(models.Model):
     def _compute_state(self, pending_only=True, offset=0, limit=100):
         have_pending = False
         res = []
-        for inv in self.inventories.all():
+        for inv in self.inventories.select_for_update().all():
             hp, res2 = inv._compute_state(pending_only, 0, limit)
             if hp:
                 have_pending = True
@@ -331,9 +331,9 @@ class Inventory(models.Model):
         return 'removed'
 
     def _compute_state(self, pending_only=True, offset=0, limit=100):
-        items_in_inventory = [ ii.asset_id for ii in self.items.all()]
+        items_in_inventory = [ ii.asset_id for ii in self.items.select_for_update().all()]
         res = []
-        items_base = assets.Item.objects.filter(Q(pk__in=items_in_inventory)|Q(location=self.location)).order_by('id')
+        items_base = assets.Item.objects.select_for_update().filter(Q(pk__in=items_in_inventory)|Q(location=self.location)).order_by('id')
 
         items_in_inventory = set(items_in_inventory)
         have_pending = False

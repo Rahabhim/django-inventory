@@ -3,6 +3,7 @@ import logging
 import datetime
 import subprocess
 from django.conf import settings
+from django.db import transaction
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -125,6 +126,7 @@ def inventory_items_compare(request, object_id):
             },
         context_instance=RequestContext(request))
 
+@transaction.commit_on_success
 def inventory_validate(request, object_id):
     # file upload?
     inventory = get_object_or_404(InventoryGroup, pk=object_id)
@@ -156,14 +158,18 @@ def inventory_validate(request, object_id):
             messages.warning(request, _("You must fill the name and upload a signed file to proceed"))
 
     except ValidationError, e:
+        transaction.rollback()
         for msg in e.messages:
             messages.error(request, msg, fail_silently=True)
     except PermissionDenied, e:
+        transaction.rollback()
         messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
         return redirect('inventory_group_view', object_id=object_id)
     except subprocess.CalledProcessError, e:
+        transaction.rollback()
         messages.error(request, _("The uploaded signature file does not contain a valid signature"), fail_silently=True)
     except ObjectDoesNotExist, e:
+        transaction.rollback()
         messages.error(request, _("Incorrect role or department to validate inventory: %s") % e, fail_silently=True)
 
     # else, if no form posted:
@@ -193,7 +199,7 @@ def inventory_printout(request, object_id):
         messages.error(request, _("Internal error, cannot render PDF: perhaps some elements cannot fit the page"))
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
+@transaction.commit_on_success
 def inventory_reject(request, object_id):
     inventory = get_object_or_404(InventoryGroup, pk=object_id)
 
@@ -214,6 +220,7 @@ def inventory_reject(request, object_id):
         if inventory.department not in active_role.departments:
             raise PermissionDenied(_("You are not currently signed at the same Department as this Inventory"))
     except PermissionDenied, e:
+        transaction.rollback()
         messages.error(request, _("Permission denied: %s") % e, fail_silently=True)
         return redirect('inventory_group_view', object_id=object_id)
 
