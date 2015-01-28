@@ -410,8 +410,8 @@ class PurchaseOrder(models.Model):
             elif master_location and master_location.department:
                 departments = [master_location.department,]
             else:
-                logger.error("Fishy, both 'departments' and 'master_location' (%r) are empty in items_into_moves %s",
-                             master_location, request.path)
+                logger.error("Fishy, both 'departments' and 'master_location' (%s) are empty in items_into_moves %s",
+                             unicode(master_location), request.path)
                 departments = []
 
         for lk, it_tmpls in mapped_items.items():
