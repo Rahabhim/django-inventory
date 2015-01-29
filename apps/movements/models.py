@@ -590,7 +590,7 @@ class PurchaseOrder(models.Model):
         return True
 
     def delete(self, *args, **kwargs):
-        if self.movements.exclude(state__in=('pending', 'done')).exists():
+        if self.movements.exclude(state__in=('draft', 'rejected')).exists():
             raise models.ProtectedError(_("Cannot delete purchase order %s with validated or pending movements") % self,
                                  self.movements.filter(state__in=('pending', 'done')).all())
         if self.state not in ('draft', 'reject') or self.validate_user:
