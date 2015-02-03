@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from dynamic_search.api import register
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+import logging
 
 class PartnerManager(models.Manager):
     def by_request(self, request):
@@ -156,15 +157,17 @@ class Sequence(models.Model):
         verbose_name_plural = _("sequences")
 
     def get_next(self):
-        # doing it *without* any lock!
+        this = Sequence.objects.select_for_update().get(pk=self.id)
         try:
-            nnext = self.number_next
-            self.number_next = self.number_next + 1
+            nnext = this.number_next
+            this.number_next = this.number_next + 1
             num = ('%%s%%0%dd%%s' % self.padding) % (self.prefix or '', nnext, self.suffix or '')
-            self.save()
+            this.save()
             return num
-        except Exception:
+        except Exception, e:
             # can we do anything here?
+            logging.getLogger('apps.common.sequence') \
+                    .error("Cannot get sequence %d number: %s", self.id, e)
             raise
 
 register(Location, _(u'locations'), ['name', 'address_line1', 'address_line2', 'address_line3', 'address_line4', 'phone_number1', 'phone_number2'])
