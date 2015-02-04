@@ -971,6 +971,10 @@ class Movement(models.Model):
                 raise ValueError(_("Item %(item)s is at %(location)s, rather than the move source location!") % \
                         dict(item=unicode(item), location=item.location))
 
+            if item.movements.filter(date_act__gt=self.date_act, state='done').exists():
+               raise ValueError(_("Item #%d %s contains movements on a later date, cannot include it in an " \
+                                   "earlier move from %s") % (item.id, unicode(item), item.location))
+
             if self.location_dest.department \
                         and item.item_template.category.chained_location \
                         and item.item_template.category.chained_location != self.location_dest.template:
