@@ -972,8 +972,11 @@ class Movement(models.Model):
                         dict(item=unicode(item), location=item.location))
 
             if item.movements.filter(date_act__gt=self.date_act, state='done').exists():
-               raise ValueError(_("Item #%d %s contains movements on a later date, cannot include it in an " \
-                                   "earlier move from %s") % (item.id, unicode(item), item.location))
+               raise ValueError(_("Item #%(item_id)d %(item_name)s contains movements on a later date, cannot include it in an " \
+                                   "earlier move from %(location)s") % \
+                                {"item_id": item.id,
+                                 "item_name": unicode(item),
+                                 'location': item.location})
 
             if self.location_dest.department \
                         and item.item_template.category.chained_location \
