@@ -93,6 +93,11 @@ class InventoryGroup(models.Model):
         else:
             return self.date_act.strftime(date_fmt)
 
+    def delete(self, *args, **kwargs):
+        if self.state not in ('draft', 'reject') or self.validate_user:
+            raise models.ProtectedError(_("Cannot delete non-draft inventory: %s") % self, [])
+        return super(InventoryGroup,self).delete(*args, **kwargs)
+
     def clean(self):
         super(InventoryGroup, self).clean()
         if self.state in ('draft', 'pending'):
@@ -222,6 +227,11 @@ class Inventory(models.Model):
         verbose_name = _(u'inventory')
         verbose_name_plural = _(u'inventories')
         permissions = ( ('validate_inventory', 'Can validate an inventory'), )
+
+    def delete(self, *args, **kwargs):
+        if self.state not in ('draft', 'reject') or self.validate_user:
+            raise models.ProtectedError(_("Cannot delete non-draft inventory: %s") % self, [])
+        return super(Inventory,self).delete(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
