@@ -76,6 +76,7 @@ class Command(SyncCommand):
         for item in qset2.all():
             last_location = None
             last_movement = False
+            cannot_reorder = False
             num += 1
             if num % 1000 == 0:
                 logger.info("Processed %d/%d items", num, qcount)
@@ -96,12 +97,15 @@ class Command(SyncCommand):
                                 next_date += timedelta(days=1)
                             if next_date > move.date_val:
                                 logger.info("Cannot reorder move #%d after date=%s , because movement was validated at %s", move.id, next_date, move.date_val)
+                                cannot_reorder = True
                                 continue
                             if move.checkpoint_dest and move.checkpoint_dest.date_act < next_date:
                                 logger.info("Cannot reorder move #%d after date=%s , because movement was checkpointed at %s", move.id, next_date, move.checkpoint_dest.date_val)
+                                cannot_reorder = True
                                 continue
                             if move.items.count() > 1:
                                 logger.info("Cannot reorder move #%d because it contains more items (%d)", move.id, move.items.count())
+                                cannot_reorder = True
                                 continue
                             
                             # fix, move this "move" after "next_move". But don't save yet
@@ -126,8 +130,10 @@ class Command(SyncCommand):
                 for smove in moves_to_save:
                     if self.ask("Re-order movement #%d %s to date %s? "+ result , smove.id, unicode(smove), smove.date_act):
                         smove.save()
+                    else:
+                        cannot_reorder = True
 
-            if last_location != item.location:
+            if last_location != item.location and not cannot_reorder:
                 move_str = ''
                 if last_movement:
                     # movement.id is part of the static question, other details aren't
