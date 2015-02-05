@@ -89,7 +89,6 @@ class Command(SyncCommand):
                     pass
                 else:
                     for i, next_move in enumerate(move_stack):
-                        print "next move:", next_move.location_src, last_location
                         if ((not last_location) and next_move.location_src.usage in ('procurement', 'supplier')) \
                                 or (next_move.location_src == last_location):
                             next_date = next_move.date_act
@@ -109,7 +108,6 @@ class Command(SyncCommand):
                             move.date_act = next_date
                             moves_to_save.append(move)
                             move_stack.insert(i+1, move)
-                            print "push to stack:", move.id, next_date
                             break
                     else:
                         logger.error("Inconsistency! Item #%d %s was jumped locations from %s to %s, among movements:\n\t%s\n\t%s",
