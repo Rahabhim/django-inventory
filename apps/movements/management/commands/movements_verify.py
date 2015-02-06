@@ -117,8 +117,12 @@ class Command(SyncCommand):
                             move_stack.insert(i+1, move)
                             break
                     else:
-                        logger.error("Inconsistency! Item #%d %s was jumped locations from %s to %s, among movements:\n\t%s\n\t%s",
-                                item.id, item, last_location, move.location_src, last_movement or '(start)', move)
+                        try:
+                            logger.error("Inconsistency! Item #%d %s was jumped locations from %s to %s, among movements:\n\t%s\n\t%s",
+                                    item.id, item, last_location, move.location_src, last_movement or '(start)', move)
+                        except UnicodeDecodeError:
+                            # don't let logging errors break the loop
+                            pass
                     # skip this move, continue with next ones in stack
                     continue
 
@@ -143,9 +147,12 @@ class Command(SyncCommand):
                     move_str = " (move: #%d)" % last_movement.id
                 question = "Item #%d %s should be at %s" + move_str + " but is now at %s, fix?"
 
-                if self.ask(question, item.id, item, last_location, item.location):
-                    item.location = last_location
-                    item.save()
+                try:
+                    if self.ask(question, item.id, item, last_location, item.location):
+                        item.location = last_location
+                        item.save()
+                except UnicodeDecodeError:
+                    pass
         return None
 
 
