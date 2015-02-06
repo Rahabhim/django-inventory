@@ -84,6 +84,9 @@ class Command(SyncCommand):
             moves_to_save = []
             while move_stack:
                 move = move_stack.pop(0)
+                if move.state != 'done':
+                    logger.warning("Move #%d in state %s returned by filter", move.id, move.state)
+                    continue
                 if (not last_location) and move.location_src.usage in ('procurement', 'supplier'):
                     pass
                 elif move.location_src == last_location:
