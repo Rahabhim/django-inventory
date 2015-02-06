@@ -59,7 +59,7 @@ class Command(SyncCommand):
         logger.debug("Searching Items with movements and location")
         qset = base_qset.filter(movements__isnull=False, location__isnull=False)
         if self.ask("Process rest of Items (%d), verify movements?", qset.count()):
-            self.process_items(qset.select_for_update())
+            self.process_items(qset)
 
     def process_items(self, qset):
         """Verify that each item in `qset` has movements leading up to its current location
@@ -71,15 +71,24 @@ class Command(SyncCommand):
         if self._limit:
             qset2 = qset2[:self._limit]
 
-        num = 0
-        qcount = qset2.count()
-        for item in qset2.all():
+        def items_iter():
+            all_ids = qset2.values_list('id', flat=True)
+            qcount = len(all_ids)
+            num = 0
+            while all_ids:
+                cur_ids = all_ids[:1000]
+                all_ids = all_ids[1000:]
+                num += len(cur_ids)
+                for item in qset.filter(id__in=cur_ids).select_for_update():
+                    yield item
+                logger.info("Processed %d/%d items", num, qcount)
+
+        real_num = 0
+        for item in items_iter():
             last_location = None
             last_movement = False
             cannot_reorder = False
-            num += 1
-            if num % 1000 == 0:
-                logger.info("Processed %d/%d items", num, qcount)
+            real_num += 1
             move_stack = list(item.movements.filter(state='done').order_by('date_act', 'id'))
             moves_to_save = []
             while move_stack:
@@ -153,6 +162,7 @@ class Command(SyncCommand):
                         item.save()
                 except UnicodeDecodeError:
                     pass
+        logger.info("End, processed %d items", real_num)
         return None
 
 
