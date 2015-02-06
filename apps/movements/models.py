@@ -931,6 +931,11 @@ class Movement(models.Model):
             if chks:
                 self.checkpoint_src = chks[0]
 
+    def delete(self, *args, **kwargs):
+        if self.state  != 'draft' or self.validate_user:
+            raise models.ProtectedError(_("Cannot delete movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
+        return super(Movement,self).delete(*args, **kwargs)
+
     def _close_check(self, skip_name=False):
         all_items = self.items.select_for_update().all()
         all_items_count = all_items.count() # this will trigger the query and lock them early
