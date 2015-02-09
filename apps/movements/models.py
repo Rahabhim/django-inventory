@@ -932,8 +932,8 @@ class Movement(models.Model):
                 self.checkpoint_src = chks[0]
 
     def delete(self, *args, **kwargs):
-        if self.state  != 'draft' or self.validate_user:
-            raise models.ProtectedError(_("Cannot delete movement %(move)s (id: %(mid)s) because it is not in draft state") % dict(move=self.name, mid=self.id))
+        if self.state not in ('draft', 'reject'):
+            raise models.ProtectedError(_("Cannot delete movement because it is not in draft state"), [self,])
         return super(Movement,self).delete(*args, **kwargs)
 
     def _close_check(self, skip_name=False):
