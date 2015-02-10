@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-04 16:26+0200\n"
-"PO-Revision-Date: 2015-02-04 16:28+0200\n"
+"POT-Creation-Date: 2015-02-10 09:59+0200\n"
+"PO-Revision-Date: 2015-02-10 10:01+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: el\n"
@@ -369,7 +369,7 @@ msgstr "Κλοπή"
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:25 models.py:26 models.py:1133
+#: models.py:25 models.py:26 models.py:1138
 msgid "purchase request status"
 msgstr "κατάσταση αίτησης"
 
@@ -401,7 +401,7 @@ msgstr "προέλευση"
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:49 models.py:66 models.py:160 models.py:1134 urls.py:108
+#: models.py:49 models.py:66 models.py:160 models.py:1139 urls.py:108
 msgid "purchase request"
 msgstr "αίτηση προμήθειας"
 
@@ -421,7 +421,7 @@ msgstr "προϊόν"
 msgid "quantity"
 msgstr "Ποσότητα"
 
-#: models.py:72 models.py:1135 urls.py:116
+#: models.py:72 models.py:1140 urls.py:116
 msgid "purchase request item"
 msgstr "γραμμή αίτησης προμήθειας"
 
@@ -429,7 +429,7 @@ msgstr "γραμμή αίτησης προμήθειας"
 msgid "purchase request items"
 msgstr "γραμμές αίτησης προμήθειας"
 
-#: models.py:87 models.py:88 models.py:1136 urls.py:121
+#: models.py:87 models.py:88 models.py:1141 urls.py:121
 msgid "purchase order status"
 msgstr "Κατάσταση Εντολής"
 
@@ -465,7 +465,7 @@ msgstr "Σε επεξεργασία"
 msgid "corresponding department"
 msgstr "Αντίστοιχη Μονάδα"
 
-#: models.py:179 models.py:618 models.py:898 models.py:1138 urls.py:139
+#: models.py:179 models.py:618 models.py:898 models.py:1143 urls.py:139
 #: urls.py:150
 msgid "purchase order"
 msgstr "Εντολή Αγοράς"
@@ -539,7 +539,7 @@ msgid "Cannot add items to this Purchase Order"
 msgstr "Δεν μπορούν να προστεθούν γραμμές σε αυτή την εντολή παραλαβής"
 
 #: models.py:558 models.py:568 models.py:704 models.py:712 models.py:732
-#: models.py:1106 models.py:1121
+#: models.py:1111 models.py:1126
 #, python-format
 msgid "Incorrect object passed: %s"
 msgstr "Λάθος αντικείμενο: %s"
@@ -567,7 +567,7 @@ msgstr ""
 msgid "Cannot delete non-draft purchase order: %s"
 msgstr "Δεν μπορεί να διαγραφεί η ενεργή παραλαβή: %s"
 
-#: models.py:607 models.py:608 models.py:1137 urls.py:170
+#: models.py:607 models.py:608 models.py:1142 urls.py:170
 msgid "purchase order item status"
 msgstr "κατάσταση γραμμής"
 
@@ -591,7 +591,7 @@ msgstr "Σειριακοί Αριθμοί"
 msgid "In group"
 msgstr "Σε ομάδα"
 
-#: models.py:631 models.py:1139 urls.py:177 urls.py:183
+#: models.py:631 models.py:1144 urls.py:177 urls.py:183
 msgid "purchase order item"
 msgstr "γραμμή εντολής προμήθειας"
 
@@ -718,7 +718,13 @@ msgid "A movement cannot have the same source and destination locations!"
 msgstr ""
 "Μια μετακίνηση δεν μπορεί να έχει την ίδια τοποθεσία πηγής με προορισμό!"
 
-#: models.py:939
+#: models.py:936
+msgid "Cannot delete movement because it is not in draft state"
+msgstr ""
+"Δεν γίνεται να επικυρωθεί η κίνηση γιατί δεν είναι "
+"σε πρόχειρη κατάσταση:"
+
+#: models.py:944
 #, python-format
 msgid ""
 "Cannot close movement %(move)s (id: %(mid)s) because it is not in draft state"
@@ -726,19 +732,19 @@ msgstr ""
 "Δεν γίνεται να επικυρωθεί η κίνηση %(move)s (id: %(mid)s) γιατί δεν είναι "
 "πρόχειρη."
 
-#: models.py:941
+#: models.py:946
 msgid "Cannot close movement because it seems already validated!"
 msgstr "Δεν γίνεται να επικυρωθεί η κίνηση γιατί είναι ήδη επικυρωμένη!"
 
-#: models.py:945
+#: models.py:950
 msgid "A movement must have its reference set, before it can be closed"
 msgstr "Για να επικυρωθεί μία μετακίνηση, πρέπει να έχει αρ. πρωτοκόλλου"
 
-#: models.py:947 models.py:1032
+#: models.py:952 models.py:1037
 msgid "Internal error, movement is already checkpointed"
 msgstr "Εσωτερικό λάθος, η κίνηση έχει ήδη τελική απογραφή."
 
-#: models.py:951
+#: models.py:956
 #, python-format
 msgid ""
 "You are not allowed to make any movements before %s, when last inventory was "
@@ -747,40 +753,39 @@ msgstr ""
 "Δεν επιτρέπεται να κάνετε κινήσεις πρίν τις %s, οπότε έγινε η τελευταία "
 "απογραφή."
 
-#: models.py:955
+#: models.py:960
 #, python-format
 msgid "You are not allowed to validate movement in a future date: %s"
 msgstr "Δεν επιτρέπεται να επικυρώσετε μετακίνηση σε μελλοντική ημερομηνία: %s"
 
-#: models.py:959
+#: models.py:964
 msgid "You cannot close a movement with no items selected"
 msgstr "Δεν επιτρέπεται να κλείσει κίνηση χωρίς επιλεγμένο εξοπλισμό."
 
-#: models.py:963
+#: models.py:968
 #, python-format
 msgid "Product %s is not approved, you cannot use it in this movement"
 msgstr ""
 "Το προϊόν %s δεν έχει εγκριθεί, και δεν μπορείτε να το χρησιμοποιήσετε στην "
 "κίνηση αυτή."
 
-#: models.py:971
+#: models.py:976
 #, python-format
 msgid "Item %(item)s is at %(location)s, rather than the move source location!"
 msgstr ""
 "Ο εξοπλισμός %(item)s είναι στο %(location)s, αντί για την τοποθεσία "
 "προέλευσης της κίνησης!"
 
-#: models.py:975
+#: models.py:980
 #, python-format
 msgid ""
 "Item #%(item_id)d %(item_name)s contains movements on a later date, cannot "
 "include it in an earlier move from %(location)s"
 msgstr ""
 "Το #%(item_id)d %(item_name)s έχει μετακινηθεί σε μεταγενέστερη ημερομηνία, "
-"και δεν μπορεί "
-"να περιέχεται στη μετακίνηση από το %(location)s"
+"και δεν μπορεί να περιέχεται στη μετακίνηση από το %(location)s"
 
-#: models.py:984
+#: models.py:989
 #, python-format
 msgid ""
 "Item of category %(category)s cannot be moved into a %(template)s "
@@ -791,11 +796,11 @@ msgstr ""
 "τοποθεσία %(template)s.\n"
 "Τέτοιος εξοπλισμός επιτρέπεται μόνο στην τοποθεσία: %(allow_tmpl)s"
 
-#: models.py:987
+#: models.py:992
 msgid "generic"
 msgstr "γενικό"
 
-#: models.py:1029
+#: models.py:1034
 #, python-format
 msgid ""
 "Cannot reject movement %(move)s (id: %(mid)s) because it is not in open state"
@@ -803,29 +808,29 @@ msgstr ""
 "Δεν γίνεται να απορριφθεί η κίνηση %(move)s (id: %(mid)s) γιατί δεν είναι "
 "πρόχειρη."
 
-#: models.py:1058
+#: models.py:1063
 #, python-format
 msgid "Move from %(src)s to %(dest)s %(name)s"
 msgstr "Μετακίνηση %(name)s από %(src)s προς %(dest)s"
 
-#: models.py:1065
+#: models.py:1070
 #, python-format
 msgid "Movement: %s"
 msgstr "Μετακίνηση: %s"
 
-#: models.py:1101 models.py:1116
+#: models.py:1106 models.py:1121
 msgid "Cannot modify items of this move"
 msgstr "Δεν επιτρέπονται αλλαγές σε αυτή τη μετακίνηση"
 
-#: models.py:1104 models.py:1119
+#: models.py:1109 models.py:1124
 msgid "Cannot modify items of a validated move"
 msgstr "Δεν επιτρέπονται τροποποιήσεις σε μία επικυρωμένη κίνηση."
 
-#: models.py:1109
+#: models.py:1114
 msgid "Item already in movement"
 msgstr "Ο εξοπλισμός είναι ήδη στη μετακίνηση"
 
-#: models.py:1128
+#: models.py:1133
 #, python-format
 msgid "Item %s not in movement!"
 msgstr "Ο εξοπλισμός %s δεν ανήκει στη μετακίνηση!"
