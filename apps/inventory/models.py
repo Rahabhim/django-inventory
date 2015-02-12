@@ -432,7 +432,8 @@ class Inventory(models.Model):
 
     def do_reject(self, user=None):
         if self.state not in ('draft', 'pending'):
-            raise ValidationError(_(u'This inventory is %s, cannot reject.') % self.get_state_display())
+            raise ValidationError(_(u'This inventory (#%(id)d) is %(state)s, cannot reject.') \
+                    % {'id': self.id, 'state': self.get_state_display()})
         self.state = 'reject'
         self.validate_user = user
         self.save()

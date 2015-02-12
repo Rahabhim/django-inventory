@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-10 09:59+0200\n"
-"PO-Revision-Date: 2015-02-10 10:00+0200\n"
+"POT-Creation-Date: 2015-02-12 18:40+0200\n"
+"PO-Revision-Date: 2015-02-12 18:41+0200\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: el\n"
@@ -145,7 +145,7 @@ msgstr "κατάσταση"
 msgid "Signed file"
 msgstr "Υπογεγραμμένο αρχείο"
 
-#: models.py:85 models.py:227 models.py:460 urls.py:64 urls.py:67 urls.py:70
+#: models.py:85 models.py:227 models.py:461 urls.py:64 urls.py:67 urls.py:70
 #: views.py:122
 msgid "inventory"
 msgstr "απογραφή"
@@ -238,32 +238,32 @@ msgstr ""
 "Δεν μπορείτε να επικυρώσετε απογραφή για τις %s, γιατί υπάρχουν οριστικές "
 "κινήσεις από/προς την τοποθεσία αυτή σε μεταγενέστερες ημερομηνίες."
 
-#: models.py:435 views.py:212
+#: models.py:435
 #, python-format
-msgid "This inventory is %s, cannot reject."
-msgstr "Η απογραφή είναι %s, δεν μπορεί να ακυρωθεί."
+msgid "This inventory (#%(id)d) is %(state)s, cannot reject."
+msgstr "Η απογραφή (#%(id)d) είναι %(state)s, δεν μπορεί να ακυρωθεί."
 
-#: models.py:442
+#: models.py:443
 msgid "asset"
 msgstr "εξοπλισμός"
 
-#: models.py:443 views.py:47 views.py:78
+#: models.py:444 views.py:47 views.py:78
 msgid "quantity"
 msgstr "Ποσότητα"
 
-#: models.py:444
+#: models.py:445
 msgid "item state"
 msgstr "κατάσταση"
 
-#: models.py:446
+#: models.py:447
 msgid "notes"
 msgstr "σημειώσεις"
 
-#: models.py:449 urls.py:81
+#: models.py:450 urls.py:81
 msgid "inventory item"
 msgstr "Εξοπλισμός"
 
-#: models.py:450
+#: models.py:451
 msgid "inventory items"
 msgstr "Εξοπλισμός"
 
@@ -340,11 +340,16 @@ msgstr ""
 msgid "Are you sure you want to reject inventory: %s?"
 msgstr "Θέλετε σίγουρα να ακυρώσετε την απογραφή: %s;"
 
+#: views.py:212
+#, python-format
+msgid "This inventory is %s, cannot reject."
+msgstr "Η απογραφή είναι %s, δεν μπορεί να ακυρωθεί."
+
 #: views.py:218
 msgid "Your active role does not have permission to reject an inventory"
 msgstr "Ο ενεργός σας ρόλος δεν έχει δικαίωμα απόρριψης της απογραφής"
 
-#: views.py:229
+#: views.py:230
 msgid "The inventory has been marked as rejected, it will no longer be used."
 msgstr ""
 "Η απογραφή ακυρώθηκε, θα μείνει στη βάση αλλά δεν θα υπολογίζεται σε καμία "
