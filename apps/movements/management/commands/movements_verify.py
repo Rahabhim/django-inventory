@@ -15,6 +15,8 @@ class Command(SyncCommand):
     def create_parser(self, prog_name, subcommand):
         parser = super(Command, self).create_parser(prog_name, subcommand)
         parser.add_option('--offset', type=int, help="Offset of items to process")
+        parser.add_option('--long-verify', action="store_true", default=False,
+                          help="Perform the long part, checking each movement")
         return parser
 
     def handle(self, *args, **options):
@@ -58,7 +60,8 @@ class Command(SyncCommand):
 
         logger.debug("Searching Items with movements and location")
         qset = base_qset.filter(movements__isnull=False, location__isnull=False)
-        if self.ask("Process rest of Items (%d), verify movements?", qset.count()):
+        if options['long_verify'] \
+                or self.ask("Process rest of Items (%d), verify movements?", qset.count()):
             self.process_items(qset)
 
     def process_items(self, qset):
