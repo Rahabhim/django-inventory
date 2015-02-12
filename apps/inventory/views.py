@@ -225,10 +225,16 @@ def inventory_reject(request, object_id):
         return redirect('inventory_group_view', object_id=object_id)
 
     if request.method == 'POST':
-        inventory.do_reject(request.user)
-        msg = _(u'The inventory has been marked as rejected, it will no longer be used.')
-        messages.success(request, msg, fail_silently=True)
-        return redirect(inventory.get_absolute_url())
+        try:
+            inventory.do_reject(request.user)
+            msg = _(u'The inventory has been marked as rejected, it will no longer be used.')
+            messages.success(request, msg, fail_silently=True)
+            return redirect(inventory.get_absolute_url())
+        except ValidationError, e:
+            transaction.rollback()
+            for msg in e.messages:
+                messages.error(request, msg, fail_silently=True)
+            return redirect('inventory_group_view', object_id=object_id)
 
     return render_to_response('generic_confirm.html', data, context_instance=RequestContext(request))
 
