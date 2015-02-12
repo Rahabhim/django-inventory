@@ -8,6 +8,7 @@ from company.management.commands.misc import verbosity_levels, SyncCommand, Comm
 from assets.models import Item
 from common.models import Location
 from datetime import timedelta
+from django.db import transaction
 
 class Command(SyncCommand):
     help = 'Verify/analyze Item movements with their location'
@@ -64,7 +65,19 @@ class Command(SyncCommand):
                 or self.ask("Process rest of Items (%d), verify movements?", qset.count()):
             self.process_items(qset)
 
+    @transaction.commit_manually
     def process_items(self, qset):
+        try:
+            self._process_items(qset)
+            transaction.commit()
+        except Exception:
+            transaction.rollback()
+            raise
+        except KeyboardInterrupt:
+            transaction.rollback()
+            raise
+
+    def _process_items(self, qset):
         """Verify that each item in `qset` has movements leading up to its current location
         """
         logger = logging.getLogger('command')
@@ -85,6 +98,7 @@ class Command(SyncCommand):
                 for item in qset.filter(id__in=cur_ids).select_for_update():
                     yield item
                 logger.info("Processed %d/%d items", num, qcount)
+                transaction.commit()
 
         real_num = 0
         for item in items_iter():
