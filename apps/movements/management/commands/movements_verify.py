@@ -7,6 +7,7 @@ from company.management.commands.misc import verbosity_levels, SyncCommand, Comm
 
 from assets.models import Item
 from common.models import Location
+from movements.models import Movement
 from datetime import timedelta
 from django.db import transaction
 
@@ -64,6 +65,10 @@ class Command(SyncCommand):
         if options['long_verify'] \
                 or self.ask("Process rest of Items (%d), verify movements?", qset.count()):
             self.process_items(qset)
+
+        if options['long_verify'] \
+                or self.ask("Scan %d draft movements for displaced items?", Movement.objects.filter(state='draft').count()):
+            self._process_draft_moves()
 
     @transaction.commit_manually
     def process_items(self, qset):
@@ -136,7 +141,7 @@ class Command(SyncCommand):
                                 logger.info("Cannot reorder move #%d because it contains more items (%d)", move.id, move.items.count())
                                 cannot_reorder = True
                                 continue
-                            
+
                             # fix, move this "move" after "next_move". But don't save yet
                             move.date_act = next_date
                             moves_to_save.append(move)
@@ -182,5 +187,43 @@ class Command(SyncCommand):
         logger.info("End, processed %d items", real_num)
         return None
 
+    @transaction.commit_manually
+    def _process_draft_moves(self):
+        logger = logging.getLogger('command')
+        try:
+            procurement_locations = Location.objects.filter(usage__in=('procurement', 'supplier')) \
+                        .values_list('id', flat=True)
+
+            fixed_moves = []
+            nmove = 0
+            logger.debug("procurement locations: %r", procurement_locations)
+            for move in Movement.objects.filter(state='draft'):
+                nmove += 1
+                if (nmove % 100) == 0:
+                    logger.info("Processed %d moves", nmove)
+                iqset = move.items.select_for_update()\
+                        .exclude(location=move.location_src)
+                if move.location_src.id in procurement_locations:
+                    iqset = iqset.exclude(location__isnull=True)
+
+                displaced_items = list(iqset.all())
+                if displaced_items and self.ask("Move #%d contains %d items not in %s, clear them?",
+                                                move.id, len(displaced_items), move.location_src):
+                    move.items.remove(*displaced_items)
+                    fixed_moves.append(move.id)
+                transaction.commit()
+
+            if fixed_moves:
+                empty_moves = Movement.objects.filter(id__in=fixed_moves, items__isnull=True)
+                if empty_moves.exists() and self.ask("Out of %d fixed moves, %d are left empty, delete?",
+                                                     len(fixed_moves), empty_moves.count()):
+                    empty_moves.delete()
+            transaction.commit()
+        except Exception:
+            transaction.rollback()
+            raise
+        except KeyboardInterrupt:
+            transaction.rollback()
+            raise
 
 #eof
