@@ -182,7 +182,7 @@ class InventoryGroup(models.Model):
             pending_invs.append(inv)
 
         for inv in pending_invs:
-            inv.do_close(val_user, val_date)
+            inv.do_close(val_user, val_date, perform_check=False)
 
         self.state = 'done'
         self.date_val = val_date
@@ -409,7 +409,7 @@ class Inventory(models.Model):
 
         return True
 
-    def do_close(self, val_user, val_date=None):
+    def do_close(self, val_user, val_date=None, perform_check=True):
         """Validate the inventory and fix Item quantities
 
             After a validation, no more Movements will be allowed for the
@@ -422,7 +422,8 @@ class Inventory(models.Model):
         if val_date is None:
             val_date = datetime.date.today()
         # Check that this inventory can be closed
-        self._close_check(val_user, val_date)
+        if perform_check:
+            self._close_check(val_user, val_date)
 
         # Mark the inventory as closed
         self.state = 'done'
