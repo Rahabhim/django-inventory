@@ -151,6 +151,8 @@ def role_from_request(request):
         return False
 
 def fmt_date(ddate):
+    if not ddate:
+        return ''
     try:
         return ddate.strftime(DATE_FMT_FORMAT)
     except ValueError:
