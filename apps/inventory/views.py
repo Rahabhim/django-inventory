@@ -14,7 +14,7 @@ from django.views.generic.list_detail import object_list
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied, ValidationError
 
 from common.models import Supplier
-from common.api import role_from_request
+from common.api import role_from_request, fmt_date
 
 from models import Inventory, InventoryGroup
 
@@ -51,6 +51,18 @@ def inventory_view(request, object_id):
     },
     context_instance=RequestContext(request))
 
+class _NameWrapper:
+    """ Wrap an inventory object, use its location name (only) as a display string
+    """
+    def __init__(self, inv):
+        self.inv = inv
+
+    def __unicode__(self):
+        return self.inv.location.name
+
+    def get_absolute_url(self):
+        return self.inv.get_absolute_url()
+
 def inventory_group_view(request, object_id):
     inventory = get_object_or_404(InventoryGroup, pk=object_id)
     form = InventoryForm_view(instance=inventory)
@@ -65,23 +77,38 @@ def inventory_group_view(request, object_id):
 
     supplies_list = [{'item_template':x, 'qty':y} for x,y in asset_qty.items()]
 
-    return render_to_response('generic_detail.html', {
+
+    view_data = {
         'title':_(u'Inventory details'),
         'object':inventory,
         'form':form,
-        'subtemplates_dict':[
-            {
+        'subtemplates_dict': [],
+        }
+
+    if request.user.is_superuser:
+        view_data['subtemplates_dict'].append({
+                'name': 'generic_list_subtemplate.html',
+                'title': _('included location inventories'),
+                'object_list': [ {'inventory': _NameWrapper(inv), 'state': inv.get_state_display(), \
+                                  'date_act': fmt_date(inv.date_act), 'date_val': fmt_date(inv.date_val) } \
+                                for inv in inventory.inventories.all()],
+                'main_object': 'inventory',
+                'extra_columns': [ {'name': _('date performed'), 'attribute': 'date_act'},
+                                   {'name': _('state'), 'attribute': 'state'},
+                                   {'name': _('date validated'), 'attribute': 'date_val'},
+                                 ],
+                })
+
+    view_data['subtemplates_dict'].append( {
                 'name':'generic_list_subtemplate.html',
                 'title':_(u'current balances for inventory'),
                 'object_list':supplies_list,
                 'main_object':'item_template',
                 'extra_columns':[{'name':_(u'quantity'),'attribute':'qty'}],
 
-            }
-        ]
-    },
-    context_instance=RequestContext(request))
-
+            })
+    return render_to_response('generic_detail.html', view_data,
+                              context_instance=RequestContext(request))
 
 def supplier_purchase_orders(request, object_id):
     supplier = get_object_or_404(Supplier, pk=object_id)
