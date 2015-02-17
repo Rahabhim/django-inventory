@@ -172,10 +172,16 @@ class InventoryGroup(models.Model):
                                     fmt_date(val_date))
 
         # Check them all, before any of them is written to
+        pending_invs = []
         for inv in self.inventories.all():
+            if inv.state == 'done' and inv.validate_user == val_user \
+                        and inv.date_val > self.date_act:
+                # already closed by us, we can skip and do the rest
+                continue
             inv._close_check(val_user, val_date)
+            pending_invs.append(inv)
 
-        for inv in self.inventories.all():
+        for inv in pending_invs:
             inv.do_close(val_user, val_date)
 
         self.state = 'done'
