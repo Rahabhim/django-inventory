@@ -958,7 +958,7 @@ class Movement(models.Model):
 
         if self.date_act > datetime.date.today():
             raise ValueError(_("You are not allowed to validate movement in a future date: %s") %\
-                        fmt_date(self.checkpoint_src.date_act))
+                        fmt_date(self.date_act))
 
         if not all_items_count:
             raise ValueError(_("You cannot close a movement with no items selected"))
