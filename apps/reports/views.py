@@ -218,6 +218,14 @@ class CJFilter(object):
     def getResults(self, request, **kwargs):
         raise NotImplementedError(self.__class__.__name__)
 
+    def q_inverse(self, qry):
+        if isinstance(qry, models.Q):
+            return ~qry
+        elif isinstance(qry, dict):
+            return ~models.Q(**qry)
+        else:
+            raise NotImplementedError
+
 def DynGroup(dinput, cols):
     """Aggregate rows in `dinput` by their distinct `cols` values, sum "count" column
     """
@@ -301,7 +309,7 @@ class CJFilter_Model(CJFilter):
                 else:
                     order_by2.append((o+'.', o))
         if domain:
-            if isinstance(domain, list) and domain[0] == 'in':
+            if isinstance(domain, list) and domain[0] in ('in', 'not in'):
                 extras = []
                 flt = self._calc_domain(request, domain[1], extras)
                 for e in extras:
@@ -309,7 +317,10 @@ class CJFilter_Model(CJFilter):
                     objects = objects.extra(**e)
                 if flt:
                     assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
-                    objects = objects.filter(flt)
+                    if domain[0] == 'not in':
+                        objects = objects.exclude(flt)
+                    else:
+                        objects = objects.filter(flt)
 
                 objects = objects.distinct()
             else:
@@ -519,7 +530,9 @@ class CJFilter_Model(CJFilter):
             return { name+'__pk': domain[2] }
         elif domain[1] == 'in' and all([isinstance(x, (long, int)) for x in domain[2]]):
             return { name+'__pk__in': domain[2] }
-        elif domain[1] == 'in':
+        elif domain[1] == 'not in' and all([isinstance(x, (long, int)) for x in domain[2]]):
+            return ~models.Q(**{ name+'__pk__in': domain[2] })
+        elif domain[1] in ('in', 'not in'):
             objects = self._model_inst.objects.using(router.db_for_read(self._model_inst, cluster='reports'))
             extras = []
             if getattr(objects, 'by_request', None):
@@ -532,7 +545,10 @@ class CJFilter_Model(CJFilter):
                 objects = objects.extra(**e)
             if flt:
                 assert isinstance(flt, models.Q), "bad result from _calc_domain(): %r" % flt
-                objects = objects.filter(flt)
+                if domain[1] == 'not in':
+                    objects = objects.exclude(flt)
+                else:
+                    objects = objects.filter(flt)
             return { name + '__in': objects }
         else:
             raise ValueError("Invalid operator for model: %r" % domain[1])
@@ -898,6 +914,27 @@ class CJFilter_contains(CJFilter):
                 return all_extras
             else:
                 return self.sub_filter.getQuery(request, name2, [domain[0], 'in', [domain[2]]])
+        elif domain[1] == '!=':
+            if (domain[2] is True) or (domain[2] is False):
+                return { name + '__isnull': domain[2]}
+            elif not isinstance(domain[2], (list, tuple)):
+                raise TypeError("RHS must be list, not %r" % domain[2])
+            name2 = name
+            if self.name_suffix:
+                name2 += '__' + self.name_suffix
+            if domain[2][0] in self.fields:
+                # count on unconditional sub-query
+                dom = domain[2]
+                sq = self.sub_filter.getQuery(request, name2, True)
+                qset = sq.pop(name2+'__in')
+                assert not sq, "bad query: %r" % sq.keys()
+                base_extra_qry = ExtraQuery(qset.query, self.related_name)
+                all_extras = []
+                for eq in self.fields[dom[0]].setExtraQuery(dom, base_extra_qry):
+                    all_extras.append(eq)
+                return self.q_inverse(all_extras)
+            else:
+                return self.q_inverse(self.sub_filter.getQuery(request, name2, [domain[0], 'in', [domain[2]]]))
         elif domain[1] == 'in':
             # multiple criteria, possibly a '_count'
             return self._getQuery_in(request, name, domain[0], domain[2])

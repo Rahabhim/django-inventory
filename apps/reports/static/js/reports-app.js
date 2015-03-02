@@ -71,11 +71,32 @@ if (typeof String.prototype.startsWith != 'function') {
                             var dom2 = dfn(rt2, n2);
                             if (dom2 && dom2.length){
                                 if (dom2[0] == '&') {
+                                    var negate = false;
                                     angular.forEach(dom2[1], function(dom3) {
+                                        if (dom3 == '!'){
+                                            negate = true;
+                                            return;
+                                        }
+                                        if (negate){
+                                          if (angular.isArray(dom3) && dom3.length > 1)
+                                              dom.push([n2, 'not in', dom3]);
+                                          else
+                                              dom.push([n2, '!=',].concat(dom3));
+                                          negate = false; // reset
+                                          return;
+                                        }
                                         if (angular.isArray(dom3) && dom3.length > 1)
-                                            dom.push([n2,'in', dom3]);
+                                            dom.push([n2, 'in', dom3]);
                                         else
                                             dom.push([n2, '=',].concat(dom3));
+                                        });
+                                }
+                                else if (dom2[0] == '!&') {
+                                    angular.forEach(dom2[1], function(dom3) {
+                                        if (angular.isArray(dom3) && dom3.length > 1)
+                                            dom.push([n2, 'not in', dom3]);
+                                        else
+                                            dom.push([n2, '!=',].concat(dom3));
                                         });
                                 }
                                 else if (dom2[0] == '&in') {
@@ -94,9 +115,13 @@ if (typeof String.prototype.startsWith != 'function') {
                                 }
                             });
                         if ((dom.length == 1) && (dom[0][0] == '_'))
-                            return [ '=', dom[0][2]];
-                        if (dom.length)
-                            return ['in', dom];
+                            return [ rt.data_op || '=', dom[0][2]];
+                        if (dom.length){
+                            if (rt.data_op == '!=' )
+                                return ['not in', dom];
+                            else
+                                return ['in', dom];
+                        }
                         return false;
                     },
                 'char': function(rt, name) {
@@ -135,7 +160,7 @@ if (typeof String.prototype.startsWith != 'function') {
                     },
                 'selection': function(rt, name) {
                         if (rt.data)
-                            return ['=', rt.data];
+                            return [rt.data_op || '=', rt.data];
                     },
                 'attribs': function(rt, name) {
                         if (!rt.data)
@@ -172,6 +197,10 @@ if (typeof String.prototype.startsWith != 'function') {
                             if (dom2[0] == 'in' || dom2[0] == '='){
                                 rdom.push(dom2[1]) ;
                             }
+                            else if (dom2[0] == 'not in') {
+                                rdom.push('!');
+                                rdom.push(dom2[1]);
+                            }
                             else if (dom2[0] == '&') {
                                 angular.forEach(dom2[1], function(dom3) {
                                     rdom.push(dom3);
@@ -180,7 +209,10 @@ if (typeof String.prototype.startsWith != 'function') {
                             else
                                 $log.warn("Cannot use domain", dom2, "for", name);
                             });
-                        return ['&', rdom];
+                        if (rt.data_op == '!=')
+                            return ['!&', rdom];
+                        else
+                            return ['&', rdom];
                     },
                 'isset': function(rt, name) {
                         if (rt.data){
@@ -339,6 +371,7 @@ if (typeof String.prototype.startsWith != 'function') {
                                         title: data.title,
                                         notes: data.notes,
                                         show_detail: data.data.show_detail,
+                                        data_op: data.data.data_op,
                                         limit: data.data.limit,
                                         preview_limit: data.data.preview_limit || 10
                                         };
@@ -422,6 +455,7 @@ if (typeof String.prototype.startsWith != 'function') {
                                         'data': {'groups': reportGroups,
                                                 'fields': getFieldData($scope.report.fields),
                                                 'show_detail': $scope.report.show_detail,
+                                                'data_op': $scope.report.data_op,
                                                 'limit': $scope.report.limit,
                                                 'preview_limit': $scope.report.preview_limit
                                                 },

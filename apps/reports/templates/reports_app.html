@@ -296,6 +296,10 @@
 {% block web_theme_footer %}
     {{ block.super }}
 <script type="text/ng-template" id="parts/field-model.html">
+    <span ng-switch="field.data_op">
+        <span ng-switch-when="!=" ng-dblclick="field.data_op='='">[[ field.data_op ]] </span>
+        <span ng-switch-default ng-dblclick="field.data_op='!='">[[ field.data_op  || '=']] </span>
+    </span>
     <dl ng-repeat="field in field.fields|seqSort">
         <dt ng-click="field.expanded = !field.expanded">
             <span class="famfam active" ng-class="{'famfam-wrench': field.expanded, 'famfam-resultset_next': !field.expanded}"></span>
