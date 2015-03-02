@@ -107,9 +107,10 @@ class ItemNode(Node):
     def do_choices(self, field):
         ret = (field.prepare_value(self._obj), field.label_from_instance(self._obj))
         if self._children:
-            ret = [ ret[1], [ ]]
+            oret = ret
+            ret = [ oret[1], [ ]]
             if self.selectable:
-                ret[1].append((ret[0], ret[1]))
+                ret[1].append((oret[0], oret[1]))
             for cc in self._children:
                 ret[1].append(cc.do_choices(field))
         return ret
