@@ -1487,6 +1487,7 @@ def reports_app_view(request, object_id=None):
     avail = filter(lambda r: r['id'] in allowed_types, _reports_cache['available_types'])
     return render(request, 'reports_app.html',
             {'available_types': SafeString(json.dumps(avail, cls=JsonEncoderS)),
+             'DEVELOPMENT': settings.DEVELOPMENT,
             })
 
 def report_details_view(request, pk=False):
