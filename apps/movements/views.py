@@ -867,7 +867,7 @@ def purchase_order_analyze(request, object_id):
             print_detail(po, excess_items)
 
     except ValueError, ve:
-        log.warning("Cannot map items for PO %#d: %s", po.id, ve)
+        log.warning("Cannot map items for PO #%d: %s", po.id, ve)
 
     return render(request, 'po_analyze.html',
                       {'purchase_order': po, 'logger': log })
