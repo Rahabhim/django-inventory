@@ -663,8 +663,12 @@ class CJFilter_String(CJFilter):
         if isinstance(domain, (list, tuple)) and len(domain) == 3:
             if domain[1] == '=':
                 return { domain[0]: domain[2] }
+            elif domain[1] == '!=':
+                return self.q_inverse({ domain[0]: domain[2] })
             elif domain[1] in ('contains', 'icontains'):
                 return {domain[0]+'__' + domain[1]: domain[2]}
+            elif domain[1] in ('not contains', 'not icontains'):
+                return self.q_inverse({domain[0]+'__' + domain[1][4:]: domain[2]})
         raise TypeError("Bad domain: %r", domain)
 
 def to_date(d):

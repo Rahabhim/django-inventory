@@ -323,6 +323,15 @@
 </script>
 
 <script type="text/ng-template" id="parts/field-char.html">
+    {% if request.user.is_staff or request.user.is_superuser %}
+    <select ng-model="field.data_op">
+        <option value="icontains"> ilike </option>
+        <option value="contains"> like </option>
+        <option value="="> = </option>
+        <option value="!="> != </option>
+        <option value="not icontains"> not like </option>
+    </select>
+    {% endif %}
     <input type="text" ng-model="field.data"></input>
 </script>
 
