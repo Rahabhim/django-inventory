@@ -938,6 +938,8 @@ class CJFilter_contains(CJFilter):
         elif domain[1] == 'in':
             # multiple criteria, possibly a '_count'
             return self._getQuery_in(request, name, domain[0], domain[2])
+        elif domain[1] == 'not in':
+            return self.q_inverse(self._getQuery_in(request, name, domain[0], domain[2]))
         elif domain[1] == '&':
             # this is a list of "in"-like sub-expressions
             if len(domain[2]) == 1:
