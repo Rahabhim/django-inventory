@@ -154,9 +154,9 @@ class SubItemsDetailWidget(ColumnsDetailWidget):
     order_by = 'item_template__category__name'
 
 class MovementForm_view(DetailForm):
-    location_src = forms.ModelChoiceField(queryset=active_locations,
+    location_src = forms.ModelChoiceField(queryset=Location.objects.all(),
                 widget=DetailPlainForeignWidget, label=_("Source location"))
-    location_dest = forms.ModelChoiceField(queryset=active_locations,
+    location_dest = forms.ModelChoiceField(queryset=Location.objects.all(),
                 widget=DetailPlainForeignWidget, label=_("Destination location"))
 
     items = forms.ModelMultipleChoiceField(Item.objects.all(), required=False,
