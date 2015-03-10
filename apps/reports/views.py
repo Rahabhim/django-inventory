@@ -1461,6 +1461,7 @@ movements_filter = CJFilter_Model('movements.Movement', title=_("movements"),
     )
 
 department_filter_full = department_filter.copy(fields_add={
+            'deprecate': CJFilter_Boolean(title=_("deprecate"), staff_only=True),
             'inventorygroup': CJFilter_contains(inventories_filter.copy(fields_add={'department': None}),
                                 set_suffix=True,
                                 related_name='department',
