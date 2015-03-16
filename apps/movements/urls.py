@@ -39,6 +39,9 @@ from views_po_wizard import PO_Wizard, PO_MassWizard
 state_filter = {'name':'state', 'title': _(u'state'),
             'choices':'movements.Movement.state' , 'destination':'state'}
 
+repair_state_filter = {'name':'state', 'title': _(u'state'),
+            'choices':'movements.RepairOrder.state' , 'destination':'state'}
+
 stype_filter = {'name':'stype', 'title':_(u'type'),
             'choices':'movements.Movement.stype' , 'destination':'stype',
             'condition': user_is_staff }
@@ -46,6 +49,8 @@ stype_filter = {'name':'stype', 'title':_(u'type'),
 po_department_filter = {'name': 'dept', 'title': _('department'),
             'condition': user_is_staff,
             'destination': lambda q: Q(department__in=Department.objects.filter(_department_filter_q(q)))}
+
+ro_department_filter = po_department_filter # RepairOrder has same semantics as PurchaseOrder
 
 location_io_filter = {'name': 'location_src', 'title': _('Location'), 
             'destination': make_mv_location('location_src', 'location_dest')}
@@ -293,7 +298,7 @@ urlpatterns = patterns('movements.views',
                 ),
             name='repair_order_view'),
     url(r'^objects/repair/list/$', views.RepairOrderListView.as_view( \
-                    list_filters=[],),
+                    list_filters=[ro_department_filter, repair_state_filter],),
             name='repair_order_list'),
     url(r'^objects/repair/pending_list/$', views.RepairOrderListView.as_view( \
                     queryset=lambda r: RepairOrder.objects.by_request(r).filter(state__in=('draft', 'pending')),
