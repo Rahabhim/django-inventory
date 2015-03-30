@@ -567,7 +567,7 @@ class PO_Step5(WizardForm):
         else:
             dept = Department.objects.filter(deprecate=False, location__isnull=False)[:1][0]
             logger.debug("Using an arbitrary department: #%s %s !", dept.id, dept.name)
-        self.fields['location'].queryset = Location.objects.filter(active=True, department=dept)
+        self.fields['location'].queryset = Location.objects.filter(active=True, department=dept, usage='internal')
 
     def save_data(self, wizard):
         # Mostly copied from views.purchase_order_receive
