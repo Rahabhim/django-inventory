@@ -954,7 +954,7 @@ class Movement(models.Model):
         self.clean()
         if self.checkpoint_src and self.date_act < self.checkpoint_src.date_val:
             raise ValueError(_("You are not allowed to make any movements before %s, when last inventory was validated") %\
-                        fmt_date(self.checkpoint_src.date_act))
+                        fmt_date(self.checkpoint_src.date_val))
 
         if self.date_act > datetime.date.today():
             raise ValueError(_("You are not allowed to validate movement in a future date: %s") %\
