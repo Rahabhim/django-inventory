@@ -64,7 +64,7 @@ class ItemManager(models.Manager):
                 if role:
                     return self.filter(location__department__in=role.departments)
                 else:
-                    return self.filter(location__department__in=request.user.dept_roles.values_list('department', flat=True))
+                    return self.filter(location__department__in=list(request.user.dept_roles.values_list('department', flat=True)))
         except Exception:
             logger.exception("cannot filter:")
         return self.none()
