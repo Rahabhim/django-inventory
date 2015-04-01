@@ -533,12 +533,14 @@ class CJFilter_Model(CJFilter):
         elif domain[1] == 'not in' and all([isinstance(x, (long, int)) for x in domain[2]]):
             return ~models.Q(**{ name+'__pk__in': domain[2] })
         elif domain[1] in ('in', 'not in'):
-            objects = self._model_inst.objects.using(router.db_for_read(self._model_inst, cluster='reports'))
+            objects = self._model_inst.objects
             extras = []
             if getattr(objects, 'by_request', None):
                 objects = objects.by_request(request)
             else:
                 objects = objects.all()
+            objects = objects.using(router.db_for_read(self._model_inst, cluster='reports'))
+
             flt = self._calc_domain(request, domain[2], extras)
             for e in extras:
                 QryPlaceholder.trans_params(e, objects.query)
