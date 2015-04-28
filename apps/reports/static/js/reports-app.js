@@ -1114,9 +1114,16 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.addToField = function(dragItem, fld_after) {
                 if (!dragItem)
                     return false;
-                if (dragItem.full_path.indexOf('.') != -1)
+                if (dragItem.full_path.indexOf('.') != -1){
+                    var pfield = false;
+                    angular.forEach($scope.fmtTable, function(ffield){
+                        if (dragItem.full_path.startsWith(ffield.full_path + '.')
+                                && (ffield.full_path.indexOf('.') == -1))
+                            pfield = ffield;
+                            });
                     // a sub_field can only be appended to its parent field
-                    return $scope.addToGroup(fld_after, dragItem);
+                    return $scope.addToGroup(pfield, dragItem, fld_after);
+                    }
 
                 if (dragItem.fmt && dragItem.fmt.hide)
                         dragItem.fmt.hide = false;
@@ -1185,7 +1192,7 @@ if (typeof String.prototype.startsWith != 'function') {
 
     var _calc_result_fields = function($scope,
                                 req_fields, field_cols, groupped_fields, order_by ){
-            var calc_get_fields = function(field, key) {
+            var calc_get_fields = function(field, key, sub_fields) {
                 if (field.hide || (field.widget == 'isset'))
                     return;
                 var req2 = this.req;
@@ -1234,10 +1241,20 @@ if (typeof String.prototype.startsWith != 'function') {
                 if (field.fields)
                     angular.forEach(field.fields, function(field2, sf_name) {
                         var b = {req:false, ggroup: ggroup};
-                        if (field.fmt && field.fmt.sub_fields
-                                && (field.fmt.sub_fields.indexOf(sf_name) >=0))
-                            b.req = true;
-                        angular.bind(b, calc_get_fields)(field2, sf_name);
+                        var o_sfields = [], i_sfields = [];
+                        if (field.fmt && field.fmt.sub_fields)
+                            angular.extend(o_sfields, field.fmt.sub_fields);
+                        if (sub_fields)
+                            angular.extend(o_sfields, sub_fields);
+                        angular.forEach(o_sfields, function(sf){
+                                if (sf == sf_name)
+                                    b.req = true;
+                                if (sf.startsWith(sf_name + '.')) {
+                                    b.req = true;
+                                    i_sfields.push(sf.substr(sf_name.length+1));
+                                    }
+                                });
+                        angular.bind(b, calc_get_fields)(field2, sf_name, i_sfields);
                         });
                 };
 
