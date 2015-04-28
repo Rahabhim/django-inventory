@@ -727,6 +727,8 @@ if (typeof String.prototype.startsWith != 'function') {
                     'extra_condition': function(field) {
                         // it is only used for display
                         return field.fmt.title || "";
+                        },
+                     'null': function(field) {
                         }
                 };
             formatFns['model-product'] = formatFns['model'];
@@ -734,7 +736,7 @@ if (typeof String.prototype.startsWith != 'function') {
             $scope.formatParmsData = function(field) {
                     var fn = formatFns[field.widget];
                     if (!fn)
-                        $log.debug("No format function for", field.widget);
+                        $log.debug("No format function for", field.name, field.widget);
                     else
                         return fn(field);
                 };
