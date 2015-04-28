@@ -8,13 +8,17 @@
 {% endblock %}
 
 {% block web_theme_javascript %}
+{% if DEVELOPMENT %}
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/angular.js"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/ui-bootstrap-tpls-0.10.0.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/f3-movable.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/f3-draggable.js"></script>
+    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/reports-app.js"></script>
+{% else %}
     <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/angular.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/ui-bootstrap-tpls-0.10.0.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/f3-movable.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/f3-draggable.min.js"></script>
-{% if DEVELOPMENT %}
-    <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/reports-app.js"></script>
-{% else %}
     <script type="text/javascript" charset="utf-8" src="{{ STATIC_URL }}js/reports-app.min.js"></script>
 {% endif %}
 {% endblock %}
