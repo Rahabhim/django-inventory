@@ -30,7 +30,7 @@ class SavedReport(models.Model):
 
     class Meta:
         ordering = ('title', 'owner') # first one is also selected in bloated view
-        permissions = ( ('full_grammar', 'Use the full grammar of reporting'), )
+        permissions = ( _('full_grammar', 'Use the full grammar of reporting'), )
         verbose_name = _(u'saved report')
         verbose_name_plural = _(u'saved reports')
         unique_together = (('owner', 'title'),)
