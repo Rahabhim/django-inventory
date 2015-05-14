@@ -518,9 +518,13 @@ class CJFilter_Model(CJFilter):
                 objects = objects.order_by(*[o.replace('.', '__') for o in order_by])
             if limit:
                 objects = objects[:limit]
-            detailed_results = objects.values('id', *fields2)
-            for fn, _post_fn in post_fns.items():
-                _post_fn(fn, detailed_results, objects)
+            if count:
+                detailed_results = objects.values('id', *fields2)
+                for fn, _post_fn in post_fns.items():
+                    _post_fn(fn, detailed_results, objects)
+            else:
+                # when count is zero, 'objects' may be a dummy object, a list
+                detailed_results = self._model_inst.objects.none()
             return detailed_results, count
 
     def getQuery(self, request, name, domain):
