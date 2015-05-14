@@ -18,7 +18,7 @@ import csv
 import re
 
 from models import SavedReport
-from common.api import user_is_staff, fmt_date
+from common.api import user_is_staff, fmt_date, _context_has_perm, role_from_request
 import logging
 
 # ------ Utility classes ------
@@ -32,6 +32,21 @@ class JsonEncoderS(json.JSONEncoder):
         elif isinstance(obj, datetime.date):
             return obj.strftime('%Y-%m-%d')
         return super(JsonEncoderS, self).default(obj)
+
+def user_full_grammar(obj, context):
+    try:
+        role = False
+        if 'request' in context:
+            if context['user'].is_staff:
+                return True
+            role = role_from_request(context['request'])
+            if role.has_perm('reports.full_grammar'):
+                return True
+            if context['request'].user.has_perm('reports.full_grammar'):
+                return True
+    except Exception, e:
+        pass
+    return False
 
 class QryPlaceholder(object):
     """ Placeholder for Django Query values
@@ -277,7 +292,9 @@ class CJFilter_Model(CJFilter):
         ret['widget'] = 'model'
         ret['fields'] = {}
         for k, field in self.fields.items():
-            if getattr(field, 'staff_only', False) and not is_staff:
+            if getattr(field, 'staff_only', False) and is_staff is not True:
+                continue
+            if getattr(field, 'full_grammar', False) and not is_staff:
                 continue
             ret['fields'][k] = field.getGrammar(is_staff)
         return ret
@@ -891,7 +908,9 @@ class CJFilter_contains(CJFilter):
         ret['widget'] = 'contains'
         ret['sub'] = self.sub_filter.getGrammar(is_staff)
         for k, field in self.fields.items():
-            if getattr(field, 'staff_only', False) and not is_staff:
+            if getattr(field, 'staff_only', False) and is_staff is not True:
+                continue
+            if getattr(field, 'full_grammar', False) and not is_staff:
                 continue
             ret['sub']['fields'][k] = field.getGrammar(is_staff)
         return ret
@@ -1292,7 +1311,7 @@ location_filter = CJFilter_Model('common.Location',
             'template': CJFilter_ModelChoices('common.LocationTemplate',
                     fields={'name': CJFilter_String(title=_('name'), sequence=1), }),
         },
-    famfam_icon='map', condition=user_is_staff,
+    famfam_icon='map', condition=user_full_grammar,
     )
 manuf_filter = CJFilter_lookup('products.Manufacturer', 'manufacturer',
     fields={ 'id': CJFilter_id(), 'name':  CJFilter_String(title=_('name'), sequence=1),
@@ -1328,7 +1347,7 @@ project_filter = CJFilter_Model('procurements.Project',
     famfam_icon='page_go',
     fields={ 'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
-            'description':  CJFilter_String(title=_('description'), sequence=5, staff_only=True),
+            'description':  CJFilter_String(title=_('description'), sequence=5, full_grammar=True),
     })
 
 contract_filter = CJFilter_lookup('procurements.Contract', 'contracts',
@@ -1348,25 +1367,25 @@ contract_filter2 = CJFilter_Model('procurements.Contract',
     sequence=30,
     fields={ 'id': CJFilter_id(),
             'name':  CJFilter_String(title=_('name'), sequence=1),
-            'description':  CJFilter_String(title=_('description'), sequence=5, staff_only=True),
-            'use_regular': CJFilter_Boolean(title=_("regular procurements"), staff_only=True),
-            'use_mass': CJFilter_Boolean(title=_("mass procurements"), staff_only=True),
-            'date_start': CJFilter_date(title=_('start date'), staff_only=True),
-            'end_date': CJFilter_date(title=_('end date'), staff_only=True),
+            'description':  CJFilter_String(title=_('description'), sequence=5, full_grammar=True),
+            'use_regular': CJFilter_Boolean(title=_("regular procurements"), full_grammar=True),
+            'use_mass': CJFilter_Boolean(title=_("mass procurements"), full_grammar=True),
+            'date_start': CJFilter_date(title=_('start date'), full_grammar=True),
+            'end_date': CJFilter_date(title=_('end date'), full_grammar=True),
             'parent': project_filter,
             'delegate': CJFilter_Model('procurements.Delegate',
                 fields={ 'name':  CJFilter_String(title=_('name'), sequence=1),
                 }
             )
         },
-    famfam_icon='basket', condition=user_is_staff,
+    famfam_icon='basket', condition=user_full_grammar,
     )
 
 purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
     fields={ 'id': CJFilter_id(),
             'user_id': CJFilter_String(title=_("user defined id"), sequence=1),
-            'create_user': users_filter.copy(title=_("created by"), staff_only=True),
-            'validate_user': users_filter.copy(title=_("validated by"), staff_only=True),
+            'create_user': users_filter.copy(title=_("created by"), full_grammar=True),
+            'validate_user': users_filter.copy(title=_("validated by"), full_grammar=True),
             'supplier': CJFilter_lookup('common.Supplier', 'supplier_vat',
                 fields={'name':  CJFilter_String(title=_('name'), sequence=1),
                         'vat_number':  CJFilter_String(title=_('VAT number'), sequence=10),
@@ -1375,10 +1394,10 @@ purchaseorder_filter = CJFilter_Model('movements.PurchaseOrder', sequence=40,
             'issue_date': CJFilter_date(title=_("issue date")),
             'state': CJFilter_choices('movements.PurchaseOrder', 'state', title=_('state')),
             'department': department_filter,
-            'procurement': contract_filter2.copy(staff_only=True,
+            'procurement': contract_filter2.copy(full_grammar=True,
                     fields_add={ '_': CJFilter_isset(sequence=0), }),
         },
-    condition=user_is_staff, famfam_icon='cart_go'
+    condition=user_full_grammar, famfam_icon='cart_go'
     )
 
 item_templ_c_filter = CJFilter_Model('assets.Item', title=_('asset'),
@@ -1430,10 +1449,10 @@ inventories_filter = CJFilter_Model('inventory.InventoryGroup', title=_('invento
         'date_act': CJFilter_date(title=_("date performed")),
         'date_val': CJFilter_date(title=_("date validated")),
         'state': CJFilter_choices('inventory.InventoryGroup', 'state', title=_('state')),
-        'create_user': users_filter.copy(title=_("created by"), staff_only=True),
-        'validate_user': users_filter.copy(title=_("validated by"), staff_only=True),
+        'create_user': users_filter.copy(title=_("created by"), full_grammar=True),
+        'validate_user': users_filter.copy(title=_("validated by"), full_grammar=True),
     },
-    condition=user_is_staff,
+    condition=user_full_grammar,
     famfam_icon='package'
     )
 
@@ -1444,8 +1463,8 @@ movements_filter = CJFilter_Model('movements.Movement', title=_("movements"),
         'date_val': CJFilter_date(title=_("date validated")),
         'state': CJFilter_choices('movements.Movement', 'state', title=_('state'), sequence=4),
         'stype': CJFilter_choices('movements.Movement', 'stype', title=_('type'), sequence=5),
-        'create_user': users_filter.copy(title=_("created by"), staff_only=True, sequence=20),
-        'validate_user': users_filter.copy(title=_("validated by"), staff_only=True, sequence=21),
+        'create_user': users_filter.copy(title=_("created by"), full_grammar=True, sequence=20),
+        'validate_user': users_filter.copy(title=_("validated by"), full_grammar=True, sequence=21),
         'location_src': location_filter.copy(title=_('source location'), sequence=2),
         'location_dest': location_filter.copy(title=_('destination location'), sequence=3),
         'items': CJFilter_contains(item_templ_c_filter,
@@ -1458,12 +1477,12 @@ movements_filter = CJFilter_Model('movements.Movement', title=_("movements"),
                             sequence=25),
         'purchase_order': purchaseorder_filter,
     },
-    condition=user_is_staff,
+    condition=user_full_grammar,
     famfam_icon='computer_go',
     )
 
 department_filter_full = department_filter.copy(fields_add={
-            'deprecate': CJFilter_Boolean(title=_("deprecate"), staff_only=True),
+            'deprecate': CJFilter_Boolean(title=_("deprecate"), full_grammar=True),
             'inventorygroup': CJFilter_contains(inventories_filter.copy(fields_add={'department': None}),
                                 set_suffix=True,
                                 related_name='department',
@@ -1551,6 +1570,23 @@ def reports_parts_params_view(request, part_id):
 
     return render(request, 'params-%s.html' % part_id, {})
 
+def _get_is_staff(request):
+    """Returns if user is_staff or has full_gramar permission
+        @return False, True or 'full'
+    """
+    if request.user.is_staff:
+        return True
+    else:
+        try:
+            role = role_from_request(request)
+            if role.has_perm('reports.full_grammar'):
+                return 'full'
+            if request.user.has_perm('reports.full_grammar'):
+               return 'full'
+        except Exception, e:
+            pass
+    return False
+
 def reports_grammar_view(request, rep_type):
     if not request.user.is_authenticated():
         raise PermissionDenied
@@ -1559,7 +1595,7 @@ def reports_grammar_view(request, rep_type):
     rt = _reports_cache['main_types'].get(rep_type, False)
     if not rt:
         return HttpResponseNotFound("Grammar for type %s not found" % rep_type)
-    content = json.dumps(rt.getGrammar(request.user.is_staff), cls=JsonEncoderS)
+    content = json.dumps(rt.getGrammar(_get_is_staff(request)), cls=JsonEncoderS)
     return HttpResponse(content, content_type='application/json')
 
 def reports_cat_grammar_view(request, cat_id):
@@ -1686,7 +1722,7 @@ def reports_back_load_view(request):
 
     ret = {'id': report.id, 'title': report.title, 'notes': report.notes,
             'model': report.rmodel, 'public': not bool(report.owner),
-            'grammar': rt.getGrammar(request.user.is_staff), 'data': json.loads(report.params)}
+            'grammar': rt.getGrammar(_get_is_staff(request)), 'data': json.loads(report.params)}
     content = json.dumps(ret, cls=JsonEncoderS)
     return HttpResponse(content, content_type='application/json')
 
