@@ -855,9 +855,8 @@ class MovementManager(models.Manager):
             else:
                 active_role = role_from_request(request)
                 if active_role:
-                    depts = list(active_role.departments.values_list('id', flat=True))
-                    q = Q(location_src__department__in=depts) \
-                          | Q(location_dest__department__in=depts)
+                    q = Q(location_src__department__in=active_role.departments) \
+                          | Q(location_dest__department__in=active_role.departments)
                 else:
                     allowed_depts = list(request.user.dept_roles.values_list('department', flat=True))
                     q = Q(create_user=request.user) | Q(validate_user=request.user) \
