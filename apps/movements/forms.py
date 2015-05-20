@@ -67,8 +67,12 @@ class PurchaseOrderForm_view(DetailForm):
 def _fmt_movement_items(move):
     return u'<br/>\n\t\t'.join([conditional_escape(unicode(it)) for it in move.items.all()])
 
+def _fmt_movement_id(move):
+    return '<a href="%s">%d</a> (%s)' %  ( move.get_absolute_url(), move.id, move.get_state_display())
+
 class RepairMovesWidget(ColumnsDetailWidget):
-    columns = [ {'name': _(u'From'), 'attribute':'location_src' },
+    columns = [ {'name': _('ID'), 'format': _fmt_movement_id },
+            {'name': _(u'From'), 'attribute':'location_src' },
             {'name': _(u'To'), 'attribute':'location_dest'},
             {'name': _('Parts'), 'format': _fmt_movement_items },
             ]
