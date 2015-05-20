@@ -1162,7 +1162,7 @@ class CJFilter_attribs_count(CJFilter_attribs):
 class CJFilter_extra_condition(CJFilter):
     def __init__(self, data, **kwargs):
         super(CJFilter_extra_condition, self).__init__(**kwargs)
-        assert isinstance(data, (tuple, list)) and len(data) == 3
+        assert isinstance(data, (tuple, list)) and len(data) == 3, repr(data)
         self.domain = data
 
     def __repr__(self):
@@ -1171,8 +1171,8 @@ class CJFilter_extra_condition(CJFilter):
     def setExtra(self, parent, request, query, name):
 
         flt = parent.getQuery(request, '', ['', 'in', [self.domain,]])
-        assert isinstance(flt, dict)
-        assert flt.keys() == ['__in',]
+        assert isinstance(flt, dict), type(flt)
+        assert flt.keys() == ['__in',], flt.keys()
         assert isinstance(flt['__in'], QuerySet), "flt: %s" % type(flt)
         new_query = flt['__in'].filter(id=QryPlaceholder()) \
                                     .extra(select={'true_value': True}) \
@@ -1191,7 +1191,7 @@ class CJFilter_extra_attrib(CJFilter):
 
     def __init__(self, data, **kwargs):
         super(CJFilter_extra_attrib, self).__init__(**kwargs)
-        assert isinstance(data, (tuple, list)) and len(data) == 2
+        assert isinstance(data, (tuple, list)) and len(data) == 2, repr(data)
         assert '.' in data[0], data[0]
         self.field_name = data[0]
         self.attr_aid = data[1]
