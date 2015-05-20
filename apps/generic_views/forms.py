@@ -169,9 +169,11 @@ class DetailForm(forms.ModelForm):
                 if isinstance(result, models.query.QuerySet):
                     klass = forms.ModelMultipleChoiceField
                     ekws['queryset'] = result
+                    ekws.setdefault('initial', result)
                 elif hasattr(result, 'all'):
                     klass = forms.ModelMultipleChoiceField
                     ekws['queryset'] = result.all()
+                    ekws.setdefault('initial', result.all())
                 elif isinstance(result, (basestring,)):
                     klass = forms.CharField
                     ekws['initial'] = result
