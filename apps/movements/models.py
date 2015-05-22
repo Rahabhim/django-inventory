@@ -792,7 +792,7 @@ class RepairOrder(models.Model):
         return ('repair_order_view', [str(self.id)])
 
     def delete(self, *args, **kwargs):
-        if self.movements.exclude(state__in=('pending', 'done')).exists():
+        if self.movements.exclude(state__in=('draft', 'reject')).exists():
             raise models.ProtectedError(_("Cannot delete repair order %s with validated or pending movements") % self,
                                  self.movements.filter(state__in=('pending', 'done')).all())
         if self.state not in ('draft', 'reject') or self.validate_user:
