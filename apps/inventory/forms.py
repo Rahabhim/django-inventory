@@ -44,15 +44,6 @@ class InventoryForm(RModelForm):
             pass
         UnAutoCompleteField(self.fields, 'department', request, use_radio=False)
 
-    def clean(self):
-        from assets.models import Item
-        cleaned_data = super(InventoryForm, self).clean()
-
-        if cleaned_data.get('department'):
-            if not Item.objects.filter(location__department=cleaned_data['department']).exists():
-                raise ValidationError(_("There are no assets in any of this Department locations, cannot make an inventory"))
-        return cleaned_data
-
 class InventoryValidateForm(forms.ModelForm):
     class Meta:
         model = InventoryGroup
