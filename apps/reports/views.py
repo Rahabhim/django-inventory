@@ -756,8 +756,12 @@ class CJFilter_id(CJFilter):
 
     def _post_fn(self, fname, results, qset):
         urls = {}
+        apath = fname.split('__')[:-1]
         for o in qset:
-            urls[o.id] = o.get_absolute_url()
+            p = o
+            for f in apath:
+                p = getattr(p, f)
+            urls[o.id] = p.get_absolute_url()
 
         for row in results:
             row[fname +'.url'] = urls.get(row['id'],False)
