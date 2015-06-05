@@ -159,7 +159,10 @@ if (typeof String.prototype.startsWith != 'function') {
                             return [rt.data_op || '=', parseInt(rt.data.pk)];
                     },
                 'selection': function(rt, name) {
-                        if (rt.data)
+                        if (rt.data && rt.data_op == 'in'){
+                            return [rt.data_op, rt.data ];
+                        }
+                        else if (rt.data)
                             return [rt.data_op || '=', rt.data];
                     },
                 'attribs': function(rt, name) {
@@ -597,6 +600,13 @@ if (typeof String.prototype.startsWith != 'function') {
                         $scope.$root.can_save = true;
                 });
 
+            var fmtSelectionVal = function(field, val) {
+                for(var i in field.selection)
+                    if(field.selection[i][0] == val)
+                        return field.selection[i][1];
+                };
+            $scope.fmtSelectionVal = fmtSelectionVal; // expose this
+
             var formatFns = {
                     'char': function(field) {
                         if (field.data)
@@ -645,9 +655,15 @@ if (typeof String.prototype.startsWith != 'function') {
                         },
                     'selection': function(field) {
                         if (field.data){
-                            for(var i in field.selection)
-                                if(field.selection[i][0] == field.data)
-                                    return field.selection[i][1];
+                            if (field.data_op == 'in') {
+                                var strs = [];
+                                angular.forEach(field.data, function(val) {
+                                    if (val) strs.push(fmtSelectionVal(field, val));
+                                    });
+                                return strs.join(', ');
+                            }
+                            else
+                                return fmtSelectionVal(field, field.data);
                             }
                         },
                     'attribs': function(field) {
@@ -784,6 +800,17 @@ if (typeof String.prototype.startsWith != 'function') {
                     else //remove empty entry
                         field.data.splice(i, 1);
                 };
+            $scope.selFieldMultiChoice = function(field, di, index) {
+                var sel = field.data[index];
+                for(var i=0; i< field.data.length;)
+                    if (field.data[i]){
+                        if (field.data[i] == sel)
+                            di.i = i;
+                        i++
+                    }
+                    else //remove empty entry
+                        field.data.splice(i, 1);
+                };
             $scope.addFieldMulti = function(field, di) {
                 $log.debug("addFieldMulti", field);
                 if (field.data_op != 'in' && field.data) {
@@ -797,6 +824,21 @@ if (typeof String.prototype.startsWith != 'function') {
                     return; // don't allow adding a value, when current one is empty
 
                 field.data.push({'value': "", 'repr': "", "pk": 0 });
+                if (di)
+                    di.i = field.data.length - 1;
+                };
+            $scope.addFieldMultiChoice = function(field, di) {
+                $log.debug("addFieldMultiChoice", field);
+                if (field.data_op != 'in' && field.data) {
+                    var dd = field.data;
+                    field.data = [];
+                    field.data.push(dd);
+                    field.data_op = 'in';
+                    }
+                else if (!field.data || ( di.i < field.data.length && !(field.data[di.i]) ) )
+                    return; // don't allow adding a value, when current one is empty
+
+                field.data.push(0);
                 if (di)
                     di.i = field.data.length - 1;
                 };

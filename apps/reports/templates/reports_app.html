@@ -446,9 +446,25 @@
 </script>
 
 <script type="text/ng-template" id="parts/field-selection.html">
+    <div ng-if="field.data_op != 'in'">
     <select ng-model="field.data" ng-options="d[0] as d[1] for d in field.selection">
         <option value="">{% trans '(none)'%}</option>
     </select>
+    <a ng-click="addFieldMultiChoice(field, di)" class="famfam active famfam-bullet_toggle_plus" title="{% trans 'Add value' %}">+</a>
+    </div>
+  <div ng-if="field.data_op == 'in'" ng-init="di = {i: field.data.length-1}">
+    <span ng-repeat="dv in field.data">
+        <a ng-if="$index != di.i" ng-click="selFieldMultiChoice(field, di, $index)">[[ fmtSelectionVal(field, dv) ]]</a>
+        <select ng-if="$index == di.i" ng-model="field.data[$index]"
+                ng-options="d[0] as d[1] for d in field.selection">
+            <option value="">{% trans '(none)'%}</option>
+        </select>
+        <span ng-if="$index == di.i" ng-click="rmFieldMulti(field, $index, di)"
+            title="{% trans 'Remove this value' %}" class="famfam active famfam-bullet_toggle_minus">-</span>
+        <span ng-if="!$last"> {% trans 'or' %} </span>
+    </span>
+    <a ng-click="addFieldMultiChoice(field, di)" class="famfam active famfam-bullet_toggle_plus" title="{% trans 'Add value' %}">+</a>
+  </div>
 </script>
 
 <script type="text/ng-template" id="parts/field-contains.html">
