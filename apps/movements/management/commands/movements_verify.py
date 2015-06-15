@@ -29,8 +29,19 @@ class Command(SyncCommand):
         base_qset = Item.objects
         if args:
             base_qset = base_qset.filter(id__in=map(int, args))
-        
-        # First set: items never moved, never placed in location
+
+        # First set: items not moved there, but participating in bundles
+        qset = base_qset.filter(location__isnull=True, bundled_in__isnull=False) \
+                .exclude(movements__state='draft')
+        logger.debug("Searching Items in bundles but not moved there")
+        if qset.exists() \
+                and self.ask("There are %d items bundled, but not moved into bundle, Clear?", qset.count()):
+            for item in qset.all():
+                item.bundled_in.clear()
+                item.is_bundled = False
+                item.save()
+
+        # Second set: items never moved, never placed in location
         qset = base_qset.filter(movements__isnull=True, location__isnull=True)
         logger.debug("Searching Items w/o movements or location")
         if qset.exists() \

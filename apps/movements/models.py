@@ -933,6 +933,7 @@ class Movement(models.Model):
     def delete(self, *args, **kwargs):
         if self.state not in ('draft', 'reject'):
             raise models.ProtectedError(_("Cannot delete movement because it is not in draft state"), [self,])
+        self._undo_bundling()
         return super(Movement,self).delete(*args, **kwargs)
 
     def _close_check(self, skip_name=False):
@@ -993,6 +994,23 @@ class Movement(models.Model):
 
         return True
 
+    def _undo_bundling(self):
+        """ItemGroups may already be updated at `items_into_moves()` with wannabe parts
+
+           So, if we cancel this move, the parts must be freed from the group
+        """
+        if self.location_dest and self.location_dest.usage == 'production' \
+                and not self.location_dest.department:
+            for item in self.items.select_for_update().all():
+                # items updated before this move closes will have location == None
+                # or location == 'Suppliers'. But they will have `bundled_in`
+                # If they are already in "production" (aka. bundle) location, bail out
+                if item.bundled_in.exists() \
+                        and not (item.location and item.location.usage == 'production'):
+                    item.bundled_in.clear()
+                    item.is_bundled = False
+                    item.save()
+
     def do_close(self, val_user, val_date=None):
         """Check the items and set the movement as 'done'
 
@@ -1040,6 +1058,7 @@ class Movement(models.Model):
         self.date_val = datetime.date.today()
         self.state = 'reject'
         self.save()
+        self._undo_bundling()
         return True
 
     @models.permalink
