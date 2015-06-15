@@ -61,6 +61,9 @@ class PO_Step1b(_WizardFormMixin, forms.ModelForm):
             initial = kwargs.get('initial', {})
             if not initial.get('supplier_name', None):
                 initial['supplier_name'] = kwargs['instance'].supplier_id
+            self.initial_issue_date = kwargs['instance'].issue_date
+        else:
+            self.initial_issue_date = None
 
         super(PO_Step1b, self).__init__(data, files, **kwargs)
 
@@ -70,6 +73,15 @@ class PO_Step1b(_WizardFormMixin, forms.ModelForm):
         if not (self.instance.pk or self.instance.create_user_id):
             self.instance.create_user = request.user
         self.instance.save()
+
+        if self.instance.issue_date != self.initial_issue_date:
+            # on changing PO's date, update *only draft* movements with same date_act
+            # to reflect the new value
+            try:
+                self.instance.movements.filter(state='draft', date_act=self.initial_issue_date) \
+                        .update(date_act=self.instance.issue_date)
+            except ObjectDoesNotExist:
+                pass
 
 class PO_Step1(PO_Step1b):
     department = AutoCompleteSelectField('department', label=_("Department"), required=False, show_help_text=False)
