@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-17 21:46+0200\n"
-"PO-Revision-Date: 2015-05-30 23:46+0300\n"
+"POT-Creation-Date: 2015-06-23 17:01+0300\n"
+"PO-Revision-Date: 2015-06-23 17:04+0300\n"
 "Last-Translator: P. Christeas <xrg@linux.gr>\n"
 "Language-Team: Greek <>\n"
 "Language: el\n"
@@ -238,6 +238,15 @@ msgid ""
 msgstr ""
 "Δεν μπορείτε να επικυρώσετε απογραφή για τις %s, γιατί υπάρχουν οριστικές "
 "κινήσεις από/προς την τοποθεσία αυτή σε μεταγενέστερες ημερομηνίες."
+
+#: models.py:414
+#, python-format
+msgid ""
+"There is still pending movements for %s, please revise them before closing "
+"this inventory."
+msgstr ""
+"Υπάρχουν εκκρεμείς μετακινήσεις για το %s, παρακαλώ κλείστε αυτές πρώτα, για "
+"να είναι έγκυρη η απογραφή."
 
 #: models.py:442
 #, python-format
