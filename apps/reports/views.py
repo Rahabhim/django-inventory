@@ -351,6 +351,9 @@ class CJFilter_Model(CJFilter):
             for fn in fields:
                 if isinstance(fn, (tuple, list)):
                     fn, ftype, data = fn
+                    if not data:
+                        # should not happen, empty domain
+                        continue
                     if fn.startswith('+'):
                         fn = fn[1:]
                     fld = dyn_fields[fn] = self.dynamic_fields[ftype](data)
