@@ -168,7 +168,6 @@ if (typeof String.prototype.startsWith != 'function') {
                 'attribs': function(rt, name) {
                         if (!rt.data)
                             return;
-                        $log.debug("Atribs=> dom:", rt);
                         var rval = [];
                         angular.forEach(rt.data, function(val) {
                                 rval.push(val);
@@ -812,7 +811,6 @@ if (typeof String.prototype.startsWith != 'function') {
                         field.data.splice(i, 1);
                 };
             $scope.addFieldMulti = function(field, di) {
-                $log.debug("addFieldMulti", field);
                 if (field.data_op != 'in' && field.data) {
                     var dd = field.data;
                     field.data = [];
@@ -828,7 +826,6 @@ if (typeof String.prototype.startsWith != 'function') {
                     di.i = field.data.length - 1;
                 };
             $scope.addFieldMultiChoice = function(field, di) {
-                $log.debug("addFieldMultiChoice", field);
                 if (field.data_op != 'in' && field.data) {
                     var dd = field.data;
                     field.data = [];
@@ -1469,7 +1466,6 @@ if (typeof String.prototype.startsWith != 'function') {
                         });
                     }
                 }
-                $log.debug("getRightColumns:", ret);
                 $scope.right_cols = ret;
             } else
                 $scope.right_cols = [];
