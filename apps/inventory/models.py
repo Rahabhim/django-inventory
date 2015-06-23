@@ -407,6 +407,12 @@ class Inventory(models.Model):
             raise ValidationError(_("You cannot validate an inventory for %s, because there is movements to/from that location on a later date") %\
                     self.date_act.strftime(DATE_FMT_FORMAT))
 
+        # some users don't read before signing, enforce that there is no pending moves
+        # before this inventory.
+        if movements.Movement.objects.filter(Q(location_src=self.location)|Q(location_dest=self.location))\
+                .filter(date_act__lt=self.date_act, state__in=('pending', 'draft')).exists():
+            raise ValidationError(_("There is still pending movements for %s, please revise them before closing this inventory.") %\
+                    self.location)
         return True
 
     def do_close(self, val_user, val_date=None, perform_check=True):
