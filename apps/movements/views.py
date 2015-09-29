@@ -1046,7 +1046,7 @@ def repair_itemgroup(request, object_id):
     item = get_object_or_404(ItemGroup.objects.select_for_update(), pk=object_id)
     active_role = role_from_request(request)
     logger = logging.getLogger('apps.movements.repair')
-    if not (request.user.is_superuser or active_role.has_perm('assets.change_itemgroup')):
+    if not (request.user.is_superuser or (active_role and active_role.has_perm('assets.change_itemgroup'))):
         logger.warning("User %s is not allowed to repair item", request.user)
         messages.error(request,_('You dont\'t have the permission to repair items'), fail_silently=True)
         transaction.rollback()
