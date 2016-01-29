@@ -124,15 +124,24 @@ class GroupNode(Node):
                     l = cur_grp_fields[:]
                     l.sort(key=lambda fc: fc.get('sequence'))
                     l.append({'id': '_count', 'name': _("Count"), 'widget': ''})
-                    g['field_cols'] = [{'id': f['id'], 'widget': f['widget']} for f in l]
-                    g['render_head'] = [{'id': f['id'], 'name': f['name']} for f in l]
+                    g['field_cols'] = []
+                    g['render_head'] = []
+                    for f in l:
+                        if 'id' not in f:
+                            continue
+                        g['field_cols'].append({'id': f['id'], 'widget': f['widget']})
+                        g['render_head'].append({'id': f['id'], 'name': f['name']})
                     in_table = True
 
                 elif g['group_mode'] == 'row':
                     l = cur_grp_fields[:]
                     l.sort(key=lambda fc: fc.get('sequence'))
                     # l.append({'id': '_count', 'name': False, 'widget': ''})
-                    g['field_cols'] = [{'id': f['id'], 'widget': f['widget'], 'name': f['name']} for f in l]
+                    g['field_cols'] = []
+                    for f in l:
+                        if 'id' not in f:
+                            continue
+                        g['field_cols'].append({'id': f['id'], 'widget': f['widget'], 'name': f['name']})
                     g['render_head'] = [{'name': '-'}]
                     in_table = False
 
@@ -148,6 +157,8 @@ class GroupNode(Node):
                     l.sort(key=lambda fc: fc.get('sequence'))
                     g['field_cols'] = []
                     for f in l:
+                        if 'id' not in f:
+                            continue
                         c = {'id': f['id'], 'widget': f['widget']}
                         if f is not cur_grp_fields[0]:
                             c['name'] = f['name']
@@ -159,9 +170,14 @@ class GroupNode(Node):
                 # detailed results
                 fc = context['field_cols']
                 g = {'group_level': cur_results['group_level'],
-                    'field_cols': [{'id': f['id'], 'widget': f['widget']} for f in fc],
-                    'render_head': [{'id': f['id'], 'name': f['name']} for f in fc],
+                    'field_cols': [],
+                    'render_head': [],
                     'group_by': False, 'group_mode': False }
+                for f in fc:
+                    if 'id' not in f:
+                        continue
+                    g['field_cols'].append({'id': f['id'], 'widget': f['widget']})
+                    g['render_head'].append({'id': f['id'], 'name': f['name']})
             # unshift stack:
             res = g
 
