@@ -772,7 +772,6 @@ class CJFilter_id(CJFilter):
 class CJFilter_dept_has_assets(CJFilter_Boolean):
     """Special filter that finds only Departments with/without assets
     """
-    staff_only = True    # by default, this field is too expensive to compute
 
     def getGrammar(self, is_staff=False):
         ret = super(CJFilter_dept_has_assets, self).getGrammar(is_staff)
@@ -1304,7 +1303,7 @@ department_filter = CJFilter_Model('company.Department', sequence=5,
                         fields={'id': CJFilter_id(),
                                 'name':  CJFilter_String(title=_('name'), sequence=1), }
                 ),
-            '_has_assets': CJFilter_dept_has_assets(title=_("has assets"), sequence=5),
+            '_has_assets': CJFilter_dept_has_assets(title=_("has assets"), sequence=5, full_grammar=True),
             #'nom_name':  CJFilter_String(title=_('Nom Name'), sequence=15),
             #'ota_name':  CJFilter_String(title=_('OTA Name'), sequence=16),
             'parent': CJFilter_lookup('company.Department', 'department',
