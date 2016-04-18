@@ -43,7 +43,7 @@ urlpatterns = patterns('dhelp.views',
 
     url(r'^t/(?P<object_id>\d+)$', 'help_display_view', (), name='help_display_view'),
 
-    url(r'^i/(?P<mode>.+)/(?P<tkey>.+)$', 'help_index_view', name='help_topic2_view'),
+    url(r'^i/(?P<mode>.+)/(?P<key>.+)$', 'help_index_view', name='help_topic2_view'),
     url(r'^$', 'help_index_view', (), name='help_index_view'),
     )
 
