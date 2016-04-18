@@ -1584,7 +1584,7 @@ def reports_parts_params_view(request, part_id):
     return render(request, 'params-%s.html' % part_id, {})
 
 def _get_is_staff(request):
-    """Returns if user is_staff or has full_gramar permission
+    """Returns if user is_staff or has full_grammar permission
         @return False, True or 'full'
     """
     if request.user.is_staff:
