@@ -821,6 +821,51 @@ class CJFilter_dept_has_assets(CJFilter_Boolean):
         for row in results:
             row[fname] = bool(row['id'] in depts_with)
 
+class CJFilter_inv_has_items(CJFilter_Boolean):
+    """Special filter that finds only Inventories with entries
+    """
+    staff_only = True    # by default, this field is too expensive to compute
+
+    def getGrammar(self, is_staff=False):
+        ret = super(CJFilter_inv_has_items, self).getGrammar(is_staff)
+        ret['widget'] = 'has_sth'
+        return ret
+
+    def getQuery(self, request, name, domain):
+        from inventory.models import InventoryGroup
+        inve_objs = InventoryGroup.objects.using(router.db_for_read(InventoryGroup, cluster='reports'))
+        if isinstance(domain, (list, tuple)) and len(domain) == 3 \
+                and (domain[1] == '='):
+            q = models.Q(inventories__items__isnull=False)
+            if domain[2]:
+                # pass through Q, to get unique results
+                return models.Q(id__in= inve_objs.filter(q))
+            else:
+                # we cannot just say "inventories__items__isnull=True", because
+                # almost all Departments have at least one empty location, for
+                # which the Inventory() will have no items.
+                return ~models.Q(id__in=inve_objs.filter(q))
+        raise TypeError("Bad domain: %r", domain)
+
+    def _post_fn(self, fname, results, qset):
+        from inventory.models import InventoryGroup
+        # use Department.objects again, because qset is already sliced
+        if qset.query.extra:
+            # in that case, we MUST request for all the extra columns, because
+            # they may participate in the ORDER BY clause
+            afields = ['id'] + qset.query.extra.keys()
+            all_ids = [ row[0] for row in qset.values_list(*afields) ]
+        else:
+            all_ids = qset.values_list('id', flat=True)
+
+        inve_objs = InventoryGroup.objects.using(router.db_for_read(InventoryGroup, cluster='reports'))
+        inve_with = set(inve_objs.filter(id__in=list(all_ids)). \
+                    filter(inventories__items__isnull=False).distinct()\
+                    .values_list('id', flat=True))
+
+        for row in results:
+            row[fname] = bool(row['id'] in inve_with)
+
 class CJFilter_lookup(CJFilter_Model):
     """Select *one* of some related model, with an autocomplete field
     """
@@ -1459,6 +1504,7 @@ inventories_filter = CJFilter_Model('inventory.InventoryGroup', title=_('invento
     fields={'id': CJFilter_id(),
         'name': CJFilter_String(title=_('name'), sequence=1),
         'department': department_filter,
+        '_has_items': CJFilter_inv_has_items(title=_("has items"), sequence=5),
         'date_act': CJFilter_date(title=_("date performed")),
         'date_val': CJFilter_date(title=_("date validated")),
         'state': CJFilter_choices('inventory.InventoryGroup', 'state', title=_('state')),
