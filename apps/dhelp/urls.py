@@ -30,10 +30,11 @@ urlpatterns = patterns('dhelp.views',
             name='help_topic_list'),
     url(r'^topic/(?P<object_id>\d+)$', 'help_display_view', (), name='help_topic_view'),
     url(r'^topic/create/$', GenericCreateView.as_view(
-                form_class=HelpTopicForm, extra_context={'title':_(u'create new help topic')}),
+                form_class=HelpTopicForm, extra_context={'title':_(u'create new help topic'),
+                                                         'novalidate': True}),
             name='help_topic_create'),
     url(r'^topic/(?P<pk>\d+)/update/$', GenericUpdateView.as_view(
-                form_class=HelpTopicForm,),
+                form_class=HelpTopicForm, extra_context={'novalidate': True}),
             name='help_topic_update'),
     url(r'^topic/(?P<pk>\d+)/delete/$', GenericDeleteView.as_view(model=HelpTopic,
                 success_url="help_topic_list",

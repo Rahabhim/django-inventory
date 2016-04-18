@@ -20,9 +20,9 @@
 {% endif %}
 
     {% if form.is_multipart %}
-        <form enctype="multipart/form-data" method="{{ submit_method|default:'post' }}" action="" class="form">
+        <form enctype="multipart/form-data" method="{{ submit_method|default:'post' }}" action="" class="form" {% if novalidate %}novalidate{% endif %}>
     {% else %}
-        <form method="{{ submit_method|default:'post' }}" action="" class="form">
+        <form method="{{ submit_method|default:'post' }}" action="" class="form" {% if novalidate %}novalidate{% endif %}>
     {% endif %}
         {% if step_field %}
             <input type="hidden" name="{{ step_field }}" value="{{ step0 }}" />
