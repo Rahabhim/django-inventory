@@ -1,0 +1,37 @@
+{% load i18n %}
+{% load report_tags %}
+
+        <h2>{{ rep.report_data.title }}</h2>
+
+        {% if rep.report_data.notes %}
+        <p>{{ report_data.notes|linebreaks }}</p>
+        {% endif %}
+        <div class="report-results final">
+        <div class="count">{% trans "Number of results:" %} {{ rep.count }}
+        </div>
+        {% if rep.have_flat_results %}
+        {% with cur_results=rep.flat_results field_cols=rep.field_cols %}
+        <table class="detail-results">
+                <thead>
+                <tr>
+                {% for fc in field_cols %}
+                <th>{% if fc.name != '-' %}{{ fc.name|title }}{% endif %}</th>
+                {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% include "sub_results.html" %}
+                </tbody>
+        </table>
+        {% endwith %}
+        
+        {% elif rep.have_groupped_results %}
+        
+        {% with report_data=rep.report_data field_cols=rep.field_cols groupped_fields=rep.groupped_fields groupped_results=rep.groupped_results %}
+        {% include "grp_results.html" %}
+        {% endwith %}
+
+        {% else %}
+            <p class="error">{% trans "Internal error: no results!" %}</p>
+        {% endif %}
+        </div>

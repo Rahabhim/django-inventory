@@ -45,6 +45,7 @@ urlpatterns = patterns('reports.views',
     url(r'^pub/results.html$', 'reports_results_html', (), name='reports_pub_results_html'),
     url(r'^pub/results.json$', 'reports_results_json', (), name='reports_pub_results_json'),
     url(r'^pub/results.csv$', 'reports_results_csv', (), name='reports_pub_results_csv'),
+    url(r'^pre/(?P<rpath>.+)$', 'reports_hard_tmpl', (), name='reports_pre_hard_tmpl'),
 
     # back API
     url(r'^back/list', 'reports_back_list_view', (), name='reports_back_list_view'),

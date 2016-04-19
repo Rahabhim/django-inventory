@@ -1850,20 +1850,27 @@ def reports_back_del_view(request):
     report.delete()
     return HttpResponse(_("Report deleted"), content_type='text/plain')
 
-def _pre_render_report(request):
+def _pre_render_report(request, exp_id=None):
     """Decode request parameters and prepare a report to be rendered
     """
     if not request.user.is_authenticated():
         raise PermissionDenied
 
     _reports_init_cache()
-    if request.method == 'POST':
+    if exp_id:
+        report = get_object_or_404(SavedReport.objects.by_request(request), pk=exp_id)
+
+        if not report.stage2:
+            messages.error(request, _("This report has not been saved properly, no stage2 data"))
+            return {}
+        report_data = json.loads(report.stage2)
+    elif request.method == 'POST':
         report_data = json.loads(request.POST['data'])
-    elif request.method == 'GET':
+    elif request.method == 'GET' and request.GET.get('id', False):
         # Instead of stage2, we need the pythonic algorithm of the JS part
         # for domains, fields
         report = get_object_or_404(SavedReport.objects.by_request(request), \
-                        pk=request.GET.get('id', 0))
+                        pk=request.GET['id'])
 
         if not report.stage2:
             messages.error(request, _("This report has not been saved properly, no stage2 data"))
@@ -1904,7 +1911,7 @@ import settings
 from django.contrib.auth.models import User
 
 def allow_public_mode(_orig_fn):
-    def _int_fn(request):
+    def _int_fn(request, *args, **kwargs):
         if not request.user.is_authenticated():
             if request.method != 'GET':
                 raise PermissionDenied
@@ -1931,7 +1938,8 @@ def allow_public_mode(_orig_fn):
                 if int(request.GET.get('id', '-1')) not in resolved_user['allowed_reports']:
                     logging.getLogger('apps.reports').error("Report %r is not allowed to %s ", request.GET.get('id', '??'), remote_addr)
                     raise PermissionDenied
-        return _orig_fn(request)
+            request.public_mode = resolved_user.copy() # prevent reports from altering settings
+        return _orig_fn(request, *args, **kwargs)
 
     return _int_fn
 
@@ -1948,6 +1956,48 @@ def reports_results_pdf(request):
 def reports_results_json(request):
     res = _pre_render_report(request)
     return HttpResponse(json.dumps(res, cls=JsonEncoderS), content_type='application/json')
+
+@allow_public_mode
+def reports_hard_tmpl(request, rpath=None):
+    """Render hard-coded reports, w. predefined templates
+    
+       Hard-coded reports are described in settings.py as:
+       API_USERS = {  '127.0.0.1': {                    # host granted access to them
+                            'user': 'admin',            # user to be set as EUID
+                            'allowed_reports': [-1, ...],  # `-1` grants hard-coded
+                            'hard': {                      # one section to define them
+                                'stats.html' : {           # URL name of report
+                                    'template': 'report-stats.html',
+                                    'reports': { 'st': 15  # `st` will contain data of #15
+                                                }          # multiple data can be queried
+                                    }
+                                }
+                            }
+                    }
+
+        Then, based only on the URL name, hard-coded `reports` will be ran and provide
+        data in corresponding `template`
+    """
+    if not (request.public_mode and ('hard' in request.public_mode)):
+        raise PermissionDenied
+
+    log = logging.getLogger('apps.reports')
+
+    hard_definition = request.public_mode['hard'].get(rpath, None)
+
+    if hard_definition is None:
+        log.info("No definition for hard-coded \"%s\" report on %s", rpath, request.META.get('REMOTE_ADDR', ''))
+        return HttpResponseNotFound("No such report: %s" % rpath)
+
+    assert 'template' in hard_definition, "No template defined for %s" % rpath
+    assert 'reports' in hard_definition, "No reports defined for %s" % rpath
+    log.debug("Rendering hard-coded report: %s", rpath)
+    data = {}
+    for key, exp_id in hard_definition['reports'].items():
+        log.debug("Rendering sub-report #%d for %s.%s", exp_id, rpath, key)
+        data[key] = _pre_render_report(request, exp_id=exp_id)
+
+    return render(request, hard_definition['template'], data)
 
 def csv_fmt(val):
     if val is None:
