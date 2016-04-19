@@ -1978,7 +1978,14 @@ def reports_hard_tmpl(request, rpath=None):
         Then, based only on the URL name, hard-coded `reports` will be ran and provide
         data in corresponding `template`
     """
-    if not (request.public_mode and ('hard' in request.public_mode)):
+    if request.user.is_authenticated() and request.user.is_superuser \
+                and request.method == 'GET':
+        hard = {}
+        hard[rpath] = { 'template': request.GET['template'],
+                        'reports':  json.loads(request.GET['reports'])
+                        }
+        request.public_mode = {'hard': hard }
+    if not (getattr(request, 'public_mode') and ('hard' in request.public_mode)):
         raise PermissionDenied
 
     log = logging.getLogger('apps.reports')
