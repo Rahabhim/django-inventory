@@ -1149,7 +1149,7 @@ class CJFilter_count(CJFilter):
         """ Prepare an extra-query for the /count/ of sub-query items
 
             `extra_query` shall already be clean (w/o select fields, ordering etc.)
-            and then we convert it to a "count" one, like the `quewry.get_count()`
+            and then we convert it to a "count" one, like the `query.get_count()`
             does.
         """
         qq = extra_query.clone()
